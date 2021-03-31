@@ -4,6 +4,7 @@ namespace RRZE\Newsletter\Mjml;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Settings;
 use RRZE\Newsletter\CPT\Newsletter;
 use function RRZE\Newsletter\plugin;
 
@@ -19,9 +20,10 @@ class Api
      */
     public static function credentials()
     {
-        $key = get_option('rrze_newsletter_mjml_api_key', false);
-        $secret = get_option('rrze_newsletter_mjml_api_secret', false);
-        if (isset($key, $secret)) {
+        $options = (object) Settings::getOptions();
+        $key = $options->mjml_api_key;
+        $secret = $options->mjml_api_secret;
+        if ($key && $secret) {
             $credentials = "$key:$secret";
         } else {
             $credentials = new \WP_Error(
@@ -60,9 +62,10 @@ class Api
 
     public static function activationNotice()
     {
+        $credentials = self::credentials();
         if (
             is_admin()
-            && !self::credentials()
+            && (!$credentials || is_wp_error($credentials))
             && !get_option('rrze_newsletter_activation_notice_dismissed', false)
         ) {
             add_action('admin_notices', [__CLASS__, 'addNotice']);

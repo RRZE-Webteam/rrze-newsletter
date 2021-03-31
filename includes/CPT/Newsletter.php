@@ -212,7 +212,7 @@ final class Newsletter
                 'single'         => true,
                 'auth_callback'  => '__return_true',
             ]
-        );        
+        );
         register_meta(
             'post',
             'rrze_newsletter_template_id',
@@ -541,9 +541,9 @@ final class Newsletter
                 );
             }
 
-            $publicHtml = $isPublic 
-            ? ' <span class="dashicons dashicons-visibility"></span>'
-            : ' <span class="dashicons dashicons-hidden"></span>';
+            $publicHtml = $isPublic
+                ? ' <span class="dashicons dashicons-visibility"></span>'
+                : ' <span class="dashicons dashicons-hidden"></span>';
 
             $postStates[$post_status->name] .= $publicHtml;
         }
@@ -640,14 +640,20 @@ final class Newsletter
 
     public static function save($postId, $post, $update)
     {
-        $status = get_post_status($postId);
-        if ('trash' === $status) {
-            return;
-        }
-
         if (!$update) {
             update_post_meta($postId, 'rrze_newsletter_template_id', -1);
         }
+
+        $render = new Render;
+        if (is_wp_error($render)) {
+            return;
+        }
+        $body = $render->renderHtmlEmail($post);
+        self::setBody($postId, $body);
+
+        $html2text = new Html2Text($body);
+        $altBody = $html2text->getText();
+        self::setAltBody($postId, $altBody);
     }
 
     public static function send($newStatus, $oldStatus, $post)
@@ -663,17 +669,6 @@ final class Newsletter
 
         if ('publish' === $newStatus && 'publish' !== $oldStatus) {
             self::setStatus($postId, 'send');
-
-            $render = new Render;
-            if (is_wp_error($render)) {
-                return;
-            }
-            $body = $render->renderHtmlEmail($post);
-            self::setBody($postId, $body);
-
-            $html2text = new Html2Text($body);
-            $altBody = $html2text->getText();
-            self::setAltBody($postId, $altBody);
         }
     }
 

@@ -194,7 +194,7 @@ function getFields(): array
         ],
         'mjml_api' => [
             [
-                'name'              => 'api_key',
+                'name'              => 'key',
                 'label'             => __('Application ID', 'rrze-newsletter'),
                 'desc'              => '',
                 'placeholder'       => '',
@@ -203,7 +203,7 @@ function getFields(): array
                 'sanitize_callback' => 'sanitize_text_field'
             ],
             [
-                'name'              => 'api_secret',
+                'name'              => 'secret',
                 'label'             => __('Secret Key', 'rrze-newsletter'),
                 'desc'              => '',
                 'placeholder'       => '',
