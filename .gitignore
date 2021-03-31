@@ -1,0 +1,10 @@
+nbproject/project.properties
+/nbproject/private/
+nbproject/project.xml
+*.DS_Store
+node_modules
+/package-lock.json
+.idea
+.tmp
+.cache
+*.pot

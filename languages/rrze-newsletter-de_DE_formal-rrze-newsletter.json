@@ -1,0 +1,609 @@
+{
+   "domain": "messages",
+   "locale_data": {
+      "messages": {
+         "": {
+            "domain": "messages",
+            "plural_forms": "nplurals=2; plural=n != 1;",
+            "lang": "de_DE"
+         },
+         "RRZE Newsletter": [
+            "RRZE Newsletter"
+         ],
+         "https://github.com/RRZE-Webteam/rrze-newsletter": [
+            "https://github.com/RRZE-Webteam/rrze-newsletter"
+         ],
+         "Plugin for creating and sending HTML Newsletters.": [
+            "Plugin zum Erstellen und Senden von Newsletters."
+         ],
+         "RRZE-Webteam": [
+            "RRZE-Webteam"
+         ],
+         "https://blogs.fau.de/webworking/": [
+            "https://blogs.fau.de/webworking/"
+         ],
+         "Newsletters": [
+            "Newsletters"
+         ],
+         "Newsletter Settings": [
+            "Newsletter Einstellungen"
+         ],
+         "Mail Server": [
+            "Mail-Server"
+         ],
+         "Mail Queue": [
+            "Mail-Queue"
+         ],
+         "Mailing List": [
+            "Mailingliste"
+         ],
+         "MJML API": [
+            "MJML-API"
+         ],
+         "Enter your MJML API keys.": [
+            "Geben Sie Ihre MJML-API-Keys ein."
+         ],
+         "Request MJML API keys": [
+            "MJML-API-Keys anfordern"
+         ],
+         "Encryption": [
+            "Verschlüsselung"
+         ],
+         "None": [
+            "Keiner"
+         ],
+         "TLS": [
+            "TLS"
+         ],
+         "SSL": [
+            "SSL"
+         ],
+         "Host": [
+            "Servername"
+         ],
+         "Host ip address.": [
+            "Server IP Adresse."
+         ],
+         "Port": [
+            "Port"
+         ],
+         "Host port.": [
+            "Server Port."
+         ],
+         "Sender Addresse": [
+            "Sender-Adresse"
+         ],
+         "Authentication": [
+            "Authentifizierung"
+         ],
+         "Authentication is required to access the SMTP server": [
+            "Für den Zugriff auf den SMTP-Server ist eine Authentifizierung erforderlich"
+         ],
+         "Username": [
+            "Benutzername"
+         ],
+         "Password": [
+            "Passwort"
+         ],
+         "Queue Limit": [
+            "Queue-Limit"
+         ],
+         "Maximum number of emails that can be queued at once.": [
+            "Maximale Anzahl von E-Mails, die gleichzeitig in die Queue gestellt werden können."
+         ],
+         "Send Limit": [
+            "Sende-Limit"
+         ],
+         "Maximum number of emails that can be sent per minute.": [
+            "Maximale Anzahl von E-Mails, die pro Minute gesendet werden können."
+         ],
+         "Max. Retries": [
+            "Max. Wiederholungen"
+         ],
+         "Maximum number of retries until an email is sent successfully.": [
+            "Maximale Anzahl von Wiederholungsversuchen, bis eine E-Mail erfolgreich gesendet wurde."
+         ],
+         "Unsubscribed E-mail Addresses": [
+            "Abgemeldete E-Mail-Adressen"
+         ],
+         "List of cancelled email addresses through the unsubscription link.": [
+            "Liste der nicht abonnierten E-Mail-Adressen."
+         ],
+         "Application ID": [
+            "Application-ID"
+         ],
+         "Secret Key": [
+            "Secret-Key"
+         ],
+         "Add New Newsletter": [
+            "Neuen Newsletter erstellen"
+         ],
+         "New Newsletter": [
+            "Neuen Newsletter"
+         ],
+         "Edit Newsletter": [
+            "Newsletter bearbeiten"
+         ],
+         "View Newsletter": [
+            "Newsletter anzeigen"
+         ],
+         "All Newsletters": [
+            "Alle Newsletters"
+         ],
+         "Search Newsletters": [
+            "Suche Newsletters"
+         ],
+         "Parent Newsletters:": [
+            "Eltern-Newsletter:"
+         ],
+         "No newsletters found.": [
+            "Keine Newsletter gefunden."
+         ],
+         "No newsletters found in Trash.": [
+            "Keine Newsletter im Papierkorb gefunden."
+         ],
+         "All Categories": [
+            "Alle Kategorien"
+         ],
+         "Edit Category": [
+            "Kategorie bearbeiten"
+         ],
+         "View Category": [
+            "Kategorie anschauen"
+         ],
+         "Update Category": [
+            "Kategorie aktualisieren"
+         ],
+         "Add New Category": [
+            "Neue Kategorie erstellen"
+         ],
+         "New Category Name": [
+            "Neuer Kategoriename"
+         ],
+         "Main Category": [
+            "Hauptkategorie"
+         ],
+         "Main Category:": [
+            "Hauptkategorie:"
+         ],
+         "Search Categories": [
+            "Kategorien suchen"
+         ],
+         "No categories found": [
+            "Keine Kategorien gefunden"
+         ],
+         "Back to categories": [
+            "Zurück zu den Kategorien"
+         ],
+         "All Lists": [
+            "Alle Listen"
+         ],
+         "Edit List": [
+            "Liste bearbeiten"
+         ],
+         "View List": [
+            "Liste anzeigen"
+         ],
+         "Update List": [
+            "Aktualisierungsliste"
+         ],
+         "Add New List": [
+            "Neue Liste hinzufügen"
+         ],
+         "New List Name": [
+            "Neuer Listenname"
+         ],
+         "Main List": [
+            "Hauptliste"
+         ],
+         "Main List:": [
+            "Hauptliste:"
+         ],
+         "Search Lists": [
+            "Suchlisten"
+         ],
+         "No lists found": [
+            "Keine Listen gefunden"
+         ],
+         "Back to lists": [
+            "Zurück zu den Listen"
+         ],
+         "E-mail Addresses": [
+            "E-Mail-Adressen"
+         ],
+         "Enter one email address per line.": [
+            "Geben Sie eine E-Mail-Adresse pro Zeile ein."
+         ],
+         "Newsletter": [
+            "Newsletter"
+         ],
+         "Emails": [
+            "E-Mails"
+         ],
+         "Sent %1$s ago": [
+            "Vor %1$s gesendet"
+         ],
+         "Sent %1$s": [
+            "%1$s gesendet"
+         ],
+         "Page not found": [
+            "Seite nicht gefunden"
+         ],
+         "Preview": [
+            "Vorschau"
+         ],
+         "Post is not a Newsletter.": [
+            "Post ist kein Newsletter."
+         ],
+         "Add New": [
+            "Erstellen"
+         ],
+         "Add New Mail Queue": [
+            "Neue Mail-Queue hinzufügen"
+         ],
+         "New Mail Queue": [
+            "Neue Mail-Queue"
+         ],
+         "Edit Mail Queue": [
+            "Mail-Queue bearbeiten"
+         ],
+         "View Mail Queue": [
+            "Mail-Queue anzeigen"
+         ],
+         "All Mail Queue": [
+            "Alle Mail-Queue"
+         ],
+         "Search Mail Queue": [
+            "Mail-Queue durchsuchen"
+         ],
+         "No Mail Queue found.": [
+            "Keine Mail-Queue gefunden."
+         ],
+         "No Mail Queue found in Trash.": [
+            "Keine Mail-Queue im Papierkorb gefunden."
+         ],
+         "Queued <span class=\"count\">(%s)</span>": [
+            "In Queue <span class=\"count\">(%s)</span>",
+            "In Queue <span class=\"count\">(%s)</span>"
+         ],
+         "Sent <span class=\"count\">(%s)</span>": [
+            "<span class=\"count\">(%s)</span> gesendet",
+            "<span class=\"count\">(%s)</span> gesendet"
+         ],
+         "Error <span class=\"count\">(%s)</span>": [
+            "Fehler <span class=\"count\">(%s)</span>",
+            "Fehler <span class=\"count\">(%s)</span>"
+         ],
+         "Subject": [
+            "Betreff"
+         ],
+         "Scheduled Date": [
+            "Geplantes Datum"
+         ],
+         "Send Date": [
+            "Sende Datum"
+         ],
+         "From": [
+            "Absender"
+         ],
+         "To": [
+            "An"
+         ],
+         "Retries": [
+            "Wdh."
+         ],
+         "Status": [
+            "Status"
+         ],
+         "Error": [
+            "Fehler"
+         ],
+         "Every 5 minutes": [
+            "Alle 5 Minuten"
+         ],
+         "Email test sent successfully to %s.": [
+            "E-Mail-Test erfolgreich an %s gesendet."
+         ],
+         "There was an error in the email test.": [
+            "Beim E-Mail-Test ist ein Fehler aufgetreten."
+         ],
+         "Settings": [
+            "Einstellungen"
+         ],
+         "Mjml Api credentials not available.": [
+            "Mjml-API-Anmeldeinformationen nicht verfügbar."
+         ],
+         "Please <a href=\"%s\">set up the API credentials</a>.": [
+            "Bitte <a href=\"%s\">richten Sie die API-Anmeldeinformationen ein</a>."
+         ],
+         "MJML rendering error.": [
+            "MJML-Rendering-Fehler."
+         ],
+         "You cannot use this resource.": [
+            "Sie können diese Ressource nicht verwenden."
+         ],
+         "Newsletter Agent": [
+            "Newsletter-Agent"
+         ],
+         "The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.": [
+            "Auf dem Server wird die PHP-Version %1$s ausgeführt. Das Plugin benötigt mindestens die PHP-Version %2$s."
+         ],
+         "The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.": [
+            "Auf dem Server wird die WordPress-Version %1$s ausgeführt. Das Plugin benötigt mindestens die WordPress-Version %2$s."
+         ],
+         "Plugins: %1$s: %2$s": [
+            "Plugins: %1$s: %2$s"
+         ],
+         "Select a layout for the newsletter": [
+            "Wählen Sie ein Layout für den Newsletter"
+         ],
+         "Prebuilt": [
+            "Vorgefertigt"
+         ],
+         "Saved": [
+            "Gespeichert"
+         ],
+         "Select a layout to preview.": [
+            "Wählen Sie ein Layout für die Vorschau aus."
+         ],
+         "Turn any newsletter to a layout via the \"Layout\" sidebar menu in the editor.": [
+            "Verwandeln Sie einen Newsletter über das Seitenleistenmenü “Layout” im Editor in ein Layout."
+         ],
+         "Start With A Blank Layout": [
+            "Leeren Layout"
+         ],
+         "Use Selected Layout": [
+            "Ausgewählte Layout"
+         ],
+         "Are you sure you want to delete this layout?": [
+            "Möchten Sie dieses Layout wirklich löschen?"
+         ],
+         "Delete": [
+            "Löschen"
+         ],
+         "Sending": [
+            "Senden"
+         ],
+         "Sent and Published": [
+            "Gesendet und veröffentlicht"
+         ],
+         "Sent": [
+            "Gesendet"
+         ],
+         "Scheduled": [
+            "Geplant"
+         ],
+         "Schedule sending": [
+            "Senden planen"
+         ],
+         "Send and Publish": [
+            "Senden und veröffentlichen"
+         ],
+         "Send": [
+            "Senden"
+         ],
+         "Updating...": [
+            "Aktualisierung…"
+         ],
+         "Update": [
+            "Aktualisierung"
+         ],
+         "Send your newsletter?": [
+            "Newsletter senden?"
+         ],
+         "The following errors prevent the newsletter from being sent:": [
+            "Die folgenden Fehler verhindern das Versenden des Newsletters:"
+         ],
+         "Cancel": [
+            "Abbrechen"
+         ],
+         "Newsletter sent on ": [
+            "Newsletter verschickt am "
+         ],
+         "Side alignment": [
+            "Seitenausrichtung"
+         ],
+         "Nested group": [
+            "Verschachtelte Gruppe"
+         ],
+         "Unequal middle alignment. All or none of the columns should be middle-aligned.": [
+            "Ungleiche mittlere Ausrichtung. Alle oder keine der Spalten sollten mittig ausgerichtet sein."
+         ],
+         "Nested columns": [
+            "Verschachtelte Spalten"
+         ],
+         "Full width": [
+            "Gesamtbreite"
+         ],
+         "Inline image": [
+            "Inline-Bild"
+         ],
+         "Drop cap": [
+            "Drop Cap"
+         ],
+         "These features will not be displayed correctly in an email, please remove them:": [
+            "Diese Eigenschaften werden in einer E-Mail nicht korrekt angezeigt. Bitte entfernen Sie sie:"
+         ],
+         "Styling": [
+            "Styling"
+         ],
+         "Testing": [
+            "Testen"
+         ],
+         "Layout": [
+            "Layout"
+         ],
+         "Are you sure you want to overwrite this layout?": [
+            "Möchten Sie dieses Layout wirklich überschreiben?"
+         ],
+         "Save new layout": [
+            "Neues speichern"
+         ],
+         "Update layout": [
+            "Aktualisieren"
+         ],
+         "Reset newsletter layout": [
+            "Newsletter-Layout zurücksetzen"
+         ],
+         "Save newsletter as a layout": [
+            "Der Newsletter als Layout speichern"
+         ],
+         "Title": [
+            "Titel"
+         ],
+         "Save": [
+            "Speichern"
+         ],
+         "Overwrite newsletter content?": [
+            "Newsletter-Inhalt überschreiben?"
+         ],
+         "Changing the newsletter's layout will remove any customizations or edits you have already made.": [
+            "Durch Ändern des Layouts des Newsletters werden bereits vorgenommene Anpassungen oder Änderungen entfernt."
+         ],
+         "Reset layout": [
+            "Layout zurücksetzen"
+         ],
+         "Make newsletter page public?": [
+            "Newsletter-Seite öffentlich machen?"
+         ],
+         "Make this newsletter viewable as a public page once it’s been sent.": [
+            "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
+         ],
+         "Name": [
+            "Name"
+         ],
+         "Email": [
+            "E-Mail"
+         ],
+         "ReplyTo": [
+            "ReplyTo"
+         ],
+         "Update Sender": [
+            "Absender aktualisieren"
+         ],
+         "Preview text": [
+            "Vorschau-Text"
+         ],
+         "Update preview text": [
+            "Vorschau-Text aktualisieren"
+         ],
+         "Sans Serif": [
+            "Sans Serif"
+         ],
+         "Arial": [
+            "Arial"
+         ],
+         "Tahoma": [
+            "Tahoma"
+         ],
+         "Trebuchet": [
+            "Trebuchet"
+         ],
+         "Verdana": [
+            "Verdana"
+         ],
+         "Serif": [
+            "Serif"
+         ],
+         "Georgia": [
+            "Georgia"
+         ],
+         "Palatino": [
+            "Palatino"
+         ],
+         "Times New Roman": [
+            "Times New Roman"
+         ],
+         "Monospace": [
+            "Monospace"
+         ],
+         "Courier": [
+            "Courier"
+         ],
+         "Headings font": [
+            "Überschriften Schriftart"
+         ],
+         "Body font": [
+            "Inhaltsschrift"
+         ],
+         "Background color": [
+            "Hintergrundfarbe"
+         ],
+         "Send a test to": [
+            "Senden einen Test an"
+         ],
+         "Use commas to separate multiple emails.": [
+            "Verwenden Sie Kommas, um mehrere E-Mails zu trennen."
+         ],
+         "Sending Test Email...": [
+            "Senden einer Test-E-Mail …"
+         ],
+         "Send a Test Email": [
+            "Eine Test-E-Mail senden"
+         ],
+         "Newsletter has already been sent.": [
+            "Newsletter wurde bereits verschickt."
+         ],
+         "Sending newsletter to:": [
+            "Senden eines Newsletters an:"
+         ],
+         "post type general name\u0004Newsletters": [
+            "Newsletters"
+         ],
+         "post type singular name\u0004Newsletter": [
+            "Newsletter"
+         ],
+         "admin menu\u0004Newsletters": [
+            "Newsletters"
+         ],
+         "add new on admin bar\u0004Newsletter": [
+            "Newsletter"
+         ],
+         "popup\u0004Add New": [
+            "Erstellen"
+         ],
+         "Taxonomy general name\u0004Categories": [
+            "Kategorien"
+         ],
+         "Taxonomy general name\u0004Mailing Lists": [
+            "Mailinglisten"
+         ],
+         "Taxonomy singular name\u0004Category": [
+            "Kategorie"
+         ],
+         "Taxonomy singular name\u0004Mailing List": [
+            "Mailingliste"
+         ],
+         "Post type general name\u0004Mail Queue": [
+            "Mail-Queue"
+         ],
+         "Post type singular name\u0004Mail Queue": [
+            "Mail-Queue"
+         ],
+         "Admin Menu text\u0004Mail Queue": [
+            "Mail-Queue"
+         ],
+         "Add New on Toolbar\u0004Mail Queue": [
+            "Mail-Queue"
+         ],
+         "Screen reader text for the filter links heading on the post type listing screen.\u0004Filter Mail Queue list": [
+            "Mail-Queue filtern"
+         ],
+         "Screen reader text for the pagination heading on the post type listing screen.\u0004Mail Queue list navigation": [
+            "Navigation in der Mail-Queue"
+         ],
+         "Screen reader text for the items list heading on the post type listing screen.\u0004Mail Queue list": [
+            "Mail-Queue-Liste"
+         ],
+         "Mail Queue Status\u0004Queued": [
+            "In Queue"
+         ],
+         "Mail Queue Status\u0004Sent": [
+            "Gesendet"
+         ],
+         "Mail Queue Status\u0004Error": [
+            "Fehler"
+         ]
+      }
+   }
+}

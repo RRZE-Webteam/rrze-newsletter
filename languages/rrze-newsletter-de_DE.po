@@ -1,0 +1,883 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: RRZE Newsletter\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
+"POT-Creation-Date: 2021-03-31T10:14:58+00:00\n"
+"PO-Revision-Date: 2021-03-31 12:15+0200\n"
+"Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
+"Language-Team: Deutsch\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Loco-Version: 2.4.6; wp-5.5.3\n"
+
+#. Plugin Name of the plugin
+msgid "RRZE Newsletter"
+msgstr "RRZE Newsletter"
+
+#. Plugin URI of the plugin
+msgid "https://github.com/RRZE-Webteam/rrze-newsletter"
+msgstr "https://github.com/RRZE-Webteam/rrze-newsletter"
+
+#. Description of the plugin
+msgid "Plugin for creating and sending HTML Newsletters."
+msgstr "Plugin zum Erstellen und Senden von Newsletters."
+
+#. Author of the plugin
+msgid "RRZE-Webteam"
+msgstr "RRZE-Webteam"
+
+#. Author URI of the plugin
+msgid "https://blogs.fau.de/webworking/"
+msgstr "https://blogs.fau.de/webworking/"
+
+#: config/settings.php:23 config/settings.php:24
+msgid "Newsletters"
+msgstr "Newsletters"
+
+#: config/settings.php:27
+msgid "Newsletter Settings"
+msgstr "Newsletter Einstellungen"
+
+#: config/settings.php:40
+msgid "Mail Server"
+msgstr "Mail-Server"
+
+#: config/settings.php:45 includes/CPT/NewsletterQueue.php:101
+#: includes/CPT/NewsletterQueue.php:102
+msgid "Mail Queue"
+msgstr "Mail-Queue"
+
+#: config/settings.php:50
+msgid "Mailing List"
+msgstr "Mailingliste"
+
+#: config/settings.php:55
+msgid "MJML API"
+msgstr "MJML-API"
+
+#: config/settings.php:58
+msgid "Enter your MJML API keys."
+msgstr "Geben Sie Ihre MJML-API-Keys ein."
+
+#: config/settings.php:59
+msgid "Request MJML API keys"
+msgstr "MJML-API-Keys anfordern"
+
+#: config/settings.php:75
+msgid "Encryption"
+msgstr "Verschlüsselung"
+
+#: config/settings.php:79
+msgid "None"
+msgstr "Keiner"
+
+#: config/settings.php:80
+msgid "TLS"
+msgstr "TLS"
+
+#: config/settings.php:81
+msgid "SSL"
+msgstr "SSL"
+
+#: config/settings.php:86
+msgid "Host"
+msgstr "Servername"
+
+#: config/settings.php:87
+msgid "Host ip address."
+msgstr "Server IP Adresse."
+
+#: config/settings.php:95
+msgid "Port"
+msgstr "Port"
+
+#: config/settings.php:96
+msgid "Host port."
+msgstr "Server Port."
+
+#: config/settings.php:104
+msgid "Sender Addresse"
+msgstr "Sender-Adresse"
+
+#: config/settings.php:113
+msgid "Authentication"
+msgstr "Authentifizierung"
+
+#: config/settings.php:114
+msgid "Authentication is required to access the SMTP server"
+msgstr ""
+"Für den Zugriff auf den SMTP-Server ist eine Authentifizierung erforderlich"
+
+#: config/settings.php:119
+msgid "Username"
+msgstr "Benutzername"
+
+#: config/settings.php:128
+msgid "Password"
+msgstr "Passwort"
+
+#: config/settings.php:137
+msgid "Queue Limit"
+msgstr "Queue-Limit"
+
+#: config/settings.php:138
+msgid "Maximum number of emails that can be queued at once."
+msgstr ""
+"Maximale Anzahl von E-Mails, die gleichzeitig in die Queue gestellt werden "
+"können."
+
+#: config/settings.php:153
+msgid "Send Limit"
+msgstr "Sende-Limit"
+
+#: config/settings.php:154
+msgid "Maximum number of emails that can be sent per minute."
+msgstr "Maximale Anzahl von E-Mails, die pro Minute gesendet werden können."
+
+#: config/settings.php:169
+msgid "Max. Retries"
+msgstr "Max. Wiederholungen"
+
+#: config/settings.php:170
+msgid "Maximum number of retries until an email is sent successfully."
+msgstr ""
+"Maximale Anzahl von Wiederholungsversuchen, bis eine E-Mail erfolgreich "
+"gesendet wurde."
+
+#: config/settings.php:187
+msgid "Unsubscribed E-mail Addresses"
+msgstr "Abgemeldete E-Mail-Adressen"
+
+#: config/settings.php:188
+msgid "List of cancelled email addresses through the unsubscription link."
+msgstr "Liste der nicht abonnierten E-Mail-Adressen."
+
+#: config/settings.php:198
+msgid "Application ID"
+msgstr "Application-ID"
+
+#: config/settings.php:207
+msgid "Secret Key"
+msgstr "Secret-Key"
+
+#: includes/CPT/Newsletter.php:65
+msgctxt "post type general name"
+msgid "Newsletters"
+msgstr "Newsletters"
+
+#: includes/CPT/Newsletter.php:66
+msgctxt "post type singular name"
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: includes/CPT/Newsletter.php:67
+msgctxt "admin menu"
+msgid "Newsletters"
+msgstr "Newsletters"
+
+#: includes/CPT/Newsletter.php:68
+msgctxt "add new on admin bar"
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: includes/CPT/Newsletter.php:69
+msgctxt "popup"
+msgid "Add New"
+msgstr "Erstellen"
+
+#: includes/CPT/Newsletter.php:70
+msgid "Add New Newsletter"
+msgstr "Neuen Newsletter erstellen"
+
+#: includes/CPT/Newsletter.php:71
+msgid "New Newsletter"
+msgstr "Neuen Newsletter"
+
+#: includes/CPT/Newsletter.php:72
+msgid "Edit Newsletter"
+msgstr "Newsletter bearbeiten"
+
+#: includes/CPT/Newsletter.php:73
+msgid "View Newsletter"
+msgstr "Newsletter anzeigen"
+
+#: includes/CPT/Newsletter.php:74
+msgid "All Newsletters"
+msgstr "Alle Newsletters"
+
+#: includes/CPT/Newsletter.php:75
+msgid "Search Newsletters"
+msgstr "Suche Newsletters"
+
+#: includes/CPT/Newsletter.php:76
+msgid "Parent Newsletters:"
+msgstr "Eltern-Newsletter:"
+
+#: includes/CPT/Newsletter.php:77
+msgid "No newsletters found."
+msgstr "Keine Newsletter gefunden."
+
+#: includes/CPT/Newsletter.php:78
+msgid "No newsletters found in Trash."
+msgstr "Keine Newsletter im Papierkorb gefunden."
+
+#: includes/CPT/Newsletter.php:282
+msgctxt "Taxonomy general name"
+msgid "Categories"
+msgstr "Kategorien"
+
+#: includes/CPT/Newsletter.php:283
+msgctxt "Taxonomy singular name"
+msgid "Category"
+msgstr "Kategorie"
+
+#: includes/CPT/Newsletter.php:284
+msgid "All Categories"
+msgstr "Alle Kategorien"
+
+#: includes/CPT/Newsletter.php:285
+msgid "Edit Category"
+msgstr "Kategorie bearbeiten"
+
+#: includes/CPT/Newsletter.php:286
+msgid "View Category"
+msgstr "Kategorie anschauen"
+
+#: includes/CPT/Newsletter.php:287
+msgid "Update Category"
+msgstr "Kategorie aktualisieren"
+
+#: includes/CPT/Newsletter.php:288
+msgid "Add New Category"
+msgstr "Neue Kategorie erstellen"
+
+#: includes/CPT/Newsletter.php:289
+msgid "New Category Name"
+msgstr "Neuer Kategoriename"
+
+#: includes/CPT/Newsletter.php:290
+msgid "Main Category"
+msgstr "Hauptkategorie"
+
+#: includes/CPT/Newsletter.php:291
+msgid "Main Category:"
+msgstr "Hauptkategorie:"
+
+#: includes/CPT/Newsletter.php:292
+msgid "Search Categories"
+msgstr "Kategorien suchen"
+
+#: includes/CPT/Newsletter.php:293
+msgid "No categories found"
+msgstr "Keine Kategorien gefunden"
+
+#: includes/CPT/Newsletter.php:294
+msgid "Back to categories"
+msgstr "Zurück zu den Kategorien"
+
+#: includes/CPT/Newsletter.php:305
+msgctxt "Taxonomy general name"
+msgid "Mailing Lists"
+msgstr "Mailinglisten"
+
+#: includes/CPT/Newsletter.php:306
+msgctxt "Taxonomy singular name"
+msgid "Mailing List"
+msgstr "Mailingliste"
+
+#: includes/CPT/Newsletter.php:307
+msgid "All Lists"
+msgstr "Alle Listen"
+
+#: includes/CPT/Newsletter.php:308
+msgid "Edit List"
+msgstr "Liste bearbeiten"
+
+#: includes/CPT/Newsletter.php:309
+msgid "View List"
+msgstr "Liste anzeigen"
+
+#: includes/CPT/Newsletter.php:310
+msgid "Update List"
+msgstr "Aktualisierungsliste"
+
+#: includes/CPT/Newsletter.php:311
+msgid "Add New List"
+msgstr "Neue Liste hinzufügen"
+
+#: includes/CPT/Newsletter.php:312
+msgid "New List Name"
+msgstr "Neuer Listenname"
+
+#: includes/CPT/Newsletter.php:313
+msgid "Main List"
+msgstr "Hauptliste"
+
+#: includes/CPT/Newsletter.php:314
+msgid "Main List:"
+msgstr "Hauptliste:"
+
+#: includes/CPT/Newsletter.php:315
+msgid "Search Lists"
+msgstr "Suchlisten"
+
+#: includes/CPT/Newsletter.php:316
+msgid "No lists found"
+msgstr "Keine Listen gefunden"
+
+#: includes/CPT/Newsletter.php:317
+msgid "Back to lists"
+msgstr "Zurück zu den Listen"
+
+#: includes/CPT/Newsletter.php:331 includes/CPT/Newsletter.php:343
+msgid "E-mail Addresses"
+msgstr "E-Mail-Adressen"
+
+#: includes/CPT/Newsletter.php:333 includes/CPT/Newsletter.php:347
+msgid "Enter one email address per line."
+msgstr "Geben Sie eine E-Mail-Adresse pro Zeile ein."
+
+#: includes/CPT/Newsletter.php:366 src/newsletter-editor/index.js:42
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: includes/CPT/Newsletter.php:367
+msgid "Emails"
+msgstr "E-Mails"
+
+#. translators: Relative time stamp of sent/published date
+#: includes/CPT/Newsletter.php:533
+msgid "Sent %1$s ago"
+msgstr "Vor %1$s gesendet"
+
+#. translators:  Absolute time stamp of sent/published date
+#: includes/CPT/Newsletter.php:539
+msgid "Sent %1$s"
+msgstr "%1$s gesendet"
+
+#: includes/CPT/Newsletter.php:597
+msgid "Page not found"
+msgstr "Seite nicht gefunden"
+
+#: includes/CPT/Newsletter.php:621
+msgid "Preview"
+msgstr "Vorschau"
+
+#: includes/CPT/Newsletter.php:660
+msgid "Post is not a Newsletter."
+msgstr "Post ist kein Newsletter."
+
+#: includes/CPT/NewsletterQueue.php:57
+msgctxt "Post type general name"
+msgid "Mail Queue"
+msgstr "Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:58
+msgctxt "Post type singular name"
+msgid "Mail Queue"
+msgstr "Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:59
+msgctxt "Admin Menu text"
+msgid "Mail Queue"
+msgstr "Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:60
+msgctxt "Add New on Toolbar"
+msgid "Mail Queue"
+msgstr "Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:61
+msgid "Add New"
+msgstr "Erstellen"
+
+#: includes/CPT/NewsletterQueue.php:62
+msgid "Add New Mail Queue"
+msgstr "Neue Mail-Queue hinzufügen"
+
+#: includes/CPT/NewsletterQueue.php:63
+msgid "New Mail Queue"
+msgstr "Neue Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:64
+msgid "Edit Mail Queue"
+msgstr "Mail-Queue bearbeiten"
+
+#: includes/CPT/NewsletterQueue.php:65
+msgid "View Mail Queue"
+msgstr "Mail-Queue anzeigen"
+
+#: includes/CPT/NewsletterQueue.php:66
+msgid "All Mail Queue"
+msgstr "Alle Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:67
+msgid "Search Mail Queue"
+msgstr "Mail-Queue durchsuchen"
+
+#: includes/CPT/NewsletterQueue.php:68
+msgid "No Mail Queue found."
+msgstr "Keine Mail-Queue gefunden."
+
+#: includes/CPT/NewsletterQueue.php:69
+msgid "No Mail Queue found in Trash."
+msgstr "Keine Mail-Queue im Papierkorb gefunden."
+
+#: includes/CPT/NewsletterQueue.php:70
+msgctxt ""
+"Screen reader text for the filter links heading on the post type listing "
+"screen."
+msgid "Filter Mail Queue list"
+msgstr "Mail-Queue filtern"
+
+#: includes/CPT/NewsletterQueue.php:71
+msgctxt ""
+"Screen reader text for the pagination heading on the post type listing "
+"screen."
+msgid "Mail Queue list navigation"
+msgstr "Navigation in der Mail-Queue"
+
+#: includes/CPT/NewsletterQueue.php:72
+msgctxt ""
+"Screen reader text for the items list heading on the post type listing "
+"screen."
+msgid "Mail Queue list"
+msgstr "Mail-Queue-Liste"
+
+#: includes/CPT/NewsletterQueue.php:113
+msgctxt "Mail Queue Status"
+msgid "Queued"
+msgstr "In Queue"
+
+#. translators: %s: Number of newsletter queued mails.
+#: includes/CPT/NewsletterQueue.php:120
+msgid "Queued <span class=\"count\">(%s)</span>"
+msgid_plural "Queued <span class=\"count\">(%s)</span>"
+msgstr[0] "In Queue <span class=\"count\">(%s)</span>"
+msgstr[1] "In Queue <span class=\"count\">(%s)</span>"
+
+#: includes/CPT/NewsletterQueue.php:128
+msgctxt "Mail Queue Status"
+msgid "Sent"
+msgstr "Gesendet"
+
+#. translators: %s: Number of sent newsletter mails.
+#: includes/CPT/NewsletterQueue.php:135
+msgid "Sent <span class=\"count\">(%s)</span>"
+msgid_plural "Sent <span class=\"count\">(%s)</span>"
+msgstr[0] "<span class=\"count\">(%s)</span> gesendet"
+msgstr[1] "<span class=\"count\">(%s)</span> gesendet"
+
+#: includes/CPT/NewsletterQueue.php:143
+msgctxt "Mail Queue Status"
+msgid "Error"
+msgstr "Fehler"
+
+#. translators: %s: Number of newsletter error mails.
+#: includes/CPT/NewsletterQueue.php:150
+msgid "Error <span class=\"count\">(%s)</span>"
+msgid_plural "Error <span class=\"count\">(%s)</span>"
+msgstr[0] "Fehler <span class=\"count\">(%s)</span>"
+msgstr[1] "Fehler <span class=\"count\">(%s)</span>"
+
+#: includes/CPT/NewsletterQueue.php:197
+#: src/newsletter-editor/sidebar/index.js:38
+msgid "Subject"
+msgstr "Betreff"
+
+#: includes/CPT/NewsletterQueue.php:198
+msgid "Scheduled Date"
+msgstr "Geplantes Datum"
+
+#: includes/CPT/NewsletterQueue.php:199
+msgid "Send Date"
+msgstr "Sende Datum"
+
+#: includes/CPT/NewsletterQueue.php:200
+#: src/newsletter-editor/sidebar/index.js:61
+msgid "From"
+msgstr "Absender"
+
+#: includes/CPT/NewsletterQueue.php:201
+msgid "To"
+msgstr "An"
+
+#: includes/CPT/NewsletterQueue.php:202
+msgid "Retries"
+msgstr "Wdh."
+
+#: includes/CPT/NewsletterQueue.php:203
+msgid "Status"
+msgstr "Status"
+
+#: includes/CPT/NewsletterQueue.php:204
+msgid "Error"
+msgstr "Fehler"
+
+#: includes/Cron.php:26
+msgid "Every 5 minutes"
+msgstr "Alle 5 Minuten"
+
+#. translators: Message after successful test email.
+#: includes/Mail/Send.php:105
+msgid "Email test sent successfully to %s."
+msgstr "E-Mail-Test erfolgreich an %s gesendet."
+
+#: includes/Mail/Send.php:111
+msgid "There was an error in the email test."
+msgstr "Beim E-Mail-Test ist ein Fehler aufgetreten."
+
+#: includes/Main.php:50
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/Mjml/Api.php:29
+msgid "Mjml Api credentials not available."
+msgstr "Mjml-API-Anmeldeinformationen nicht verfügbar."
+
+#. translators: Notify users to set API credentials on the settings page.
+#: includes/Mjml/Api.php:86
+msgid "Please <a href=\"%s\">set up the API credentials</a>."
+msgstr "Bitte <a href=\"%s\">richten Sie die API-Anmeldeinformationen ein</a>."
+
+#: includes/Mjml/Render.php:659
+msgid "MJML rendering error."
+msgstr "MJML-Rendering-Fehler."
+
+#: includes/RestApi.php:161 includes/RestApi.php:175
+msgid "You cannot use this resource."
+msgstr "Sie können diese Ressource nicht verwenden."
+
+#: includes/Roles.php:78
+msgid "Newsletter Agent"
+msgstr "Newsletter-Agent"
+
+#. translators: 1: Server PHP version number, 2: Required PHP version number.
+#: rrze-newsletter.php:75
+msgid ""
+"The server is running PHP version %1$s. The Plugin requires at least PHP "
+"version %2$s."
+msgstr ""
+"Auf dem Server wird die PHP-Version %1$s ausgeführt. Das Plugin benötigt "
+"mindestens die PHP-Version %2$s."
+
+#. translators: 1: Server WordPress version number, 2: Required WordPress version number.
+#: rrze-newsletter.php:82
+msgid ""
+"The server is running WordPress version %1$s. The Plugin requires at least "
+"WordPress version %2$s."
+msgstr ""
+"Auf dem Server wird die WordPress-Version %1$s ausgeführt. Das Plugin "
+"benötigt mindestens die WordPress-Version %2$s."
+
+#. translators: 1: The plugin name, 2: The error string.
+#: rrze-newsletter.php:98 rrze-newsletter.php:156
+msgid "Plugins: %1$s: %2$s"
+msgstr "Plugins: %1$s: %2$s"
+
+#: src/components/init-modal/index.js:21
+msgid "Select a layout for the newsletter"
+msgstr "Wählen Sie ein Layout für den Newsletter"
+
+#: src/components/init-modal/screens/layout-picker/index.js:28
+msgid "Prebuilt"
+msgstr "Vorgefertigt"
+
+#: src/components/init-modal/screens/layout-picker/index.js:32
+msgid "Saved"
+msgstr "Gespeichert"
+
+#: src/components/init-modal/screens/layout-picker/index.js:80
+msgid "Select a layout to preview."
+msgstr "Wählen Sie ein Layout für die Vorschau aus."
+
+#: src/components/init-modal/screens/layout-picker/index.js:138
+msgid ""
+"Turn any newsletter to a layout via the \"Layout\" sidebar menu in the "
+"editor."
+msgstr ""
+"Verwandeln Sie einen Newsletter über das Seitenleistenmenü “Layout” im "
+"Editor in ein Layout."
+
+#: src/components/init-modal/screens/layout-picker/index.js:154
+msgid "Start With A Blank Layout"
+msgstr "Leeren Layout"
+
+#: src/components/init-modal/screens/layout-picker/index.js:162
+msgid "Use Selected Layout"
+msgstr "Ausgewählte Layout"
+
+#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:37
+msgid "Are you sure you want to delete this layout?"
+msgstr "Möchten Sie dieses Layout wirklich löschen?"
+
+#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:112
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/components/send-button/index.js:73
+msgid "Sending"
+msgstr "Senden"
+
+#: src/components/send-button/index.js:76
+msgid "Sent and Published"
+msgstr "Gesendet und veröffentlicht"
+
+#: src/components/send-button/index.js:77
+msgid "Sent"
+msgstr "Gesendet"
+
+#: src/components/send-button/index.js:81
+msgid "Scheduled"
+msgstr "Geplant"
+
+#: src/components/send-button/index.js:83
+msgid "Schedule sending"
+msgstr "Senden planen"
+
+#: src/components/send-button/index.js:86
+msgid "Send and Publish"
+msgstr "Senden und veröffentlichen"
+
+#: src/components/send-button/index.js:87
+#: src/components/send-button/index.js:168
+msgid "Send"
+msgstr "Senden"
+
+#: src/components/send-button/index.js:119
+msgid "Updating..."
+msgstr "Aktualisierung…"
+
+#: src/components/send-button/index.js:120
+msgid "Update"
+msgstr "Aktualisierung"
+
+#: src/components/send-button/index.js:142
+msgid "Send your newsletter?"
+msgstr "Newsletter senden?"
+
+#: src/components/send-button/index.js:147
+msgid "The following errors prevent the newsletter from being sent:"
+msgstr "Die folgenden Fehler verhindern das Versenden des Newsletters:"
+
+#: src/components/send-button/index.js:174
+#: src/newsletter-editor/layout/index.js:249
+#: src/newsletter-editor/layout/index.js:283
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/components/with-api-handler/index.js:24
+msgid "Newsletter sent on "
+msgstr "Newsletter verschickt am "
+
+#: src/editor/blocks-validation/blocks-filters.js:19
+msgid "Side alignment"
+msgstr "Seitenausrichtung"
+
+#: src/editor/blocks-validation/blocks-filters.js:34
+msgid "Nested group"
+msgstr "Verschachtelte Gruppe"
+
+#: src/editor/blocks-validation/blocks-filters.js:59
+msgid ""
+"Unequal middle alignment. All or none of the columns should be middle-"
+"aligned."
+msgstr ""
+"Ungleiche mittlere Ausrichtung. Alle oder keine der Spalten sollten mittig "
+"ausgerichtet sein."
+
+#: src/editor/blocks-validation/blocks-filters.js:70
+msgid "Nested columns"
+msgstr "Verschachtelte Spalten"
+
+#: src/editor/blocks-validation/blocks-filters.js:77
+msgid "Full width"
+msgstr "Gesamtbreite"
+
+#: src/editor/blocks-validation/blocks-filters.js:83
+msgid "Inline image"
+msgstr "Inline-Bild"
+
+#: src/editor/blocks-validation/blocks-filters.js:86
+msgid "Drop cap"
+msgstr "Drop Cap"
+
+#: src/editor/blocks-validation/blocks-filters.js:100
+msgid ""
+"These features will not be displayed correctly in an email, please remove "
+"them:"
+msgstr ""
+"Diese Eigenschaften werden in einer E-Mail nicht korrekt angezeigt. Bitte "
+"entfernen Sie sie:"
+
+#: src/newsletter-editor/index.js:49
+msgid "Styling"
+msgstr "Styling"
+
+#: src/newsletter-editor/index.js:55
+msgid "Testing"
+msgstr "Testen"
+
+#: src/newsletter-editor/index.js:61
+msgid "Layout"
+msgstr "Layout"
+
+#: src/newsletter-editor/layout/index.js:147
+msgid "Are you sure you want to overwrite this layout?"
+msgstr "Möchten Sie dieses Layout wirklich überschreiben?"
+
+#: src/newsletter-editor/layout/index.js:194
+msgid "Save new layout"
+msgstr "Neues speichern"
+
+#: src/newsletter-editor/layout/index.js:205
+msgid "Update layout"
+msgstr "Aktualisieren"
+
+#: src/newsletter-editor/layout/index.js:218
+msgid "Reset newsletter layout"
+msgstr "Newsletter-Layout zurücksetzen"
+
+#: src/newsletter-editor/layout/index.js:224
+msgid "Save newsletter as a layout"
+msgstr "Der Newsletter als Layout speichern"
+
+#: src/newsletter-editor/layout/index.js:231
+msgid "Title"
+msgstr "Titel"
+
+#: src/newsletter-editor/layout/index.js:243
+msgid "Save"
+msgstr "Speichern"
+
+#: src/newsletter-editor/layout/index.js:257
+msgid "Overwrite newsletter content?"
+msgstr "Newsletter-Inhalt überschreiben?"
+
+#: src/newsletter-editor/layout/index.js:264
+msgid ""
+"Changing the newsletter's layout will remove any customizations or edits you "
+"have already made."
+msgstr ""
+"Durch Ändern des Layouts des Newsletters werden bereits vorgenommene "
+"Anpassungen oder Änderungen entfernt."
+
+#: src/newsletter-editor/layout/index.js:277
+msgid "Reset layout"
+msgstr "Layout zurücksetzen"
+
+#: src/newsletter-editor/public/index.js:23
+msgid "Make newsletter page public?"
+msgstr "Newsletter-Seite öffentlich machen?"
+
+#: src/newsletter-editor/public/index.js:24
+msgid "Make this newsletter viewable as a public page once it’s been sent."
+msgstr "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
+
+#: src/newsletter-editor/sidebar/index.js:63
+msgid "Name"
+msgstr "Name"
+
+#: src/newsletter-editor/sidebar/index.js:70
+msgid "Email"
+msgstr "E-Mail"
+
+#: src/newsletter-editor/sidebar/index.js:78
+msgid "ReplyTo"
+msgstr "ReplyTo"
+
+#: src/newsletter-editor/sidebar/index.js:109
+msgid "Update Sender"
+msgstr "Absender aktualisieren"
+
+#: src/newsletter-editor/sidebar/index.js:113
+msgid "Preview text"
+msgstr "Vorschau-Text"
+
+#: src/newsletter-editor/sidebar/index.js:131
+msgid "Update preview text"
+msgstr "Vorschau-Text aktualisieren"
+
+#: src/newsletter-editor/styling/index.js:14
+msgid "Sans Serif"
+msgstr "Sans Serif"
+
+#: src/newsletter-editor/styling/index.js:18
+msgid "Arial"
+msgstr "Arial"
+
+#: src/newsletter-editor/styling/index.js:22
+msgid "Tahoma"
+msgstr "Tahoma"
+
+#: src/newsletter-editor/styling/index.js:26
+msgid "Trebuchet"
+msgstr "Trebuchet"
+
+#: src/newsletter-editor/styling/index.js:30
+msgid "Verdana"
+msgstr "Verdana"
+
+#: src/newsletter-editor/styling/index.js:36
+msgid "Serif"
+msgstr "Serif"
+
+#: src/newsletter-editor/styling/index.js:40
+msgid "Georgia"
+msgstr "Georgia"
+
+#: src/newsletter-editor/styling/index.js:44
+msgid "Palatino"
+msgstr "Palatino"
+
+#: src/newsletter-editor/styling/index.js:48
+msgid "Times New Roman"
+msgstr "Times New Roman"
+
+#: src/newsletter-editor/styling/index.js:54
+msgid "Monospace"
+msgstr "Monospace"
+
+#: src/newsletter-editor/styling/index.js:58
+msgid "Courier"
+msgstr "Courier"
+
+#: src/newsletter-editor/styling/index.js:126
+msgid "Headings font"
+msgstr "Überschriften Schriftart"
+
+#: src/newsletter-editor/styling/index.js:132
+msgid "Body font"
+msgstr "Inhaltsschrift"
+
+#: src/newsletter-editor/styling/index.js:138
+msgid "Background color"
+msgstr "Hintergrundfarbe"
+
+#: src/newsletter-editor/testing/index.js:53
+msgid "Send a test to"
+msgstr "Senden einen Test an"
+
+#: src/newsletter-editor/testing/index.js:57
+msgid "Use commas to separate multiple emails."
+msgstr "Verwenden Sie Kommas, um mehrere E-Mails zu trennen."
+
+#: src/newsletter-editor/testing/index.js:69
+msgid "Sending Test Email..."
+msgstr "Senden einer Test-E-Mail …"
+
+#: src/newsletter-editor/testing/index.js:70
+msgid "Send a Test Email"
+msgstr "Eine Test-E-Mail senden"
+
+#: src/service-providers/generic/index.js:17
+msgid "Newsletter has already been sent."
+msgstr "Newsletter wurde bereits verschickt."
+
+#: src/service-providers/generic/index.js:92
+msgid "Sending newsletter to:"
+msgstr "Senden eines Newsletters an:"
