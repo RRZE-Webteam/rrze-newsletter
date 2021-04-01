@@ -10,28 +10,22 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Capabilities;
 
-final class NewsletterQueue
+class NewsletterQueue
 {
     const POST_TYPE = 'newsletter_queue';
-
-    protected static $instance = null;
-
-    public static function instance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
 
     public function __construct()
     {
         // Register CPT.
         add_action('init', [__CLASS__, 'registerPostType']);
-        // CPT Menu
-        add_action('admin_menu', [__CLASS__, 'adminMenu']);
         // Custom Post Status
         add_action('init', [__CLASS__, 'registerPostStatus']);
+    }
+
+    public function onLoaded()
+    {
+        // CPT Menu
+        add_action('admin_menu', [__CLASS__, 'adminMenu']);
         // CPT Custom Columns.
         add_filter('manage_' . self::POST_TYPE . '_posts_columns', [__CLASS__, 'columns']);
         add_action('manage_' . self::POST_TYPE . '_posts_custom_column', [__CLASS__, 'customColumn'], 10, 2);
@@ -86,7 +80,6 @@ final class NewsletterQueue
             'has_archive'         => false,
             'exclude_from_search' => true,
             'publicly_queryable'  => false,
-            'taxonomies'          => [],
             'capability_type'     => Capabilities::getCptCapabilityType(self::POST_TYPE),
             'capabilities'        => (array) Capabilities::getCptCaps(self::POST_TYPE),
             'map_meta_cap'        => Capabilities::getCptMapMetaCap(self::POST_TYPE),

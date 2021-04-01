@@ -13,7 +13,7 @@ use RRZE\Newsletter\Mjml\Render;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
 
-final class Newsletter
+class Newsletter
 {
     const POST_TYPE = 'newsletter';
 
@@ -21,17 +21,7 @@ final class Newsletter
 
     const MAILING_LIST = 'newsletter_mailing_list';
 
-    protected static $instance = null;
-
-    public static function instance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    protected function __construct()
+    public function __construct()
     {
         // Register Post Type.
         add_action('init', [__CLASS__, 'registerPostType']);
@@ -39,6 +29,10 @@ final class Newsletter
         add_action('init', [__CLASS__, 'register_meta']);
         // Register Taxonomies.
         add_action('init', [__CLASS__, 'registerTaxonomies']);
+    }
+
+    public function onLoaded()
+    {
         // Taxonomy Terms Fields.
         add_action('newsletter_mailing_list_add_form_fields', [__CLASS__, 'addFormFields']);
         add_action('newsletter_mailing_list_edit_form_fields', [__CLASS__, 'editFormFields'], 10, 2);
@@ -90,7 +84,6 @@ final class Newsletter
             'show_in_rest'     => true,
             'supports'         => ['author', 'editor', 'title', 'custom-fields', 'revisions', 'thumbnail'],
             'menu_icon'        => 'dashicons-email-alt',
-            'taxonomies'       => [self::MAILING_LIST, self::CATEGORY],
         ];
 
         register_post_type(self::POST_TYPE, $args);
@@ -631,11 +624,6 @@ final class Newsletter
             unset($actions['inline hide-if-no-js']);
         }
         return $actions;
-    }
-
-    public static function transitionPostStatus()
-    {
-        add_action('transition_post_status', [__CLASS__, 'send'], 10, 3);
     }
 
     public static function save($postId, $post, $update)

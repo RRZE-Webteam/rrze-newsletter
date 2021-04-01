@@ -26,19 +26,23 @@ class Main
         $settings = new Settings;
         $settings->onLoaded();
 
-        // RestApi
-        new RestApi;
-
-        // Post Types 
-        Newsletter::instance();
-        NewsletterLayout::instance();
-        NewsletterQueue::instance();
+        // Custom Post Types
+        $newsletter = new Newsletter;
+        $newsletter->onLoaded();
+        $newslQueue = new NewsletterQueue;
+        $newslQueue->onLoaded();
+        new NewsletterLayout;
 
         // Editor
         Editor::instance();
 
+        // MJML API
         MjmlApi::activationNotice();
 
+        // RestApi
+        new RestApi;
+
+        // Schedule
         new Cron;
     }
 

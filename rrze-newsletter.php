@@ -52,12 +52,18 @@ register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
 
 add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
 
+transitionPostStatus();
+
 /**
  * loadTextdomain
  */
 function loadTextdomain()
 {
-    load_plugin_textdomain('rrze-newsletter', false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
+    load_plugin_textdomain(
+        'rrze-newsletter',
+        false,
+        sprintf('%s/languages/', dirname(plugin_basename(__FILE__)))
+    );
 }
 
 /**
@@ -94,18 +100,18 @@ function activation()
 {
     if ($error = systemRequirements()) {
         deactivate_plugins(plugin_basename(__FILE__));
-        /* translators: 1: The plugin name, 2: The error string. */
-        wp_die(sprintf(__('Plugins: %1$s: %2$s', 'rrze-newsletter'), plugin_basename(__FILE__), $error));
+        wp_die(
+            sprintf(
+                /* translators: 1: The plugin name, 2: The error string. */
+                __('Plugins: %1$s: %2$s', 'rrze-newsletter'),
+                plugin_basename(__FILE__),
+                $error
+            )
+        );
     }
 
     //Roles::addRoleCaps();
     //Roles::createRoles();
-
-    Newsletter::instance();
-    NewsletterLayout::instance();
-    NewsletterQueue::instance();
-    
-    flush_rewrite_rules();
 }
 
 /**
@@ -116,7 +122,7 @@ function deactivation()
     //Roles::removeRoleCaps();
     //Roles::removeRoles();
 
-    Cron::clearSchedule();
+    clearSchedule();
 
     flush_rewrite_rules();
 }
@@ -132,6 +138,34 @@ function plugin(): object
         $instance = new Plugin(__FILE__);
     }
     return $instance;
+}
+
+function flushRewriteRules()
+{
+    add_action(
+        'init',
+        function () {
+            Newsletter::registerPostType();
+            NewsletterQueue::registerPostType();
+            NewsletterLayout::registerPostType();
+            flush_rewrite_rules();
+        }
+    );
+}
+
+function clearSchedule()
+{
+    Cron::clearSchedule();
+}
+
+function transitionPostStatus()
+{
+    add_action(
+        'transition_post_status',
+        [__NAMESPACE__ . '\CPT\Newsletter', 'send'],
+        10,
+        3
+    );
 }
 
 /**
@@ -166,5 +200,3 @@ function loaded()
 
     new Main;
 }
-
-Newsletter::transitionPostStatus();

@@ -10,27 +10,17 @@ defined('ABSPATH') || exit;
 
 use function RRZE\Newsletter\plugin;
 
-final class NewsletterLayout
+class NewsletterLayout
 {
     const POST_TYPE = 'newsletter_layout';
 
-    protected static $instance = null;
-
-    public static function instance()
-    {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
     public function __construct()
     {
-        add_action('init', [__CLASS__, 'register_layout_cpt']);
+        add_action('init', [__CLASS__, 'registerPostType']);
         add_action('init', [__CLASS__, 'register_meta']);
     }
 
-    public static function register_layout_cpt()
+    public static function registerPostType()
     {
         if (!current_user_can('edit_others_posts')) {
             return;
