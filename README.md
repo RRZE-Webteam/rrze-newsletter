@@ -23,6 +23,19 @@ Update der Node-Module
 ```shell
  npm update --legacy-peer-deps   
 ```
+
+Dev-Modus
+
+```shell
+ npm start   
+```
+
+Build-Modus
+
+```shell
+ npm run build   
+```
+
 Übersetzung: Erstellen der .pot-Datei (WP_CLI)
 Hinweis: Die Verwendung von Poedit für die Übersetzung der jeweiligen Sprachen wird empfohlen.
 
