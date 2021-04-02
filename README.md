@@ -8,7 +8,7 @@ Das Plugin erstellt mithilfe des Blockeditors E-Mail-Newsletter, die dann über 
 
 ## Einstellungen
 
-Dasboard / Einstellungen / Newsletters
+Dashboard / Einstellungen / Newsletters
 
 ## Hinweis für Entwickler
 
