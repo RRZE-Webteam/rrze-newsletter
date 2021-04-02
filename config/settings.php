@@ -106,7 +106,7 @@ function getFields(): array
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => '',
-                'sanitize_callback' => ['\RRZE\Newsletter\Functions', 'sanitizeEmail']
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeEmail']
             ],
             [
                 'name'  => 'auth',
@@ -144,7 +144,7 @@ function getFields(): array
                 'default'           => '100',
                 'sanitize_callback' => [
                     function ($input) {
-                        return \RRZE\Newsletter\Functions::validateIntRange($input, 100, 1, 200);
+                        return \RRZE\Newsletter\Utils::validateIntRange($input, 100, 1, 200);
                     }
                 ]
             ],
@@ -160,7 +160,7 @@ function getFields(): array
                 'default'           => '15',
                 'sanitize_callback' => [
                     function ($input) {
-                        return \RRZE\Newsletter\Functions::validateIntRange($input, 15, 1, 60);
+                        return \RRZE\Newsletter\Utils::validateIntRange($input, 15, 1, 60);
                     }
                 ]
             ],
@@ -176,7 +176,7 @@ function getFields(): array
                 'default'           => '1',
                 'sanitize_callback' => [
                     function ($input) {
-                        return \RRZE\Newsletter\Functions::validateIntRange($input, 1, 0, 10);
+                        return \RRZE\Newsletter\Utils::validateIntRange($input, 1, 0, 10);
                     }
                 ]
             ]
@@ -189,7 +189,7 @@ function getFields(): array
                 'placeholder'       => '',
                 'type'              => 'textarea',
                 'default'           => '',
-                'sanitize_callback' => ['\RRZE\Newsletter\Functions', 'sanitizeMailingList']
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeMailingList']
             ],
         ],
         'mjml_api' => [
