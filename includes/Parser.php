@@ -37,9 +37,8 @@ class Parser
 
     /**
      * [__construct description]
-     * @param string $template [description]
      */
-    public function __construct($template = '')
+    public function __construct()
     {
         $this->vars = [];
     }
