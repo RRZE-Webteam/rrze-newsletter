@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\Mail;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Settings;
+use RRZE\Newsletter\Utils;
 
 class SMTP
 {
@@ -121,12 +122,9 @@ class SMTP
             : $this->options->mail_server_encryption;
         $phpmailer->SMTPAuth = ($this->options->mail_server_auth == 'on');
         $phpmailer->Username = $this->options->mail_server_username;
-        $phpmailer->Password = $this->options->mail_server_password;
+        $phpmailer->Password = Utils::getPassoword($this->options->mail_server_password);
 
-        $sender = $this->options->mail_server_sender;
-        if ($sender) {
-            $phpmailer->Sender = $sender;
-        }
+        $phpmailer->Sender = $this->options->mail_server_sender ?: get_option('admin_email');
 
         $phpmailer->AltBody = $this->altBody;
 
