@@ -6,11 +6,11 @@ defined('ABSPATH') || exit;
 
 class Cron
 {
-    public function __construct()
+    public static function init()
     {
-        add_action('wp', [__CLASS__, 'activateScheduledEvents'], 1);
         add_action('rrze_newsl_every5mins_event', [__CLASS__, 'every5MinutesEvent']);
         add_filter('cron_schedules', [__CLASS__, 'customCronSchedules']);
+        add_action('init', [__CLASS__, 'activateScheduledEvents']);
     }
 
     /**
@@ -35,7 +35,13 @@ class Cron
     public static function activateScheduledEvents()
     {
         if (false === wp_next_scheduled('rrze_newsl_every5mins_event')) {
-            wp_schedule_event(time(), 'rrze_newsl_every5mins', 'rrze_newsl_every5mins_event');
+            $scheduleEvent = wp_schedule_event(
+                time(),
+                'rrze_newsl_every5mins',
+                'rrze_newsl_every5mins_event',
+                [],
+                true
+            );
         }
     }
 
@@ -46,7 +52,6 @@ class Cron
     public static function every5MinutesEvent()
     {
         $events = new Events;
-        $events->setMailQueue();
         $events->processMailQueue();
     }
 
