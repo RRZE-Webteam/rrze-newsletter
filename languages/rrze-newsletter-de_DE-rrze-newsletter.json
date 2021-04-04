@@ -85,12 +85,6 @@
          "Password": [
             "Passwort"
          ],
-         "Queue Limit": [
-            "Queue-Limit"
-         ],
-         "Maximum number of emails that can be queued at once.": [
-            "Maximale Anzahl von E-Mails, die gleichzeitig in die Queue gestellt werden können."
-         ],
          "Send Limit": [
             "Sende-Limit"
          ],
@@ -231,9 +225,6 @@
          ],
          "Preview": [
             "Vorschau"
-         ],
-         "Post is not a Newsletter.": [
-            "Post ist kein Newsletter."
          ],
          "Add New": [
             "Erstellen"
