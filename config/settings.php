@@ -103,9 +103,9 @@ function getFields(): array
                 'name'              => 'sender',
                 'label'             => __('Sender Addresse', 'rrze-newsletter'),
                 'desc'              => '',
-                'placeholder'       => '',
+                'placeholder'       => get_option('admin_email'),
                 'type'              => 'text',
-                'default'           => '',
+                'default'           => get_option('admin_email'),
                 'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeEmail']
             ],
             [
@@ -128,26 +128,11 @@ function getFields(): array
                 'label'   => __('Password', 'rrze-newsletter'),
                 'desc'    => '',
                 'type'    => 'password',
-                'default' => ''
+                'default' => '',
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePassword']
             ]
         ],
         'mail_queue' => [
-            [
-                'name'              => 'limit',
-                'label'             => __('Queue Limit', 'rrze-newsletter'),
-                'desc'              => __('Maximum number of emails that can be queued at once.', 'rrze-newsletter'),
-                'placeholder'       => '100',
-                'min'               => '1',
-                'max'               => '200',
-                'step'              => '1',
-                'type'              => 'number',
-                'default'           => '100',
-                'sanitize_callback' => [
-                    function ($input) {
-                        return \RRZE\Newsletter\Utils::validateIntRange($input, 100, 1, 200);
-                    }
-                ]
-            ],
             [
                 'name'              => 'send_limit',
                 'label'             => __('Send Limit', 'rrze-newsletter'),
