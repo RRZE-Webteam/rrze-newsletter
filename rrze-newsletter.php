@@ -17,11 +17,9 @@ namespace RRZE\Newsletter;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\CPT\{
-    Newsletter,
-    NewsletterLayout,
-    NewsletterQueue
-};
+use RRZE\Newsletter\CPT\Newsletter;
+use RRZE\Newsletter\CPT\NewsletterLayout;
+use RRZE\Newsletter\CPT\NewsletterQueue;
 
 const RRZE_PHP_VERSION = '7.4';
 const RRZE_WP_VERSION = '5.7';
@@ -51,8 +49,6 @@ register_activation_hook(__FILE__, __NAMESPACE__ . '\activation');
 register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
 
 add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
-
-transitionPostStatus();
 
 /**
  * loadTextdomain
@@ -112,6 +108,16 @@ function activation()
 
     //Roles::addRoleCaps();
     //Roles::createRoles();
+
+    add_action(
+        'init',
+        function () {
+            Newsletter::registerPostType();
+            NewsletterQueue::registerPostType();
+            NewsletterLayout::registerPostType();
+            flush_rewrite_rules();
+        }
+    );
 }
 
 /**
@@ -122,7 +128,7 @@ function deactivation()
     //Roles::removeRoleCaps();
     //Roles::removeRoles();
 
-    clearSchedule();
+    Cron::clearSchedule();
 
     flush_rewrite_rules();
 }
@@ -138,34 +144,6 @@ function plugin(): object
         $instance = new Plugin(__FILE__);
     }
     return $instance;
-}
-
-function flushRewriteRules()
-{
-    add_action(
-        'init',
-        function () {
-            Newsletter::registerPostType();
-            NewsletterQueue::registerPostType();
-            NewsletterLayout::registerPostType();
-            flush_rewrite_rules();
-        }
-    );
-}
-
-function clearSchedule()
-{
-    Cron::clearSchedule();
-}
-
-function transitionPostStatus()
-{
-    add_action(
-        'transition_post_status',
-        [__NAMESPACE__ . '\CPT\Newsletter', 'send'],
-        10,
-        3
-    );
 }
 
 /**
@@ -200,3 +178,18 @@ function loaded()
 
     new Main;
 }
+
+add_action(
+    'transition_post_status',
+    function ($newStatus, $oldStatus, $post) {
+        if ('newsletter' !== $post->post_type) {
+            return;
+        }
+        if ('publish' === $newStatus && 'publish' !== $oldStatus) {
+            update_post_meta($post->ID, 'rrze_newsletter_status', 'send');
+            delete_option('rrze_newsletter_queue_task_lock');
+        }
+    },
+    10,
+    3
+);
