@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\Mail;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Settings;
+use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterQueue;
@@ -33,16 +34,6 @@ class Queue
     }
 
     /**
-     * Get the maximum number of emails that can be queued at once.
-     * @return int Max. number of emails queued at once.
-     */
-    public function queueLimit()
-    {
-        $limit = $this->options->mail_queue_limit;
-        return absint($limit);
-    }
-
-    /**
      * Get the maximum number of emails that can be sent per minute.
      * @return int Max. number of emails sent per minute.
      */
@@ -63,38 +54,168 @@ class Queue
     }
 
     /**
-     * Checks whether the mail queue is being created.
-     * @param integer $postId
-     * @return boolean
+     * Set the queue.
+     *
+     * @return void
      */
-    public static function isQueueBeingCreated(int $postId): bool
+    public function set()
     {
-        return !empty(get_option('rrze_newsletter_queue_' . $postId));
+        $gPosts = Newsletter::getPostsToQueue();
+        if (empty($gPosts)) {
+            return;
+        }
+
+        foreach ($gPosts as $postId) {
+            $this->add($postId);
+        }
+    }
+
+    public function add(int $postId)
+    {
+        $status = Newsletter::getStatus($postId);
+        if ($status != 'send') {
+            return;
+        }
+
+        Newsletter::setStatus($postId, 'queued');
+
+        $data = Newsletter::getData($postId);
+        if (empty($data)) {
+            Newsletter::setStatus($postId, 'error');
+            return;
+        }
+
+        // Set the mailing list.
+        $mailingList = [];
+        if (!empty($data['mail_lists']['terms'])) {
+            $options = (object) Settings::getOptions();
+            $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
+
+            foreach ($data['mail_lists']['terms'] as $term) {
+                if (empty($list = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true))) {
+                    continue;
+                }
+                $aryList = explode(PHP_EOL, sanitize_textarea_field($list));
+                foreach ($aryList as $row) {
+                    $aryRow = explode(',', $row);
+                    $email = isset($aryRow[0]) ? trim($aryRow[0]) : ''; // Email Address
+                    $fname = isset($aryRow[1]) ? trim($aryRow[1]) : ''; // First Name
+                    $lname = isset($aryRow[2]) ? trim($aryRow[2]) : ''; // Last Name
+
+                    if (
+                        !Utils::sanitizeEmail($email)
+                        || in_array($email, $unsubscribed)
+                    ) {
+                        continue;
+                    }
+
+                    $name = !empty($fname . $lname) ? trim(sprintf('%1$s %2$s', $fname, $lname)) : '';
+                    $to = !empty($name) ? sprintf('%1$s <%2$s>', $name, $email) : $email;
+
+                    $mailingList[$email] = [
+                        'to_fname' => $fname,
+                        'to_lname' => $lname,
+                        'to_name' => $name,
+                        'to_email' => $email,
+                        'to' => $to
+                    ];
+                }
+            }
+        }
+
+        if (empty($mailingList)) {
+            Newsletter::setStatus($postId, 'error');
+            return;
+        }
+
+        // Update the custom taxonomies' term counts.
+        foreach ((array) get_object_taxonomies(Newsletter::POST_TYPE) as $taxonomy) {
+            $ttIds = wp_get_object_terms($postId, $taxonomy, ['fields' => 'tt_ids']);
+            wp_update_term_count($ttIds, $taxonomy);
+        }
+
+        // Insert post in the mail queue.
+        $args = [
+            'post_date' => $data['send_date'],
+            'post_date_gmt' => $data['send_date_gmt'],
+            'post_title' => $data['title'],
+            'post_content' => $data['content'],
+            'post_excerpt' => $data['excerpt'],
+            'post_type' => NewsletterQueue::POST_TYPE,
+            'post_status' => 'mail-queued',
+            'post_author' => 1
+        ];
+
+        foreach ($mailingList as $mail) {
+            remove_filter('content_save_pre', 'wp_filter_post_kses');
+            remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
+
+            $qId = wp_insert_post($args);
+
+            add_filter('content_save_pre', 'wp_filter_post_kses');
+            add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
+
+            if ($qId != 0 && !is_wp_error($qId)) {
+                add_post_meta($qId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
+                add_post_meta($qId, 'rrze_newsletter_queue_newsletter_url', get_permalink($postId));
+                add_post_meta($qId, 'rrze_newsletter_queue_from_email', $data['from_email'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_from', $data['from'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_to_fname', $mail['to_fname'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_to_lname', $mail['to_lname'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_to_name', $mail['to_name'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_to_email', $mail['to_email'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_to', $mail['to'], true);
+                add_post_meta($qId, 'rrze_newsletter_queue_retries', 0, true);
+            }
+        }
+
+        Newsletter::setStatus($postId, 'sent');
     }
 
     /**
      * Process items from the mail queue.
      */
-    public function processQueue()
+    public function process()
     {
-        $queue = $this->getQueue();
+        $queue = $this->get();
+        $start = microtime(true);
 
         foreach ($queue as $post) {
-            $newsletterId = absint(get_post_meta($post->ID, 'rrze_newsletter_queue_newsletter_id', true));
-            if (!$newsletterId) {
+            $timeElapsed = microtime(true) - $start;
+            if ($timeElapsed >= MINUTE_IN_SECONDS) {
+                break;
+            }
+
+            $newsletterId = get_post_meta($post->ID, 'rrze_newsletter_queue_newsletter_id', true);
+            if (get_post_type($newsletterId) !== Newsletter::POST_TYPE) {
                 continue;
             }
 
-            $from = get_post_meta($newsletterId, 'rrze_newsletter_from_email', true);
-            $fromName = get_post_meta($newsletterId, 'rrze_newsletter_from_name', true);
+            $from = get_post_meta($post->ID, 'rrze_newsletter_queue_from_email', true);
+            $fromName = get_post_meta($post->ID, 'rrze_newsletter_queue_from_name', true);
 
-            $replyTo = get_post_meta($newsletterId, 'rrze_newsletter_replyto', true);
+            $replyTo = get_post_meta($post->ID, 'rrze_newsletter_queue_replyto', true);
 
+            $toFname  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_fname', true);
+            $toLname  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_lname', true);
+            $toEmail  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_email', true);
+            $toName  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_name', true);
             $to  = get_post_meta($post->ID, 'rrze_newsletter_queue_to', true);
 
             $subject = $post->post_title;
             $body = $post->post_content;
             $altBody = $post->post_excerpt;
+    
+            $data = [
+                'FNAME' => $toFname,
+                'LNAME' => $toLname,
+                'NAME' => $toName,
+                'EMAIL' => $toEmail                
+            ];
+            $parser = new Parser();
+            $body = $parser->parse($body, $data);
 
             $website = get_bloginfo('name') ?? parse_url(site_url(), PHP_URL_HOST);
             $headers = [
@@ -143,7 +264,7 @@ class Queue
      * Get Mail Queue.
      * @return array Array of post objects.
      */
-    public function getQueue()
+    public function get()
     {
         $before = time();
         $sendLimit = $this->sendLimit();
@@ -164,95 +285,5 @@ class Queue
         ];
 
         return get_posts($args);
-    }
-
-    public function setQueue(int $postId)
-    {
-        $data = Newsletter::getData($postId);
-        if (empty($data)) {
-            return;
-        }
-
-        $mailingListQueue = get_option('rrze_newsletter_queue_' . $postId);
-        if (
-            empty($mailingListQueue)
-            && !empty($data['mail_lists']['terms'])
-        ) {
-            $options = (object) Settings::getOptions();
-            $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
-
-            $mailingList = [];
-            foreach ($data['mail_lists']['terms'] as $term) {
-                if (empty($list = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true))) {
-                    continue;
-                }
-                $aryList = explode(PHP_EOL, sanitize_textarea_field($list));
-                foreach ($aryList as $row) {
-                    $aryRow = explode(',', $row);
-                    $email = isset($aryRow[0]) ? trim($aryRow[0]) : ''; // Email Address
-                    $fname = isset($aryRow[1]) ? trim($aryRow[1]) : ''; // First Name
-                    $lname = isset($aryRow[2]) ? trim($aryRow[2]) : ''; // Last Name
-
-                    if (
-                        !Utils::sanitizeEmail($email)
-                        || in_array($email, $unsubscribed)
-                    ) {
-                        continue;
-                    }
-
-                    $name = !empty($fname . $lname) ? trim(sprintf('%1$s %2$s', $fname, $lname)) : '';
-                    $mailingList[$email] = !empty($name) ? sprintf('%1$s <%2$s>', $name, $email) : $email;
-                }
-            }
-
-            update_option('rrze_newsletter_queue_' . $postId, $mailingList);
-            Newsletter::setStatus($postId, 'queued');
-            $mailingListQueue = $mailingList;
-        }
-
-        $postId = $data['id'];
-
-        $args = [
-            'post_date' => $data['send_date'],
-            'post_date_gmt' => $data['send_date_gmt'],
-            'post_title' => $data['title'],
-            'post_content' => $data['content'],
-            'post_excerpt' => $data['excerpt'],
-            'post_type' => NewsletterQueue::POST_TYPE,
-            'post_status' => 'mail-queued',
-            'post_author' => 1
-        ];
-
-        $count = 1;
-        foreach ($mailingListQueue as $key => $email) {
-            if ($count > $this->queueLimit()) {
-                break;
-            }
-
-            remove_filter('content_save_pre', 'wp_filter_post_kses');
-            remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
-
-            $qId = wp_insert_post($args);
-
-            add_filter('content_save_pre', 'wp_filter_post_kses');
-            add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
-
-            if ($qId != 0 && !is_wp_error($qId)) {
-                add_post_meta($qId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
-                add_post_meta($qId, 'rrze_newsletter_queue_newsletter_url', get_permalink($postId));
-                add_post_meta($qId, 'rrze_newsletter_queue_from', $data['from'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_to', $email, true);
-                add_post_meta($qId, 'rrze_newsletter_queue_retries', 0, true);
-            }
-
-            unset($mailingListQueue[$key]);
-            update_option('rrze_newsletter_queue_' . $postId, $mailingListQueue);
-            $count++;
-        }
-
-        if (empty($mailingListQueue)) {
-            delete_option('rrze_newsletter_queue_' . $postId);
-            Newsletter::setStatus($postId, 'sent');
-        }
     }
 }
