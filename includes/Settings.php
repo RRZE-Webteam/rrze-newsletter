@@ -208,8 +208,8 @@ class Settings
     }
 
     /**
-     * Einstellungsbereiche als Registerkarte anzeigen.
-     * Zeigt alle Beschriftungen der Einstellungsbereiche als Registerkarte an.
+     * Display the settings sections as tabs.
+     * Displays all labels of the setting sections as a tab.
      */
     public function showTabs()
     {
@@ -238,8 +238,8 @@ class Settings
     }
 
     /**
-     * Anzeigen der Einstellungsbereiche.
-     * Zeigt für jeden Einstellungsbereich das entsprechende Formular an.
+     * Display the setting sections.
+     * Displays the corresponding form for each setting sections.
      */
     public function showSections()
     {
@@ -260,7 +260,7 @@ class Settings
     }
 
     /**
-     * Optionen Seitenausgabe
+     * Settings page output.
      */
     public function pageOutput()
     {
@@ -271,11 +271,11 @@ class Settings
     }
 
     /**
-     * Initialisierung und Registrierung der Bereiche und Felder.
+     * Registration of sections and fields.
      */
     public function adminInit()
     {
-        // Hinzufügen von Einstellungsbereichen
+        // Add setting sections
         foreach ($this->settingsSections as $section) {
             if (isset($section['desc']) && !empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
@@ -291,7 +291,7 @@ class Settings
             add_settings_section($this->settingsPrefix . $section['id'], $section['title'], $callback, $this->settingsPrefix . $section['id']);
         }
 
-        // Hinzufügen von Einstellungsfelder
+        // Add setting fields
         foreach (getFields() as $section => $field) {
             foreach ($field as $option) {
                 $name = $option['name'];
@@ -328,7 +328,7 @@ class Settings
     }
 
     /**
-     * Hinzufügen der Optionen-Seite
+     * Add the options page.
      * @return void
      */
     public function adminMenu()
@@ -343,7 +343,7 @@ class Settings
     }
 
     /**
-     * Registerkarten einstellen
+     * Set tabs.
      */
     protected function setTabs()
     {
@@ -358,8 +358,8 @@ class Settings
     }
 
     /**
-     * Gibt die Feldbeschreibung des Einstellungsfelds zurück.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Returns a description of the settings field.
+     * @param array   $args Description arguments
      */
     public function getFieldDescription(array $args)
     {
@@ -373,8 +373,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Textfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a text input field.
+     * @param array   $args Field settings arguments
      */
     public function callbackText(array $args)
     {
@@ -399,8 +399,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Zahlenfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a number input field.
+     * @param array   $args Field settings arguments
      */
     public function callbackNumber(array $args)
     {
@@ -431,8 +431,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Kontrollkästchen (Checkbox) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a checkbox input field.
+     * @param array   $args Field settings arguments
      */
     public function callbackCheckbox(array $args)
     {
@@ -467,8 +467,8 @@ class Settings
     }
 
     /**
-     * Zeigt ein Multicheckbox für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a multi-checkbox input field.
+     * @param array   $args Field settings arguments
      */
     public function callbackMulticheck(array $args)
     {
@@ -506,8 +506,8 @@ class Settings
     }
 
     /**
-     * Zeigt einen Auswahlknopf (Radio-Button) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a radio input field.
+     * @param array   $args Field settings arguments
      */
     public function callbackRadio(array $args)
     {
@@ -542,8 +542,8 @@ class Settings
     }
 
     /**
-     * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a selectbox field.
+     * @param array   $args Field settings arguments
      */
     public function callbackSelect(array $args)
     {
@@ -573,8 +573,8 @@ class Settings
     }
 
     /**
-     * Zeigt eine Multi-Auswahlliste (Selectbox) für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a multi-selectbox field.
+     * @param array   $args Field settings arguments
      */
     public function callbackMultiSelect(array $args)
     {
@@ -605,8 +605,8 @@ class Settings
 
 
     /**
-     * Zeigt ein Textfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a textarea field.
+     * @param array   $args Field settings arguments
      */
     public function callbackTextarea(array $args)
     {
@@ -629,12 +629,13 @@ class Settings
     }
 
     /**
-     * Zeigt ein Passwortfeld für ein Einstellungsfeld an.
-     * @param array   $args Argumente des Einstellungsfelds
+     * Displays a password input field.
+     * @param array   $args Field settings arguments
      */
     public function callbackPassword(array $args)
     {
-        $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
+        $value = esc_attr($this->getOption($args['section'], $args['id'], ''));
+        $value = $value ? Utils::getPassoword($value) : '';
         $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
 
         $html = sprintf(
