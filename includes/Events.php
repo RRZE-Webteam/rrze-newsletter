@@ -4,7 +4,6 @@ namespace RRZE\Newsletter;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\Mail\Queue;
 
 class Events
@@ -18,17 +17,11 @@ class Events
 
     public function setMailQueue()
     {
-        $gPosts = Newsletter::getPostsToQueue();
-        if (empty($gPosts)) {
-            return;
-        }
-        foreach ($gPosts as $postId) {
-            $this->queue->setQueue($postId);
-        }
+        $this->queue->set();
     }
 
     public function processMailQueue()
     {
-        $this->queue->processQueue();
+        $this->queue->process();
     }
 }
