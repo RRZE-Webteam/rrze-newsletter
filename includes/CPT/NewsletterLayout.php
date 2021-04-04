@@ -77,21 +77,21 @@ class NewsletterLayout
 
     public static function layout_token_replacement($content, $extra = [])
     {
-        $sitename       = get_bloginfo('name');
-        $custom_logo_id = get_theme_mod('custom_logo');
-        $logo           = $custom_logo_id ? wp_get_attachment_image_src($custom_logo_id, 'medium')[0] : null;
+        $sitename = get_bloginfo('name');
+        $customLogoId = get_theme_mod('custom_logo');
+        $logo = $customLogoId ? wp_get_attachment_image_src($customLogoId, 'medium')[0] : null;
 
-        $sitename_block = sprintf(
+        $sitenameBlock = sprintf(
             '<!-- wp:heading {"align":"center","level":1} --><h1 class="has-text-align-center">%s</h1><!-- /wp:heading -->',
             $sitename
         );
 
-        $logo_block = $logo ? sprintf(
+        $logoBlock = $logo ? sprintf(
             '<!-- wp:image {"align":"center","id":%s,"sizeSlug":"medium"} --><figure class="wp-block-image aligncenter size-medium"><img src="%s" alt="%s" class="wp-image-%s" /></figure><!-- /wp:image -->',
-            $custom_logo_id,
+            $customLogoId,
             $logo,
             $sitename,
-            $custom_logo_id
+            $customLogoId
         ) : null;
 
         $search = array_merge(
@@ -106,7 +106,7 @@ class NewsletterLayout
             [
                 $sitename,
                 $logo,
-                $logo ? $logo_block : $sitename_block,
+                $logo ? $logoBlock : $sitenameBlock,
             ],
             array_values($extra)
         );
