@@ -12,6 +12,7 @@ use RRZE\Newsletter\Html2Text;
 use RRZE\Newsletter\Mjml\Render;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
+use RRZE\Newsletter\Events;
 
 class Newsletter
 {
@@ -33,6 +34,9 @@ class Newsletter
 
     public function onLoaded()
     {
+        // Custom Columns.
+        add_filter('manage_' . self::POST_TYPE . '_posts_columns', [$this, 'columns']);
+        add_action('manage_' . self::POST_TYPE . '_posts_custom_column', [$this, 'customColumn'], 10, 2);
         // Taxonomy Terms Fields.
         add_action('newsletter_mailing_list_add_form_fields', [__CLASS__, 'addFormFields']);
         add_action('newsletter_mailing_list_edit_form_fields', [__CLASS__, 'editFormFields'], 10, 2);
@@ -318,6 +322,28 @@ class Newsletter
         register_taxonomy(self::MAILING_LIST, self::POST_TYPE, $args);
     }
 
+    public static function columns($columns)
+    {
+        if (!isset($columns['mailing_list'])) {
+            $columns = array_merge(
+                array_slice($columns, 0, 3),
+                ['mailing_list' => __('Mailing List', 'rrze-newsletter')],
+                array_slice($columns, 3)
+            );
+        }
+
+        return $columns;
+    }
+
+    public function customColumn($column, $postId)
+    {
+        if ($column !== 'mailing_list') {
+            return;
+        }
+        $mailingList = self::getTermsList($postId, self::MAILING_LIST);
+        echo $mailingList['links'] ? $mailingList['links'] : '&mdash;';
+    }
+
     public static function addFormFields($taxonomy)
     {
         echo '<div class="form-field">
@@ -412,7 +438,7 @@ class Newsletter
         $replyTo = get_post_meta($postId, 'rrze_newsletter_replyto', true);
         $data['from_email'] = $fromEmail;
         $data['from_name'] = $fromName;
-        $data['from'] = sprintf('%s <%s>', $fromName, $fromEmail);
+        $data['from'] = $fromName != '' ? sprintf('%1$s <%2$s>', $fromName, $fromEmail) : $fromEmail;
         $data['replyto'] = $replyTo;
 
         $data['status'] = get_post_meta($postId, 'rrze_newsletter_status', true);
@@ -431,7 +457,7 @@ class Newsletter
             'meta_query'        => [
                 [
                     'key'       => 'rrze_newsletter_status',
-                    'value'     => ['send', 'queued'],
+                    'value'     => ['send'],
                     'compare'   => 'IN'
                 ]
             ]
@@ -641,23 +667,7 @@ class Newsletter
 
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
-        self::setAltBody($postId, $altBody);
-    }
-
-    public static function send($newStatus, $oldStatus, $post)
-    {
-        $postId = $post->ID;
-
-        if (!self::validateNewsletterId($postId)) {
-            return new \WP_Error(
-                'rrze_newsletter_incorrect_post_type',
-                __('Post is not a Newsletter.', 'rrze-newsletter')
-            );
-        }
-
-        if ('publish' === $newStatus && 'publish' !== $oldStatus) {
-            self::setStatus($postId, 'send');
-        }
+        self::setAltBody($postId, $altBody);     
     }
 
     protected static function setBody(int $postId, string $body)
