@@ -119,10 +119,8 @@ class Send
                 implode(', ', $sentEmails)
             );
         } else {
-            $result = new \WP_Error(
-                'rrze_newsletter_email_error',
-                __('There was an error in the email test.', 'rrze-newsletter')
-            );
+            $error = $this->smtp->getError();
+            $result = $error->get_error_message();
         }
 
         return $result;
