@@ -447,24 +447,6 @@ class Newsletter
         return $data;
     }
 
-    public static function getPostsToQueue(): array
-    {
-        $args = [
-            'fields'            => 'ids',
-            'post_type'         => self::POST_TYPE,
-            'post_status'       => 'publish',
-            'nopaging'          => true,
-            'meta_query'        => [
-                [
-                    'key'       => 'rrze_newsletter_status',
-                    'value'     => ['send'],
-                    'compare'   => 'IN'
-                ]
-            ]
-        ];
-        return get_posts($args);
-    }
-
     protected static function getTermsList($postId, $taxonomy)
     {
         $postTerms = [
@@ -667,7 +649,7 @@ class Newsletter
 
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
-        self::setAltBody($postId, $altBody);     
+        self::setAltBody($postId, $altBody);
     }
 
     protected static function setBody(int $postId, string $body)
