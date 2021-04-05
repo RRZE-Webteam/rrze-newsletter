@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\Settings;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Html2Text;
+use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Mjml\Render;
 
 use function RRZE\Newsletter\plugin;
@@ -71,9 +72,21 @@ class Send
         if (is_wp_error($body)) {
             return $body->get_error_message();
         }
+        
+        // Parse tags.
+        $data = [
+            'FNAME' => __('First Name', 'rrze-newsletter'),
+            'LNAME' => __('Last Name', 'rrze-newsletter'),
+            'NAME' => __('Full Name', 'rrze-newsletter'),
+            'EMAIL' => __('Email address', 'rrze-newsletter')
+        ];
+        $parser = new Parser();
+        $body = $parser->parse($body, $data);
+        // End parse tags.
 
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
+
         $website = get_bloginfo('name') ?? parse_url(site_url(), PHP_URL_HOST);
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
