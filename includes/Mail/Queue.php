@@ -58,14 +58,18 @@ class Queue
      *
      * @return void
      */
-    public function set()
+    public function set($postId)
     {
-        $gPosts = Newsletter::getPostsToQueue();
-        if (empty($gPosts)) {
+        if ('newsletter' !== get_post_type($postId)) {
             return;
         }
 
-        foreach ($gPosts as $postId) {
+        $post = get_post($postId);
+
+        if (
+            $post->post_status = 'publish'
+            && get_post_meta($postId, 'rrze_newsletter_status', true) == 'send'
+        ) {
             $this->add($postId);
         }
     }
@@ -207,15 +211,18 @@ class Queue
             $subject = $post->post_title;
             $body = $post->post_content;
             $altBody = $post->post_excerpt;
-    
+
+            // Parse tags.
             $data = [
                 'FNAME' => $toFname,
                 'LNAME' => $toLname,
                 'NAME' => $toName,
-                'EMAIL' => $toEmail                
+                'EMAIL' => $toEmail
             ];
             $parser = new Parser();
             $body = $parser->parse($body, $data);
+            $altBody = $parser->parse($altBody, $data);
+            // End Parse tags.
 
             $website = get_bloginfo('name') ?? parse_url(site_url(), PHP_URL_HOST);
             $headers = [
