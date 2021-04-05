@@ -43,8 +43,8 @@ class Main
         // Schedule
         Cron::init();
 
-        // Run Async Tasks
-        $this->asyncTasks();
+        // Queue task
+        add_action('rrze_newsletter_queue_task', [$this, 'setQueue']);
     }
 
     public function settingsLink($links)
@@ -58,19 +58,9 @@ class Main
         return $links;
     }
 
-    public function asyncTasks()
+    public function setQueue($postId)
     {
-        new QueueTask();
-        add_action(
-            'wp_async_rrze_newsletter_queue_task',
-            function () {
-                $queue = new Queue;
-                $queue->set();
-            }
-        );
-        if (!get_option('rrze_newsletter_queue_task_lock')) {
-            add_option('rrze_newsletter_queue_task_lock', 1);
-            do_action('rrze_newsletter_queue_task');
-        }
-    }      
+        $queue = new Queue;
+        $queue->set($postId);
+    }
 }
