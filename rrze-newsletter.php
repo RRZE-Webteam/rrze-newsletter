@@ -50,6 +50,22 @@ register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
 
 add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
 
+add_action(
+    'transition_post_status',
+    function ($newStatus, $oldStatus, $post) {
+        if ('newsletter' !== $post->post_type) {
+            return;
+        }
+        if ('publish' === $newStatus && 'publish' !== $oldStatus) {
+            update_post_meta($post->ID, 'rrze_newsletter_status', 'send');
+            wp_clear_scheduled_hook('rrze_newsletter_queue_task', [$post->ID]);
+            wp_schedule_single_event(time(), 'rrze_newsletter_queue_task', [$post->ID]);
+        }
+    },
+    10,
+    3
+);
+
 /**
  * loadTextdomain
  */
@@ -178,18 +194,3 @@ function loaded()
 
     new Main;
 }
-
-add_action(
-    'transition_post_status',
-    function ($newStatus, $oldStatus, $post) {
-        if ('newsletter' !== $post->post_type) {
-            return;
-        }
-        if ('publish' === $newStatus && 'publish' !== $oldStatus) {
-            update_post_meta($post->ID, 'rrze_newsletter_status', 'send');
-            delete_option('rrze_newsletter_queue_task_lock');
-        }
-    },
-    10,
-    3
-);
