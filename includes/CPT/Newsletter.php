@@ -29,14 +29,12 @@ class Newsletter
         // Register Metadata.
         add_action('init', [__CLASS__, 'register_meta']);
         // Register Taxonomies.
-        add_action('init', [__CLASS__, 'registerTaxonomies']);
+        add_action('init', [__CLASS__, 'registerCategory']);
+        add_action('init', [__CLASS__, 'registerMailingList']);
     }
 
     public function onLoaded()
     {
-        // Custom Columns.
-        add_filter('manage_' . self::POST_TYPE . '_posts_columns', [$this, 'columns']);
-        add_action('manage_' . self::POST_TYPE . '_posts_custom_column', [$this, 'customColumn'], 10, 2);
         // Taxonomy Terms Fields.
         add_action('newsletter_mailing_list_add_form_fields', [__CLASS__, 'addFormFields']);
         add_action('newsletter_mailing_list_edit_form_fields', [__CLASS__, 'editFormFields'], 10, 2);
@@ -273,7 +271,7 @@ class Newsletter
         );
     }
 
-    public static function registerTaxonomies()
+    public static function registerCategory()
     {
         $labels = [
             'name' => _x('Categories', 'Taxonomy general name', 'rrze-newsletter'),
@@ -291,13 +289,18 @@ class Newsletter
             'back_to_items' => __('Back to categories', 'rrze-newsletter'),
         ];
         $args = [
-            'labels' => $labels,
-            'hierarchical' => true,
-            'rewrite' => self::CATEGORY,
-            'show_in_rest' => true
+            'labels'            => $labels,
+            'public'            => true,
+            'hierarchical'      => true,
+            'show_admin_column' => true,
+            'show_in_rest'      => true,
+            'rewrite'           => ['slug' => 'newsletters', 'with_front' => false]
         ];
         register_taxonomy(self::CATEGORY, self::POST_TYPE, $args);
+    }
 
+    public static function registerMailingList()
+    {
         $labels = [
             'name' => _x('Mailing Lists', 'Taxonomy general name', 'rrze-newsletter'),
             'singular_name' => _x('Mailing List', 'Taxonomy singular name', 'rrze-newsletter'),
@@ -315,42 +318,13 @@ class Newsletter
         ];
         $args = [
             'labels' => $labels,
+            'public' => false,
             'hierarchical' => true,
-            'rewrite' => self::MAILING_LIST,
-            'show_in_rest' => true,
+            'show_ui' => true,
+            'show_admin_column' => true,
+            'show_in_rest' => true
         ];
         register_taxonomy(self::MAILING_LIST, self::POST_TYPE, $args);
-    }
-
-    public static function columns($columns)
-    {
-        if (!isset($columns['category'])) {
-            $columns = array_merge(
-                array_slice($columns, 0, 3),
-                ['category' => __('Category', 'rrze-newsletter')],
-                array_slice($columns, 3)
-            );
-        }
-        if (!isset($columns['mailing_list'])) {
-            $columns = array_merge(
-                array_slice($columns, 0, 3),
-                ['mailing_list' => __('Mailing List', 'rrze-newsletter')],
-                array_slice($columns, 3)
-            );
-        }
-
-        return $columns;
-    }
-
-    public function customColumn($column, $postId)
-    {
-        if ($column === 'category') {
-            $mailingList = self::getTermsList($postId, self::CATEGORY);
-            echo $mailingList['links'] ? $mailingList['links'] : '&mdash;';
-        } elseif ($column === 'mailing_list') {
-            $mailingList = self::getTermsList($postId, self::MAILING_LIST);
-            echo $mailingList['links'] ? $mailingList['links'] : '&mdash;';
-        }
     }
 
     public static function addFormFields($taxonomy)
