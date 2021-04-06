@@ -122,8 +122,8 @@ function activation()
         );
     }
 
-    //Roles::addRoleCaps();
-    //Roles::createRoles();
+    Roles::addRoleCaps();
+    Roles::createRoles();
 
     add_action(
         'init',
@@ -142,8 +142,8 @@ function activation()
  */
 function deactivation()
 {
-    //Roles::removeRoleCaps();
-    //Roles::removeRoles();
+    Roles::removeRoleCaps();
+    Roles::removeRoles();
 
     Cron::clearSchedule();
 
