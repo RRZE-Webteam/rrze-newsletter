@@ -36,7 +36,7 @@ Build-Modus
  npm run build   
 ```
 
-Übersetzung: Erstellen der .pot-Datei (WP_CLI)
+Übersetzung: Erstellen der .pot-Datei (WP-CLI)
 Hinweis: Die Verwendung von Poedit für die Übersetzung der jeweiligen Sprachen wird empfohlen.
 
 ```shell
