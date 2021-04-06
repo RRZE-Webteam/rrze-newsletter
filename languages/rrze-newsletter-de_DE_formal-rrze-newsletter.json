@@ -202,6 +202,9 @@
          "Back to lists": [
             "Zurück zu den Listen"
          ],
+         "Category": [
+            "Kategorie"
+         ],
          "E-mail Addresses": [
             "E-Mail-Adressen"
          ],
@@ -291,6 +294,18 @@
          ],
          "Every 5 minutes": [
             "Alle 5 Minuten"
+         ],
+         "First Name": [
+            "Vorname"
+         ],
+         "Last Name": [
+            "Nachname"
+         ],
+         "Full Name": [
+            "Vollständiger Name"
+         ],
+         "Email address": [
+            "E-Mail-Adresse"
          ],
          "Email test sent successfully to %s.": [
             "E-Mail-Test erfolgreich an %s gesendet."

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-04-04T16:06:55+00:00\n"
-"PO-Revision-Date: 2021-04-04 18:08+0200\n"
+"POT-Creation-Date: 2021-04-06T09:44:33+00:00\n"
+"PO-Revision-Date: 2021-04-06 11:47+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -51,7 +51,7 @@ msgstr "Mail-Server"
 msgid "Mail Queue"
 msgstr "Mail-Queue"
 
-#: config/settings.php:50 includes/CPT/Newsletter.php:330
+#: config/settings.php:50 includes/CPT/Newsletter.php:337
 msgid "Mailing List"
 msgstr "Mailingliste"
 
@@ -323,37 +323,41 @@ msgstr "Keine Listen gefunden"
 msgid "Back to lists"
 msgstr "Zurück zu den Listen"
 
-#: includes/CPT/Newsletter.php:350 includes/CPT/Newsletter.php:362
+#: includes/CPT/Newsletter.php:330
+msgid "Category"
+msgstr "Kategorie"
+
+#: includes/CPT/Newsletter.php:359 includes/CPT/Newsletter.php:371
 msgid "E-mail Addresses"
 msgstr "E-Mail-Adressen"
 
-#: includes/CPT/Newsletter.php:352 includes/CPT/Newsletter.php:366
+#: includes/CPT/Newsletter.php:361 includes/CPT/Newsletter.php:375
 msgid "Enter one email address per line."
 msgstr "Geben Sie eine E-Mail-Adresse pro Zeile ein."
 
-#: includes/CPT/Newsletter.php:385 src/newsletter-editor/index.js:42
+#: includes/CPT/Newsletter.php:394 src/newsletter-editor/index.js:42
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: includes/CPT/Newsletter.php:386
+#: includes/CPT/Newsletter.php:395
 msgid "Emails"
 msgstr "E-Mails"
 
 #. translators: Relative time stamp of sent/published date
-#: includes/CPT/Newsletter.php:552
+#: includes/CPT/Newsletter.php:543
 msgid "Sent %1$s ago"
 msgstr "Vor %1$s gesendet"
 
 #. translators:  Absolute time stamp of sent/published date
-#: includes/CPT/Newsletter.php:558
+#: includes/CPT/Newsletter.php:549
 msgid "Sent %1$s"
 msgstr "%1$s gesendet"
 
-#: includes/CPT/Newsletter.php:616
+#: includes/CPT/Newsletter.php:607
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: includes/CPT/Newsletter.php:640
+#: includes/CPT/Newsletter.php:631
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -508,12 +512,28 @@ msgstr "Fehler"
 msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
+#: includes/Mail/Send.php:78
+msgid "First Name"
+msgstr "Vorname"
+
+#: includes/Mail/Send.php:79
+msgid "Last Name"
+msgstr "Nachname"
+
+#: includes/Mail/Send.php:80
+msgid "Full Name"
+msgstr "Vollständiger Name"
+
+#: includes/Mail/Send.php:81
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
 #. translators: Message after successful test email.
-#: includes/Mail/Send.php:105
+#: includes/Mail/Send.php:118
 msgid "Email test sent successfully to %s."
 msgstr "E-Mail-Test erfolgreich an %s gesendet."
 
-#: includes/Mail/Send.php:111
+#: includes/Mail/Send.php:126
 msgid "There was an error in the email test."
 msgstr "Beim E-Mail-Test ist ein Fehler aufgetreten."
 
@@ -543,7 +563,7 @@ msgid "Newsletter Agent"
 msgstr "Newsletter-Agent"
 
 #. translators: 1: Server PHP version number, 2: Required PHP version number.
-#: rrze-newsletter.php:77
+#: rrze-newsletter.php:93
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
@@ -552,7 +572,7 @@ msgstr ""
 "mindestens die PHP-Version %2$s."
 
 #. translators: 1: Server WordPress version number, 2: Required WordPress version number.
-#: rrze-newsletter.php:84
+#: rrze-newsletter.php:100
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
@@ -561,7 +581,7 @@ msgstr ""
 "benötigt mindestens die WordPress-Version %2$s."
 
 #. translators: 1: The plugin name, 2: The error string.
-#: rrze-newsletter.php:102 rrze-newsletter.php:168
+#: rrze-newsletter.php:118 rrze-newsletter.php:184
 msgid "Plugins: %1$s: %2$s"
 msgstr "Plugins: %1$s: %2$s"
 
