@@ -540,13 +540,13 @@ class Newsletter
         if (
             is_admin() ||
             !$query->is_main_query() ||
-            (!is_tax('newsletter_category') &&
+            (!is_tax(self::CATEGORY) &&
                 !is_post_type_archive(self::POST_TYPE))
         ) {
             return;
         }
 
-        if (is_tax('newsletter_category') || empty($query->get('post_type'))) {
+        if (is_tax(self::CATEGORY) || empty($query->get('post_type'))) {
             $query->set('post_type', ['post', self::POST_TYPE]);
         }
 
@@ -559,7 +559,7 @@ class Newsletter
             ],
         ];
 
-        if (is_tax('newsletter_category')) {
+        if (is_tax(self::CATEGORY)) {
             $metaQueryParams['relation'] = 'OR';
             $metaQueryParams[] = [
                 'key'     => 'rrze_newsletter_is_public',
