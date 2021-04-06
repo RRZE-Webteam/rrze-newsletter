@@ -72,7 +72,7 @@ class Send
         if (is_wp_error($body)) {
             return $body->get_error_message();
         }
-        
+
         // Parse tags.
         $data = [
             'FNAME' => __('First Name', 'rrze-newsletter'),
@@ -120,7 +120,11 @@ class Send
             );
         } else {
             $error = $this->smtp->getError();
-            $result = $error->get_error_message();
+            //$result = is_wp_error($error) ? $error->get_error_message() : '';
+            $result = new \WP_Error(
+                'rrze_newsletter_email_error',
+                __('There was an error in the email test.', 'rrze-newsletter')
+            );
         }
 
         return $result;
