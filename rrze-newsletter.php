@@ -129,6 +129,7 @@ function activation()
         'init',
         function () {
             Newsletter::registerPostType();
+            Newsletter::registerCategory();
             NewsletterQueue::registerPostType();
             NewsletterLayout::registerPostType();
             flush_rewrite_rules();
