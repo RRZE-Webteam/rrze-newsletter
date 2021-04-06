@@ -43,10 +43,6 @@ class NewsletterQueue
 
     public static function registerPostType()
     {
-        if (!current_user_can('edit_others_posts')) {
-            return;
-        }
-
         $labels = [
             'name'                  => _x('Mail Queue', 'Post type general name', 'rrze-newsletter'),
             'singular_name'         => _x('Mail Queue', 'Post type singular name', 'rrze-newsletter'),
