@@ -12,7 +12,6 @@ use RRZE\Newsletter\Html2Text;
 use RRZE\Newsletter\Mjml\Render;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
-use RRZE\Newsletter\Events;
 
 class Newsletter
 {
@@ -80,6 +79,7 @@ class Newsletter
         $args = [
             'labels'           => $labels,
             'public'           => true,
+            'has_archive'      => true,
             'public_queryable' => true,
             'query_var'        => true,
             'show_ui'          => true,
