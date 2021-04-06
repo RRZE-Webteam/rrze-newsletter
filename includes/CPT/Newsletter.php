@@ -540,26 +540,35 @@ class Newsletter
         if (
             is_admin() ||
             !$query->is_main_query() ||
-            !is_post_type_archive(self::POST_TYPE)
+            (!is_tax('newsletter_category') &&
+                !is_post_type_archive(self::POST_TYPE))
         ) {
             return;
         }
 
-        if (
-            is_post_type_archive(self::POST_TYPE)
-            || self::POST_TYPE === get_post_type()
-        ) {
-            $metaQuery = $query->get('meta_query');
-            if (empty($metaQuery) || !is_array($metaQuery)) {
-                $metaQuery = [];
-            }
-            $metaQuery[] = [
-                'key'          => 'rrze_newsletter_is_public',
-                'value'        => '1',
-                'meta_compare' => '=',
-            ];
-            $query->set('meta_query', $metaQuery);
+        if (is_tax('newsletter_category') || empty($query->get('post_type'))) {
+            $query->set('post_type', ['post', self::POST_TYPE]);
         }
+
+        $metaQuery = $query->get('meta_query', []);
+        $metaQueryParams = [
+            [
+                'key'     => 'rrze_newsletter_is_public',
+                'value'   => true,
+                'compare' => '=',
+            ],
+        ];
+
+        if (is_tax('newsletter_category')) {
+            $metaQueryParams['relation'] = 'OR';
+            $metaQueryParams[] = [
+                'key'     => 'rrze_newsletter_is_public',
+                'compare' => 'NOT EXISTS',
+            ];
+        }
+
+        $metaQuery[] = $metaQueryParams;
+        $query->set('meta_query', $metaQuery);
     }
 
     public static function maybeDisplayPublicPost()
