@@ -22,10 +22,6 @@ class NewsletterLayout
 
     public static function registerPostType()
     {
-        if (!current_user_can('edit_others_posts')) {
-            return;
-        }
-
         $cpt_args = [
             'public'       => false,
             'show_in_rest' => true,
