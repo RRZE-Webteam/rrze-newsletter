@@ -324,6 +324,13 @@ class Newsletter
 
     public static function columns($columns)
     {
+        if (!isset($columns['category'])) {
+            $columns = array_merge(
+                array_slice($columns, 0, 3),
+                ['category' => __('Category', 'rrze-newsletter')],
+                array_slice($columns, 3)
+            );
+        }
         if (!isset($columns['mailing_list'])) {
             $columns = array_merge(
                 array_slice($columns, 0, 3),
@@ -337,11 +344,13 @@ class Newsletter
 
     public function customColumn($column, $postId)
     {
-        if ($column !== 'mailing_list') {
-            return;
+        if ($column === 'category') {
+            $mailingList = self::getTermsList($postId, self::CATEGORY);
+            echo $mailingList['links'] ? $mailingList['links'] : '&mdash;';
+        } elseif ($column === 'mailing_list') {
+            $mailingList = self::getTermsList($postId, self::MAILING_LIST);
+            echo $mailingList['links'] ? $mailingList['links'] : '&mdash;';
         }
-        $mailingList = self::getTermsList($postId, self::MAILING_LIST);
-        echo $mailingList['links'] ? $mailingList['links'] : '&mdash;';
     }
 
     public static function addFormFields($taxonomy)
