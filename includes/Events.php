@@ -15,11 +15,6 @@ class Events
         $this->queue = new Queue;
     }
 
-    public function setMailQueue()
-    {
-        $this->queue->set();
-    }
-
     public function processMailQueue()
     {
         $this->queue->process();
