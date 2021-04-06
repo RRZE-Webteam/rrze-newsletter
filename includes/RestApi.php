@@ -22,12 +22,12 @@ class RestApi
             'email/(?P<id>[\a-z]+)',
             [
                 'methods'             => \WP_REST_Server::READABLE,
-                'callback'            => [$this, 'api_retrieve'],
-                'permission_callback' => [$this, 'api_authoring_permissions_check'],
+                'callback'            => [$this, 'apiRetrieve'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
                 'args'                => [
                     'id' => [
                         'sanitize_callback' => 'absint',
-                        'validate_callback' => [$this, 'validate_newsletter_id'],
+                        'validate_callback' => [$this, 'validateNewsletterId'],
                     ],
                 ],
             ]
@@ -37,12 +37,12 @@ class RestApi
             'email/(?P<id>[\a-z]+)/test',
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
-                'callback'            => [$this, 'api_test'],
-                'permission_callback' => [$this, 'api_authoring_permissions_check'],
+                'callback'            => [$this, 'apiTest'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
                 'args'                => [
                     'id'         => [
                         'sanitize_callback' => 'absint',
-                        'validate_callback' => [$this, 'validate_newsletter_id'],
+                        'validate_callback' => [$this, 'validateNewsletterId'],
                     ],
                     'test_email' => [
                         'sanitize_callback' => 'sanitize_text_field',
@@ -55,12 +55,12 @@ class RestApi
             'email/(?P<id>[\a-z]+)/sender',
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
-                'callback'            => [$this, 'api_sender'],
-                'permission_callback' => [$this, 'api_authoring_permissions_check'],
+                'callback'            => [$this, 'apiSender'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
                 'args'                => [
                     'id'        => [
                         'sanitize_callback' => 'absint',
-                        'validate_callback' => [$this, 'validate_newsletter_id'],
+                        'validate_callback' => [$this, 'validateNewsletterId'],
                     ],
                     'from_name' => [
                         'sanitize_callback' => 'sanitize_text_field',
@@ -77,8 +77,8 @@ class RestApi
             'layouts',
             [
                 'methods'             => \WP_REST_Server::READABLE,
-                'callback'            => [$this, 'api_get_layouts'],
-                'permission_callback' => [$this, 'api_authoring_permissions_check'],
+                'callback'            => [$this, 'apiGetLayouts'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
             ]
         );
         register_rest_route(
@@ -86,15 +86,15 @@ class RestApi
             'post-meta/(?P<id>[\a-z]+)',
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
-                'callback'            => [$this, 'api_set_post_meta'],
-                'permission_callback' => [$this, 'api_administration_permissions_check'],
+                'callback'            => [$this, 'apiSetPostMeta'],
+                'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
                 'args'                => [
                     'id'    => [
-                        'validate_callback' => [$this, 'validate_newsletter_id'],
+                        'validate_callback' => [$this, 'validateNewsletterId'],
                         'sanitize_callback' => 'absint',
                     ],
                     'key'   => [
-                        'validate_callback' => [$this, 'validate_newsletter_post_meta_key'],
+                        'validate_callback' => [$this, 'validateNewsletterPostMetaKey'],
                         'sanitize_callback' => 'sanitize_text_field',
                     ],
                     'value' => [
@@ -108,18 +108,18 @@ class RestApi
             'color-palette',
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
-                'callback'            => [$this, 'api_set_color_palette'],
-                'permission_callback' => [$this, 'api_administration_permissions_check'],
+                'callback'            => [$this, 'apiSetColorPalette'],
+                'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
             ]
         );
     }
 
-    public function validate_newsletter_id($id)
+    public function validateNewsletterId($id)
     {
         return Newsletter::POST_TYPE === get_post_type($id);
     }
 
-    public function api_get_layouts()
+    public function apiGetLayouts()
     {
         $layouts_query = new \WP_Query(
             [
@@ -147,13 +147,13 @@ class RestApi
         return rest_ensure_response($layouts);
     }
 
-    public function api_retrieve($request)
+    public function apiRetrieve($request)
     {
         $response = json_encode($request['id']);
         return rest_ensure_response($response);
     }
 
-    public function api_authoring_permissions_check($request)
+    public function apiAuthoringPermissionsCheck($request)
     {
         if (!current_user_can('edit_others_posts')) {
             return new \WP_Error(
@@ -167,7 +167,7 @@ class RestApi
         return true;
     }
 
-    public function api_administration_permissions_check($request)
+    public function apiAdministrationPermissionsCheck($request)
     {
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
@@ -181,7 +181,7 @@ class RestApi
         return true;
     }
 
-    public function api_sender($request)
+    public function apiSender($request)
     {
         $response = $this->sender(
             $request['id'],
@@ -199,7 +199,7 @@ class RestApi
         return rest_ensure_response($data);
     }
 
-    public function api_test($request)
+    public function apiTest($request)
     {
         $emails = explode(',', $request['test_email']);
         foreach ($emails as &$email) {
@@ -223,14 +223,10 @@ class RestApi
         $post = get_post($post_id);
         $send = new Send;
         $message = $send->set($post, $args);
-
-        $data = [];
-        $data['result']  = [];
-        $data['message'] = $message;
-        return $data;
+        return is_wp_error($message) ? $message : ['message' => $message];
     }
 
-    public function api_set_post_meta($request)
+    public function apiSetPostMeta($request)
     {
         $id = $request['id'];
         $key = $request['key'];
@@ -239,7 +235,7 @@ class RestApi
         return [];
     }
 
-    public function validate_newsletter_post_meta_key($key)
+    public function validateNewsletterPostMetaKey($key)
     {
         return in_array(
             $key,
@@ -255,7 +251,7 @@ class RestApi
         );
     }
 
-    public function api_set_color_palette($request)
+    public function apiSetColorPalette($request)
     {
         update_option('rrze_newsletter_color_palette', $request->get_body());
         return rest_ensure_response([]);
