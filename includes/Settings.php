@@ -106,6 +106,16 @@ class Settings
     }
 
     /**
+     * Returns the option name.
+     *
+     * @return string
+     */
+    public static function getOptionName(): string
+    {
+        return self::$optionName;
+    }
+
+    /**
      * Returns the default options.
      * 
      * @return array
