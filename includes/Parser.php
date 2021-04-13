@@ -5,38 +5,38 @@ namespace RRZE\Newsletter;
 defined('ABSPATH') || exit;
 
 /**
- * Parse a HTML string with embedded interpolation expressions.
+ * Parse a markup string with embedded interpolation expressions.
  *
- * Value interpolation: {{=value}}
- * Value to HTML entities interpolation: {{%unsafe_value}}
- * Mutidimensional value: {{=user.address.city}}
+ * Simple interpolation: {{=value}}
+ * Scrubbed interpolation: {{%unsafe_value}}
+ * Name-spaced variables: {{=user.address.city}}
  * If blocks: {{value}} <<markup>> {{/value}}
  * If not blocks: {{!value}} <<markup>> {{/!value}}
  * If/else blocks: {{value}} <<markup>> {{:value}} <<alternate markup>> {{/value}}
- * Values iteration: {{@values}} {{=_key}}:{{=_val}} {{/@values}}
+ * Object/Array iteration: {{@values}} {{=_key}}:{{=_val}} {{/@values}}
  */
 class Parser
 {
     /**
-     * [protected description]
+     * Regular expression that identifies a block.
      * @var string
      */
     protected $blockRegex = '/\\{\\{(([@!]?)(.+?))\\}\\}(([\\s\\S]+?)(\\{\\{:\\1\\}\\}([\\s\\S]+?))?)\\{\\{\\/\\1\\}\\}/';
 
     /**
-     * [protected description]
+     * Regular expression that identifies a value.
      * @var string
      */
-    protected $valRegex = '/\\{\\{([=%])(.+?)\\}\\}/';
+    protected $valueRegex = '/\\{\\{([=%])(.+?)\\}\\}/';
 
     /**
-     * [protected description]
+     * Array that stores the identified values.
      * @var array
      */
     protected $vars;
 
     /**
-     * [__construct description]
+     * Construct function.
      */
     public function __construct()
     {
@@ -45,20 +45,20 @@ class Parser
 
     /**
      * Convert special characters to HTML entities
-     * @param  string $val [description]
-     * @return string      [description]
+     * @param string $value The string being converted.
+     * @return string The converted string.
      */
-    public function convertToHtmlEntities($val)
+    public function convertToHtmlEntities(string $value): string
     {
-        return htmlspecialchars($val . '', ENT_QUOTES);
+        return htmlspecialchars($value, ENT_QUOTES);
     }
 
     /**
-     * [getValue description]
-     * @param  string $index [description]
-     * @return string        [description]
+     * Get a specific value.
+     * @param string $index The value index.
+     * @return mixed Returns the value.
      */
-    public function getValue($index)
+    public function getValue(string $index)
     {
         $index = explode('.', $index);
 
@@ -66,10 +66,10 @@ class Parser
     }
 
     /**
-     * [searchValue description]
-     * @param array $index  [description]
-     * @param array $value [description]
-     * @return string       [description]
+     * Look for a value.
+     * @param mixed $index The value index.
+     * @param mixed $value The value.
+     * @return mixed Returns the found value.
      */
     protected function searchValue($index, $value)
     {
@@ -77,74 +77,71 @@ class Parser
             is_array($index) &&
             !empty($index)
         ) {
-            $current_index = array_shift($index);
+            $currentIndex = array_shift($index);
         }
         if (
             is_array($index) &&
             !empty($index) &&
-            isset($value[$current_index]) &&
-            is_array($value[$current_index]) &&
-            !empty($value[$current_index])
+            isset($value[$currentIndex]) &&
+            is_array($value[$currentIndex]) &&
+            !empty($value[$currentIndex])
         ) {
-            return $this->searchValue($index, $value[$current_index]);
+            return $this->searchValue($index, $value[$currentIndex]);
         } else {
-            $val = isset($value[$current_index]) ? $value[$current_index] : '';
-            return str_replace('{{', "{\f{", $val);
+            return $value[$currentIndex] ?? '';
         }
     }
 
     /**
-     * [matchTags description]
-     * @param  array $matches [description]
-     * @return string         [description]
+     * Matching tags.
+     * @param array $matches An array containing tags.
+     * @return mixed Returns the matching tags.
      */
     public function matchTags($matches)
     {
-        if (!is_array($matches)) {
-            return '';
-        }
-
-        $_key = isset($matches[0]) ? $matches[0] : '';
-        $_val = isset($matches[1]) ? $matches[1] : '';
-        $meta = isset($matches[2]) ? $matches[2] : '';
-        $key = isset($matches[3]) ? $matches[3] : '';
-        $expr = isset($matches[4]) ? $matches[4] : '';
-        $ifTrue = isset($matches[5]) ? $matches[5] : '';
-        $ifElse = isset($matches[6]) ? $matches[6] : '';
-        $ifFalse = isset($matches[7]) ? $matches[7] : '';
+        $_key = $matches[0] ?? '';
+        $_val = $matches[1] ?? '';
+        $meta = $matches[2] ?? '';
+        $key = $matches[3] ?? '';
+        $inner = $matches[4] ?? '';
+        $ifTrue = $matches[5] ?? '';
+        $hasElse = $matches[6] ?? '';
+        $ifFalse = $matches[7] ?? '';
 
         $val = $this->getValue($key);
 
-        $temp = '';
+        $temp = "";
 
         if (!$val) {
-            // Check for if negation
+            // handle if not
             if ($meta == '!') {
-                return $this->render($expr);
+                return $this->render($inner);
             }
-            // Check for if else
-            if ($ifElse) {
+            // check for else
+            if ($hasElse) {
                 return $this->render($ifFalse);
             }
-            return '';
+
+            return "";
         }
 
-        // Check for regular if expr
+        // regular if
         if (!$meta) {
             return $this->render($ifTrue);
         }
 
-        // Process array iteration
+        // process array/obj iteration
         if ($meta == '@') {
-            // Store any previous vars by reusing existing vars
-            $_key = $this->vars['_key'];
-            $_val = $this->vars['_val'];
+            // store any previous vars
+            // reuse existing vars
+            $_key = $this->vars['_key'] ?? '';
+            $_val = $this->vars['_val'] ?? '';
 
-            foreach ($_val as $i => $v) {
+            foreach ($val as $i => $v) {
                 $this->vars['_key'] = $i;
                 $this->vars['_val'] = $v;
 
-                $temp .= $this->render($expr);
+                $temp .= $this->render($inner);
             }
 
             $this->vars['_key'] = $_key;
@@ -155,18 +152,18 @@ class Parser
     }
 
     /**
-     * [replaceTags description]
-     * @param  array $matches [description]
-     * @return string         [description]
+     * Replace the tags.
+     * @param array $matches An array of matching tags.
+     * @return mixed Returns the tags replaced with the corresponding value.
      */
-    public function replaceTags($matches)
+    public function replaceTags(array $matches)
     {
         if (!is_array($matches)) {
             return '';
         }
 
-        $meta = isset($matches[1]) ? $matches[1] : '';
-        $key = isset($matches[2]) ? $matches[2] : '';
+        $meta = $matches[1] ?? '';
+        $key = $matches[2] ?? '';
 
         $val = $this->getValue($key);
 
@@ -178,25 +175,25 @@ class Parser
     }
 
     /**
-     * [render description]
-     * @param  string $fragment [description]
-     * @return mixed            [description]
+     * Render a fragment of the content.
+     * @param string $fragment The fragment.
+     * @return mixed Returns the rendered fragment.
      */
-    protected function render($fragment)
+    protected function render(string $fragment)
     {
         $matchTags = preg_replace_callback($this->blockRegex, [$this, 'matchTags'], $fragment);
-        $replaceTags = preg_replace_callback($this->valRegex, [$this, 'replaceTags'], $matchTags);
+        $replaceTags = preg_replace_callback($this->valueRegex, [$this, 'replaceTags'], $matchTags);
 
         return $replaceTags;
     }
 
     /**
-     * [parse description]
-     * @param  string $content [description]
-     * @param  array $data      [description]
-     * @return string           [description]
+     * Parse a string content with embedded interpolation expressions.
+     * @param string $content The content.
+     * @param array $data An array of data to be replaced.
+     * @return string Returns the parsed content.
      */
-    public function parse($content, $data)
+    public function parse(string $content, array $data): string
     {
         $this->vars = (array) $data;
         return $this->render($content);
