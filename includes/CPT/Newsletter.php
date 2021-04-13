@@ -329,30 +329,61 @@ class Newsletter
 
     public static function addFormFields($taxonomy)
     {
-        echo '<div class="form-field">
-        <label for="newsletter_mailing_list">' . __('E-mail Addresses', 'rrze-newsletter') . '</label>
-        <textarea id="newsletter_mailing_list" rows="5" cols="40" name="rrze_newsletter_mailing_list"></textarea>
-        <p>' . __('Enter one email address per line.', 'rrze-newsletter') . '</p>
-        </div>';
+        echo '<div class="form-field">',
+        '<input type="checkbox" name="rrze_newsletter_mailing_list_public" value="true">',
+        '<span>', __('Public Mailing List', 'rrze-newsletter'), '</span>',
+        '<p>', __('A public mailing list can be listed on the subscription page and viewed by everyone.', 'rrze-newsletter'), '</p>',
+        '</div>';
+
+        echo '<div class="form-field">',
+        '<label for="newsletter_mailing_list">', __('Subscribed email addresses', 'rrze-newsletter'), '</label>',
+        '<textarea id="newsletter_mailing_list" rows="5" cols="40" name="rrze_newsletter_mailing_list"></textarea>',
+        '<p>', __("Enter one email address per line. Note: The recipient's first and last name separated by a comma are optional and can be added using a comma after the email address using the following format: email-address,first name,last name", 'rrze-newsletter'), '</p>',
+        '</div>';
     }
 
     public static function editFormFields($term, $taxonomy)
     {
-        $value = get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true);
+        $value = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
 
-        echo '<tr class="form-field">
-        <th>
-            <label for="newsletter_mailing_list">' . __('E-mail Addresses', 'rrze-newsletter') . '</label>
-        </th>
-        <td>
-            <textarea id="newsletter_mailing_list" rows="5" cols="50" name="rrze_newsletter_mailing_list">' . $value . '</textarea>
-            <p class="description">' . __('Enter one email address per line.', 'rrze-newsletter') . '</p>
-        </td>
-        </tr>';
+        echo '<tr class="form-field">',
+        '<th>', '<label for="newsletter_mailing_list">' . __('Public Mailing List', 'rrze-newsletter') . '</label>', '</th>',
+        '<td>',
+        '<input type="checkbox" name="rrze_newsletter_mailing_list_public" value="true" ', checked($value, true, false), '>',
+        '<span>', __('It can be listed on the subscription page and seen by everyone.', 'rrze-newsletter'), '</span>',
+        '</td>',
+        '</tr>';
+
+        $value = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true);
+
+        echo '<tr class="form-field">',
+        '<th><label for="newsletter_mailing_list">' . __('Subscribed email addresses', 'rrze-newsletter') . '</label></th>',
+        '<td>',
+        '<textarea id="newsletter_mailing_list" rows="5" cols="50" name="rrze_newsletter_mailing_list">', $value, '</textarea>',
+        '<p class="description">', __("List of email addresses that have been subscribed to this mailing list. Enter one email address per line. Note: The recipient's first and last name separated by a comma are optional and can be added using a comma after the email address using the following format: email-address,first name,last name", 'rrze-newsletter'), '</p>',
+        '</td>',
+        '</tr>';
+
+        $value = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
+
+        echo '<tr class="form-field">',
+        '<th><label for="rrze_newsletter_mailing_list_unsubscribed">' . __('Unsubscribed E-mail Addresses', 'rrze-newsletter') . '</label></th>',
+        '<td>',
+        '<textarea id="rrze_newsletter_mailing_list_unsubscribed" rows="5" cols="50" name="rrze_newsletter_mailing_list_unsubscribed">', $value, '</textarea>',
+        '<p class="description">', __('List of email addresses that have been unsubscribed from this mailing list. Enter one email address per line.', 'rrze-newsletter'), '</p>',
+        '</td>',
+        '</tr>';
     }
 
     public static function saveFormFields(int $termId)
     {
+        $isPublic = isset($_POST['rrze_newsletter_mailing_list_public']);
+        update_term_meta(
+            $termId,
+            'rrze_newsletter_mailing_list_public',
+            $isPublic
+        );
+
         if (isset($_POST['rrze_newsletter_mailing_list'])) {
             $mailingList = Utils::sanitizeMailingList((string) $_POST['rrze_newsletter_mailing_list']);
             update_term_meta(
@@ -361,12 +392,23 @@ class Newsletter
                 $mailingList
             );
         }
+
+        if (isset($_POST['rrze_newsletter_mailing_list_unsubscribed'])) {
+            $unsubscribed = Utils::sanitizeUnsubscribedList((string) $_POST['rrze_newsletter_mailing_list_unsubscribed']);
+            update_term_meta(
+                $termId,
+                'rrze_newsletter_mailing_list_unsubscribed',
+                $unsubscribed
+            );
+        }
     }
 
     public static function mailListColumns($columns)
     {
         $columns['posts'] = __('Newsletter', 'rrze-newsletter');
-        $columns['emails'] = __('Emails', 'rrze-newsletter');
+        $columns['public'] = __('Public', 'rrze-newsletter');
+        $columns['emails-in'] = __('In', 'rrze-newsletter');
+        $columns['emails-out'] = __('Out', 'rrze-newsletter');
         return $columns;
     }
 
@@ -374,11 +416,18 @@ class Newsletter
     {
         $term = get_term($termId, 'newsletter_mailing_list');
         switch ($columnName) {
-            case 'emails':
-                if (empty($list = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true))) {
-                    $content = 0;
-                }
-                $mailList = explode(PHP_EOL, $list);
+            case 'public':
+                $isPublic = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
+                $content = $isPublic ? '<span class="dashicons dashicons-yes"></span>' : '<span class="dashicons dashicons-no-alt"></span>';
+                break;
+            case 'emails-in':
+                $list = get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true);
+                $mailList = $list ? explode(PHP_EOL, $list) : [];
+                $content = count($mailList);
+                break;
+            case 'emails-out':
+                $list = get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
+                $mailList = $list ? explode(PHP_EOL, $list) : [];
                 $content = count($mailList);
                 break;
             default:
@@ -414,7 +463,7 @@ class Newsletter
         $data['content'] = self::getBody($postId);
         $data['excerpt'] = self::getAltBody($postId);
 
-        $data['mail_lists'] = self::getTermsList($postId, self::MAILING_LIST);
+        $data['mailing_list_terms'] = self::getTermsList($postId, self::MAILING_LIST);
 
         $fromEmail = get_post_meta($postId, 'rrze_newsletter_from_email', true);
         $fromName = get_post_meta($postId, 'rrze_newsletter_from_name', true);
@@ -432,22 +481,11 @@ class Newsletter
 
     protected static function getTermsList($postId, $taxonomy)
     {
-        $postTerms = [
-            'taxonomy' => $taxonomy,
-            'terms' => null,
-            'links' => null
-        ];
-        $postType = get_post_type($postId);
         $terms = get_the_terms($postId, $taxonomy);
-        $termslinks = [];
         if ($terms !== false && !is_wp_error($terms)) {
-            foreach ($terms as $term) {
-                $termslinks[] = "<a href='edit.php?post_type={$postType}&{$taxonomy}={$term->slug}'> " . esc_html(sanitize_term_field('name', $term->name, $term->term_id, $taxonomy, 'edit')) . "</a>";
-            }
-            $postTerms['terms'] = $terms;
-            $postTerms['links'] = implode(', ', $termslinks);
+            return $terms;
         }
-        return $postTerms;
+        return false;
     }
 
     public static function defaultTitle($post_title, $post)
@@ -582,8 +620,6 @@ class Newsletter
 
         $isPublic = get_post_meta(get_the_ID(), 'rrze_newsletter_is_public', true);
         if (empty($isPublic)) {
-            global $wp_query;
-
             add_filter(
                 'wpseo_title',
                 function ($title) {
