@@ -168,9 +168,27 @@ function getFields(): array
         ],
         'mailing_list' => [
             [
+                'name'              => 'subsc_page_title',
+                'label'             => __('Subscription Page Title', 'rrze-newsletter'),
+                'desc'              => __('Corresponds to the main title of the subscription page.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'text',
+                'default'           => __('Newsletter Subscription', 'rrze-newsletter'),
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageTitle']
+            ],
+            [
+                'name'              => 'subsc_page_slug',
+                'label'             => __('Subscription Page Slug', 'rrze-newsletter'),
+                'desc'              => __('Please note that the modification of the Slug disables the subscription links previously sent in the newsletters. Use with caution.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'text',
+                'default'           => 'newsletter-subscription',
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageSlug']
+            ],
+            [
                 'name'              => 'unsubscribed',
                 'label'             => __('Unsubscribed E-mail Addresses', 'rrze-newsletter'),
-                'desc'              => __('List of cancelled email addresses through the unsubscription link.', 'rrze-newsletter'),
+                'desc'              => __('List of email addresses that do not subscribe to any mailing list. Enter one email address per line.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'textarea',
                 'default'           => '',
