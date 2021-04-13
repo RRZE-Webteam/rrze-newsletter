@@ -1,0 +1,41 @@
+<div class="rrze-newsl-subsc">
+    <div class="o-container  o-container--mw700  u-py-60">
+        <div class="u-bb  u-bc-alto  u-mb-24  u-pb-24  u-text-center">
+            <h1 class="c-content-heading  u-mb-6  u-text-black  u-text-center">
+                {{=title}}
+            </h1>
+            <p class="u-mb-0  u-text-center">
+                {{=subtitle}}
+            </p>
+        </div>
+        <div>
+            <p class="u-text-center  u-text-epsilon">
+                {{=description}}
+            </p>
+            <form method="post">
+                {{@mailing_lists}}
+                <div class="newsl-subsc-list u-mb-24  u-pb-24  u-bb  u-bc-alto">
+                    <div>
+                        <input type="checkbox" name="mailing_lists[{{=_val.id}}]" id="{{=_val.id}}"
+                            class="newsl-subsc-checkbox u-mb-24" value="true" {{=_val.checked}}>
+                        <label for="{{=_val.id}}" class="newsl-subsc-list__title">{{=_val.title}}</label> <br>
+                        <span class="u-block  newsl-subsc-list__info">{{=_val.description}}</span>
+                    </div>
+                </div>
+                {{/@mailing_lists}}
+                <div class="u-text-center">
+                    <div>
+                        <input type="checkbox" name="unsubscribe_all" id="unsubscribe-all" class="u-mb-24"
+                            value="true" {{=canceled}}>
+                        <label for="unsubscribe-all"
+                            class="newsl-subsc-checkbox__label u-text-zeta">{{=unsubscribe_all_label}}</label>
+                    </div>
+                </div>
+                <input type="hidden" name="email" value="{{=email}}" id="newsl-email">
+                {{=nonce_field}}
+                <button type="submit"
+                    class="newsl-subsc-btn u-mt-24  u-py-18  u-px-48  u-text-zeta  u-caps">{{=button_label}}</button>
+            </form>
+        </div>
+    </div>
+</div>
