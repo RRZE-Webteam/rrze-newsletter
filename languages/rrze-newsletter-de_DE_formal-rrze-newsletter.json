@@ -4,8 +4,8 @@
       "messages": {
          "": {
             "domain": "messages",
-            "plural_forms": "nplurals=2; plural=n != 1;",
-            "lang": "de"
+            "plural_forms": "nplurals=2; plural=(n != 1);",
+            "lang": "de_DE@formal"
          },
          "RRZE Newsletter": [
             "RRZE Newsletter"
@@ -97,11 +97,26 @@
          "Maximum number of retries until an email is sent successfully.": [
             "Maximale Anzahl von Wiederholungsversuchen, bis eine E-Mail erfolgreich gesendet wurde."
          ],
+         "Subscription Page Title": [
+            "Titel der Abonnementseite"
+         ],
+         "Corresponds to the main title of the subscription page.": [
+            "Entspricht dem Haupttitel der Abonnementseite."
+         ],
+         "Newsletter Subscription": [
+            "Newsletter-Abonnement"
+         ],
+         "Subscription Page Slug": [
+            "Abonnementseite Titelform"
+         ],
+         "Please note that the modification of the Slug disables the subscription links previously sent in the newsletters. Use with caution.": [
+            "Bitte beachten Sie, dass durch die Änderung des Titelforms die zuvor in den Newslettern gesendeten Abonnement-Links deaktiviert werden. Mit Vorsicht verwenden."
+         ],
          "Unsubscribed E-mail Addresses": [
             "Abgemeldete E-Mail-Adressen"
          ],
-         "List of cancelled email addresses through the unsubscription link.": [
-            "Liste der nicht abonnierten E-Mail-Adressen."
+         "List of email addresses that do not subscribe to any mailing list. Enter one email address per line.": [
+            "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine E-Mail-Adresse pro Zeile ein."
          ],
          "Application ID": [
             "Application-ID"
@@ -202,20 +217,38 @@
          "Back to lists": [
             "Zurück zu den Listen"
          ],
-         "Category": [
-            "Kategorie"
+         "Public Mailing List": [
+            "Öffentliche Mailingliste"
          ],
-         "E-mail Addresses": [
-            "E-Mail-Adressen"
+         "A public mailing list can be listed on the subscription page and viewed by everyone.": [
+            "Eine öffentliche Mailingliste kann auf der Abonnementseite aufgelistet und von allen angezeigt werden."
          ],
-         "Enter one email address per line.": [
-            "Geben Sie eine E-Mail-Adresse pro Zeile ein."
+         "Subscribed email addresses": [
+            "Abonnierte E-Mail-Adressen"
+         ],
+         "Enter one email address per line. Note: The recipient's first and last name separated by a comma are optional and can be added using a comma after the email address using the following format: email-address,first name,last name": [
+            "Geben Sie eine E-Mail-Adresse pro Zeile ein. Hinweis: Der durch Komma getrennte Vor- und Nachname des Empfängers ist optional und kann durch ein Komma nach der E-Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-Adresse,Vorname,Nachname"
+         ],
+         "It can be listed on the subscription page and seen by everyone.": [
+            "Es kann auf der Abonnementseite aufgelistet und von jedem gesehen werden."
+         ],
+         "List of email addresses that have been subscribed to this mailing list. Enter one email address per line. Note: The recipient's first and last name separated by a comma are optional and can be added using a comma after the email address using the following format: email-address,first name,last name": [
+            "Liste der E-Mail-Adressen, die diese Mailingliste abonniert haben. Geben Sie eine E-Mail-Adresse pro Zeile ein. Hinweis: Der durch Komma getrennte Vor- und Nachname des Empfängers ist optional und kann durch ein Komma nach der E-Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-Adresse,Vorname,Nachname"
+         ],
+         "List of email addresses that have been unsubscribed from this mailing list. Enter one email address per line.": [
+            "Liste der E-Mail-Adressen, die von dieser Mailingliste abgemeldet wurden. Geben Sie eine E-Mail-Adresse pro Zeile ein."
          ],
          "Newsletter": [
             "Newsletter"
          ],
-         "Emails": [
-            "E-Mails"
+         "Public": [
+            "Öffentlich"
+         ],
+         "In": [
+            "In"
+         ],
+         "Out": [
+            "Out"
          ],
          "Sent %1$s ago": [
             "Vor %1$s gesendet"
@@ -330,6 +363,27 @@
          ],
          "Newsletter Agent": [
             "Newsletter-Agent"
+         ],
+         "Manage newsletter subscription for %s": [
+            "Verwalten Sie das Newsletter-Abonnement für %s"
+         ],
+         "Please mark all newsletters below that you would like to receive from us:": [
+            "Bitte markieren Sie alle Newsletter unten, die Sie von uns erhalten möchten:"
+         ],
+         "Cancel my subscription to all future newsletters.": [
+            "Kündigen Sie mein Abonnement für alle zukünftigen Newsletter."
+         ],
+         "Update subscription": [
+            "Abonnement aktualisieren"
+         ],
+         "Thank you": [
+            "Vielen Dank"
+         ],
+         "Your newsletter settings have been updated.": [
+            "Ihre Newsletter-Einstellungen wurden aktualisiert."
+         ],
+         "Back to home page": [
+            "Zurück zur Startseite"
          ],
          "The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.": [
             "Auf dem Server wird die PHP-Version %1$s ausgeführt. Das Plugin benötigt mindestens die PHP-Version %2$s."
