@@ -6,6 +6,22 @@ defined('ABSPATH') || exit;
 
 class Utils
 {
+    public static function sanitizePageTitle(string $title): string
+    {
+        $options = (object) Settings::getOptions();
+        $default = $options->mailing_list_subsc_page_title;
+        $sanitizedTitle = sanitize_text_field($title);
+        return mb_strlen($sanitizedTitle) > 3 ? $sanitizedTitle : $default;
+    }
+
+    public static function sanitizePageSlug(string $slug): string
+    {
+        $options = (object) Settings::getOptions();
+        $default = $options->mailing_list_subsc_page_slug;
+        $sanitizedSlug = sanitize_title($slug);
+        return mb_strlen($sanitizedSlug) > 3 ? $sanitizedSlug : $default;
+    }
+
     public static function sanitizeEmail(string $input): string
     {
         $email = sanitize_text_field($input);
@@ -22,7 +38,7 @@ class Utils
 
     public static function setPassword(string $password): string
     {
-        return self::crypt($password);
+        return self::encrypt($password);
     }
 
     public static function getPassoword(string $password): string
@@ -59,7 +75,22 @@ class Utils
         return implode(PHP_EOL, $mailingList);
     }
 
-    public static function crypt(string $string, string $action = 'encrypt')
+    public static function sanitizeUnsubscribedList(string $input): string
+    {
+        $mailingList = [];
+        $emails = explode(PHP_EOL, sanitize_textarea_field($input));
+        foreach ($emails as $email) {
+            $email = trim($email);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                continue;
+            }
+            $mailingList[$email] = $email;
+        }
+        ksort($mailingList);
+        return implode(PHP_EOL, $mailingList);
+    }
+
+    public static function encrypt(string $string, string $action = 'encrypt')
     {
         $secretKey = AUTH_KEY;
         $secretSalt = AUTH_SALT;
@@ -80,6 +111,6 @@ class Utils
 
     public static function decrypt(string $string)
     {
-        return self::crypt($string, 'decrypt');
+        return self::encrypt($string, 'decrypt');
     }
 }
