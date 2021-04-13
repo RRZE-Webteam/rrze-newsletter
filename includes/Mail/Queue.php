@@ -91,14 +91,24 @@ class Queue
 
         // Set the mailing list.
         $mailingList = [];
-        if (!empty($data['mail_lists']['terms'])) {
+        if (!empty($data['mailing_list_terms'])) {
             $options = (object) Settings::getOptions();
             $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
 
-            foreach ($data['mail_lists']['terms'] as $term) {
+            foreach ($data['mailing_list_terms'] as $term) {
                 if (empty($list = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true))) {
                     continue;
                 }
+
+                $unsubscribedFromList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
+                $unsubscribedFromList = explode(
+                    PHP_EOL,
+                    sanitize_textarea_field($unsubscribedFromList)
+                );
+                $unsubscribed = array_unique(
+                    array_merge($unsubscribed, $unsubscribedFromList)
+                );
+
                 $aryList = explode(PHP_EOL, sanitize_textarea_field($list));
                 foreach ($aryList as $row) {
                     $aryRow = explode(',', $row);
