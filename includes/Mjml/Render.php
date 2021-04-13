@@ -4,7 +4,7 @@ namespace RRZE\Newsletter\Mjml;
 
 defined('ABSPATH') || exit;
 
-use function RRZE\Newsletter\plugin;
+use RRZE\Newsletter\Templates;
 
 final class Render
 {
@@ -628,16 +628,14 @@ final class Render
             self::$fontBody = 'Georgia';
         }
 
-        $title = $post->post_title;
-        $body = self::postToMjmlComponents($post, true);
-        $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
-        $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true);
-        if (!$backgroundColor) {
-            $backgroundColor = '#ffffff';
-        }
-        ob_start();
-        include plugin()->getPath('includes/Mjml') . 'template.php';
-        return ob_get_clean();
+        $data = [
+            'title' => $post->post_title,
+            'preview_text' => get_post_meta($post->ID, 'rrze_newsletter_preview_text', true),
+            'background_color' => get_post_meta($post->ID, 'rrze_newsletter_background_color', true) ?? '#ffffff',
+            'body' => self::postToMjmlComponents($post, true)
+        ];
+
+        return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
     }
 
     /**
