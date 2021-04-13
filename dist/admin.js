@@ -1,2 +1,2 @@
-!function(){var n=window&&window.jQuery;n(document).ready((function(){n(document).on("click",".rrze-newsletter-activation-notice .notice-dismiss",(function(){var i=(window&&window.rrze_newsletter_activation_nag_dismissal_params).ajaxurl;n.post(i,{action:"rrze_newsletter_activation_notice_dismiss"},(function(){return null}))}))}))}();
+!function(){var n=window&&window.jQuery;n(document).ready((function(){n(document).on("click",".rrze-newsletter-activation-notice .notice-dismiss",(function(){var i=(window&&window.rrze_newsletter_activation_notice_dismiss_params).ajaxurl;n.post(i,{action:"rrze_newsletter_activation_notice_dismiss"},(function(){return null}))}))}))}();
 //# sourceMappingURL=admin.js.map
