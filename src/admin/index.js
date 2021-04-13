@@ -10,7 +10,7 @@ jQuery(document).ready(() => {
             };
             const { ajaxurl } =
                 window &&
-                window.rrze_newsletter_activation_nag_dismissal_params;
+                window.rrze_newsletter_activation_notice_dismiss_params;
             jQuery.post(ajaxurl, data, () => null);
         }
     );
