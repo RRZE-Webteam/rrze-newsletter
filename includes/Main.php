@@ -9,7 +9,6 @@ use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
 use RRZE\Newsletter\Mjml\Api as MjmlApi;
 use RRZE\Newsletter\Mail\Queue;
-use RRZE\Newsletter\Mail\QueueTask;
 
 class Main
 {
@@ -30,6 +29,9 @@ class Main
         $newslQueue = new NewsletterQueue;
         $newslQueue->onLoaded();
         new NewsletterLayout;
+
+        // Newsletter Subscription        
+        new Subscription;
 
         // Editor
         Editor::instance();
