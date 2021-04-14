@@ -569,16 +569,17 @@ final class Render
     }
 
     /**
-     * Convert a WP post to MJML components.
+     * Convert a string or an \WP_Post object content to MJML components.
      *
-     * @param \WP_Post $post The post.
+     * @param string $content The content.
+     * @param boolean $processLink Are the links processed?
      * @return string MJML markup to be injected into the template.
      */
-    private static function postToMjmlComponents($post)
+    private static function postToMjmlComponents(string $content, bool $processLinks)
     {
         $body = '';
         $validBlocks = array_filter(
-            parse_blocks($post->post_content),
+            parse_blocks($content),
             function ($block) {
                 return null !== $block['blockName'];
             }
@@ -607,16 +608,16 @@ final class Render
             $body .= $blockContent;
         }
 
-        return self::processLinks($body);
+        return $processLinks ? self::processLinks($body) : $body;
     }
 
     /**
-     * Convert a WP post to MJML markup.
+     * Convert an \WP_Post object to MJML markup.
      *
      * @param \WP_Post $post The post.
      * @return string MJML markup.
      */
-    private static function renderMjml($post)
+    private static function fromPost($post)
     {
         self::$colorPalette = json_decode(get_option('rrze_newsletter_color_palette', false), true);
         self::$fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
@@ -632,26 +633,67 @@ final class Render
             'title' => $post->post_title,
             'preview_text' => get_post_meta($post->ID, 'rrze_newsletter_preview_text', true),
             'background_color' => get_post_meta($post->ID, 'rrze_newsletter_background_color', true) ?? '#ffffff',
-            'body' => self::postToMjmlComponents($post, true)
+            'body' => self::postToMjmlComponents($post->content, true)
         ];
 
         return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
     }
 
     /**
-     * Convert a WP Post to email-compliant HTML.
+     * Convert an Array of arguments to MJML markup.
      *
-     * @param \WP_Post $post The post.
+     * @param array $args The arguments.
+     * @return string MJML markup.
+     */
+    private static function fromAry(array $args)
+    {
+        $default = [
+            'title' => '',
+            'preview_text' => '',
+            'background_color' => '#ffffff',
+            'content' => ''
+        ];
+        $args = wp_parse_args($args, $default);
+        $args = array_intersect_key($args, $default);
+
+        extract($args);
+
+        self::$fontHeader = 'Arial';
+        self::$fontBody = 'Georgia';
+
+        $data = [
+            'title' => $title,
+            'preview_text' => $preview_text,
+            'background_color' => $background_color,
+            'body' => self::postToMjmlComponents($content, false)
+        ];
+
+        return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
+    }
+
+    /**
+     * Convert an array of arguments or an \WP_Post object to email-compliant HTML.
+     *
+     * @param array|\WP_Post $input An array of arguments or an \WP_Post object.
      * @return string|\WP_Error Email-compliant HTML or \WP_Error otherwise.
      * @throws \Exception Error message.
      */
-    public static function renderHtmlEmail($post)
+    public static function toHtml($input)
     {
         $credentials = Api::credentials();
         if (is_wp_error($credentials)) {
             return $credentials;
         }
-        $markup = self::renderMjml($post);
+        if (is_a($input, '\WP_Post')) {
+            $markup = self::fromPost($input);
+        } elseif (is_array($input)) {
+            $markup = self::fromAry($input);
+        } else {
+            return new \WP_Error(
+                'rrze_newsletter_mjml_render_error',
+                __('MJML rendering error.', 'rrze-newsletter')
+            );
+        }
         $request = Api::request($markup);
         if (401 === intval($request['response']['code'])) {
             throw new \Exception(__('MJML rendering error.', 'rrze-newsletter'));
