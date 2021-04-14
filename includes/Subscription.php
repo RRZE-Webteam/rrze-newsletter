@@ -141,6 +141,7 @@ class Subscription
             $mailingList = explode(PHP_EOL, sanitize_textarea_field($mailingList));
             $unsubscribedFromList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
             $unsubscribedFromList = explode(PHP_EOL, sanitize_textarea_field($unsubscribedFromList));
+            $isPublic = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
             if (isset($mailingLists[$term->term_id])) {
                 $mailingList[] = $email;
                 $mailingList = Utils::sanitizeMailingList(implode(PHP_EOL, $mailingList));
@@ -153,7 +154,7 @@ class Subscription
                     unset($unsubscribedFromList[$key]);
                 }
             } else {
-                if ($unsubscribeEmpty) {
+                if ($isPublic || $unsubscribeEmpty) {
                     $unsubscribedFromList[] = $email;
                 }
             }
