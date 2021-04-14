@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
 "POT-Creation-Date: 2021-04-13T10:45:51+00:00\n"
-"PO-Revision-Date: 2021-04-13 12:59+0200\n"
+"PO-Revision-Date: 2021-04-14 17:44+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -12,7 +12,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.2\n"
-"X-Loco-Version: 2.4.6; wp-5.5.3\n"
 
 #. Plugin Name of the plugin
 msgid "RRZE Newsletter"
@@ -146,8 +145,7 @@ msgstr "Titel der Abonnementseite"
 msgid "Corresponds to the main title of the subscription page."
 msgstr "Entspricht dem Haupttitel der Abonnementseite."
 
-#: config/settings.php:176 includes/Subscription.php:220
-#: includes/Subscription.php:240
+#: config/settings.php:176 includes/Subscription.php:405
 msgid "Newsletter Subscription"
 msgstr "Newsletter-Abonnement"
 
@@ -591,28 +589,28 @@ msgstr "Fehler"
 msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
-#: includes/Mail/Send.php:78
+#: includes/Mail/Send.php:72
 msgid "First Name"
 msgstr "Vorname"
 
-#: includes/Mail/Send.php:79
+#: includes/Mail/Send.php:73
 msgid "Last Name"
 msgstr "Nachname"
 
-#: includes/Mail/Send.php:80
+#: includes/Mail/Send.php:74
 msgid "Full Name"
 msgstr "Vollständiger Name"
 
-#: includes/Mail/Send.php:81
+#: includes/Mail/Send.php:75
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
 #. translators: Message after successful test email.
-#: includes/Mail/Send.php:118
+#: includes/Mail/Send.php:112
 msgid "Email test sent successfully to %s."
 msgstr "E-Mail-Test erfolgreich an %s gesendet."
 
-#: includes/Mail/Send.php:126
+#: includes/Mail/Send.php:120
 msgid "There was an error in the email test."
 msgstr "Beim E-Mail-Test ist ein Fehler aufgetreten."
 
@@ -629,11 +627,11 @@ msgstr "Mjml-API-Anmeldeinformationen nicht verfügbar."
 msgid "Please <a href=\"%s\">set up the API credentials</a>."
 msgstr "Bitte <a href=\"%s\">richten Sie die API-Anmeldeinformationen ein</a>."
 
-#: includes/Mjml/Render.php:657
+#: includes/Mjml/Render.php:694 includes/Mjml/Render.php:699
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
-#: includes/RestApi.php:161 includes/RestApi.php:175
+#: includes/RestApi.php:162 includes/RestApi.php:176
 msgid "You cannot use this resource."
 msgstr "Sie können diese Ressource nicht verwenden."
 
@@ -641,35 +639,102 @@ msgstr "Sie können diese Ressource nicht verwenden."
 msgid "Newsletter Agent"
 msgstr "Newsletter-Agent"
 
-#: includes/Subscription.php:222 includes/Subscription.php:242
+#: includes/Subscription.php:181
+msgid "Add newsletter subscription"
+msgstr "Newsletter-Abonnement erstellen"
+
+#: includes/Subscription.php:182
+msgid ""
+"Please check the newsletters below that you would like to receive from us "
+"and then enter your email address to add your subscription."
+msgstr ""
+"Bitte überprüfen Sie die unten stehenden Newsletter, die Sie von uns "
+"erhalten möchten, und geben Sie dann Ihre E-Mail-Adresse ein, um Ihr "
+"Abonnement zu erstellen."
+
+#: includes/Subscription.php:183
+msgid "Add subscription"
+msgstr "Abonnement erstellen"
+
+#: includes/Subscription.php:185
+msgid "Enter your email address."
+msgstr "Geben sie ihre E-Mailadresse ein."
+
+#. translators: Email address to subscribe to the newsletter
+#: includes/Subscription.php:204
 msgid "Manage newsletter subscription for %s"
 msgstr "Verwalten Sie das Newsletter-Abonnement für %s"
 
-#: includes/Subscription.php:225
+#: includes/Subscription.php:207
 msgid ""
-"Please mark all newsletters below that you would like to receive from us:"
+"Please check the newsletters below that you would like to receive from us to "
+"update your subscription."
 msgstr ""
-"Bitte markieren Sie alle Newsletter unten, die Sie von uns erhalten möchten:"
+"Bitte überprüfen Sie die unten stehenden Newsletter, die Sie von uns "
+"erhalten möchten, um Ihr Abonnement zu aktualisieren."
 
-#: includes/Subscription.php:226
+#: includes/Subscription.php:208
 msgid "Cancel my subscription to all future newsletters."
 msgstr "Kündigen Sie mein Abonnement für alle zukünftigen Newsletter."
 
-#: includes/Subscription.php:227
+#: includes/Subscription.php:209
 msgid "Update subscription"
 msgstr "Abonnement aktualisieren"
 
-#: includes/Subscription.php:245
+#. translators: Email address to subscribe to the newsletter
+#: includes/Subscription.php:226 includes/Subscription.php:242
+#: includes/Subscription.php:259
+msgid "Newsletter subscription for %s"
+msgstr "Newsletter-Abonnement für %s"
+
+#: includes/Subscription.php:229 includes/Subscription.php:245
+#: includes/Subscription.php:262
 msgid "Thank you"
 msgstr "Vielen Dank"
 
-#: includes/Subscription.php:246
+#: includes/Subscription.php:230
 msgid "Your newsletter settings have been updated."
 msgstr "Ihre Newsletter-Einstellungen wurden aktualisiert."
+
+#: includes/Subscription.php:231
+msgid "Back to manage newsletter subscription page"
+msgstr "Zurück zum Verwalten der Newsletter-Abonnementseite"
+
+#: includes/Subscription.php:246
+msgid "We have sent a confirmation link to your email address."
+msgstr "Wir haben einen Bestätigungslink an Ihre E-Mail-Adresse gesendet."
 
 #: includes/Subscription.php:247
 msgid "Back to home page"
 msgstr "Zurück zur Startseite"
+
+#: includes/Subscription.php:263
+msgid "Your newsletter subscription has been confirmed."
+msgstr "Ihr Newsletter-Abonnement wurde bestätigt."
+
+#: includes/Subscription.php:264
+msgid "Manage newsletter subscription page"
+msgstr "Newsletter-Abonnementseite verwalten"
+
+#: includes/Subscription.php:406
+msgid "Click below to confirm you subscription for the newsletter."
+msgstr "Klicken Sie unten, um Ihr Abonnement für den Newsletter zu bestätigen."
+
+#: includes/Subscription.php:410
+msgid "Confirmation link"
+msgstr "Bestätigungslink"
+
+#: includes/Subscription.php:417
+msgid "If you haven't subscribed for it, please ignore this email."
+msgstr ""
+
+#: includes/Subscription.php:418
+msgid "Sincerely"
+msgstr "Mit freundlichen Grüßen"
+
+#: includes/Subscription.php:425
+msgid "Newsletter subscription"
+msgstr "Newsletter-Abonnement"
 
 #. translators: 1: Server PHP version number, 2: Required PHP version number.
 #: rrze-newsletter.php:93
