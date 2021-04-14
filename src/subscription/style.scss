@@ -2,10 +2,9 @@
 
 .rrze-newsl-subsc {
     .c-content-heading {
-        font-size: 1.875rem;
         line-height: 1.3;
     }
-        
+
     .o-container--mw700 {
         max-width: 700px;
     }
@@ -36,7 +35,7 @@
         border-bottom: 1px solid !important;
     }
 
-    .u-bc-alto {
+    .u-bc-spacer {
         border-color: $color-grey !important;
     }
 
@@ -48,26 +47,14 @@
         color: $color-black !important;
     }
 
-    .u-text-delta {
-        font-size: 1.125rem !important;
-    }
-
-    .u-text-epsilon {
-        font-size: 1rem !important;
-    }
-
-    .u-text-zeta {
-        font-size: 0.875rem !important;
+    .u-px-48 {
+        padding-right: 60px !important;
+        padding-left: 60px !important;
     }
 
     .u-py-18 {
         padding-top: 18px !important;
         padding-bottom: 18px !important;
-    }
-
-    .u-px-48 {
-        padding-right: 48px !important;
-        padding-left: 48px !important;
     }
 
     .u-py-60 {
@@ -83,10 +70,15 @@
         text-transform: uppercase !important;
     }
 
+    .u-block {
+        display: block !important;
+    }
+
+    .u-text-beta {
+        font-size: 0.9em !important;
+    }
+
     .newsl-subsc-checkbox__label:before {
-        position: absolute;
-        top: 0;
-        left: 0;
         content: "";
         width: 18px;
         height: 18px;
@@ -101,8 +93,6 @@
 
     .newsl-subsc-list__title {
         display: inline-block;
-        color: --color-mine-shaft;
-        font-size: 1rem;
         font-weight: 500;
     }
 
@@ -113,7 +103,6 @@
     .newsl-subsc-checkbox__label {
         position: relative;
         padding-left: 32px;
-        font-size: 1rem;
     }
 
     h1,
@@ -121,6 +110,10 @@
         font-weight: 600;
         padding: 0 !important;
         margin: 0 !important;
+    }
+
+    p {
+        hyphens: none !important;
     }
 
     form {
@@ -141,14 +134,18 @@
         transition: background-color 0.3s ease, opacity 0.3s ease;
         appearance: none;
     }
-        
+
     .newsl-subsc-btn:active {
         transform: scale(0.98);
     }
 
     .newsl-subsc-btn:hover {
         background-color: $color-light-grey;
-      }    
+    }
+
+    input[type="checkbox"] {
+        margin: 0 !important;
+    }
 
     [type="checkbox"]:not(:checked),
     [type="checkbox"]:checked {
@@ -179,11 +176,11 @@
 
     [type="checkbox"]:not(:checked) + label:after,
     [type="checkbox"]:checked + label:after {
-        content: "✕";
+        content: "✔";
         position: absolute;
-        top: 0.525em;
-        left: 0.18em;
-        font-size: 1.375em;
+        top: 0.68em;
+        left: 0.28em;
+        font-size: 1em;
         line-height: 0;
     }
 
@@ -205,7 +202,7 @@
 
     [type="checkbox"]:checked:focus + label:before,
     [type="checkbox"]:not(:checked):focus + label:before {
-        border: 2px solid $color-dark-grey;
+        border: 2px solid $color-blue;
         border-radius: 4px;
         background-color: $color-white;
     }
