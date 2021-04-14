@@ -8,7 +8,6 @@ use RRZE\Newsletter\Settings;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Html2Text;
 use RRZE\Newsletter\Parser;
-use RRZE\Newsletter\Mjml\Render;
 
 use function RRZE\Newsletter\plugin;
 
@@ -33,7 +32,6 @@ class Send
         $this->options = (object) Settings::getOptions();
         $this->smtp = new SMTP;
         $this->smtp->onLoaded();
-        $this->render = new Render;
     }
 
     /**
@@ -46,11 +44,13 @@ class Send
             'from' => '',
             'fromName' => '',
             'replyTo' => '',
-            'to' => ''
+            'to' => '',
+            'subject' => '',
+            'body' => ''
         ];
     }
 
-    public function set(\WP_Post $post, array $args)
+    public function email(array $args)
     {
         $default = $this->defaultArgs();
         $args = wp_parse_args($args, $default);
@@ -65,12 +65,6 @@ class Send
                 continue;
             }
             $emailsList[$email] = $email;
-        }
-
-        $subject = $post->post_title;
-        $body = $this->render->renderHtmlEmail($post);
-        if (is_wp_error($body)) {
-            return $body->get_error_message();
         }
 
         // Parse tags.
