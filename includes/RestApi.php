@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\Mail\Send;
+use RRZE\Newsletter\Mjml\Render;
 
 class RestApi
 {
@@ -191,11 +192,11 @@ class RestApi
         return rest_ensure_response($response);
     }
 
-    public function sender($post_id, $from_name, $reply_to)
+    public function sender($postId, $fromName, $replyTo)
     {
-        $data           = [];
+        $data = [];
         $data['result'] = [];
-
+        // @todo
         return rest_ensure_response($data);
     }
 
@@ -212,17 +213,32 @@ class RestApi
         return rest_ensure_response($response);
     }
 
-    public function test($post_id, $emails)
+    public function test($postId, $emails)
     {
+        $post = get_post($postId);
+        $subject = $post->post_title;
+
+        $mjmlRender = new Render;
+        $body = $mjmlRender->toHtml($post);
+        if (is_wp_error($body)) {
+            return $body;
+        }
+
+        $from = get_post_meta($postId, 'rrze_newsletter_queue_from_email', true);
+        $fromName = get_post_meta($postId, 'rrze_newsletter_queue_from_name', true);
+        $replyTo = get_post_meta($postId, 'rrze_newsletter_queue_replyto', true);
+
         $args = [
-            'from' => 'newsletter@localhost',
-            'fromName' => 'Newsletter',
-            'replyTo' => 'newsletter@localhost',
-            'to' => implode(', ', $emails)
+            'from' => $from,
+            'fromName' => $fromName,
+            'replyTo' => $replyTo,
+            'to' => implode(', ', $emails),
+            'subject' => $subject,
+            'body' => $body
         ];
-        $post = get_post($post_id);
+
         $send = new Send;
-        $message = $send->set($post, $args);
+        $message = $send->email($args);
         return is_wp_error($message) ? $message : ['message' => $message];
     }
 
