@@ -672,7 +672,7 @@ class Newsletter
         if (is_wp_error($render)) {
             return;
         }
-        $body = $render->renderHtmlEmail($post);
+        $body = $render->toHtml($post);
         self::setBody($postId, $body);
 
         $html2text = new Html2Text($body);
