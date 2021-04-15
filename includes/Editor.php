@@ -23,25 +23,25 @@ final class Editor
 
     public function __construct()
     {
-        add_action('the_post', [__CLASS__, 'strip_editor_modifications']);
-        add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueue_block_editor_assets']);
-        add_filter('allowed_block_types', [__CLASS__, 'newsletter_allowed_block_types'], 10, 2);
-        add_action('rest_post_query', [__CLASS__, 'maybe_filter_excerpt_length'], 10, 2);
-        add_filter('the_posts', [__CLASS__, 'maybe_reset_excerpt_length']);
+        add_action('the_post', [__CLASS__, 'stripEditorModifications']);
+        add_action('enqueueBlockEditorAssets', [__CLASS__, 'enqueueBlockEditorAssets']);
+        add_filter('allowed_block_types', [__CLASS__, 'newsletterAllowedBlockTypes'], 10, 2);
+        add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
+        add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
     }
 
-    public static function strip_editor_modifications()
+    public static function stripEditorModifications()
     {
         if (!self::is_editing_newsletter()) {
             return;
         }
 
-        $enqueue_block_editor_assets_filters = $GLOBALS['wp_filter']['enqueue_block_editor_assets']->callbacks;
-        foreach ($enqueue_block_editor_assets_filters as $index => $filter) {
+        $enqueueBlockEditorAssets_filters = $GLOBALS['wp_filter']['enqueueBlockEditorAssets']->callbacks;
+        foreach ($enqueueBlockEditorAssets_filters as $index => $filter) {
             $action_handlers = array_keys($filter);
             foreach ($action_handlers as $handler) {
-                if (__CLASS__ . '::enqueue_block_editor_assets' != $handler) {
-                    remove_action('enqueue_block_editor_assets', $handler, $index);
+                if (__CLASS__ . '::enqueueBlockEditorAssets' != $handler) {
+                    remove_action('enqueueBlockEditorAssets', $handler, $index);
                 }
             }
         }
@@ -51,7 +51,7 @@ final class Editor
         add_theme_support('disable-custom-gradients');
     }
 
-    public static function newsletter_allowed_block_types($allowed_block_types, $post)
+    public static function newsletterAllowedBlockTypes($allowed_block_types, $post)
     {
         if (!self::is_editing_newsletter()) {
             return $allowed_block_types;
@@ -75,7 +75,7 @@ final class Editor
         );
     }
 
-    public static function maybe_filter_excerpt_length($args, $request)
+    public static function maybeFilterExcerptLength($args, $request)
     {
         $params = $request->get_params();
 
@@ -86,7 +86,7 @@ final class Editor
         return $args;
     }
 
-    public static function maybe_reset_excerpt_length($posts)
+    public static function maybeResetExcerptLength($posts)
     {
         if (self::$newsletter_excerpt_length_filter) {
             self::remove_excerpt_length_filter();
@@ -117,7 +117,7 @@ final class Editor
         );
     }
 
-    public static function enqueue_block_editor_assets()
+    public static function enqueueBlockEditorAssets()
     {
         if (self::is_editing_newsletter()) {
             wp_register_style(
@@ -153,7 +153,7 @@ final class Editor
             'rrze-newsletter',
             'rrze-newsletter',
             plugin()->getPath('languages')
-        );        
+        );
     }
 
     /**
