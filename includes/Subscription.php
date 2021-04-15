@@ -419,8 +419,10 @@ class Subscription
             'salute' => __('Sincerely', 'rrze-newsletter')
         ];
 
+        $blogName = get_bloginfo('name');
+
         $from = 'no-reply@' . $hostname;
-        $fromName = get_bloginfo('name') ?? $hostname;
+        $fromName = $blogName ? $blogName : $hostname;
         $replyTo = $from;
 
         $title = __('Newsletter subscription', 'rrze-newsletter');
