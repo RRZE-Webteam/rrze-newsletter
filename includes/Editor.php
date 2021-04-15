@@ -11,7 +11,7 @@ final class Editor
 {
     protected static $instance = null;
 
-    public static $newsletter_excerpt_length_filter = null;
+    public static $newsletterExcerptLengthFilter = null;
 
     public static function instance()
     {
@@ -24,7 +24,7 @@ final class Editor
     public function __construct()
     {
         add_action('the_post', [__CLASS__, 'stripEditorModifications']);
-        add_action('enqueueBlockEditorAssets', [__CLASS__, 'enqueueBlockEditorAssets']);
+        add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
         add_filter('allowed_block_types', [__CLASS__, 'newsletterAllowedBlockTypes'], 10, 2);
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
@@ -32,31 +32,31 @@ final class Editor
 
     public static function stripEditorModifications()
     {
-        if (!self::is_editing_newsletter()) {
+        if (!self::isEditingNewsletter()) {
             return;
         }
 
-        $enqueueBlockEditorAssets_filters = $GLOBALS['wp_filter']['enqueueBlockEditorAssets']->callbacks;
-        foreach ($enqueueBlockEditorAssets_filters as $index => $filter) {
-            $action_handlers = array_keys($filter);
-            foreach ($action_handlers as $handler) {
+        $enqueueBlockEditorAssetsFilters = $GLOBALS['wp_filter']['enqueue_block_editor_assets']->callbacks;
+        foreach ($enqueueBlockEditorAssetsFilters as $index => $filter) {
+            $actionHandlers = array_keys($filter);
+            foreach ($actionHandlers as $handler) {
                 if (__CLASS__ . '::enqueueBlockEditorAssets' != $handler) {
-                    remove_action('enqueueBlockEditorAssets', $handler, $index);
+                    remove_action('enqueue_block_editor_assets', $handler, $index);
                 }
             }
         }
 
         remove_editor_styles();
-        add_theme_support('editor-gradient-presets', array());
+        add_theme_support('editor-gradient-presets', []);
         add_theme_support('disable-custom-gradients');
     }
 
-    public static function newsletterAllowedBlockTypes($allowed_block_types, $post)
+    public static function newsletterAllowedBlockTypes($allowedBlockTypes, $post)
     {
-        if (!self::is_editing_newsletter()) {
-            return $allowed_block_types;
+        if (!self::isEditingNewsletter()) {
+            return $allowedBlockTypes;
         }
-        return array(
+        return [
             'core/rss',
             'core/spacer',
             'core/block',
@@ -72,7 +72,7 @@ final class Editor
             'core/list',
             'core/quote',
             'core/social-links'
-        );
+        ];
     }
 
     public static function maybeFilterExcerptLength($args, $request)
@@ -80,7 +80,7 @@ final class Editor
         $params = $request->get_params();
 
         if (isset($params['excerpt_length'])) {
-            self::filter_excerpt_length(intval($params['excerpt_length']));
+            self::filterExcerptLength(intval($params['excerpt_length']));
         }
 
         return $args;
@@ -88,38 +88,38 @@ final class Editor
 
     public static function maybeResetExcerptLength($posts)
     {
-        if (self::$newsletter_excerpt_length_filter) {
-            self::remove_excerpt_length_filter();
+        if (self::$newsletterExcerptLengthFilter) {
+            self::removeExcerptLengthFilter();
         }
 
         return $posts;
     }
 
-    public static function filter_excerpt_length($excerpt_length)
+    public static function filterExcerptLength($excerptLength)
     {
-        if (is_int($excerpt_length)) {
-            self::$newsletter_excerpt_length_filter = add_filter(
+        if (is_int($excerptLength)) {
+            self::$newsletterExcerptLengthFilter = add_filter(
                 'excerpt_length',
-                function () use ($excerpt_length) {
-                    return $excerpt_length;
+                function () use ($excerptLength) {
+                    return $excerptLength;
                 },
                 999
             );
         }
     }
 
-    public static function remove_excerpt_length_filter()
+    public static function removeExcerptLengthFilter()
     {
         remove_filter(
             'excerpt_length',
-            self::$newsletter_excerpt_length_filter,
+            self::$newsletterExcerptLengthFilter,
             999
         );
     }
 
     public static function enqueueBlockEditorAssets()
     {
-        if (self::is_editing_newsletter()) {
+        if (self::isEditingNewsletter()) {
             wp_register_style(
                 'rrze-newsletter',
                 plugins_url('dist/editor.css', plugin()->getBasename()),
@@ -130,7 +130,7 @@ final class Editor
             wp_enqueue_style('rrze-newsletter');
         }
 
-        if (!self::is_editing_newsletter()) {
+        if (!self::isEditingNewsletter()) {
             return;
         }
         wp_enqueue_script(
@@ -159,7 +159,7 @@ final class Editor
     /**
      * Is editing a newsletter?
      */
-    public static function is_editing_newsletter()
+    public static function isEditingNewsletter()
     {
         return Newsletter::POST_TYPE === get_post_type();
     }
