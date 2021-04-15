@@ -629,11 +629,14 @@ final class Render
             self::$fontBody = 'Georgia';
         }
 
+        $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true);
+        $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
+
         $data = [
             'title' => $post->post_title,
-            'preview_text' => get_post_meta($post->ID, 'rrze_newsletter_preview_text', true),
-            'background_color' => get_post_meta($post->ID, 'rrze_newsletter_background_color', true) ?? '#ffffff',
-            'body' => self::postToMjmlComponents($post->content, true)
+            'preview_text' => $previewText ? $previewText : '',
+            'background_color' => $backgroundColor ? $backgroundColor : '#ffffff',
+            'body' => self::postToMjmlComponents($post->post_content, true)
         ];
 
         return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
