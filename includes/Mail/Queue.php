@@ -234,7 +234,9 @@ class Queue
             $altBody = $parser->parse($altBody, $data);
             // End Parse tags.
 
-            $website = get_bloginfo('name') ?? parse_url(site_url(), PHP_URL_HOST);
+            $blogName = get_bloginfo('name');
+            $website = $blogName ? $blogName : parse_url(site_url(), PHP_URL_HOST);
+
             $headers = [
                 'Content-Type: text/html; charset=UTF-8',
                 'Content-Transfer-Encoding: 8bit',
