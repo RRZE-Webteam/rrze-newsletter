@@ -67,21 +67,12 @@ class Send
             $emailsList[$email] = $email;
         }
 
-        // Parse tags.
-        $data = [
-            'FNAME' => __('First Name', 'rrze-newsletter'),
-            'LNAME' => __('Last Name', 'rrze-newsletter'),
-            'NAME' => __('Full Name', 'rrze-newsletter'),
-            'EMAIL' => __('Email address', 'rrze-newsletter')
-        ];
-        $parser = new Parser();
-        $body = $parser->parse($body, $data);
-        // End parse tags.
-
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
 
-        $website = get_bloginfo('name') ?? parse_url(site_url(), PHP_URL_HOST);
+        $blogName = get_bloginfo('name');
+        $website = $blogName ? $blogName : parse_url(site_url(), PHP_URL_HOST);
+
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
             'Content-Transfer-Encoding: 8bit',
