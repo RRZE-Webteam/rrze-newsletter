@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Settings;
 use RRZE\Newsletter\Parser;
+use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterQueue;
@@ -229,6 +230,7 @@ class Queue
                 'NAME' => $toName,
                 'EMAIL' => $toEmail
             ];
+            $data = Tags::sanitizeTags($data);
             $parser = new Parser();
             $body = $parser->parse($body, $data);
             $altBody = $parser->parse($altBody, $data);
