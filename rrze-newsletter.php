@@ -30,7 +30,7 @@ require_once 'config/settings.php';
 // Autoloader (PSR-4)
 spl_autoload_register(function ($class) {
     $prefix = __NAMESPACE__;
-    $base_dir = __DIR__ . '/includes/';
+    $baseDir = __DIR__ . '/includes/';
 
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
@@ -38,7 +38,7 @@ spl_autoload_register(function ($class) {
     }
 
     $relativeClass = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relativeClass) . '.php';
+    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
 
     if (file_exists($file)) {
         require $file;
