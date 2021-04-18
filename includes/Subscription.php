@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\Mail\Send;
-use RRZE\Newsletter\Mjml\Render;
+use RRZE\Newsletter\MJML\Render;
 use stdClass;
 
 class Subscription
