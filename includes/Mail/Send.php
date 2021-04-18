@@ -70,13 +70,10 @@ class Send
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
 
-        $blogName = get_bloginfo('name');
-        $website = $blogName ? $blogName : parse_url(site_url(), PHP_URL_HOST);
-
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
             'Content-Transfer-Encoding: 8bit',
-            'X-Mailtool: RRZE-Newsletter Plugin ' . plugin()->getVersion() . ' on ' . $website,
+            'X-Mailtool: RRZE Newsletter ' . plugin()->getVersion() . ' (https://github.com/RRZE-Webteam/rrze-newsletter)',
             'Reply-To: ' . $replyTo
         ];
 
