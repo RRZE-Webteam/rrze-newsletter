@@ -52,12 +52,8 @@ function getSections(): array
         ],
         [
             'id'    => 'mjml_api',
-            'title' => __('MJML API', 'rrze-newsletter'),
-            'desc' => sprintf(
-                '<p>%1$s</p><a href="https://mjml.io/api">%2$s <span class="dashicons dashicons-external"></span></a>',
-                __('Enter your MJML API keys.', 'rrze-newsletter'),
-                __('Request MJML API keys', 'rrze-newsletter')
-            )
+            'title' => __('MJML API Service', 'rrze-newsletter'),
+            'desc' => __('Please note that some MJML API Services require HTTP Basic Authentication.', 'rrze-newsletter')
         ]
     ];
 }
@@ -197,9 +193,18 @@ function getFields(): array
         ],
         'mjml_api' => [
             [
+                'name'              => 'endpoint',
+                'label'             => __('API Endpoint', 'rrze-newsletter'),
+                'desc'              => __('URL of the MJML API Service.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'text',
+                'default'           => '',
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl']
+            ],
+            [
                 'name'              => 'key',
                 'label'             => __('Application ID', 'rrze-newsletter'),
-                'desc'              => '',
+                'desc'              => __('The Application ID acts as a username.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => '',
@@ -208,7 +213,7 @@ function getFields(): array
             [
                 'name'              => 'secret',
                 'label'             => __('Secret Key', 'rrze-newsletter'),
-                'desc'              => '',
+                'desc'              => __('The API Key act as a password.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => '',
