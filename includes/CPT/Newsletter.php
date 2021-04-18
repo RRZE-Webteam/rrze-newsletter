@@ -9,7 +9,7 @@ namespace RRZE\Newsletter\CPT;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Html2Text;
-use RRZE\Newsletter\Mjml\Render;
+use RRZE\Newsletter\MJML\Render;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
 
