@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\Mail\Send;
-use RRZE\Newsletter\Mjml\Render;
+use RRZE\Newsletter\MJML\Render;
 
 class RestApi
 {
