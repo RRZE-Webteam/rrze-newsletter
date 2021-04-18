@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Newsletter\Mjml;
+namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
@@ -10,7 +10,23 @@ use function RRZE\Newsletter\plugin;
 
 class Api
 {
-    const API_URL = 'https://api.mjml.io/v1/render';
+    /**
+     * Return MJML API Endpoint.
+     *
+     * @return string|\WP_Error API Endpoint or \WP_Error otherwise.
+     */
+    public static function apiEndpoint()
+    {
+        $options = (object) Settings::getOptions();
+        $apiEndpoint = $options->mjml_api_endpoint;
+        if (!$apiEndpoint) {
+            $apiEndpoint = new \WP_Error(
+                'rrze_newsletter_mjml_api_endpoint',
+                __('MJML API Endpoint not available.', 'rrze-newsletter')
+            );
+        }
+        return $apiEndpoint;
+    }
 
     /**
      * Return MJML API credentials.
@@ -28,23 +44,24 @@ class Api
         } else {
             $credentials = new \WP_Error(
                 'rrze_newsletter_mjml_api_credentials',
-                __('Mjml Api credentials not available.', 'rrze-newsletter')
+                __('MJML Api credentials not available.', 'rrze-newsletter')
             );
         }
         return $credentials;
     }
 
     /** 
-     * Return Mjml Api request.
+     * Return MJML Api request.
      * 
-     * @param string Mjml-compliant Markup.
+     * @param string MJML-compliant Markup.
      * @return array|\WP_Error Api respond.
      */
     public static function request(string $markup)
     {
+        $endPoint = self::apiEndpoint();
         $credentials = self::credentials();
         $response = wp_remote_post(
-            self::API_URL,
+            $endPoint,
             [
                 'body' => wp_json_encode(
                     [
@@ -62,7 +79,7 @@ class Api
 
     public static function activationNotice()
     {
-        $credentials = self::credentials();
+        $credentials = self::apiEndpoint();
         if (
             is_admin()
             && (!$credentials || is_wp_error($credentials))
@@ -80,14 +97,14 @@ class Api
         if (Newsletter::POST_TYPE !== $screen->post_type) {
             return;
         }
-        $url = admin_url('edit.php?post_type=' . Newsletter::POST_TYPE . '&page=rrze-newsletter-settings-admin');
 
         echo '<div class="notice notice-info is-dismissible rrze-newsletter-notification-notice"><p>';
         echo wp_kses_post(
             sprintf(
-                // translators: Notify users to set API credentials on the settings page.
-                __('Please <a href="%s">set up the API credentials</a>.', 'rrze-newsletter'),
-                $url
+                '<a href="%1$s">%2$s</a>',
+                admin_url('options-general.php?page=rrze-newsletter&current-tab=rrze-newsletter-mjml_api'),
+                // translators: Notify users to set the API Endpoint on the settings page.
+                __('Please set up the MJML API Endpoint.', 'rrze-newsletter')
             )
         );
         echo '</p></div>';
