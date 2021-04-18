@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Newsletter\Mjml;
+namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
@@ -697,10 +697,11 @@ final class Render
                 __('MJML rendering error.', 'rrze-newsletter')
             );
         }
-        $request = Api::request($markup);
-        if (401 === intval($request['response']['code'])) {
+        $respond = Api::request($markup);
+
+        if (401 === intval($respond['response']['code'])) {
             throw new \Exception(__('MJML rendering error.', 'rrze-newsletter'));
         }
-        return is_wp_error($request) ? $request : json_decode($request['body'])->html;
+        return is_wp_error($respond) ? $respond : json_decode($respond['body'])->html;
     }
 }
