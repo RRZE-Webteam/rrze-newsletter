@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
-use RRZE\Newsletter\Mjml\Api as MjmlApi;
+use RRZE\Newsletter\MJML\Api as MjmlApi;
 use RRZE\Newsletter\Mail\Queue;
 
 class Main
