@@ -22,6 +22,15 @@ class Utils
         return mb_strlen($sanitizedSlug) > 3 ? $sanitizedSlug : $default;
     }
 
+    public static function sanitizeUrl(string $input): string
+    {
+        $url = sanitize_text_field($input);
+        if (filter_var($url, FILTER_SANITIZE_URL)) {
+            return $url;
+        }
+        return '';
+    }
+
     public static function sanitizeEmail(string $input): string
     {
         $email = sanitize_text_field($input);
