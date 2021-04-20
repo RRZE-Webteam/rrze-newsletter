@@ -57,7 +57,6 @@ final class Editor
             return $allowedBlockTypes;
         }
         return [
-            'core/rss',
             'core/spacer',
             'core/block',
             'core/group',
