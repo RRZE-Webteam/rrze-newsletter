@@ -57,15 +57,6 @@ class Send
 
         extract($args);
 
-        $emailsList = [];
-        $toAry = explode(',', sanitize_textarea_field($to));
-        foreach ($toAry as $email) {
-            if (!Utils::sanitizeEmail(trim($email))) {
-                continue;
-            }
-            $emailsList[$email] = $email;
-        }
-
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
             'Content-Transfer-Encoding: 8bit',
@@ -73,35 +64,30 @@ class Send
             'Reply-To: ' . $replyTo
         ];
 
-        $sentEmails = [];
-        foreach ($emailsList as $to) {
-            $isSent = $this->smtp->send(
-                $from,
-                $fromName,
-                $to,
-                $subject,
-                $body,
-                $altBody,
-                $headers
-            );
+        $isSent = $this->smtp->send(
+            $from,
+            $fromName,
+            $to,
+            $subject,
+            $body,
+            $altBody,
+            $headers
+        );
 
-            if ($isSent) {
-                $sentEmails[] = $to;
-            }
-        }
-
-        if (!empty($sentEmails)) {
+        if ($isSent) {
             $result = sprintf(
-                // translators: Message after successful test email.
-                __('Email test sent successfully to %s.', 'rrze-newsletter'),
-                implode(', ', $sentEmails)
+                // translators: Message after the email was sent successfully.
+                __('Email sent successfully to %s.', 'rrze-newsletter'),
+                $to
             );
         } else {
-            $error = $this->smtp->getError();
-            //$result = is_wp_error($error) ? $error->get_error_message() : '';
             $result = new \WP_Error(
                 'rrze_newsletter_email_error',
-                __('There was an error in the email test.', 'rrze-newsletter')
+                sprintf(
+                    // translators: Error message when sending email.
+                    __('There was an error sending the email to %s.', 'rrze-newsletter'),
+                    $to
+                )
             );
         }
 
