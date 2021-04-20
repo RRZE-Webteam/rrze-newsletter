@@ -441,13 +441,17 @@ class Subscription
             return $body;
         }
 
+        $html2text = new Html2Text($body);
+        $altBody = $html2text->getText();
+
         $args = [
             'from' => $from,
             'fromName' => $fromName,
             'replyTo' => $replyTo,
             'to' => $email,
             'subject' => $title,
-            'body' => $body
+            'body' => $body,
+            'altBody' => $altBody
         ];
 
         $send = new Send;
