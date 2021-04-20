@@ -124,13 +124,11 @@ class Queue
                         continue;
                     }
 
-                    $name = !empty($fname . $lname) ? trim(sprintf('%1$s %2$s', $fname, $lname)) : '';
                     $to = !empty($name) ? sprintf('%1$s <%2$s>', $name, $email) : $email;
 
                     $mailingList[$email] = [
                         'to_fname' => $fname,
                         'to_lname' => $lname,
-                        'to_name' => $name,
                         'to_email' => $email,
                         'to' => $to
                     ];
@@ -179,7 +177,6 @@ class Queue
                 add_post_meta($qId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_to_fname', $mail['to_fname'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_to_lname', $mail['to_lname'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_to_name', $mail['to_name'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_to_email', $mail['to_email'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_to', $mail['to'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_retries', 0, true);
@@ -216,7 +213,6 @@ class Queue
             $toFname  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_fname', true);
             $toLname  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_lname', true);
             $toEmail  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_email', true);
-            $toName  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_name', true);
             $to  = get_post_meta($post->ID, 'rrze_newsletter_queue_to', true);
 
             $subject = $post->post_title;
@@ -227,10 +223,9 @@ class Queue
             $data = [
                 'FNAME' => $toFname,
                 'LNAME' => $toLname,
-                'NAME' => $toName,
                 'EMAIL' => $toEmail
             ];
-            $data = Tags::sanitizeTags($data);
+            $data = Tags::sanitizeTags($post, $data);
             $parser = new Parser();
             $body = $parser->parse($body, $data);
             $altBody = $parser->parse($altBody, $data);
