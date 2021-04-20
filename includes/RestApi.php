@@ -231,25 +231,56 @@ class RestApi
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
 
-        // Parse tags.
-        $data = Tags::sanitizeTags($post);
-        $parser = new Parser();
-        $body = $parser->parse($body, $data);
-        $altBody = $parser->parse($altBody, $data);
-        // End Parse tags.
+        $emailsList = [];
+        foreach ($emails as $email) {
+            if (!Utils::sanitizeEmail(trim($email))) {
+                continue;
+            }
+            $emailsList[$email] = $email;
+        }
 
-        $args = [
-            'from' => $from,
-            'fromName' => $fromName,
-            'replyTo' => $replyTo,
-            'to' => implode(', ', $emails),
-            'subject' => $subject,
-            'body' => $body,
-            'altBody' => $altBody
-        ];
+        $sentEmails = [];
+        foreach ($emailsList as $to) {
+            // Parse tags.
+            $data = [
+                'EMAIL' => $to
+            ];
+            $data = Tags::sanitizeTags($post, $data);
+            $parser = new Parser();
+            $tBody = $parser->parse($body, $data);
+            $tAltBody = $parser->parse($altBody, $data);
+            // End Parse tags.
 
-        $send = new Send;
-        $message = $send->email($args);
+            $args = [
+                'from' => $from,
+                'fromName' => $fromName,
+                'replyTo' => $replyTo,
+                'to' => $to,
+                'subject' => $subject,
+                'body' => $tBody,
+                'altBody' => $tAltBody
+            ];
+
+            $send = new Send;
+            $isSent = $send->email($args);
+            if (!is_wp_error($isSent)) {
+                $sentEmails[] = $to;
+            }
+        }
+
+        if (!empty($sentEmails)) {
+            $message = sprintf(
+                // translators: Message after the email was sent successfully.
+                __('Email sent successfully to %s.', 'rrze-newsletter'),
+                implode(', ', $sentEmails)
+            );
+        } else {
+            $message = new \WP_Error(
+                'rrze_newsletter_email_error',
+                __('There was an error sending the email.', 'rrze-newsletter')
+            );
+        }
+
         return is_wp_error($message) ? $message : ['message' => $message];
     }
 
