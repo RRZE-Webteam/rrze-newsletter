@@ -228,13 +228,24 @@ class RestApi
         $fromName = get_post_meta($postId, 'rrze_newsletter_queue_from_name', true);
         $replyTo = get_post_meta($postId, 'rrze_newsletter_queue_replyto', true);
 
+        $html2text = new Html2Text($body);
+        $altBody = $html2text->getText();
+
+        // Parse tags.
+        $data = Tags::sanitizeTags($post);
+        $parser = new Parser();
+        $body = $parser->parse($body, $data);
+        $altBody = $parser->parse($altBody, $data);
+        // End Parse tags.
+
         $args = [
             'from' => $from,
             'fromName' => $fromName,
             'replyTo' => $replyTo,
             'to' => implode(', ', $emails),
             'subject' => $subject,
-            'body' => $body
+            'body' => $body,
+            'altBody' => $altBody
         ];
 
         $send = new Send;
