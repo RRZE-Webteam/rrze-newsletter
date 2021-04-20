@@ -8,6 +8,7 @@ use RRZE\Newsletter\Settings;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Html2Text;
 use RRZE\Newsletter\Parser;
+use RRZE\Newsletter\Tags;
 
 use function RRZE\Newsletter\plugin;
 
@@ -69,6 +70,13 @@ class Send
 
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
+
+        // Parse tags.
+        $data = Tags::sanitizeTags([]);
+        $parser = new Parser();
+        $body = $parser->parse($body, $data);
+        $altBody = $parser->parse($altBody, $data);
+        // End Parse tags.
 
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
