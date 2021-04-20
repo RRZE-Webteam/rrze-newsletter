@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
 "POT-Creation-Date: 2021-04-13T10:45:51+00:00\n"
-"PO-Revision-Date: 2021-04-18 21:17+0200\n"
+"PO-Revision-Date: 2021-04-20 21:28+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -604,14 +604,15 @@ msgstr "Fehler"
 msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
-#. translators: Message after successful test email.
-#: includes/Mail/Send.php:103
-msgid "Email test sent successfully to %s."
-msgstr "E-Mail-Test erfolgreich an %s gesendet."
+#. translators: Message after the email was sent successfully.
+#: includes/Mail/Send.php:80 includes/RestApi.php:274
+msgid "Email sent successfully to %s."
+msgstr "E-Mail erfolgreich an %s gesendet."
 
-#: includes/Mail/Send.php:111
-msgid "There was an error in the email test."
-msgstr "Beim E-Mail-Test ist ein Fehler aufgetreten."
+#. translators: Error message when sending email.
+#: includes/Mail/Send.php:88
+msgid "There was an error sending the email to %s."
+msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 
 #: includes/Main.php:57
 msgid "Settings"
@@ -630,13 +631,17 @@ msgstr "MJML-API-Anmeldeinformationen nicht verfügbar."
 msgid "Please set up the MJML API Endpoint."
 msgstr "Bitte richten Sie den MJML-API-Endpoint ein."
 
-#: includes/MJML/Render.php:697 includes/MJML/Render.php:703
+#: includes/MJML/Render.php:704 includes/MJML/Render.php:710
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
 #: includes/RestApi.php:162 includes/RestApi.php:176
 msgid "You cannot use this resource."
 msgstr "Sie können diese Ressource nicht verwenden."
+
+#: includes/RestApi.php:280
+msgid "There was an error sending the email."
+msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 
 #: includes/Roles.php:78
 msgid "Newsletter Agent"
