@@ -195,13 +195,20 @@ final class Render
         $hrefParams = $matches[0];
         $urls = $matches[1];
         foreach ($urls as $index => $url) {
-            $urlWithParams = add_query_arg(
-                [
-                    'utm_medium' => 'email',
-                ],
-                $url
-            );
-            $html = str_replace($hrefParams[$index], 'href="' . $urlWithParams . '"', $html);
+            $skipUrlWithParams = false;
+            if (strpos($url, '{{=UNSUB}}') !== false) {
+                $url = '{{=UNSUB}}';
+                $skipUrlWithParams = true;
+            }
+            if (!$skipUrlWithParams) {
+                $url = add_query_arg(
+                    [
+                        'utm_medium' => 'email',
+                    ],
+                    $url
+                );
+            }
+            $html = str_replace($hrefParams[$index], 'href="' . $url . '"', $html);
         }
         return $html;
     }
