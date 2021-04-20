@@ -15,7 +15,7 @@ class Tags
         'NAME'          => '',
         // The subscriber's email address.
         'EMAIL'         => '',
-        // The URL path + query to unsubscribe from the newsletters.
+        // The URL to unsubscribe from the newsletters.
         'UNSUB'         => '',
         // The date the newsletter was sent.
         'DATE'          => '',
@@ -41,11 +41,9 @@ class Tags
 
         $subscPageSlug = $options->mailing_list_subsc_page_slug;
         $unsubUrl = site_url($subscPageSlug . '/?update=' . $encryptedEmail);
-        $scheme = (string) parse_url($unsubUrl, PHP_URL_SCHEME);
-        $unsubPath = ltrim($unsubUrl, $scheme . '://');
 
         $tags['NAME'] = $name;
-        $tags['UNSUB'] = $unsubPath;
+        $tags['UNSUB'] = $unsubUrl;
         $tags['DATE'] = get_the_time(get_option('date_format'), $post);
         $tags['CURRENT_YEAR'] = date('Y');
 
