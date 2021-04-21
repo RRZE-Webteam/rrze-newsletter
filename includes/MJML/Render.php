@@ -11,21 +11,21 @@ final class Render
     /**
      * The color palette to be used.
      *
-     * @var Object
+     * @var object
      */
     public static $colorPalette = null;
 
     /**
      * The header font.
      *
-     * @var String
+     * @var string
      */
     protected static $fontHeader = null;
 
     /**
      * The body font.
      *
-     * @var String
+     * @var string
      */
     protected static $fontBody = null;
 
