@@ -17,6 +17,8 @@ class Tags
         'EMAIL'         => '',
         // The URL to unsubscribe from the newsletters.
         'UNSUB'         => '',
+        // The permalink of the newsletter.
+        'PERMALINK'     => '',
         // The date the newsletter was sent.
         'DATE'          => '',
         // Displays the current year.
@@ -44,6 +46,7 @@ class Tags
 
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
+        $tags['PERMALINK'] = get_permalink($post);
         $tags['DATE'] = get_the_time(get_option('date_format'), $post);
         $tags['CURRENT_YEAR'] = date('Y');
 
