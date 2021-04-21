@@ -199,6 +199,9 @@ final class Render
             if (strpos($url, '{{=UNSUB}}') !== false) {
                 $url = '{{=UNSUB}}';
                 $skipUrlWithParams = true;
+            } elseif (strpos($url, '{{=PERMALINK}}') !== false) {
+                $url = '{{=PERMALINK}}';
+                $skipUrlWithParams = true;
             }
             if (!$skipUrlWithParams) {
                 $url = add_query_arg(
