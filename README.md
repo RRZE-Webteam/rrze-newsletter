@@ -37,6 +37,8 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
+Empfohlene Node-Version: `node@15`
+
 Installation der Node-Module
 
 ```shell
