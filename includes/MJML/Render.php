@@ -484,7 +484,9 @@ final class Render
                 }
 
                 if (isset($atts['width'])) {
-                    $columnAtts['width'] = $atts['width'];
+                    preg_match_all('/^(\d+)(\w+|%)$/', $atts['width'], $matches);
+                    $defaultUnit = empty($matches[2][0]) ? '%' : '';
+                    $columnAtts['width'] = $atts['width'] . $defaultUnit;
                     $columnAtts['css-class'] = 'mj-column-has-width';
                 }
 
