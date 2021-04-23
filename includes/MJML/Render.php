@@ -356,7 +356,7 @@ final class Render
                     $anchor = $xpath->query('//a')[0];
                     $atts = $buttonBlock['attrs'];
                     $text = $anchor->textContent;
-                    $borderRadius = isset($atts['borderRadius']) ? $atts['borderRadius'] : 28;
+                    $borderRadius = isset($atts['borderRadius']) ? $atts['borderRadius'] : 5;
                     $isOutlined = isset($atts['className']) && 'is-style-outline' == $atts['className'];
 
                     $defaultButtonAtts = [
@@ -368,7 +368,7 @@ final class Render
                         'font-size' => '18px',
                         'font-family' => $fontFamily,
                         // Default color - will be replaced by getColors if there are colors set.
-                        'color' => $isOutlined ? '#32373c' : '#fff',
+                        'color' => $isOutlined ? '#32373c' : '#fff !important',
                     ];
                     if ($isOutlined) {
                         $defaultButtonAtts['background-color'] = 'transparent';
@@ -484,7 +484,7 @@ final class Render
                 }
 
                 if (isset($atts['width'])) {
-                    $columnAtts['width']     = $atts['width'] . '%';
+                    $columnAtts['width'] = $atts['width'];
                     $columnAtts['css-class'] = 'mj-column-has-width';
                 }
 
@@ -498,17 +498,17 @@ final class Render
                 // Columns block.
             case 'core/columns':
                 // Some columns might have no width set.
-                $widths_sum            = 0;
+                $widthsSum = 0;
                 $noWidthColsIndexes = [];
                 foreach ($innerBlocks as $i => $block) {
                     if (isset($block['attrs']['width'])) {
-                        $widths_sum += floatval($block['attrs']['width']);
+                        $widthsSum += floatval($block['attrs']['width']);
                     } else {
                         array_push($noWidthColsIndexes, $i);
                     }
                 };
                 foreach ($noWidthColsIndexes as $noWidthColsIndex) {
-                    $innerBlocks[$noWidthColsIndex]['attrs']['width'] = (100 - $widths_sum) / count($noWidthColsIndexes);
+                    $innerBlocks[$noWidthColsIndex]['attrs']['width'] = (100 - $widthsSum) / count($noWidthColsIndexes);
                 };
 
                 if (isset($atts['color'])) {
