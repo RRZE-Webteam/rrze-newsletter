@@ -23,6 +23,8 @@ class Tags
         'DATE'          => '',
         // Displays the current year.
         'CURRENT_YEAR'  => '',
+        // Finds out whether a newsletter is public.
+        'IS_PUBLIC'  => ''
     ];
 
     public static function sanitizeTags(\WP_POST $post, array $tags = []): array
@@ -44,11 +46,14 @@ class Tags
         $subscPageSlug = $options->mailing_list_subsc_page_slug;
         $unsubUrl = site_url($subscPageSlug . '/?update=' . $encryptedEmail);
 
+        $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
+
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
-        $tags['PERMALINK'] = get_permalink($post);
-        $tags['DATE'] = get_the_time(get_option('date_format'), $post);
+        $tags['PERMALINK'] = (string) get_permalink($post);
+        $tags['DATE'] = (string) get_the_time(get_option('date_format'), $post);
         $tags['CURRENT_YEAR'] = date('Y');
+        $tags['IS_PUBLIC'] = (string) $isPublic;
 
         return $tags;
     }
