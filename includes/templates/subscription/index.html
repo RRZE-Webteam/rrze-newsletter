@@ -9,7 +9,7 @@
             <p class="u-text-center">
                 {{=description}}
             </p>
-            <form method="post">
+            <form action="{{=action}}" method="post">
                 {{@mailing_lists}}
                 <div class="newsl-subsc-list u-mb-24  u-pb-24  u-bb  u-bc-spacer">
                     <div>
@@ -29,9 +29,16 @@
                     </div>
                     <input type="hidden" name="email" value="{{=email}}" id="newsl-email">
                     {{/update}}
+                    {{error}}
+                    <div class="u-px-48">
+                        <p class="u-text-center u-text-error">
+                            {{=error}}
+                        </p>
+                    </div>
+                    {{/error}}                    
                     {{add}}
                     <div class="u-px-48">
-                        <input type="email" name="email" id="email" class="u-mb-24" value=""
+                        <input type="email" name="email" id="email" class="u-mb-24" value="{{=email}}"
                             placeholder="{{=email_placeholder}}" required="required">
                     </div>
                     {{/add}}
