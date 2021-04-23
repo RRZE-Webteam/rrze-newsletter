@@ -41,8 +41,7 @@
         "@wordpress/plugins": "^2.25.0",
         "jquery": "^3.6.0",
         "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "react-sortable-hoc": "^2.0.0"
+        "react-dom": "^17.0.2"
     },
     "devDependencies": {
         "@babel/core": "^7.13.10",
