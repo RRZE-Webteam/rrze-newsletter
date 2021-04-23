@@ -7,7 +7,6 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\Mail\Send;
 use RRZE\Newsletter\MJML\Render;
-use stdClass;
 
 class Subscription
 {
@@ -80,19 +79,37 @@ class Subscription
         } elseif (strpos($urlQuery, 'updated') !== false && $email = $this->getUpdated()) {
             $this->updatedNotice($email);
         } elseif ($urlQuery == '') {
-            if ($submitted) {
-                $email = $_POST['email'] ?? null;
-                $mailingLists = $_POST['mailing_lists'] ?? [];
+            $error = '';
+            $postEmail = $_POST['email'] ?? '';
+            $email = Utils::sanitizeEmail($postEmail);
+            $mailingLists = $_POST['mailing_lists'] ?? [];
+            if ($submitted && $email) {
                 $this->sendConfirmation($email, $mailingLists);
 
                 $transient = Utils::encrypt(bin2hex(random_bytes(8)));
                 set_transient($transient, $email, 30);
                 wp_redirect(site_url($this->pageSlug . '/?added=' . $transient));
                 exit();
+            } elseif ($submitted && !$postEmail) {
+                $error = __('Please fill in this field.', 'rrze-newsletter');
+            } elseif ($submitted && !$email) {
+                $error = __('The email address is not valid.', 'rrze-newsletter');
+            }
+            if ($error) {
+                $errorData = [
+                    'email' => sanitize_text_field($postEmail),
+                    'mailing_lists' => $mailingLists,
+                    'error' => $error
+                ];
+                $transient = Utils::encrypt(bin2hex(random_bytes(8)));
+                set_transient($transient, $errorData, 30);
+                wp_redirect(site_url($this->pageSlug . '/?error=' . $transient));
+                exit();
             }
             $this->addSubscription();
+        } elseif (strpos($urlQuery, 'error') !== false && $error = $this->getError()) {
+            $this->addSubscription($error);
         } elseif (strpos($urlQuery, 'added') !== false && $email = $this->getAdded()) {
-
             $this->addedNotice($email);
         } elseif (strpos($urlQuery, 'confirmation') !== false && $data = $this->getConfirmation()) {
             $email = $data['email'] ?? null;
@@ -174,9 +191,18 @@ class Subscription
         return update_option($this->optionName, $this->options);
     }
 
-    public function addSubscription(string $email = '')
+    public function addSubscription(array $data = [])
     {
-        $mailingLists = $this->getMailingLists($email);
+        $email = $data['email'] ?? '';
+        $lists = $data['mailing_lists'] ?? '';
+        $error = $data['error'] ?? '';
+
+        $mailingLists = $this->publicMailingLists();
+
+        foreach ($mailingLists as $key => $list) {
+            $checked = isset($lists[$list['id']]) ? 'checked="checked"' : '';
+            $mailingLists[$key]['checked'] = $checked;
+        }
 
         $data = [
             'title' => __('Add newsletter subscription', 'rrze-newsletter'),
@@ -185,6 +211,9 @@ class Subscription
             'mailing_lists' => $mailingLists,
             'email_placeholder' => __('Enter your email address.', 'rrze-newsletter'),
             'nonce_field' => wp_nonce_field('rrze_newsletter_subscription', 'rrze_newsletter_subscription_field'),
+            'email' => $email,
+            'error' => $error,
+            'action' => site_url($this->pageSlug),
             'add' => 'true',
         ];
 
@@ -212,6 +241,7 @@ class Subscription
             'mailing_lists' => $mailingLists,
             'canceled' => $canceled,
             'nonce_field' => wp_nonce_field('rrze_newsletter_subscription', 'rrze_newsletter_subscription_field'),
+            'action' => '',
             'update' => 'true',
         ];
 
@@ -269,7 +299,7 @@ class Subscription
         $this->content = str_replace(PHP_EOL, '', Templates::getContent('subscription/notice.html', $data));
     }
 
-    public function getMailingLists($email)
+    public function getMailingLists(string $email)
     {
         $mailingListTerms = get_terms([
             'taxonomy' => Newsletter::MAILING_LIST,
@@ -340,7 +370,8 @@ class Subscription
                     [
                         'id' => $term->term_id,
                         'title' => $term->name,
-                        'description' => $term->description
+                        'description' => $term->description,
+                        'checked' => false
                     ]
                 ]);
             }
@@ -362,6 +393,17 @@ class Subscription
         return Utils::sanitizeEmail($email);
     }
 
+    public function getError()
+    {
+        $transient = $_GET['error'] ?? '';
+        $error = get_transient($transient);
+        delete_transient($transient);
+        if (isset($error['email'], $error['mailing_lists'], $error['error'])) {
+            return $error;
+        }
+        return '';
+    }
+
     public function getAdded()
     {
         $transient = $_GET['added'] ?? '';
@@ -376,8 +418,7 @@ class Subscription
         $data = get_transient($confirmation);
         delete_transient($confirmation);
         $email = $data['email'] ?? '';
-        $mailingLists = $data['mailing_lists'] ?? [];
-        if (Utils::sanitizeEmail($email) && $mailingLists) {
+        if (Utils::sanitizeEmail($email)) {
             return $data;
         }
         return false;
@@ -502,7 +543,7 @@ class Subscription
 
     protected function postObject(): object
     {
-        $post                        = new stdClass;
+        $post                        = new \stdClass;
         $post->ID                    = -1;
         $post->post_author           = 1;
         $post->post_date             = current_time('mysql');
