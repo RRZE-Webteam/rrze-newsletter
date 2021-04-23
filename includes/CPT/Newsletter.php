@@ -541,7 +541,7 @@ class Newsletter
 
         $post_status = get_post_status_object($post->post_status);
         $isSent = 'publish' === $post_status->name;
-        $isPublic = get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
+        $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
 
         if ($isSent) {
             $timestamp = current_time('U');
