@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-04-28T09:19:24+00:00\n"
-"PO-Revision-Date: 2021-04-28 11:20+0200\n"
+"POT-Creation-Date: 2021-04-28T13:31:11+00:00\n"
+"PO-Revision-Date: 2021-04-28 15:31+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -627,7 +627,8 @@ msgstr "MJML-API-Endpoint nicht verfügbar."
 msgid "Please set up the MJML API Endpoint."
 msgstr "Bitte richten Sie den MJML-API-Endpoint ein."
 
-#: includes/MJML/Render.php:709 includes/MJML/Render.php:715
+#: includes/MJML/Render.php:709 includes/MJML/Render.php:717
+#: includes/MJML/Render.php:729
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
