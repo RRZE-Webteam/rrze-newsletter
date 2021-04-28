@@ -31,22 +31,14 @@ class Api
     /**
      * Return MJML API credentials.
      *
-     * @return string|\WP_Error API key and API secret as a key:secret string 
-     *                          or \WP_Error otherwise.
+     * @return string API key and API secret as a key:secret string
      */
     public static function credentials()
     {
         $options = (object) Settings::getOptions();
         $key = $options->mjml_api_key;
         $secret = $options->mjml_api_secret;
-        if ($key && $secret) {
-            $credentials = "$key:$secret";
-        } else {
-            $credentials = new \WP_Error(
-                'rrze_newsletter_mjml_api_credentials',
-                __('MJML Api credentials not available.', 'rrze-newsletter')
-            );
-        }
+        $credentials = "$key:$secret";
         return $credentials;
     }
 
