@@ -711,9 +711,25 @@ final class Render
         }
         $respond = Api::request($markup);
 
-        if (401 === intval($respond['response']['code'])) {
-            throw new \Exception(__('MJML rendering error.', 'rrze-newsletter'));
+        if (intval($respond['response']['code']) != 200) {
+            return new \WP_Error(
+                'rrze_newsletter_mjml_render_error',
+                __('MJML rendering error.', 'rrze-newsletter')
+            );
         }
-        return is_wp_error($respond) ? $respond : json_decode($respond['body'])->html;
+
+        if (is_wp_error($respond)) {
+            return $respond;
+        }
+
+        $body = json_decode($respond['body'], true);
+        if (empty($body['html'])) {
+            return new \WP_Error(
+                'rrze_newsletter_mjml_render_error',
+                __('MJML rendering error.', 'rrze-newsletter')
+            );
+        }
+
+        return $body['html'];
     }
 }
