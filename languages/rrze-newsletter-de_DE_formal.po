@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-04-23T14:59:21+00:00\n"
-"PO-Revision-Date: 2021-04-23 17:01+0200\n"
+"POT-Creation-Date: 2021-04-28T09:19:24+00:00\n"
+"PO-Revision-Date: 2021-04-28 11:20+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -622,12 +622,8 @@ msgstr "Einstellungen"
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Api.php:47
-msgid "MJML Api credentials not available."
-msgstr "MJML-API-Anmeldeinformationen nicht verfügbar."
-
 #. translators: Notify users to set the API Endpoint on the settings page.
-#: includes/MJML/Api.php:107
+#: includes/MJML/Api.php:99
 msgid "Please set up the MJML API Endpoint."
 msgstr "Bitte richten Sie den MJML-API-Endpoint ein."
 
@@ -1077,3 +1073,6 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:92
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgid "MJML Api credentials not available."
+#~ msgstr "MJML-API-Anmeldeinformationen nicht verfügbar."
