@@ -75,7 +75,8 @@ function getFields(): array
                     'none' => __('None', 'rrze-newsletter'),
                     'tls'  => __('TLS', 'rrze-newsletter'),
                     'ssl'  => __('SSL', 'rrze-newsletter')
-                ]
+                ],
+                'default' => 'none'
             ],
             [
                 'name'              => 'host',
