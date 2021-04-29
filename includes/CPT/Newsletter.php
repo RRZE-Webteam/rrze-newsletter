@@ -491,7 +491,11 @@ class Newsletter
     public static function defaultTitle($post_title, $post)
     {
         if (self::POST_TYPE === get_post_type($post)) {
-            $post_title = sprintf(__('Newsletter of %s', 'rrze-notices'), date_i18n(get_option('date_format'), false, true));
+            $post_title = sprintf(
+                /* translators: Default title of the newsletter including the date. */
+                __('Newsletter of %s', 'rrze-newsletter'),
+                date_i18n(get_option('date_format'), false, true)
+            );
         }
         return $post_title;
     }
