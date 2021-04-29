@@ -50,7 +50,7 @@ class Utils
         return self::encrypt($password);
     }
 
-    public static function getPassoword(string $password): string
+    public static function getPassword(string $password): string
     {
         return self::decrypt($password);
     }
@@ -101,6 +101,10 @@ class Utils
 
     public static function encrypt(string $string, string $action = 'encrypt')
     {
+        if ($string == '') {
+            return $string;
+        }
+
         $secretKey = AUTH_KEY;
         $secretSalt = AUTH_SALT;
 
@@ -121,5 +125,35 @@ class Utils
     public static function decrypt(string $string)
     {
         return self::encrypt($string, 'decrypt');
+    }
+
+    public static function isPluginAvailable($plugin)
+    {
+        if (is_network_admin()) {
+            return file_exists(WP_PLUGIN_DIR . '/' . $plugin);
+        } elseif (!function_exists('is_plugin_active')) {
+            include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        }
+        return is_plugin_active($plugin);
+    }
+
+    public static function getCustomMjmlEndpoint()
+    {
+        if (
+            self::isPluginAvailable('rrze-settings/rrze-settings.php')
+            && class_exists('\RRZE\Settings\Options')
+        ) {
+            $optionName = method_exists('\RRZE\Settings\Options', 'getOptionName')
+                ? \RRZE\Settings\Options::getOptionName()
+                : '';
+            $options = (array) get_site_option($optionName);
+            if (isset($options['plugins'])) {
+                $plugins = (array) $options['plugins'];
+                return !empty($plugins['rrze_newsletter_mjml_endpoint'])
+                    ? $plugins['rrze_newsletter_mjml_endpoint']
+                    : '';
+            }
+        }
+        return '';
     }
 }
