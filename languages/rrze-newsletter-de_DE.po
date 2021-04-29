@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-04-28T13:31:11+00:00\n"
-"PO-Revision-Date: 2021-04-28 15:31+0200\n"
+"POT-Creation-Date: 2021-04-29T12:24:15+00:00\n"
+"PO-Revision-Date: 2021-04-29 14:25+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #. Plugin Name of the plugin
 msgid "RRZE Newsletter"
@@ -81,78 +81,78 @@ msgstr "TLS"
 msgid "SSL"
 msgstr "SSL"
 
-#: config/settings.php:82
+#: config/settings.php:83
 msgid "Host"
 msgstr "Servername"
 
-#: config/settings.php:83
+#: config/settings.php:84
 msgid "Host ip address."
 msgstr "Server IP Adresse."
 
-#: config/settings.php:91
+#: config/settings.php:92
 msgid "Port"
 msgstr "Port"
 
-#: config/settings.php:92
+#: config/settings.php:93
 msgid "Host port."
 msgstr "Server Port."
 
-#: config/settings.php:100
+#: config/settings.php:101
 msgid "Sender Addresse"
 msgstr "Sender-Adresse"
 
-#: config/settings.php:109
+#: config/settings.php:110
 msgid "Authentication"
 msgstr "Authentifizierung"
 
-#: config/settings.php:110
+#: config/settings.php:111
 msgid "Authentication is required to access the SMTP server"
 msgstr ""
 "Für den Zugriff auf den SMTP-Server ist eine Authentifizierung erforderlich"
 
-#: config/settings.php:115
+#: config/settings.php:116
 msgid "Username"
 msgstr "Benutzername"
 
-#: config/settings.php:124
+#: config/settings.php:125
 msgid "Password"
 msgstr "Passwort"
 
-#: config/settings.php:134
+#: config/settings.php:135
 msgid "Send Limit"
 msgstr "Sende-Limit"
 
-#: config/settings.php:135
+#: config/settings.php:136
 msgid "Maximum number of emails that can be sent per minute."
 msgstr "Maximale Anzahl von E-Mails, die pro Minute gesendet werden können."
 
-#: config/settings.php:150
+#: config/settings.php:151
 msgid "Max. Retries"
 msgstr "Max. Wiederholungen"
 
-#: config/settings.php:151
+#: config/settings.php:152
 msgid "Maximum number of retries until an email is sent successfully."
 msgstr ""
 "Maximale Anzahl von Wiederholungsversuchen, bis eine E-Mail erfolgreich "
 "gesendet wurde."
 
-#: config/settings.php:168
+#: config/settings.php:169
 msgid "Subscription Page Title"
 msgstr "Titel der Abonnementseite"
 
-#: config/settings.php:169
+#: config/settings.php:170
 msgid "Corresponds to the main title of the subscription page."
 msgstr "Entspricht dem Haupttitel der Abonnementseite."
 
-#: config/settings.php:172 includes/Subscription.php:447
+#: config/settings.php:173 includes/Subscription.php:447
 msgid "Newsletter Subscription"
 msgstr "Newsletter-Abonnement"
 
-#: config/settings.php:177
+#: config/settings.php:178
 msgid "Subscription Page Slug"
 msgstr "Abonnementseite Titelform"
 
-#: config/settings.php:178
+#: config/settings.php:179
 msgid ""
 "Please note that the modification of the Slug disables the subscription "
 "links previously sent in the newsletters. Use with caution."
@@ -161,11 +161,11 @@ msgstr ""
 "Newslettern gesendeten Abonnement-Links deaktiviert werden. Mit Vorsicht "
 "verwenden."
 
-#: config/settings.php:186 includes/CPT/Newsletter.php:370
+#: config/settings.php:187 includes/CPT/Newsletter.php:370
 msgid "Unsubscribed E-mail Addresses"
 msgstr "Abgemeldete E-Mail-Adressen"
 
-#: config/settings.php:187
+#: config/settings.php:188
 msgid ""
 "List of email addresses that do not subscribe to any mailing list. Enter one "
 "email address per line."
@@ -173,27 +173,27 @@ msgstr ""
 "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine "
 "E-Mail-Adresse pro Zeile ein."
 
-#: config/settings.php:197
+#: config/settings.php:198
 msgid "API Endpoint"
 msgstr "API-Endpoint"
 
-#: config/settings.php:198
+#: config/settings.php:199
 msgid "URL of the MJML API Service."
 msgstr "URL des MJML-API-Dienstes."
 
-#: config/settings.php:206
+#: config/settings.php:207
 msgid "Application ID"
 msgstr "Anwendungs-ID"
 
-#: config/settings.php:207
+#: config/settings.php:208
 msgid "The Application ID acts as a username."
 msgstr "Die Anwendungs-ID fungiert als Benutzername."
 
-#: config/settings.php:215
+#: config/settings.php:216
 msgid "Secret Key"
 msgstr "Secret-Key"
 
-#: config/settings.php:216
+#: config/settings.php:217
 msgid "The API Key act as a password."
 msgstr "Der API-Key fungiert als Kennwort."
 
@@ -435,21 +435,26 @@ msgstr "In"
 msgid "Out"
 msgstr "Out"
 
+#. translators: Default title of the newsletter including the date.
+#: includes/CPT/Newsletter.php:496
+msgid "Newsletter of %s"
+msgstr "Newsletter vom %s"
+
 #. translators: Relative time stamp of sent/published date
-#: includes/CPT/Newsletter.php:555
+#: includes/CPT/Newsletter.php:559
 msgid "Sent %1$s ago"
 msgstr "Vor %1$s gesendet"
 
 #. translators:  Absolute time stamp of sent/published date
-#: includes/CPT/Newsletter.php:561
+#: includes/CPT/Newsletter.php:565
 msgid "Sent %1$s"
 msgstr "%1$s gesendet"
 
-#: includes/CPT/Newsletter.php:626
+#: includes/CPT/Newsletter.php:630
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: includes/CPT/Newsletter.php:650
+#: includes/CPT/Newsletter.php:654
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -605,12 +610,12 @@ msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
 #. translators: Message after the email was sent successfully.
-#: includes/Mail/Send.php:80 includes/RestApi.php:274
+#: includes/Mail/Send.php:79 includes/RestApi.php:274
 msgid "Email sent successfully to %s."
 msgstr "E-Mail erfolgreich an %s gesendet."
 
 #. translators: Error message when sending email.
-#: includes/Mail/Send.php:88
+#: includes/Mail/Send.php:87
 msgid "There was an error sending the email to %s."
 msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 
