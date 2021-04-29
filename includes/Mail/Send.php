@@ -5,7 +5,6 @@ namespace RRZE\Newsletter\Mail;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Settings;
-use RRZE\Newsletter\Utils;
 
 use function RRZE\Newsletter\plugin;
 
