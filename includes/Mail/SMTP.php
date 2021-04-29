@@ -122,7 +122,7 @@ class SMTP
             : $this->options->mail_server_encryption;
         $phpmailer->SMTPAuth = ($this->options->mail_server_auth == 'on');
         $phpmailer->Username = $this->options->mail_server_username;
-        $phpmailer->Password = Utils::getPassoword($this->options->mail_server_password);
+        $phpmailer->Password = Utils::getPassword($this->options->mail_server_password);
 
         $phpmailer->Sender = $this->options->mail_server_sender ?: get_option('admin_email');
 
