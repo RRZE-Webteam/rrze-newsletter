@@ -148,6 +148,12 @@ class Settings
         $options = wp_parse_args($options, $defaults);
         $options = array_intersect_key($options, $defaults);
 
+        if ($customMjmlEndpoint = Utils::getCustomMjmlEndpoint()) {
+            $options['mjml_api_endpoint'] = $customMjmlEndpoint;
+            $options['mjml_api_key'] = '';
+            $options['mjml_api_secret'] = '';
+        }
+
         return $options;
     }
 
@@ -178,7 +184,7 @@ class Settings
     public function sanitizeOptions($options)
     {
         if (!$options) {
-            return $options;
+            return self::$options;
         }
 
         foreach ($options as $key => $value) {
@@ -304,6 +310,9 @@ class Settings
         // Add setting fields
         foreach (getFields() as $section => $field) {
             foreach ($field as $option) {
+                if (Utils::getCustomMjmlEndpoint() && $section == 'mjml_api') {
+                    $option['disabled'] = 'disabled';
+                }
                 $name = $option['name'];
                 $type = isset($option['type']) ? $option['type'] : 'text';
                 $label = isset($option['label']) ? $option['label'] : '';
@@ -325,6 +334,7 @@ class Settings
                     'min' => isset($option['min']) ? $option['min'] : '',
                     'max' => isset($option['max']) ? $option['max'] : '',
                     'step' => isset($option['step']) ? $option['step'] : '',
+                    'disabled' => isset($option['disabled']) ? 'disabled' : ''
                 ];
 
                 add_settings_field("{$section}[{$name}]", $label, $callback, $this->settingsPrefix . $section, $this->settingsPrefix . $section, $args);
@@ -392,16 +402,18 @@ class Settings
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
         $type = isset($args['type']) ? $args['type'] : 'text';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
+        $disabled = $args['disabled'] != 'disabled' ? '' : ' disabled';
 
         $html = sprintf(
-            '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s>',
+            '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s%8$s>',
             $type,
             $size,
             self::$optionName,
             $args['section'],
             $args['id'],
             $value,
-            $placeholder
+            $placeholder,
+            $disabled
         );
         $html .= $this->getFieldDescription($args);
 
@@ -645,7 +657,7 @@ class Settings
     public function callbackPassword(array $args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], ''));
-        $value = $value ? Utils::getPassoword($value) : '';
+        $value = $value ? Utils::getPassword($value) : '';
         $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
 
         $html = sprintf(
