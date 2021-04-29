@@ -224,9 +224,9 @@ class RestApi
             return $body;
         }
 
-        $from = get_post_meta($postId, 'rrze_newsletter_queue_from_email', true);
-        $fromName = get_post_meta($postId, 'rrze_newsletter_queue_from_name', true);
-        $replyTo = get_post_meta($postId, 'rrze_newsletter_queue_replyto', true);
+        $from = get_post_meta($postId, 'rrze_newsletter_from_email', true);
+        $fromName = get_post_meta($postId, 'rrze_newsletter_from_name', true);
+        $replyTo = get_post_meta($postId, 'rrze_newsletter_replyto', true);
 
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
