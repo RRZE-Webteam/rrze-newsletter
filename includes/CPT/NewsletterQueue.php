@@ -167,7 +167,6 @@ class NewsletterQueue
         $data['subject'] = $post->post_title;
 
         $data['newsletter_id'] = absint(get_post_meta($post->ID, 'rrze_newsletter_queue_newsletter_id', true));
-        $data['newsletter_url'] = get_post_meta($post->ID, 'rrze_newsletter_queue_newsletter_url', true);
         $data['from'] = get_post_meta($post->ID, 'rrze_newsletter_queue_from', true);
         $data['to'] = get_post_meta($post->ID, 'rrze_newsletter_queue_to', true);
         $data['sent_date_gmt'] = get_post_meta($post->ID, 'rrze_newsletter_queue_sent_date_gmt', true);
