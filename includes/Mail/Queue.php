@@ -170,7 +170,6 @@ class Queue
 
             if ($qId != 0 && !is_wp_error($qId)) {
                 add_post_meta($qId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
-                add_post_meta($qId, 'rrze_newsletter_queue_newsletter_url', get_permalink($postId));
                 add_post_meta($qId, 'rrze_newsletter_queue_from_email', $data['from_email'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_from', $data['from'], true);
@@ -225,7 +224,7 @@ class Queue
                 'LNAME' => $toLname,
                 'EMAIL' => $toEmail
             ];
-            $data = Tags::sanitizeTags($post, $data);
+            $data = Tags::sanitizeTags($newsletterId, $data);
             $parser = new Parser();
             $body = $parser->parse($body, $data);
             $altBody = $parser->parse($altBody, $data);
