@@ -62,6 +62,7 @@ class Main
 
     public function setQueue($postId)
     {
+        wp_clear_scheduled_hook('rrze_newsletter_queue_task', [$postId]);
         $queue = new Queue;
         $queue->set($postId);
     }
