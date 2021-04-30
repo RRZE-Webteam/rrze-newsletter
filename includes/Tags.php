@@ -27,14 +27,14 @@ class Tags
         'IS_PUBLIC'  => ''
     ];
 
-    public static function sanitizeTags(\WP_POST $post, array $tags = []): array
+    public static function sanitizeTags($postId, array $tags = []): array
     {
         $tags = wp_parse_args($tags, self::SUPPORTED_TAGS);
         $tags = array_intersect_key($tags, self::SUPPORTED_TAGS);
-        return self::setDefaultValues($post, $tags);
+        return self::setDefaultValues($postId, $tags);
     }
 
-    protected static function setDefaultValues(\WP_POST $post, array $tags): array
+    protected static function setDefaultValues(int $postId, array $tags): array
     {
         $options = (object) Settings::getOptions();
 
@@ -46,12 +46,12 @@ class Tags
         $subscPageSlug = $options->mailing_list_subsc_page_slug;
         $unsubUrl = site_url($subscPageSlug . '/?update=' . $encryptedEmail);
 
-        $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
+        $isPublic = (bool) get_post_meta($postId, 'rrze_newsletter_is_public', true);
 
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
-        $tags['PERMALINK'] = (string) get_permalink($post);
-        $tags['DATE'] = (string) get_the_time(get_option('date_format'), $post);
+        $tags['PERMALINK'] = (string) get_permalink($postId);
+        $tags['DATE'] = (string) get_the_time(get_option('date_format'), $postId);
         $tags['CURRENT_YEAR'] = date('Y');
         $tags['IS_PUBLIC'] = (string) $isPublic;
 
