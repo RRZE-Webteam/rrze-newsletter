@@ -70,7 +70,7 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
  wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,dist
 ```
 
-Hinweis: Die Verwendung von Poedit für die Übersetzung der jeweiligen Sprachen wird empfohlen.
+Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung der jeweiligen Sprachen wird empfohlen.
 
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
