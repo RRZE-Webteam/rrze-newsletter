@@ -245,7 +245,7 @@ class RestApi
             $data = [
                 'EMAIL' => $to
             ];
-            $data = Tags::sanitizeTags($post, $data);
+            $data = Tags::sanitizeTags($postId, $data);
             $parser = new Parser();
             $tBody = $parser->parse($body, $data);
             $tAltBody = $parser->parse($altBody, $data);
