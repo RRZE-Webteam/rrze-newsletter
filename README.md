@@ -4,7 +4,7 @@ WordPress-Plugin für die Erstellung von E-Mail-Newslettern und deren anschließ
 
 ## Beschreibung
 
-Das Plugin erstellt mithilfe des Blockeditors E-Mail-Newsletter, die dann über einen Mailserver gesendet werden. Mit dem Plugin kann man auffällige Newsletter nur mit den in WordPress verfügbaren Bearbeitungswerkzeugen erstellen und Entwürfe speichern, wiederverwendbare Layouts erstellen und auf der Website veröffentlichen. Die Mailinglisten werden mit den Funktionen für Taxonomien in WordPress verwaltet. Eine E-Mail-Warteschlangenfunktion ist in das Plugin integriert.
+Das Plugin verwendet den Blockeditor (Gutenberg), um E-Mail-Newsletter zu erstellen, die dann über einen Mailserver gesendet werden. Mit dem Plugin kann man mit den in WordPress verfügbaren Bearbeitungswerkzeugen auffällige Newsletter erstellen. Außerdem kann man Entwürfe speichern, wiederverwendbare Designs erstellen und auf der Website veröffentlichen. Die Mailinglisten werden mit den Funktionen für Taxonomien in WordPress verwaltet. Eine E-Mail-Warteschlangenfunktion ist in das Plugin integriert.
 
 ## Einstellungen
 
