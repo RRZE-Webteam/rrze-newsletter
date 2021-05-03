@@ -16,23 +16,23 @@ import "./style.scss";
 
 export default compose([
     withApiHandler(),
-    withSelect((select) => {
+    withSelect(select => {
         const { getCurrentPostId } = select("core/editor");
         return { postId: getCurrentPostId() };
     }),
-    withDispatch((dispatch) => {
+    withDispatch(dispatch => {
         const { savePost } = dispatch("core/editor");
         return {
-            savePost,
+            savePost
         };
-    }),
+    })
 ])(
     ({
         apiFetchWithErrorHandling,
         inFlight,
         postId,
         savePost,
-        setInFlightForAsync,
+        setInFlightForAsync
     }) => {
         const [testEmail, setTestEmail] = useState("");
         const sendTestEmail = async () => {
@@ -41,9 +41,9 @@ export default compose([
             const params = {
                 path: `/rrze-newsletter/v1/email/${postId}/test`,
                 data: {
-                    test_email: testEmail,
+                    test_email: testEmail
                 },
-                method: "POST",
+                method: "POST"
             };
             apiFetchWithErrorHandling(params);
         };
