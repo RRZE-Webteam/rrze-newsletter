@@ -6,7 +6,7 @@ jQuery(document).ready(() => {
         ".rrze-newsletter-activation-notice .notice-dismiss",
         () => {
             const data = {
-                action: "rrze_newsletter_activation_notice_dismiss",
+                action: "rrze_newsletter_activation_notice_dismiss"
             };
             const { ajaxurl } =
                 window &&
