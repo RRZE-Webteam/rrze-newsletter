@@ -17,17 +17,17 @@ const NestedColumnsDetectionBase = ({ blocks, updateBlock }) => {
         if (condition && !hasWarning) {
             updateBlock(block.clientId, {
                 ...block,
-                attributes: { ...block.attributes, [warningKeyName]: true },
+                attributes: { ...block.attributes, [warningKeyName]: true }
             });
         } else if (!condition && hasWarning) {
             updateBlock(block.clientId, {
                 ...block,
-                attributes: { ...block.attributes, [warningKeyName]: false },
+                attributes: { ...block.attributes, [warningKeyName]: false }
             });
         }
     };
 
-    const warnIfColumnHasColumns = (block) => {
+    const warnIfColumnHasColumns = block => {
         if (block.name === "core/column") {
             const hasColumns = some(
                 block.innerBlocks,
@@ -38,7 +38,7 @@ const NestedColumnsDetectionBase = ({ blocks, updateBlock }) => {
         block.innerBlocks.forEach(warnIfColumnHasColumns);
     };
 
-    const warnIfIsGroupBlock = (block) => {
+    const warnIfIsGroupBlock = block => {
         handleWarning(
             block,
             block.name === "core/group",
@@ -48,7 +48,7 @@ const NestedColumnsDetectionBase = ({ blocks, updateBlock }) => {
     };
 
     useEffect(() => {
-        blocks.forEach((block) => {
+        blocks.forEach(block => {
             // A column cannot host columns.
             block.innerBlocks.forEach(warnIfColumnHasColumns);
             // Group can only be top-level.
@@ -60,17 +60,17 @@ const NestedColumnsDetectionBase = ({ blocks, updateBlock }) => {
 };
 
 export const NestedColumnsDetection = compose([
-    withSelect((select) => {
+    withSelect(select => {
         const { getBlocks } = select("core/block-editor");
         return {
-            blocks: getBlocks(),
+            blocks: getBlocks()
         };
     }),
-    withDispatch((dispatch) => {
+    withDispatch(dispatch => {
         return {
             updateBlock: (id, block) => {
                 dispatch("core/block-editor").replaceBlock(id, block);
-            },
+            }
         };
-    }),
+    })
 ])(NestedColumnsDetectionBase);
