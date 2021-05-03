@@ -12,7 +12,7 @@ import { Fragment } from "@wordpress/element";
  */
 import "./style.scss";
 
-const PublicSettingsComponent = (props) => {
+const PublicSettingsComponent = props => {
     const { meta, updateIsPublic } = props;
     const { rrze_newsletter_is_public } = meta;
 
@@ -22,32 +22,34 @@ const PublicSettingsComponent = (props) => {
                 className="rrze-newsletter__public-toggle-control"
                 label={__("Make newsletter page public?", "rrze-newsletter")}
                 help={__(
-                    "Make this newsletter viewable as a public page once it’s been sent.", "rrze-newsletter"
+                    "Make this newsletter viewable as a public page once it’s been sent.",
+                    "rrze-newsletter"
                 )}
                 checked={rrze_newsletter_is_public}
-                onChange={(value) => updateIsPublic(value)}
+                onChange={value => updateIsPublic(value)}
             />
         </Fragment>
     );
 };
 
-const mapStateToProps = (select) => {
+const mapStateToProps = select => {
     const { getEditedPostAttribute } = select("core/editor");
 
     return {
-        meta: getEditedPostAttribute("meta"),
+        meta: getEditedPostAttribute("meta")
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     const { editPost } = dispatch("core/editor");
 
     return {
-        updateIsPublic: (value) => editPost({ meta: { rrze_newsletter_is_public: value } }),
+        updateIsPublic: value =>
+            editPost({ meta: { rrze_newsletter_is_public: value } })
     };
 };
 
 export const PublicSettings = compose([
     withSelect(mapStateToProps),
-    withDispatch(mapDispatchToProps),
+    withDispatch(mapDispatchToProps)
 ])(PublicSettingsComponent);
