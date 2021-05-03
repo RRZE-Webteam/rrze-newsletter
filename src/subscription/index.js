@@ -2,26 +2,21 @@
  * Plugin dependencies
  */
 import "./style.scss";
+import $ from "jquery";
 
-const jQuery = window && window.jQuery;
-
-jQuery(document).ready(() => {
-    if (jQuery("#unsubscribe-all").prop("checked")) {
-        jQuery(".newsl-subsc-checkbox").prop("disabled", true);
-        jQuery(".newsl-subsc-list").toggleClass("newsl-subsc-list--disabled");
+$(document).ready(() => {
+    if ($("#unsubscribe-all").prop("checked")) {
+        $(".newsl-subsc-checkbox").prop("disabled", true);
+        $(".newsl-subsc-list").toggleClass("newsl-subsc-list--disabled");
     }
-    jQuery("#unsubscribe-all").change(function () {
-        jQuery(".newsl-subsc-checkbox").prop("disabled", (i, v) => !v);
-        if (
-            jQuery(".newsl-subsc-list").hasClass("newsl-subsc-list--disabled")
-        ) {
-            jQuery(".newsl-subsc-checkbox").prop("checked", true);
-            jQuery(".newsl-subsc-list").removeClass(
-                "newsl-subsc-list--disabled"
-            );
+    $(document).on("change", "#unsubscribe-all", () => {
+        $(".newsl-subsc-checkbox").prop("disabled", (i, v) => !v);
+        if ($(".newsl-subsc-list").hasClass("newsl-subsc-list--disabled")) {
+            $(".newsl-subsc-checkbox").prop("checked", true);
+            $(".newsl-subsc-list").removeClass("newsl-subsc-list--disabled");
         } else {
-            jQuery(".newsl-subsc-checkbox").prop("checked", false);
-            jQuery(".newsl-subsc-list").addClass("newsl-subsc-list--disabled");
+            $(".newsl-subsc-checkbox").prop("checked", false);
+            $(".newsl-subsc-list").addClass("newsl-subsc-list--disabled");
         }
     });
 });
