@@ -21,18 +21,18 @@ export const useLayoutsState = () => {
 
     useEffect(() => {
         apiFetch({
-            path: `/rrze-newsletter/v1/layouts`,
-        }).then((response) => {
+            path: `/rrze-newsletter/v1/layouts`
+        }).then(response => {
             setLayouts(response);
             setIsFetching(false);
         });
     }, []);
 
-    const deleteLayoutPost = (id) => {
+    const deleteLayoutPost = id => {
         setLayouts(layouts.filter(({ ID }) => ID !== id));
         apiFetch({
             path: `/wp/v2/${LAYOUT_CPT_SLUG}/${id}`,
-            method: "DELETE",
+            method: "DELETE"
         });
     };
 
