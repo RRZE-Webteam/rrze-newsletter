@@ -15,7 +15,7 @@ import { get } from "lodash";
 import "./style.scss";
 
 export default compose([
-    withDispatch((dispatch) => {
+    withDispatch(dispatch => {
         const { editPost, savePost } = dispatch("core/editor");
         return { editPost, savePost };
     }),
@@ -28,7 +28,7 @@ export default compose([
             isEditedPostSaveable,
             isSavingPost,
             isEditedPostBeingScheduled,
-            isCurrentPostPublished,
+            isCurrentPostPublished
         } = select("core/editor");
         return {
             isPublishable: forceIsDirty || isEditedPostPublishable(),
@@ -43,9 +43,9 @@ export default compose([
             ),
             visibility: getEditedPostVisibility(),
             meta: getEditedPostAttribute("meta"),
-            isPublished: isCurrentPostPublished(),
+            isPublished: isCurrentPostPublished()
         };
-    }),
+    })
 ])(
     ({
         editPost,
@@ -58,9 +58,12 @@ export default compose([
         hasPublishAction,
         visibility,
         meta,
-        isPublished,
+        isPublished
     }) => {
-        const { newsletterValidationErrors = [], rrze_newsletter_is_public } = meta;
+        const {
+            newsletterValidationErrors = [],
+            rrze_newsletter_is_public
+        } = meta;
 
         const isButtonEnabled =
             (isPublishable || isEditedPostBeingScheduled) &&
