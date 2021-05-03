@@ -1,7 +1,10 @@
-const jQuery = window && window.jQuery;
+/**
+ * Plugin dependencies
+ */
+import $ from "jquery";
 
-jQuery(document).ready(() => {
-    jQuery(document).on(
+$(document).ready(() => {
+    $(document).on(
         "click",
         ".rrze-newsletter-activation-notice .notice-dismiss",
         () => {
@@ -11,7 +14,7 @@ jQuery(document).ready(() => {
             const { ajaxurl } =
                 window &&
                 window.rrze_newsletter_activation_notice_dismiss_params;
-            jQuery.post(ajaxurl, data, () => null);
+            $.post(ajaxurl, data, () => null);
         }
     );
 });
