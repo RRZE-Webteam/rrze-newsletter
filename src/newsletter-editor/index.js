@@ -69,14 +69,14 @@ const NewsletterEdit = ({ layoutId }) => {
 };
 
 const NewsletterEditWithSelect = compose([
-    withSelect((select) => {
+    withSelect(select => {
         const { getEditedPostAttribute } = select("core/editor");
         const meta = getEditedPostAttribute("meta");
         return { layoutId: meta.rrze_newsletter_template_id };
-    }),
+    })
 ])(NewsletterEdit);
 
 registerPlugin("rrze-newsletter-sidebar", {
     render: NewsletterEditWithSelect,
-    icon: null,
+    icon: null
 });
