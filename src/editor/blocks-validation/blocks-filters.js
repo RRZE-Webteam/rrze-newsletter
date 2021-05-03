@@ -21,10 +21,10 @@ const handleSideAlignment = (warnings, props) => {
     return warnings;
 };
 
-const isCenterAligned = (block) =>
+const isCenterAligned = block =>
     block.attributes.verticalAlignment === "center";
 
-const getWarnings = (props) => {
+const getWarnings = props => {
     let warnings = [];
     const { getBlock } = select("core/block-editor");
     const block = getBlock(props.block.clientId);
@@ -91,8 +91,8 @@ const getWarnings = (props) => {
 };
 
 const withUnsupportedFeaturesNotices = createHigherOrderComponent(
-    (BlockListBlock) => {
-        return (props) => {
+    BlockListBlock => {
+        return props => {
             const warnings = getWarnings(props);
             return warnings.length ? (
                 <div className="rrze-newsletter__editor-block">
