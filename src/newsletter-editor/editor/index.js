@@ -20,14 +20,14 @@ import "./style.scss";
 
 const Editor = compose([
     withApiHandler(),
-    withSelect((select) => {
+    withSelect(select => {
         const {
             getCurrentPostId,
             getCurrentPostAttribute,
             getEditedPostAttribute,
             isPublishingPost,
             isSavingPost,
-            isCleanNewPost,
+            isCleanNewPost
         } = select("core/editor");
         const { getActiveGeneralSidebarName } = select("core/edit-post");
         const meta = getEditedPostAttribute("meta");
@@ -44,15 +44,15 @@ const Editor = compose([
             isPublishingOrSavingPost: isSavingPost() || isPublishingPost(),
             status,
             sentDate,
-            isPublic: meta.rrze_newsletter_is_public,
+            isPublic: meta.rrze_newsletter_is_public
         };
     }),
-    withDispatch((dispatch) => {
+    withDispatch(dispatch => {
         const {
             lockPostAutosaving,
             lockPostSaving,
             unlockPostSaving,
-            editPost,
+            editPost
         } = dispatch("core/editor");
         const { createNotice } = dispatch("core/notices");
         return {
@@ -60,10 +60,10 @@ const Editor = compose([
             lockPostSaving,
             unlockPostSaving,
             editPost,
-            createNotice,
+            createNotice
         };
-    }),
-])((props) => {
+    })
+])(props => {
     const [publishEl] = useState(document.createElement("div"));
     // Create alternate publish button
     useEffect(() => {
@@ -81,7 +81,7 @@ const Editor = compose([
         props.apiFetchWithErrorHandling({
             path: `/rrze-newsletter/v1/color-palette`,
             data: props.colorPalette,
-            method: "POST",
+            method: "POST"
         });
     }, [JSON.stringify(props.colorPalette)]);
 
@@ -105,7 +105,7 @@ const Editor = compose([
 
             // Show an editor notice if the newsletter has been sent.
             props.createNotice("success", props.successNote + dateTime, {
-                isDismissible: false,
+                isDismissible: false
             });
         }
     }, [props.status]);
@@ -125,6 +125,6 @@ const Editor = compose([
 
 export default () => {
     registerPlugin("rrze-newsletter-edit", {
-        render: Editor,
+        render: Editor
     });
 };
