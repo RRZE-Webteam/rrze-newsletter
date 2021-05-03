@@ -44,5 +44,5 @@ addFilter(
 
 registerPlugin("rrze-newsletter-plugin", {
     render: NestedColumnsDetection,
-    icon: null,
+    icon: null
 });
