@@ -23,11 +23,11 @@ import "./style.scss";
 import NewsletterPreview from "../../components/newsletter-preview";
 
 export default compose([
-    withSelect((select) => {
+    withSelect(select => {
         const {
             getEditedPostAttribute,
             isEditedPostEmpty,
-            getCurrentPostId,
+            getCurrentPostId
         } = select("core/editor");
         const { getBlocks } = select("core/block-editor");
         const meta = getEditedPostAttribute("meta");
@@ -35,7 +35,7 @@ export default compose([
             rrze_newsletter_template_id: layoutId,
             rrze_newsletter_background_color,
             rrze_newsletter_font_body,
-            rrze_newsletter_font_header,
+            rrze_newsletter_font_header
         } = meta;
         return {
             layoutId,
@@ -46,8 +46,8 @@ export default compose([
             stylingMeta: {
                 rrze_newsletter_background_color,
                 rrze_newsletter_font_body,
-                rrze_newsletter_font_header,
-            },
+                rrze_newsletter_font_header
+            }
         };
     }),
     withDispatch((dispatch, { currentPostId, stylingMeta }) => {
@@ -56,20 +56,20 @@ export default compose([
         const { saveEntityRecord } = dispatch("core");
         return {
             replaceBlocks,
-            saveLayoutIdMeta: (id) => {
+            saveLayoutIdMeta: id => {
                 editPost({ meta: { rrze_newsletter_template_id: id } });
                 saveEntityRecord("postType", NEWSLETTER_CPT_SLUG, {
                     id: currentPostId,
-                    meta: { rrze_newsletter_template_id: id, ...stylingMeta },
+                    meta: { rrze_newsletter_template_id: id, ...stylingMeta }
                 });
             },
-            saveLayout: (payload) =>
+            saveLayout: payload =>
                 saveEntityRecord("postType", LAYOUT_CPT_SLUG, {
                     status: "publish",
-                    ...payload,
-                }),
+                    ...payload
+                })
         };
-    }),
+    })
 ])(
     ({
         saveLayoutIdMeta,
@@ -79,7 +79,7 @@ export default compose([
         postBlocks,
         postTitle,
         isEditedPostEmpty,
-        stylingMeta,
+        stylingMeta
     }) => {
         const [warningModalVisible, setWarningModalVisible] = useState(false);
         const { layouts, isFetchingLayouts } = useLayoutsState();
@@ -107,7 +107,7 @@ export default compose([
         const [isManageModalVisible, setIsManageModalVisible] = useState(null);
         const [newLayoutName, setNewLayoutName] = useState(postTitle);
 
-        const handleLayoutUpdate = (updatedLayout) => {
+        const handleLayoutUpdate = updatedLayout => {
             setIsSavingLayout(false);
             // Set this new layout as the newsletter's layout
             saveLayoutIdMeta(updatedLayout.id);
@@ -118,7 +118,7 @@ export default compose([
                 ...updatedLayout,
                 post_content: updatedLayout.content.raw,
                 post_title: updatedLayout.title.raw,
-                post_type: LAYOUT_CPT_SLUG,
+                post_type: LAYOUT_CPT_SLUG
             });
         };
 
@@ -132,9 +132,9 @@ export default compose([
             const updatePayload = {
                 title: newLayoutName,
                 content: postContent,
-                meta: stylingMeta,
+                meta: stylingMeta
             };
-            saveLayout(updatePayload).then((newLayout) => {
+            saveLayout(updatePayload).then(newLayout => {
                 setIsManageModalVisible(false);
 
                 handleLayoutUpdate(newLayout);
@@ -154,7 +154,7 @@ export default compose([
                 const updatePayload = {
                     id: usedLayout.ID,
                     content: postContent,
-                    meta: stylingMeta,
+                    meta: stylingMeta
                 };
                 saveLayout(updatePayload).then(handleLayoutUpdate);
             }
