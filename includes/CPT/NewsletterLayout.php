@@ -116,12 +116,12 @@ class NewsletterLayout
         $layout_id = 1;
         foreach (scandir($layouts_base_path) as $layout) {
             if (strpos($layout, '.json') !== false) {
-                $decoded_layout  = json_decode(file_get_contents($layouts_base_path . $layout, true));
-                $layouts[]      = array(
+                $decoded_layout = json_decode(file_get_contents($layouts_base_path . $layout, true));
+                $layouts[] = [
                     'ID'           => $layout_id,
                     'post_title'   => $decoded_layout->title,
                     'post_content' => self::layout_token_replacement($decoded_layout->content),
-                );
+                ];
                 $layout_id++;
             }
         }
