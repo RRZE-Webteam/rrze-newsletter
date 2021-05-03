@@ -31,7 +31,7 @@ const Sidebar = ({
     previewText,
     newsletterData,
     apiFetchWithErrorHandling,
-    postId,
+    postId
 }) => {
     const renderSubject = () => (
         <TextControl
@@ -39,7 +39,7 @@ const Sidebar = ({
             className="rrze-newsletter__subject-textcontrol"
             value={title}
             disabled={inFlight}
-            onChange={(value) => editPost({ title: value })}
+            onChange={value => editPost({ title: value })}
         />
     );
 
@@ -49,11 +49,11 @@ const Sidebar = ({
             "rrze-newsletter__error"
     );
 
-    const updateMetaValueInAPI = (data) =>
+    const updateMetaValueInAPI = data =>
         apiFetchWithErrorHandling({
             data,
             method: "POST",
-            path: `/rrze-newsletter/v1/post-meta/${postId}`,
+            path: `/rrze-newsletter/v1/post-meta/${postId}`
         });
 
     const renderFrom = () => (
@@ -64,7 +64,9 @@ const Sidebar = ({
                 className="rrze-newsletter__name-textcontrol"
                 value={senderName}
                 disabled={inFlight}
-                onChange={(value) => editPost({ meta: { rrze_newsletter_from_name: value } })}
+                onChange={value =>
+                    editPost({ meta: { rrze_newsletter_from_name: value } })
+                }
             />
             <TextControl
                 label={__("Email", "rrze-newsletter")}
@@ -72,7 +74,9 @@ const Sidebar = ({
                 value={senderEmail}
                 type="email"
                 disabled={inFlight}
-                onChange={(value) => editPost({ meta: { rrze_newsletter_from_email: value } })}
+                onChange={value =>
+                    editPost({ meta: { rrze_newsletter_from_email: value } })
+                }
             />
             <TextControl
                 label={__("ReplyTo", "rrze-newsletter")}
@@ -80,22 +84,24 @@ const Sidebar = ({
                 value={replytoEmail}
                 type="email"
                 disabled={inFlight}
-                onChange={(value) => editPost({ meta: { rrze_newsletter_replyto: value } })}
+                onChange={value =>
+                    editPost({ meta: { rrze_newsletter_replyto: value } })
+                }
             />
             <Button
                 isLink
                 onClick={() => {
                     updateMetaValueInAPI({
                         key: "rrze_newsletter_from_name",
-                        value: senderName,
+                        value: senderName
                     });
                     updateMetaValueInAPI({
                         key: "rrze_newsletter_from_email",
-                        value: senderEmail,
+                        value: senderEmail
                     });
                     updateMetaValueInAPI({
                         key: "rrze_newsletter_replyto",
-                        value: replytoEmail,
+                        value: replytoEmail
                     });
                 }}
                 disabled={
@@ -114,7 +120,7 @@ const Sidebar = ({
                 className="rrze-newsletter__name-textcontrol rrze-newsletter__name-textcontrol--separated"
                 value={previewText}
                 disabled={inFlight}
-                onChange={(value) =>
+                onChange={value =>
                     editPost({ meta: { rrze_newsletter_preview_text: value } })
                 }
             />
@@ -123,7 +129,7 @@ const Sidebar = ({
                 onClick={() =>
                     updateMetaValueInAPI({
                         key: "rrze_newsletter_preview_text",
-                        value: previewText,
+                        value: previewText
                     })
                 }
                 disabled={inFlight}
@@ -142,7 +148,7 @@ const Sidebar = ({
                 inFlight={inFlight}
                 renderSubject={renderSubject}
                 renderFrom={renderFrom}
-                updateMeta={(meta) => editPost({ meta })}
+                updateMeta={meta => editPost({ meta })}
             />
         </Fragment>
     );
@@ -150,7 +156,7 @@ const Sidebar = ({
 
 export default compose([
     withApiHandler(),
-    withSelect((select) => {
+    withSelect(select => {
         const { getEditedPostAttribute, getCurrentPostId } = select(
             "core/editor"
         );
@@ -162,11 +168,11 @@ export default compose([
             senderEmail: meta.rrze_newsletter_from_email || "",
             replytoEmail: meta.rrze_newsletter_replyto || "",
             previewText: meta.rrze_newsletter_preview_text || "",
-            newsletterData: meta.newsletterData || {},
+            newsletterData: meta.newsletterData || {}
         };
     }),
-    withDispatch((dispatch) => {
+    withDispatch(dispatch => {
         const { editPost } = dispatch("core/editor");
         return { editPost };
-    }),
+    })
 ])(Sidebar);
