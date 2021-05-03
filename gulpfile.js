@@ -5,8 +5,9 @@ let bump = require("gulp-bump");
 let semver = require("semver");
 let touch = require("gulp-touch-cmd");
 let info = require("./package.json");
+let zip = require("gulp-zip");
 
-// major: 1.0.0
+// Major: 1.0.0
 gulp.task("major", async () => {
     let v = semver.inc(info.version, "major");
     gulp.src(["./" + info.main, "./package.json"])
@@ -15,7 +16,7 @@ gulp.task("major", async () => {
         .pipe(touch());
 });
 
-// minor: 0.1.0
+// Minor: 0.1.0
 gulp.task("minor", async () => {
     let v = semver.inc(info.version, "minor");
     gulp.src(["./" + info.main, "./package.json"])
@@ -24,7 +25,7 @@ gulp.task("minor", async () => {
         .pipe(touch());
 });
 
-// patch: 0.0.2
+// Patch: 0.0.2
 gulp.task("patch", async () => {
     let v = semver.inc(info.version, "patch");
     gulp.src(["./" + info.main, "./package.json"])
@@ -33,11 +34,31 @@ gulp.task("patch", async () => {
         .pipe(touch());
 });
 
-// prerelease: 0.0.1-2
+// Prerelease: 0.0.1-2
 gulp.task("prerelease", async () => {
     let v = semver.inc(info.version, "prerelease");
     gulp.src(["./" + info.main, "./package.json"])
         .pipe(bump({ version: v }))
         .pipe(gulp.dest("./"))
+        .pipe(touch());
+});
+
+// Create a bundle.
+gulp.task("bundle", async () => {
+    gulp.src([
+        "**/*",
+        "!node_modules/**",
+        "!src/**",
+        "!bundle/**",
+        "!gulpfile.js",
+        "!eslintrc.js",
+        "!babel.config.json",
+        "!package.json",
+        "!package-lock.json",
+        "!webpack.config.js",
+        "!.gitignore"
+    ])
+        .pipe(zip(info.name + ".zip"))
+        .pipe(gulp.dest("bundle"))
         .pipe(touch());
 });
