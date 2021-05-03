@@ -2,22 +2,22 @@ module.exports = {
     env: {
         browser: true,
         es6: true,
-        node: true,
+        node: true
     },
     extends: ["eslint:recommended", "prettier", "plugin:react/recommended"],
     globals: {
         Atomics: "readonly",
         SharedArrayBuffer: "readonly",
-        wp: "readonly",
+        wp: "readonly"
     },
     parser: "@babel/eslint-parser",
     parserOptions: {
         requireConfigFile: false,
         ecmaFeatures: {
-            jsx: true,
+            jsx: true
         },
         ecmaVersion: 2018,
-        sourceType: "module",
+        sourceType: "module"
     },
     plugins: ["react"],
     rules: {
@@ -26,11 +26,11 @@ module.exports = {
         "react/display-name": "off",
         "react/prop-types": "off",
         "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error",
+        "react/jsx-uses-vars": "error"
     },
     settings: {
         react: {
-            version: "detect",
-        },
-    },
+            version: "detect"
+        }
+    }
 };
