@@ -30,7 +30,7 @@ const validateNewsletter = ({ status }) => {
  * @return {Object} Config fetching.
  */
 const getFetchDataConfig = ({ postId }) => ({
-    path: `/rrze-newsletter/v1/email/${postId}`,
+    path: `/rrze-newsletter/v1/email/${postId}`
 });
 
 /**
@@ -60,16 +60,16 @@ const ProviderSidebar = ({
      * which will receive a `{senderName, senderEmail}` object – so that
      * the data can be sent to the backend.
      */
-    renderFrom,
+    renderFrom
 }) => {
     const handleSenderUpdate = ({ senderName, senderEmail }) =>
         apiFetch({
             path: `/rrze-newsletter/v1/email/${postId}/sender`,
             data: {
                 rrze_newsletter_from_name: senderName,
-                rrze_newsletter_replyto: senderEmail,
+                rrze_newsletter_replyto: senderEmail
             },
-            method: "POST",
+            method: "POST"
         });
 
     return (
@@ -98,5 +98,5 @@ export default {
     validateNewsletter,
     getFetchDataConfig,
     ProviderSidebar,
-    renderPreSendInfo,
+    renderPreSendInfo
 };
