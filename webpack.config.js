@@ -2,7 +2,6 @@ const autoprefixer = require("autoprefixer");
 const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const ESLintPlugin = require("eslint-webpack-plugin");
 
 const path = require("path");
 const admin = path.join(__dirname, "src", "admin");
@@ -17,11 +16,11 @@ module.exports = (env, argv) => {
         entry: {
             admin,
             editor,
-            subscription,
+            subscription
         },
         output: {
             filename: "[name].js",
-            clean: true,
+            clean: true
         },
         optimization: {
             minimizer: [
@@ -30,20 +29,19 @@ module.exports = (env, argv) => {
                     cssProcessorOptions: {
                         map: {
                             inline: false,
-                            annotation: true,
-                        },
-                    },
-                }),
-            ],
+                            annotation: true
+                        }
+                    }
+                })
+            ]
         },
         plugins: [
             new MiniCSSExtractPlugin({
                 chunkFilename: "[id].css",
-                filename: (chunkData) => {
+                filename: chunkData => {
                     return "[name].css";
-                },
-            }),
-            new ESLintPlugin(),
+                }
+            })
         ],
         devtool: isDevelopment() ? "cheap-module-source-map" : "source-map",
         module: {
@@ -56,7 +54,7 @@ module.exports = (env, argv) => {
                             loader: "babel-loader",
                             options: {
                                 plugins: [
-                                    "@babel/plugin-proposal-class-properties",
+                                    "@babel/plugin-proposal-class-properties"
                                 ],
                                 presets: [
                                     "@babel/preset-env",
@@ -65,13 +63,13 @@ module.exports = (env, argv) => {
                                         {
                                             pragma: "wp.element.createElement",
                                             pragmaFrag: "wp.element.Fragment",
-                                            development: isDevelopment(),
-                                        },
-                                    ],
-                                ],
-                            },
-                        },
-                    ],
+                                            development: isDevelopment()
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
                 },
                 {
                     test: /\.(sa|sc|c)ss$/,
@@ -82,18 +80,20 @@ module.exports = (env, argv) => {
                             loader: "postcss-loader",
                             options: {
                                 postcssOptions: {
-                                    plugins: [autoprefixer()],
-                                },
-                            },
+                                    plugins: [autoprefixer()]
+                                }
+                            }
                         },
-                        "sass-loader",
-                    ],
-                },
-            ],
+                        "sass-loader"
+                    ]
+                }
+            ]
         },
         externals: {
             jquery: "jQuery",
             lodash: "lodash",
+            react: "React",
+            "react-dom": "ReactDOM",
             "@wordpress/api-fetch": ["wp", "apiFetch"],
             "@wordpress/data": ["wp", "data"],
             "@wordpress/dom-ready": ["wp", "domReady"],
@@ -109,10 +109,8 @@ module.exports = (env, argv) => {
             "@wordpress/compose": ["wp", "compose"],
             "@wordpress/plugins": ["wp", "plugins"],
             "@wordpress/edit-post": ["wp", "editPost"],
-            "@wordpress/block-editor": ["wp", "blockEditor"],
-            react: "React",
-            "react-dom": "ReactDOM",
-        },
+            "@wordpress/block-editor": ["wp", "blockEditor"]
+        }
     };
     return config;
 };
