@@ -9,26 +9,26 @@ import { useState } from "@wordpress/element";
 
 export default () =>
     createHigherOrderComponent(
-        (OriginalComponent) => (props) => {
+        OriginalComponent => props => {
             const [inFlight, setInFlight] = useState(false);
             const [errors, setErrors] = useState({});
             const {
                 createSuccessNotice,
                 createErrorNotice,
-                removeNotice,
+                removeNotice
             } = dispatch("core/notices");
             const { getNotices } = select("core/notices");
             const setInFlightForAsync = () => {
                 setInFlight(true);
             };
             const successNote = __("Newsletter sent on ", "rrze-newsletter");
-            const apiFetchWithErrorHandling = (apiRequest) => {
+            const apiFetchWithErrorHandling = apiRequest => {
                 setInFlight(true);
                 return new Promise((resolve, reject) => {
                     apiFetch(apiRequest)
-                        .then((response) => {
+                        .then(response => {
                             const { message } = response;
-                            getNotices().forEach((notice) => {
+                            getNotices().forEach(notice => {
                                 if (
                                     "error" !== notice.status &&
                                     ("success" !== notice.status ||
@@ -45,9 +45,9 @@ export default () =>
                             setErrors({});
                             resolve(response);
                         })
-                        .catch((error) => {
+                        .catch(error => {
                             const { message } = error;
-                            getNotices().forEach((notice) => {
+                            getNotices().forEach(notice => {
                                 if (
                                     "error" !== notice.status &&
                                     ("success" !== notice.status ||
