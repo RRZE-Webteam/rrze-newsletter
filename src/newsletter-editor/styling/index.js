@@ -15,21 +15,21 @@ const fontOptgroups = [
         options: [
             {
                 value: "Arial, Helvetica, sans-serif",
-                label: __("Arial", "rrze-newsletter"),
+                label: __("Arial", "rrze-newsletter")
             },
             {
                 value: "Tahoma, sans-serif",
-                label: __("Tahoma", "rrze-newsletter"),
+                label: __("Tahoma", "rrze-newsletter")
             },
             {
                 value: "Trebuchet MS, sans-serif",
-                label: __("Trebuchet", "rrze-newsletter"),
+                label: __("Trebuchet", "rrze-newsletter")
             },
             {
                 value: "Verdana, sans-serif",
-                label: __("Verdana", "rrze-newsletter"),
-            },
-        ],
+                label: __("Verdana", "rrze-newsletter")
+            }
+        ]
     },
 
     {
@@ -37,17 +37,17 @@ const fontOptgroups = [
         options: [
             {
                 value: "Georgia, serif",
-                label: __("Georgia", "rrze-newsletter"),
+                label: __("Georgia", "rrze-newsletter")
             },
             {
                 value: "Palatino, serif",
-                label: __("Palatino", "rrze-newsletter"),
+                label: __("Palatino", "rrze-newsletter")
             },
             {
                 value: "Times New Roman, serif",
-                label: __("Times New Roman", "rrze-newsletter"),
-            },
-        ],
+                label: __("Times New Roman", "rrze-newsletter")
+            }
+        ]
     },
 
     {
@@ -55,19 +55,22 @@ const fontOptgroups = [
         options: [
             {
                 value: "Courier, monospace",
-                label: __("Courier", "rrze-newsletter"),
-            },
-        ],
-    },
+                label: __("Courier", "rrze-newsletter")
+            }
+        ]
+    }
 ];
 
-const customStylesSelector = (select) => {
+const customStylesSelector = select => {
     const { getEditedPostAttribute } = select("core/editor");
     const meta = getEditedPostAttribute("meta");
     return {
-        fontBody: meta.rrze_newsletter_font_body || fontOptgroups[1].options[0].value,
-        fontHeader: meta.rrze_newsletter_font_header || fontOptgroups[0].options[0].value,
-        backgroundColor: meta.rrze_newsletter_background_color || "#ffffff",
+        fontBody:
+            meta.rrze_newsletter_font_body || fontOptgroups[1].options[0].value,
+        fontHeader:
+            meta.rrze_newsletter_font_header ||
+            fontOptgroups[0].options[0].value,
+        backgroundColor: meta.rrze_newsletter_background_color || "#ffffff"
     };
 };
 
@@ -96,24 +99,24 @@ export const ApplyStyling = withSelect(customStylesSelector)(
 );
 
 export const Styling = compose([
-    withDispatch((dispatch) => {
+    withDispatch(dispatch => {
         const { editPost } = dispatch("core/editor");
         return { editPost };
     }),
-    withSelect((select) => {
+    withSelect(select => {
         const { getCurrentPostId } = select("core/editor");
         return {
             postId: getCurrentPostId(),
-            ...customStylesSelector(select),
+            ...customStylesSelector(select)
         };
-    }),
+    })
 ])(({ editPost, fontBody, fontHeader, backgroundColor, postId }) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
         apiFetch({
             data: { key, value },
             method: "POST",
-            path: `/rrze-newsletter/v1/post-meta/${postId}`,
+            path: `/rrze-newsletter/v1/post-meta/${postId}`
         });
     };
 
@@ -126,13 +129,17 @@ export const Styling = compose([
                 label={__("Headings font", "rrze-newsletter")}
                 value={fontHeader}
                 optgroups={fontOptgroups}
-                onChange={(value) => updateStyleValue("rrze_newsletter_font_header", value)}
+                onChange={value =>
+                    updateStyleValue("rrze_newsletter_font_header", value)
+                }
             />
             <SelectControlWithOptGroup
                 label={__("Body font", "rrze-newsletter")}
                 value={fontBody}
                 optgroups={fontOptgroups}
-                onChange={(value) => updateStyleValue("rrze_newsletter_font_body", value)}
+                onChange={value =>
+                    updateStyleValue("rrze_newsletter_font_body", value)
+                }
             />
             <BaseControl
                 label={__("Background color", "rrze-newsletter")}
@@ -141,8 +148,11 @@ export const Styling = compose([
                 <ColorPicker
                     id={id}
                     color={backgroundColor}
-                    onChangeComplete={(value) =>
-                        updateStyleValue("rrze_newsletter_background_color", value.hex)
+                    onChangeComplete={value =>
+                        updateStyleValue(
+                            "rrze_newsletter_background_color",
+                            value.hex
+                        )
                     }
                     disableAlpha
                 />
