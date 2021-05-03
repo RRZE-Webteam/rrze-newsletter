@@ -24,7 +24,7 @@ export default function SelectControlWithOptGroup({
 }) {
     const instanceId = useInstanceId(SelectControlWithOptGroup);
     const id = `inspector-select-control-${instanceId}`;
-    const onChangeValue = (event) => {
+    const onChangeValue = event => {
         if (multiple) {
             const selectedOptions = [...event.target.options].filter(
                 ({ selected }) => selected
