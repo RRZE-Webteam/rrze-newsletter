@@ -1,9 +1,9 @@
 import generic from "./generic";
 
 const SERVICE_PROVIDERS = {
-  generic,
+    generic
 };
 
 export const getServiceProvider = () => {
-  return SERVICE_PROVIDERS["generic"];
+    return SERVICE_PROVIDERS["generic"];
 };
