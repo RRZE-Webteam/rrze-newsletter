@@ -25,7 +25,7 @@ class Tags
         'CURRENT_YEAR'  => '',
         // Finds out whether a newsletter is public.
         'IS_PUBLIC'  => '',
-        // Only show in email.
+        // Show in email only.
         'EMAIL_ONLY'  => 'show'
     ];
 
