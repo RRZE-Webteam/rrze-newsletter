@@ -24,7 +24,9 @@ class Tags
         // Displays the current year.
         'CURRENT_YEAR'  => '',
         // Finds out whether a newsletter is public.
-        'IS_PUBLIC'  => ''
+        'IS_PUBLIC'  => '',
+        // Only show in email.
+        'EMAIL_ONLY'  => 'show'
     ];
 
     public static function sanitizeTags($postId, array $tags = []): array
