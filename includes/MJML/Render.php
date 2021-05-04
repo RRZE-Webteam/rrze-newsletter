@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\MJML;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Templates;
+use function RRZE\Newsletter\plugin;
 
 final class Render
 {
@@ -467,7 +468,7 @@ final class Render
                         if (isset($socialIcons[$serviceName])) {
                             $imgAtts = [
                                 'href' => $url,
-                                'src' => plugins_url('assets/' . $socialIcons[$serviceName]['icon'], dirname(__FILE__)),
+                                'src' => plugins_url('assets/icons/' . $socialIcons[$serviceName]['icon'], plugin()->getBasename()),
                                 'background-color' => $socialIcons[$serviceName]['color'],
                                 'css-class' => 'social-element',
                             ];
