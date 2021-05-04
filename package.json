@@ -1,6 +1,6 @@
 {
     "name": "rrze-newsletter",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "Plugin for creating and sending HTML Newsletters.",
     "main": "rrze-newsletter.php",
     "scripts": {
