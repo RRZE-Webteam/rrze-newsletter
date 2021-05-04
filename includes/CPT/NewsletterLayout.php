@@ -111,12 +111,12 @@ class NewsletterLayout
 
     public static function get_default_layouts()
     {
-        $layouts_base_path = plugin()->getPath('includes/layouts/');
+        $layoutsBasePath = plugin()->getPath('includes/layouts/');
         $layouts = [];
         $layout_id = 1;
-        foreach (scandir($layouts_base_path) as $layout) {
+        foreach (scandir($layoutsBasePath) as $layout) {
             if (strpos($layout, '.json') !== false) {
-                $decoded_layout = json_decode(file_get_contents($layouts_base_path . $layout, true));
+                $decoded_layout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
                 $layouts[] = [
                     'ID'           => $layout_id,
                     'post_title'   => $decoded_layout->title,
