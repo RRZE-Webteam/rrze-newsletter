@@ -280,6 +280,12 @@ final class Render
                     unset($textAtts['background-color']);
                 }
 
+                // core/heading attributes normalization
+                if (isset($textAtts['textAlign'])) {
+                    $textAtts['align'] = $textAtts['textAlign'];
+                    unset($textAtts['textAlign']);
+                }
+
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
                 break;
 
