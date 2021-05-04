@@ -10,6 +10,8 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Html2Text;
 use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\Tags;
+use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
 
@@ -44,6 +46,7 @@ class Newsletter
         add_filter('manage_newsletter_mailing_list_custom_column', [__CLASS__, 'mailListCustomColumns'], 10, 3);
         // Post Stuff.  
         add_action('default_title', [__CLASS__, 'defaultTitle'], 10, 2);
+        add_filter('the_content', [__CLASS__, 'theContent']);
         add_action('wp_head', [__CLASS__, 'publicCustomStyle'], 10, 2);
         add_filter('display_post_states', [__CLASS__, 'displayPostStates'], 10, 2);
         add_action('pre_get_posts', [__CLASS__, 'maybeDisplayPublicArchivePosts']);
@@ -498,6 +501,22 @@ class Newsletter
             );
         }
         return $post_title;
+    }
+
+    public static function theContent($content)
+    {
+        if (self::POST_TYPE === get_post_type()) {
+            $post = get_post();
+            // Parse tags.
+            $data = [
+                'EMAIL_ONLY' => ''
+            ];
+            $data = Tags::sanitizeTags($post->ID, $data);
+            $parser = new Parser();
+            $content = $parser->parse($content, $data);
+            // End Parse tags.            
+        }
+        return $content;
     }
 
     public static function publicCustomStyle()
