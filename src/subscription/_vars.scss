@@ -1,0 +1,36 @@
+$color-white-h: 0;
+$color-white-s: 0%;
+$color-white-l: 100%;
+$color-white: hsl($color-white-h, $color-white-s, $color-white-l);
+$color-white-alpha-80: hsla(
+    $color-white-h,
+    $color-white-s,
+    $color-white-l,
+    0.8
+);
+
+$color-black-h: 100;
+$color-black-s: 0%;
+$color-black-l: 0%;
+$color-black: hsl($color-black-h, $color-black-s, $color-black-l);
+$color-black-alpha-80: hsla(
+    $color-black-h,
+    $color-black-s,
+    $color-black-l,
+    0.8
+);
+
+$color-blue-h: 203;
+$color-blue-s: 97%;
+$color-blue-l: 38%;
+$color-blue: hsl($color-blue-h, $color-blue-s, $color-blue-l);
+$color-blue-alpha-10: hsla($color-blue-h, $color-blue-s, $color-blue-l, 0.1);
+
+$color-grey-h: 0;
+$color-grey-s: 0%;
+$color-grey-l: 83%;
+$color-grey: hsl($color-grey-h, $color-grey-s, $color-grey-l);
+
+$color-light-grey: #dcdcdc;
+$color-dark-grey: #636363;
+$color-dark-red: #d60036;

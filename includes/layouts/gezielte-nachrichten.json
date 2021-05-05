@@ -1,0 +1,5 @@
+{
+    "__file": "wp_block",
+    "title": "Gezielte Nachrichten",
+    "content": "__LOGO_OR_SITENAME__\n\n<!-- wp:paragraph -->\n<p>Guten Tag {{=FNAME}},</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>es ist Zeit, den Newsletter zu gestalten.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Sie k\u00f6nnen das Layout des Newsletters definieren, indem Sie Inhaltsbl\u00f6cke hinzuf\u00fcgen, neu anordnen und l\u00f6schen.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph -->\n<p>Mit TAGS k\u00f6nnen Sie den Newsletter personalisieren. Die verf\u00fcgbaren TAGS sind:</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:list -->\n<ul><li>{{=FNAME}} - Name</li><li>{{=LNAME}} - Nachname</li><li>{{=EMAIL}} - E-Mail-Adresse</li></ul>\n<!-- /wp:list -->"
+}
