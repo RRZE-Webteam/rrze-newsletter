@@ -114,9 +114,9 @@ class Utils
         $salt = substr(hash('sha256', $secretSalt), 0, 16);
 
         if ($action == 'encrypt') {
-            $output = base64_encode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            $output = self::urlsafeEncode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
         } else if ($action == 'decrypt') {
-            $output = openssl_decrypt(base64_decode($string), $encryptMethod, $key, 0, $salt);
+            $output = openssl_decrypt(self::urlsafeDecode($string), $encryptMethod, $key, 0, $salt);
         }
 
         return $output;
@@ -125,6 +125,21 @@ class Utils
     public static function decrypt(string $string)
     {
         return self::encrypt($string, 'decrypt');
+    }
+
+    public static function urlsafeEncode(string $string)
+    {
+        return str_replace('=', '', strtr(base64_encode($string), '+/', '-_'));
+    }
+
+    public static function urlsafeDecode(string $string)
+    {
+        $remainder = strlen($string) % 4;
+        if ($remainder) {
+            $padlen = 4 - $remainder;
+            $string .= str_repeat('=', $padlen);
+        }
+        return base64_decode(strtr($string, '-_', '+/'));
     }
 
     public static function isPluginAvailable($plugin)
