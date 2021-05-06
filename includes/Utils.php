@@ -99,7 +99,7 @@ class Utils
         return implode(PHP_EOL, $mailingList);
     }
 
-    public static function encrypt(string $string, string $action = 'encrypt')
+    public static function encrypt(string $string, string $action = 'encrypt', bool $safeurl = false)
     {
         if ($string == '') {
             return $string;
@@ -114,9 +114,17 @@ class Utils
         $salt = substr(hash('sha256', $secretSalt), 0, 16);
 
         if ($action == 'encrypt') {
-            $output = self::urlsafeEncode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            if ($safeurl) {
+                $output = self::urlsafeEncode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            } else {
+                $output = base64_encode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            }
         } else if ($action == 'decrypt') {
-            $output = openssl_decrypt(self::urlsafeDecode($string), $encryptMethod, $key, 0, $salt);
+            if ($safeurl) {
+                $output = openssl_decrypt(self::urlsafeDecode($string), $encryptMethod, $key, 0, $salt);
+            } else {
+                $output = openssl_decrypt(base64_decode($string), $encryptMethod, $key, 0, $salt);
+            }
         }
 
         return $output;
@@ -127,12 +135,22 @@ class Utils
         return self::encrypt($string, 'decrypt');
     }
 
-    public static function urlsafeEncode(string $string)
+    public static function encryptUrlQuery(string $string)
+    {
+        return self::encrypt($string, 'encrypt', true);
+    }
+
+    public static function decryptUrlQuery(string $string)
+    {
+        return self::encrypt($string, 'decrypt', true);
+    }
+
+    private static function urlsafeEncode(string $string)
     {
         return str_replace('=', '', strtr(base64_encode($string), '+/', '-_'));
     }
 
-    public static function urlsafeDecode(string $string)
+    private static function urlsafeDecode(string $string)
     {
         $remainder = strlen($string) % 4;
         if ($remainder) {
