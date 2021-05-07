@@ -4,6 +4,8 @@ namespace RRZE\Newsletter;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\CPT\Newsletter;
+
 class Tags
 {
     const SUPPORTED_TAGS = [
@@ -23,8 +25,6 @@ class Tags
         'DATE'          => '',
         // Displays the current year.
         'CURRENT_YEAR'  => '',
-        // Finds out whether a newsletter is public.
-        'IS_PUBLIC'  => '',
         // Show in email only.
         'EMAIL_ONLY'  => 'show'
     ];
@@ -43,19 +43,19 @@ class Tags
         $name = !empty($tags['FNAME'] . $tags['LNAME']) ? trim(sprintf('%1$s %2$s', $tags['FNAME'], $tags['LNAME'])) : '';
 
         $email = Utils::sanitizeEmail($tags['EMAIL']);
-        $encryptedEmail = Utils::encrypt($email);
 
-        $subscPageSlug = $options->mailing_list_subsc_page_slug;
-        $unsubUrl = site_url($subscPageSlug . '/?update=' . $encryptedEmail);
+        $subscPageSlug = Newsletter::POST_TYPE . 's';
+        $unsubUrl = site_url($subscPageSlug . '/?update=' . Utils::encryptUrlQuery($email));
 
-        $isPublic = (bool) get_post_meta($postId, 'rrze_newsletter_is_public', true);
+        $archiveSlug = Newsletter::POST_TYPE . 's/archive';
+        $archiveQuery = Utils::encryptUrlQuery($postId . '|' . $email);
+        $archiveUrl = site_url($archiveSlug . '/' . $archiveQuery);
 
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
-        $tags['PERMALINK'] = (string) get_permalink($postId);
+        $tags['PERMALINK'] = $archiveUrl;
         $tags['DATE'] = (string) get_the_time(get_option('date_format'), $postId);
         $tags['CURRENT_YEAR'] = date('Y');
-        $tags['IS_PUBLIC'] = (string) $isPublic;
 
         return $tags;
     }
