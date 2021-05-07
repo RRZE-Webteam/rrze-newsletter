@@ -162,15 +162,15 @@ class Subscription
             if (isset($mailingLists[$term->term_id])) {
                 if (!isset($mailingList[$email])) {
                     $mailingList[$email] = $email;
-                    $mailingList = Utils::sanitizeMailingList(implode(PHP_EOL, $mailingList));
-                    update_term_meta(
-                        $term->term_id,
-                        'rrze_newsletter_mailing_list',
-                        $mailingList
-                    );
-                    if (isset($unsubscribedFromList[$email])) {
-                        unset($unsubscribedFromList[$email]);
-                    }
+                }
+                $mailingList = Utils::sanitizeMailingList(implode(PHP_EOL, $mailingList));
+                update_term_meta(
+                    $term->term_id,
+                    'rrze_newsletter_mailing_list',
+                    $mailingList
+                );
+                if (isset($unsubscribedFromList[$email])) {
+                    unset($unsubscribedFromList[$email]);
                 }
             } else {
                 if ($isPublic || $unsubscribeEmpty) {
