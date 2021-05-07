@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-04-29T12:24:15+00:00\n"
-"PO-Revision-Date: 2021-04-29 14:26+0200\n"
+"POT-Creation-Date: 2021-05-07T12:25:14+00:00\n"
+"PO-Revision-Date: 2021-05-07 14:26+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -144,28 +144,15 @@ msgstr "Titel der Abonnementseite"
 msgid "Corresponds to the main title of the subscription page."
 msgstr "Entspricht dem Haupttitel der Abonnementseite."
 
-#: config/settings.php:173 includes/Subscription.php:447
+#: config/settings.php:173 includes/Subscription.php:456
 msgid "Newsletter Subscription"
 msgstr "Newsletter-Abonnement"
 
-#: config/settings.php:178
-msgid "Subscription Page Slug"
-msgstr "Abonnementseite Titelform"
-
-#: config/settings.php:179
-msgid ""
-"Please note that the modification of the Slug disables the subscription "
-"links previously sent in the newsletters. Use with caution."
-msgstr ""
-"Bitte beachten Sie, dass durch die Änderung des Titelforms die zuvor in den "
-"Newslettern gesendeten Abonnement-Links deaktiviert werden. Mit Vorsicht "
-"verwenden."
-
-#: config/settings.php:187 includes/CPT/Newsletter.php:370
+#: config/settings.php:178 includes/CPT/Newsletter.php:375
 msgid "Unsubscribed E-mail Addresses"
 msgstr "Abgemeldete E-Mail-Adressen"
 
-#: config/settings.php:188
+#: config/settings.php:179
 msgid ""
 "List of email addresses that do not subscribe to any mailing list. Enter one "
 "email address per line."
@@ -173,204 +160,204 @@ msgstr ""
 "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine "
 "E-Mail-Adresse pro Zeile ein."
 
-#: config/settings.php:198
+#: config/settings.php:189
 msgid "API Endpoint"
 msgstr "API-Endpoint"
 
-#: config/settings.php:199
+#: config/settings.php:190
 msgid "URL of the MJML API Service."
 msgstr "URL des MJML-API-Dienstes."
 
-#: config/settings.php:207
+#: config/settings.php:198
 msgid "Application ID"
 msgstr "Anwendungs-ID"
 
-#: config/settings.php:208
+#: config/settings.php:199
 msgid "The Application ID acts as a username."
 msgstr "Die Anwendungs-ID fungiert als Benutzername."
 
-#: config/settings.php:216
+#: config/settings.php:207
 msgid "Secret Key"
 msgstr "Secret-Key"
 
-#: config/settings.php:217
+#: config/settings.php:208
 msgid "The API Key act as a password."
 msgstr "Der API-Key fungiert als Kennwort."
 
-#: includes/CPT/Newsletter.php:60
+#: includes/CPT/Newsletter.php:65
 msgctxt "post type general name"
 msgid "Newsletters"
 msgstr "Newsletters"
 
-#: includes/CPT/Newsletter.php:61
+#: includes/CPT/Newsletter.php:66
 msgctxt "post type singular name"
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: includes/CPT/Newsletter.php:62
+#: includes/CPT/Newsletter.php:67
 msgctxt "admin menu"
 msgid "Newsletters"
 msgstr "Newsletters"
 
-#: includes/CPT/Newsletter.php:63
+#: includes/CPT/Newsletter.php:68
 msgctxt "add new on admin bar"
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: includes/CPT/Newsletter.php:64
+#: includes/CPT/Newsletter.php:69
 msgctxt "popup"
 msgid "Add New"
 msgstr "Erstellen"
 
-#: includes/CPT/Newsletter.php:65
+#: includes/CPT/Newsletter.php:70
 msgid "Add New Newsletter"
 msgstr "Neuen Newsletter erstellen"
 
-#: includes/CPT/Newsletter.php:66
+#: includes/CPT/Newsletter.php:71
 msgid "New Newsletter"
 msgstr "Neuen Newsletter"
 
-#: includes/CPT/Newsletter.php:67
+#: includes/CPT/Newsletter.php:72
 msgid "Edit Newsletter"
 msgstr "Newsletter bearbeiten"
 
-#: includes/CPT/Newsletter.php:68
+#: includes/CPT/Newsletter.php:73
 msgid "View Newsletter"
 msgstr "Newsletter anzeigen"
 
-#: includes/CPT/Newsletter.php:69
+#: includes/CPT/Newsletter.php:74
 msgid "All Newsletters"
 msgstr "Alle Newsletters"
 
-#: includes/CPT/Newsletter.php:70
+#: includes/CPT/Newsletter.php:75
 msgid "Search Newsletters"
 msgstr "Suche Newsletters"
 
-#: includes/CPT/Newsletter.php:71
+#: includes/CPT/Newsletter.php:76
 msgid "Parent Newsletters:"
 msgstr "Eltern-Newsletter:"
 
-#: includes/CPT/Newsletter.php:72
+#: includes/CPT/Newsletter.php:77
 msgid "No newsletters found."
 msgstr "Keine Newsletter gefunden."
 
-#: includes/CPT/Newsletter.php:73
+#: includes/CPT/Newsletter.php:78
 msgid "No newsletters found in Trash."
 msgstr "Keine Newsletter im Papierkorb gefunden."
 
-#: includes/CPT/Newsletter.php:277
+#: includes/CPT/Newsletter.php:282
 msgctxt "Taxonomy general name"
 msgid "Categories"
 msgstr "Kategorien"
 
-#: includes/CPT/Newsletter.php:278
+#: includes/CPT/Newsletter.php:283
 msgctxt "Taxonomy singular name"
 msgid "Category"
 msgstr "Kategorie"
 
-#: includes/CPT/Newsletter.php:279
+#: includes/CPT/Newsletter.php:284
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
-#: includes/CPT/Newsletter.php:280
+#: includes/CPT/Newsletter.php:285
 msgid "Edit Category"
 msgstr "Kategorie bearbeiten"
 
-#: includes/CPT/Newsletter.php:281
+#: includes/CPT/Newsletter.php:286
 msgid "View Category"
 msgstr "Kategorie anschauen"
 
-#: includes/CPT/Newsletter.php:282
+#: includes/CPT/Newsletter.php:287
 msgid "Update Category"
 msgstr "Kategorie aktualisieren"
 
-#: includes/CPT/Newsletter.php:283
+#: includes/CPT/Newsletter.php:288
 msgid "Add New Category"
 msgstr "Neue Kategorie erstellen"
 
-#: includes/CPT/Newsletter.php:284
+#: includes/CPT/Newsletter.php:289
 msgid "New Category Name"
 msgstr "Neuer Kategoriename"
 
-#: includes/CPT/Newsletter.php:285
+#: includes/CPT/Newsletter.php:290
 msgid "Main Category"
 msgstr "Hauptkategorie"
 
-#: includes/CPT/Newsletter.php:286
+#: includes/CPT/Newsletter.php:291
 msgid "Main Category:"
 msgstr "Hauptkategorie:"
 
-#: includes/CPT/Newsletter.php:287
+#: includes/CPT/Newsletter.php:292
 msgid "Search Categories"
 msgstr "Kategorien suchen"
 
-#: includes/CPT/Newsletter.php:288
+#: includes/CPT/Newsletter.php:293
 msgid "No categories found"
 msgstr "Keine Kategorien gefunden"
 
-#: includes/CPT/Newsletter.php:289
+#: includes/CPT/Newsletter.php:294
 msgid "Back to categories"
 msgstr "Zurück zu den Kategorien"
 
-#: includes/CPT/Newsletter.php:305
+#: includes/CPT/Newsletter.php:310
 msgctxt "Taxonomy general name"
 msgid "Mailing Lists"
 msgstr "Mailinglisten"
 
-#: includes/CPT/Newsletter.php:306
+#: includes/CPT/Newsletter.php:311
 msgctxt "Taxonomy singular name"
 msgid "Mailing List"
 msgstr "Mailingliste"
 
-#: includes/CPT/Newsletter.php:307
+#: includes/CPT/Newsletter.php:312
 msgid "All Lists"
 msgstr "Alle Listen"
 
-#: includes/CPT/Newsletter.php:308
+#: includes/CPT/Newsletter.php:313
 msgid "Edit List"
 msgstr "Liste bearbeiten"
 
-#: includes/CPT/Newsletter.php:309
+#: includes/CPT/Newsletter.php:314
 msgid "View List"
 msgstr "Liste anzeigen"
 
-#: includes/CPT/Newsletter.php:310
+#: includes/CPT/Newsletter.php:315
 msgid "Update List"
 msgstr "Aktualisierungsliste"
 
-#: includes/CPT/Newsletter.php:311
+#: includes/CPT/Newsletter.php:316
 msgid "Add New List"
 msgstr "Neue Liste hinzufügen"
 
-#: includes/CPT/Newsletter.php:312
+#: includes/CPT/Newsletter.php:317
 msgid "New List Name"
 msgstr "Neuer Listenname"
 
-#: includes/CPT/Newsletter.php:313
+#: includes/CPT/Newsletter.php:318
 msgid "Main List"
 msgstr "Hauptliste"
 
-#: includes/CPT/Newsletter.php:314
+#: includes/CPT/Newsletter.php:319
 msgid "Main List:"
 msgstr "Hauptliste:"
 
-#: includes/CPT/Newsletter.php:315
+#: includes/CPT/Newsletter.php:320
 msgid "Search Lists"
 msgstr "Suchlisten"
 
-#: includes/CPT/Newsletter.php:316
+#: includes/CPT/Newsletter.php:321
 msgid "No lists found"
 msgstr "Keine Listen gefunden"
 
-#: includes/CPT/Newsletter.php:317
+#: includes/CPT/Newsletter.php:322
 msgid "Back to lists"
 msgstr "Zurück zu den Listen"
 
-#: includes/CPT/Newsletter.php:334 includes/CPT/Newsletter.php:350
+#: includes/CPT/Newsletter.php:339 includes/CPT/Newsletter.php:355
 msgid "Public Mailing List"
 msgstr "Öffentliche Mailingliste"
 
-#: includes/CPT/Newsletter.php:335
+#: includes/CPT/Newsletter.php:340
 msgid ""
 "A public mailing list can be listed on the subscription page and viewed by "
 "everyone."
@@ -378,11 +365,11 @@ msgstr ""
 "Eine öffentliche Mailingliste kann auf der Abonnementseite aufgelistet und "
 "von allen angezeigt werden."
 
-#: includes/CPT/Newsletter.php:339 includes/CPT/Newsletter.php:360
+#: includes/CPT/Newsletter.php:344 includes/CPT/Newsletter.php:365
 msgid "Subscribed email addresses"
 msgstr "Abonnierte E-Mail-Adressen"
 
-#: includes/CPT/Newsletter.php:341
+#: includes/CPT/Newsletter.php:346
 msgid ""
 "Enter one email address per line. Note: The recipient's first and last name "
 "separated by a comma are optional and can be added using a comma after the "
@@ -393,12 +380,12 @@ msgstr ""
 "Komma nach der E-Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-"
 "Adresse,Vorname,Nachname"
 
-#: includes/CPT/Newsletter.php:353
+#: includes/CPT/Newsletter.php:358
 msgid "It can be listed on the subscription page and seen by everyone."
 msgstr ""
 "Es kann auf der Abonnementseite aufgelistet und von jedem gesehen werden."
 
-#: includes/CPT/Newsletter.php:363
+#: includes/CPT/Newsletter.php:368
 msgid ""
 "List of email addresses that have been subscribed to this mailing list. "
 "Enter one email address per line. Note: The recipient's first and last name "
@@ -411,7 +398,7 @@ msgstr ""
 "Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-Adresse,Vorname,"
 "Nachname"
 
-#: includes/CPT/Newsletter.php:373
+#: includes/CPT/Newsletter.php:378
 msgid ""
 "List of email addresses that have been unsubscribed from this mailing list. "
 "Enter one email address per line."
@@ -419,42 +406,42 @@ msgstr ""
 "Liste der E-Mail-Adressen, die von dieser Mailingliste abgemeldet wurden. "
 "Geben Sie eine E-Mail-Adresse pro Zeile ein."
 
-#: includes/CPT/Newsletter.php:408 src/newsletter-editor/index.js:42
+#: includes/CPT/Newsletter.php:413 src/newsletter-editor/index.js:42
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: includes/CPT/Newsletter.php:409
+#: includes/CPT/Newsletter.php:414
 msgid "Public"
 msgstr "Öffentlich"
 
-#: includes/CPT/Newsletter.php:410
+#: includes/CPT/Newsletter.php:415
 msgid "In"
 msgstr "In"
 
-#: includes/CPT/Newsletter.php:411
+#: includes/CPT/Newsletter.php:416
 msgid "Out"
 msgstr "Out"
 
 #. translators: Default title of the newsletter including the date.
-#: includes/CPT/Newsletter.php:496
+#: includes/CPT/Newsletter.php:501
 msgid "Newsletter of %s"
 msgstr "Newsletter vom %s"
 
 #. translators: Relative time stamp of sent/published date
-#: includes/CPT/Newsletter.php:559
+#: includes/CPT/Newsletter.php:580
 msgid "Sent %1$s ago"
 msgstr "Vor %1$s gesendet"
 
 #. translators:  Absolute time stamp of sent/published date
-#: includes/CPT/Newsletter.php:565
+#: includes/CPT/Newsletter.php:586
 msgid "Sent %1$s"
 msgstr "%1$s gesendet"
 
-#: includes/CPT/Newsletter.php:630
+#: includes/CPT/Newsletter.php:651
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: includes/CPT/Newsletter.php:654
+#: includes/CPT/Newsletter.php:675
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -571,37 +558,37 @@ msgid_plural "Error <span class=\"count\">(%s)</span>"
 msgstr[0] "Fehler <span class=\"count\">(%s)</span>"
 msgstr[1] "Fehler <span class=\"count\">(%s)</span>"
 
-#: includes/CPT/NewsletterQueue.php:186
+#: includes/CPT/NewsletterQueue.php:185
 #: src/newsletter-editor/sidebar/index.js:38
 msgid "Subject"
 msgstr "Betreff"
 
-#: includes/CPT/NewsletterQueue.php:187
+#: includes/CPT/NewsletterQueue.php:186
 msgid "Scheduled Date"
 msgstr "Geplantes Datum"
 
-#: includes/CPT/NewsletterQueue.php:188
+#: includes/CPT/NewsletterQueue.php:187
 msgid "Send Date"
 msgstr "Sende Datum"
 
-#: includes/CPT/NewsletterQueue.php:189
+#: includes/CPT/NewsletterQueue.php:188
 #: src/newsletter-editor/sidebar/index.js:61
 msgid "From"
 msgstr "Absender"
 
-#: includes/CPT/NewsletterQueue.php:190
+#: includes/CPT/NewsletterQueue.php:189
 msgid "To"
 msgstr "An"
 
-#: includes/CPT/NewsletterQueue.php:191
+#: includes/CPT/NewsletterQueue.php:190
 msgid "Retries"
 msgstr "Wdh."
 
-#: includes/CPT/NewsletterQueue.php:192
+#: includes/CPT/NewsletterQueue.php:191
 msgid "Status"
 msgstr "Status"
 
-#: includes/CPT/NewsletterQueue.php:193
+#: includes/CPT/NewsletterQueue.php:192
 msgid "Error"
 msgstr "Fehler"
 
@@ -619,7 +606,7 @@ msgstr "E-Mail erfolgreich an %s gesendet."
 msgid "There was an error sending the email to %s."
 msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 
-#: includes/Main.php:57
+#: includes/Main.php:60
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -632,8 +619,8 @@ msgstr "MJML-API-Endpoint nicht verfügbar."
 msgid "Please set up the MJML API Endpoint."
 msgstr "Bitte richten Sie den MJML-API-Endpoint ein."
 
-#: includes/MJML/Render.php:709 includes/MJML/Render.php:717
-#: includes/MJML/Render.php:729
+#: includes/MJML/Render.php:716 includes/MJML/Render.php:724
+#: includes/MJML/Render.php:736
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -657,11 +644,11 @@ msgstr "Bitte füllen Sie dieses Feld aus."
 msgid "The email address is not valid."
 msgstr "Die E-Mail-adresse ist nicht gültig."
 
-#: includes/Subscription.php:208
+#: includes/Subscription.php:210
 msgid "Add newsletter subscription"
 msgstr "Newsletter-Abonnement erstellen"
 
-#: includes/Subscription.php:209
+#: includes/Subscription.php:211
 msgid ""
 "Please check the newsletters below that you would like to receive from us "
 "and then enter your email address to add your subscription."
@@ -670,20 +657,20 @@ msgstr ""
 "erhalten möchten, und geben Sie dann Ihre E-Mail-Adresse ein, um Ihr "
 "Abonnement zu erstellen."
 
-#: includes/Subscription.php:210
+#: includes/Subscription.php:212
 msgid "Add subscription"
 msgstr "Abonnement erstellen"
 
-#: includes/Subscription.php:212
+#: includes/Subscription.php:214
 msgid "Enter your email address."
 msgstr "Geben sie ihre E-Mailadresse ein."
 
 #. translators: Email address to subscribe to the newsletter
-#: includes/Subscription.php:234
+#: includes/Subscription.php:236
 msgid "Manage newsletter subscription for %s"
 msgstr "Verwalten Sie das Newsletter-Abonnement für %s"
 
-#: includes/Subscription.php:237
+#: includes/Subscription.php:239
 msgid ""
 "Please check the newsletters below that you would like to receive from us to "
 "update your subscription."
@@ -691,71 +678,71 @@ msgstr ""
 "Bitte überprüfen Sie die unten stehenden Newsletter, die Sie von uns "
 "erhalten möchten, um Ihr Abonnement zu aktualisieren."
 
-#: includes/Subscription.php:238
+#: includes/Subscription.php:240
 msgid "Cancel my subscription to all future newsletters."
 msgstr "Kündigen Sie mein Abonnement für alle zukünftigen Newsletter."
 
-#: includes/Subscription.php:239
+#: includes/Subscription.php:241
 msgid "Update subscription"
 msgstr "Abonnement aktualisieren"
 
 #. translators: Email address to subscribe to the newsletter
-#: includes/Subscription.php:257 includes/Subscription.php:273
-#: includes/Subscription.php:290
+#: includes/Subscription.php:259 includes/Subscription.php:275
+#: includes/Subscription.php:292
 msgid "Newsletter subscription for %s"
 msgstr "Newsletter-Abonnement für %s"
 
-#: includes/Subscription.php:260 includes/Subscription.php:276
-#: includes/Subscription.php:293
+#: includes/Subscription.php:262 includes/Subscription.php:278
+#: includes/Subscription.php:295
 msgid "Thank you"
 msgstr "Vielen Dank"
 
-#: includes/Subscription.php:261
+#: includes/Subscription.php:263
 msgid "Your newsletter settings have been updated."
 msgstr "Ihre Newsletter-Einstellungen wurden aktualisiert."
 
-#: includes/Subscription.php:262
+#: includes/Subscription.php:264
 msgid "Back to manage newsletter subscription page"
 msgstr "Zurück zum Verwalten der Newsletter-Abonnementseite"
 
-#: includes/Subscription.php:277
+#: includes/Subscription.php:279
 msgid "We have sent a confirmation link to your email address."
 msgstr "Wir haben einen Bestätigungslink an Ihre E-Mail-Adresse gesendet."
 
-#: includes/Subscription.php:278
+#: includes/Subscription.php:280
 msgid "Back to home page"
 msgstr "Zurück zur Startseite"
 
-#: includes/Subscription.php:294
+#: includes/Subscription.php:296
 msgid "Your newsletter subscription has been confirmed."
 msgstr "Ihr Newsletter-Abonnement wurde bestätigt."
 
-#: includes/Subscription.php:295
+#: includes/Subscription.php:297
 msgid "Manage newsletter subscription page"
 msgstr "Newsletter-Abonnementseite verwalten"
 
-#: includes/Subscription.php:448
+#: includes/Subscription.php:457
 msgid "Click below to confirm you subscription for the newsletter."
 msgstr "Klicken Sie unten, um Ihr Abonnement für den Newsletter zu bestätigen."
 
-#: includes/Subscription.php:452
+#: includes/Subscription.php:461
 msgid "Confirmation link"
 msgstr "Bestätigungslink"
 
-#: includes/Subscription.php:459
+#: includes/Subscription.php:468
 msgid "If you haven't subscribed for it, please ignore this email."
 msgstr "Wenn Sie es nicht abonniert haben, ignorieren Sie bitte diese E-Mail."
 
-#: includes/Subscription.php:460
+#: includes/Subscription.php:469
 msgid "Sincerely"
 msgstr "Mit freundlichen Grüßen"
 
-#: includes/Subscription.php:469
+#: includes/Subscription.php:478
 msgid "Newsletter subscription"
 msgstr "Newsletter-Abonnement"
 
 #. translators: 1: Server PHP version number, 2: Required PHP version number.
-#: rrze-newsletter.php:93
+#: rrze-newsletter.php:92
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
@@ -764,7 +751,7 @@ msgstr ""
 "mindestens die PHP-Version %2$s."
 
 #. translators: 1: Server WordPress version number, 2: Required WordPress version number.
-#: rrze-newsletter.php:100
+#: rrze-newsletter.php:99
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
@@ -773,7 +760,7 @@ msgstr ""
 "benötigt mindestens die WordPress-Version %2$s."
 
 #. translators: 1: The plugin name, 2: The error string.
-#: rrze-newsletter.php:118 rrze-newsletter.php:185
+#: rrze-newsletter.php:117 rrze-newsletter.php:184
 msgid "Plugins: %1$s: %2$s"
 msgstr "Plugins: %1$s: %2$s"
 
@@ -789,11 +776,11 @@ msgstr "Vorgefertigt"
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: src/components/init-modal/screens/layout-picker/index.js:80
+#: src/components/init-modal/screens/layout-picker/index.js:81
 msgid "Select a layout to preview."
 msgstr "Wählen Sie ein Layout für die Vorschau aus."
 
-#: src/components/init-modal/screens/layout-picker/index.js:138
+#: src/components/init-modal/screens/layout-picker/index.js:146
 msgid ""
 "Turn any newsletter to a layout via the \"Layout\" sidebar menu in the "
 "editor."
@@ -801,11 +788,11 @@ msgstr ""
 "Verwandeln Sie einen Newsletter über das Seitenleistenmenü “Layout” im "
 "Editor in ein Layout."
 
-#: src/components/init-modal/screens/layout-picker/index.js:154
+#: src/components/init-modal/screens/layout-picker/index.js:165
 msgid "Start With A Blank Layout"
 msgstr "Leeren Layout"
 
-#: src/components/init-modal/screens/layout-picker/index.js:162
+#: src/components/init-modal/screens/layout-picker/index.js:173
 msgid "Use Selected Layout"
 msgstr "Ausgewählte Layout"
 
@@ -813,56 +800,56 @@ msgstr "Ausgewählte Layout"
 msgid "Are you sure you want to delete this layout?"
 msgstr "Möchten Sie dieses Layout wirklich löschen?"
 
-#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:112
+#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:122
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/components/send-button/index.js:73
+#: src/components/send-button/index.js:76
 msgid "Sending"
 msgstr "Senden"
 
-#: src/components/send-button/index.js:76
+#: src/components/send-button/index.js:79
 msgid "Sent and Published"
 msgstr "Gesendet und veröffentlicht"
 
-#: src/components/send-button/index.js:77
+#: src/components/send-button/index.js:80
 msgid "Sent"
 msgstr "Gesendet"
 
-#: src/components/send-button/index.js:81
+#: src/components/send-button/index.js:84
 msgid "Scheduled"
 msgstr "Geplant"
 
-#: src/components/send-button/index.js:83
+#: src/components/send-button/index.js:86
 msgid "Schedule sending"
 msgstr "Senden planen"
 
-#: src/components/send-button/index.js:86
+#: src/components/send-button/index.js:89
 msgid "Send and Publish"
 msgstr "Senden und veröffentlichen"
 
-#: src/components/send-button/index.js:87
-#: src/components/send-button/index.js:168
+#: src/components/send-button/index.js:90
+#: src/components/send-button/index.js:171
 msgid "Send"
 msgstr "Senden"
 
-#: src/components/send-button/index.js:119
+#: src/components/send-button/index.js:122
 msgid "Updating..."
 msgstr "Aktualisierung…"
 
-#: src/components/send-button/index.js:120
+#: src/components/send-button/index.js:123
 msgid "Update"
 msgstr "Aktualisierung"
 
-#: src/components/send-button/index.js:142
+#: src/components/send-button/index.js:145
 msgid "Send your newsletter?"
 msgstr "Newsletter senden?"
 
-#: src/components/send-button/index.js:147
+#: src/components/send-button/index.js:150
 msgid "The following errors prevent the newsletter from being sent:"
 msgstr "Die folgenden Fehler verhindern das Versenden des Newsletters:"
 
-#: src/components/send-button/index.js:174
+#: src/components/send-button/index.js:177
 #: src/newsletter-editor/layout/index.js:249
 #: src/newsletter-editor/layout/index.js:283
 msgid "Cancel"
@@ -980,23 +967,23 @@ msgstr "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
 msgid "Name"
 msgstr "Name"
 
-#: src/newsletter-editor/sidebar/index.js:70
+#: src/newsletter-editor/sidebar/index.js:72
 msgid "Email"
 msgstr "E-Mail"
 
-#: src/newsletter-editor/sidebar/index.js:78
+#: src/newsletter-editor/sidebar/index.js:82
 msgid "ReplyTo"
 msgstr "ReplyTo"
 
-#: src/newsletter-editor/sidebar/index.js:109
+#: src/newsletter-editor/sidebar/index.js:115
 msgid "Update Sender"
 msgstr "Absender aktualisieren"
 
-#: src/newsletter-editor/sidebar/index.js:113
+#: src/newsletter-editor/sidebar/index.js:119
 msgid "Preview text"
 msgstr "Vorschau-Text"
 
-#: src/newsletter-editor/sidebar/index.js:131
+#: src/newsletter-editor/sidebar/index.js:137
 msgid "Update preview text"
 msgstr "Vorschau-Text aktualisieren"
 
@@ -1044,15 +1031,15 @@ msgstr "Monospace"
 msgid "Courier"
 msgstr "Courier"
 
-#: src/newsletter-editor/styling/index.js:126
+#: src/newsletter-editor/styling/index.js:129
 msgid "Headings font"
 msgstr "Überschriften Schriftart"
 
-#: src/newsletter-editor/styling/index.js:132
+#: src/newsletter-editor/styling/index.js:137
 msgid "Body font"
 msgstr "Inhaltsschrift"
 
-#: src/newsletter-editor/styling/index.js:138
+#: src/newsletter-editor/styling/index.js:145
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
@@ -1079,6 +1066,17 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:92
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgid "Subscription Page Slug"
+#~ msgstr "Abonnementseite Titelform"
+
+#~ msgid ""
+#~ "Please note that the modification of the Slug disables the subscription "
+#~ "links previously sent in the newsletters. Use with caution."
+#~ msgstr ""
+#~ "Bitte beachten Sie, dass durch die Änderung des Titelforms die zuvor in "
+#~ "den Newslettern gesendeten Abonnement-Links deaktiviert werden. Mit "
+#~ "Vorsicht verwenden."
 
 #~ msgid "MJML Api credentials not available."
 #~ msgstr "MJML-API-Anmeldeinformationen nicht verfügbar."

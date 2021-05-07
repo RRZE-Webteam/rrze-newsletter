@@ -34,7 +34,7 @@ class Subscription
         $this->optionName = Settings::getOptionName();
         $this->options = (object) Settings::getOptions();
 
-        $this->pageSlug = $this->options->mailing_list_subsc_page_slug;
+        $this->pageSlug = Newsletter::POST_TYPE . 's';
         $this->pageTitle = $this->options->mailing_list_subsc_page_title;
 
         add_action('init', [$this, 'init']);
@@ -70,7 +70,7 @@ class Subscription
                 $unsubscribeAll = isset($_POST['unsubscribe_all']) ? true : false;
                 $this->updateMailingLists($email, $mailingLists, $unsubscribeAll);
 
-                $transient = Utils::encrypt(bin2hex(random_bytes(8)));
+                $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
                 set_transient($transient, $email, 30);
                 wp_redirect(site_url($this->pageSlug . '/?updated=' . $transient));
                 exit();
@@ -86,7 +86,7 @@ class Subscription
             if ($submitted && $email) {
                 $this->sendConfirmation($email, $mailingLists);
 
-                $transient = Utils::encrypt(bin2hex(random_bytes(8)));
+                $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
                 set_transient($transient, $email, 30);
                 wp_redirect(site_url($this->pageSlug . '/?added=' . $transient));
                 exit();
@@ -101,7 +101,7 @@ class Subscription
                     'mailing_lists' => $mailingLists,
                     'error' => $error
                 ];
-                $transient = Utils::encrypt(bin2hex(random_bytes(8)));
+                $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
                 set_transient($transient, $errorData, 30);
                 wp_redirect(site_url($this->pageSlug . '/?error=' . $transient));
                 exit();
@@ -116,7 +116,7 @@ class Subscription
             $mailingLists = $data['mailing_lists'] ?? [];
             $this->updateMailingLists($email, $mailingLists, false, false);
 
-            $transient = Utils::encrypt(bin2hex(random_bytes(8)));
+            $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
             set_transient($transient, $email, 30);
             wp_redirect(site_url($this->pageSlug . '/?confirmed=' . $transient));
             exit();
@@ -155,24 +155,26 @@ class Subscription
         ]);
         foreach ($mailingListTerms as $term) {
             $mailingList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true);
-            $mailingList = explode(PHP_EOL, sanitize_textarea_field($mailingList));
+            $mailingList = Utils::sanitizeMailingList($mailingList, \ARRAY_N);
             $unsubscribedFromList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
-            $unsubscribedFromList = explode(PHP_EOL, sanitize_textarea_field($unsubscribedFromList));
+            $unsubscribedFromList = Utils::sanitizeUnsubscribedList($unsubscribedFromList, \ARRAY_N);
             $isPublic = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
             if (isset($mailingLists[$term->term_id])) {
-                $mailingList[] = $email;
-                $mailingList = Utils::sanitizeMailingList(implode(PHP_EOL, $mailingList));
-                update_term_meta(
-                    $term->term_id,
-                    'rrze_newsletter_mailing_list',
-                    $mailingList
-                );
-                if (($key = array_search($email, $unsubscribedFromList)) !== false) {
-                    unset($unsubscribedFromList[$key]);
+                if (!isset($mailingList[$email])) {
+                    $mailingList[$email] = $email;
+                    $mailingList = Utils::sanitizeMailingList(implode(PHP_EOL, $mailingList));
+                    update_term_meta(
+                        $term->term_id,
+                        'rrze_newsletter_mailing_list',
+                        $mailingList
+                    );
+                    if (isset($unsubscribedFromList[$email])) {
+                        unset($unsubscribedFromList[$email]);
+                    }
                 }
             } else {
                 if ($isPublic || $unsubscribeEmpty) {
-                    $unsubscribedFromList[] = $email;
+                    $unsubscribedFromList[$email] = $email;
                 }
             }
             $unsubscribedFromList = Utils::sanitizeUnsubscribedList(implode(PHP_EOL, $unsubscribedFromList));
@@ -250,7 +252,7 @@ class Subscription
 
     public function updatedNotice($email)
     {
-        $encryptedEmail = Utils::encrypt($email);
+        $encryptedEmail = Utils::encryptUrlQuery($email);
         $data = [
             'title' => sprintf(
                 /* translators: Email address to subscribe to the newsletter */
@@ -284,7 +286,7 @@ class Subscription
 
     public function confirmedNotice(string $email)
     {
-        $encryptedEmail = Utils::encrypt($email);
+        $encryptedEmail = Utils::encryptUrlQuery($email);
         $data = [
             'title' => sprintf(
                 __('Newsletter subscription for %s', 'rrze-newsletter'),
@@ -361,6 +363,13 @@ class Subscription
         $mailingListTerms = get_terms([
             'taxonomy' => Newsletter::MAILING_LIST,
             'hide_empty' => false,
+            'meta_query' => [
+                [
+                    'key'     => 'rrze_newsletter_mailing_list_public',
+                    'value'   => '1',
+                    'compare' => '='
+                ]
+            ]
         ]);
 
         $mailingLists = [];
@@ -382,7 +391,7 @@ class Subscription
     public function getUpdate()
     {
         $email = $_GET['update'] ?? '';
-        return Utils::sanitizeEmail(Utils::decrypt($email));
+        return Utils::sanitizeEmail(Utils::decryptUrlQuery($email));
     }
 
     public function getUpdated()
@@ -438,7 +447,7 @@ class Subscription
             'email' => $email,
             'mailing_lists' => $mailingLists
         ];
-        $transient = Utils::encrypt(bin2hex(random_bytes(8)));
+        $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
         set_transient($transient, $data, DAY_IN_SECONDS);
 
         $hostname = parse_url(site_url(), PHP_URL_HOST);

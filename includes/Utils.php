@@ -14,14 +14,6 @@ class Utils
         return mb_strlen($sanitizedTitle) > 3 ? $sanitizedTitle : $default;
     }
 
-    public static function sanitizePageSlug(string $slug): string
-    {
-        $options = (object) Settings::getOptions();
-        $default = $options->mailing_list_subsc_page_slug;
-        $sanitizedSlug = sanitize_title($slug);
-        return mb_strlen($sanitizedSlug) > 3 ? $sanitizedSlug : $default;
-    }
-
     public static function sanitizeUrl(string $input): string
     {
         $url = sanitize_text_field($input);
@@ -65,7 +57,7 @@ class Utils
         }
     }
 
-    public static function sanitizeMailingList(string $input): string
+    public static function sanitizeMailingList(string $input, string $output = '')
     {
         $mailingList = [];
         $textField = explode(PHP_EOL, sanitize_textarea_field($input));
@@ -81,10 +73,10 @@ class Utils
             $mailingList[$email] = trim(implode(',', [$email, $fname, $lname]), ',');
         }
         ksort($mailingList);
-        return implode(PHP_EOL, $mailingList);
+        return $output == '' ? implode(PHP_EOL, $mailingList) : $mailingList;
     }
 
-    public static function sanitizeUnsubscribedList(string $input): string
+    public static function sanitizeUnsubscribedList(string $input, string $output = '')
     {
         $mailingList = [];
         $emails = explode(PHP_EOL, sanitize_textarea_field($input));
@@ -96,10 +88,10 @@ class Utils
             $mailingList[$email] = $email;
         }
         ksort($mailingList);
-        return implode(PHP_EOL, $mailingList);
+        return $output == '' ? implode(PHP_EOL, $mailingList) : $mailingList;
     }
 
-    public static function encrypt(string $string, string $action = 'encrypt')
+    public static function encrypt(string $string, string $action = 'encrypt', bool $safeurl = false)
     {
         if ($string == '') {
             return $string;
@@ -114,9 +106,17 @@ class Utils
         $salt = substr(hash('sha256', $secretSalt), 0, 16);
 
         if ($action == 'encrypt') {
-            $output = base64_encode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            if ($safeurl) {
+                $output = self::urlsafeEncode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            } else {
+                $output = base64_encode(openssl_encrypt($string, $encryptMethod, $key, 0, $salt));
+            }
         } else if ($action == 'decrypt') {
-            $output = openssl_decrypt(base64_decode($string), $encryptMethod, $key, 0, $salt);
+            if ($safeurl) {
+                $output = openssl_decrypt(self::urlsafeDecode($string), $encryptMethod, $key, 0, $salt);
+            } else {
+                $output = openssl_decrypt(base64_decode($string), $encryptMethod, $key, 0, $salt);
+            }
         }
 
         return $output;
@@ -125,6 +125,31 @@ class Utils
     public static function decrypt(string $string)
     {
         return self::encrypt($string, 'decrypt');
+    }
+
+    public static function encryptUrlQuery(string $string)
+    {
+        return self::encrypt($string, 'encrypt', true);
+    }
+
+    public static function decryptUrlQuery(string $string)
+    {
+        return self::encrypt($string, 'decrypt', true);
+    }
+
+    private static function urlsafeEncode(string $string)
+    {
+        return str_replace('=', '', strtr(base64_encode($string), '+/', '-_'));
+    }
+
+    private static function urlsafeDecode(string $string)
+    {
+        $remainder = strlen($string) % 4;
+        if ($remainder) {
+            $padlen = 4 - $remainder;
+            $string .= str_repeat('=', $padlen);
+        }
+        return base64_decode(strtr($string, '-_', '+/'));
     }
 
     public static function isPluginAvailable($plugin)

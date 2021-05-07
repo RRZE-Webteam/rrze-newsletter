@@ -174,15 +174,6 @@ function getFields(): array
                 'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageTitle']
             ],
             [
-                'name'              => 'subsc_page_slug',
-                'label'             => __('Subscription Page Slug', 'rrze-newsletter'),
-                'desc'              => __('Please note that the modification of the Slug disables the subscription links previously sent in the newsletters. Use with caution.', 'rrze-newsletter'),
-                'placeholder'       => '',
-                'type'              => 'text',
-                'default'           => 'newsletter-subscription',
-                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageSlug']
-            ],
-            [
                 'name'              => 'unsubscribed',
                 'label'             => __('Unsubscribed E-mail Addresses', 'rrze-newsletter'),
                 'desc'              => __('List of email addresses that do not subscribe to any mailing list. Enter one email address per line.', 'rrze-newsletter'),
