@@ -14,14 +14,6 @@ class Utils
         return mb_strlen($sanitizedTitle) > 3 ? $sanitizedTitle : $default;
     }
 
-    public static function sanitizePageSlug(string $slug): string
-    {
-        $options = (object) Settings::getOptions();
-        $default = $options->mailing_list_subsc_page_slug;
-        $sanitizedSlug = sanitize_title($slug);
-        return mb_strlen($sanitizedSlug) > 3 ? $sanitizedSlug : $default;
-    }
-
     public static function sanitizeUrl(string $input): string
     {
         $url = sanitize_text_field($input);
@@ -65,7 +57,7 @@ class Utils
         }
     }
 
-    public static function sanitizeMailingList(string $input): string
+    public static function sanitizeMailingList(string $input, string $output = '')
     {
         $mailingList = [];
         $textField = explode(PHP_EOL, sanitize_textarea_field($input));
@@ -81,10 +73,10 @@ class Utils
             $mailingList[$email] = trim(implode(',', [$email, $fname, $lname]), ',');
         }
         ksort($mailingList);
-        return implode(PHP_EOL, $mailingList);
+        return $output == '' ? implode(PHP_EOL, $mailingList) : $mailingList;
     }
 
-    public static function sanitizeUnsubscribedList(string $input): string
+    public static function sanitizeUnsubscribedList(string $input, string $output = '')
     {
         $mailingList = [];
         $emails = explode(PHP_EOL, sanitize_textarea_field($input));
@@ -96,7 +88,7 @@ class Utils
             $mailingList[$email] = $email;
         }
         ksort($mailingList);
-        return implode(PHP_EOL, $mailingList);
+        return $output == '' ? implode(PHP_EOL, $mailingList) : $mailingList;
     }
 
     public static function encrypt(string $string, string $action = 'encrypt', bool $safeurl = false)
