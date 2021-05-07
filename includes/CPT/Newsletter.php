@@ -32,6 +32,8 @@ class Newsletter
         // Register Taxonomies.
         add_action('init', [__CLASS__, 'registerCategory']);
         add_action('init', [__CLASS__, 'registerMailingList']);
+        // Redirect Canonical
+        add_filter('redirect_canonical', [__CLASS__, 'redirectCanonical']);
     }
 
     public function onLoaded()
@@ -746,11 +748,23 @@ class Newsletter
         //@todo
     }
 
-    public static function support_featured_image_options($post_types)
+    public static function support_featured_image_options($postTypes)
     {
         return array_merge(
-            $post_types,
+            $postTypes,
             [self::POST_TYPE]
         );
+    }
+
+    public static function redirectCanonical($redirectUrl)
+    {
+        if (self::POST_TYPE == get_post_type()) {
+            global $wp_query;
+            $wp_query->set_404();
+            status_header(404);
+            nocache_headers();
+            return false;
+        }
+        return $redirectUrl;
     }
 }
