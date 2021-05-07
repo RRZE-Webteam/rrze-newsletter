@@ -30,8 +30,11 @@ class Main
         $newslQueue->onLoaded();
         new NewsletterLayout;
 
-        // Newsletter Subscription        
+        // Newsletter Subscription
         new Subscription;
+
+        // Newsletter Archive
+        new Archive;
 
         // Editor
         Editor::instance();
