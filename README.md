@@ -22,7 +22,6 @@ Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den N
 -   `{{=PERMALINK}}` Der Permalink des Newsletters
 -   `{{=DATE}}` Das Datum, an dem das Bulletin gesendet wurde
 -   `{{=CURRENT_YEAR}}` Das laufende Jahr
--   `{{IS_PUBLIC}}` Prüft, ob ein Newsletter öffentlich ist
 -   `{{EMAIL_ONLY}}` Nur in der E-Mail anzeigen.
 
 **IF-Konstrukte**
