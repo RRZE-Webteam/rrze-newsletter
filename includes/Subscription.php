@@ -547,6 +547,8 @@ class Subscription
         $wp_query->query_vars['error'] = '';
         $wp_query->is_404 = false;
 
+        nocache_headers();
+
         return ($posts);
     }
 
