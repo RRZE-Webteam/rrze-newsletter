@@ -35,7 +35,7 @@ class Subscription
         $this->options = (object) Settings::getOptions();
 
         $this->pageBase = self::getPageBase();
-        $this->pageTitle = $this->options->mailing_list_subsc_page_title;
+        $this->pageTitle = $this->options->subscription_page_title;
 
         add_action('init', [$this, 'init']);
     }
@@ -469,24 +469,20 @@ class Subscription
         $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
         set_transient($transient, $data, DAY_IN_SECONDS);
 
-        $hostname = parse_url(site_url(), PHP_URL_HOST);
+        $options = (object) Settings::getOptions();
 
-        $tplData = [
-            'title' => __('Newsletter Subscription', 'rrze-newsletter'),
-            'confirm_text' => __('Click below to confirm you subscription for the newsletter.', 'rrze-newsletter'),
-            'confirm_link' => sprintf(
-                '<a href="%1$s">%2$s',
-                site_url($this->pageBase . '/?confirmation=' . $transient),
-                __('Confirmation link', 'rrze-newsletter')
-            ),
-            'site_link' => sprintf(
-                '<a href="%1$s">%2$s',
-                site_url(),
-                $hostname
-            ),
-            'ignore_text' => __("If you haven't subscribed for it, please ignore this email.", 'rrze-newsletter'),
-            'salute' => __('Sincerely', 'rrze-newsletter')
-        ];
+        $confirmationLink = sprintf(
+            '<a href="%1$s">%2$s',
+            site_url($this->pageBase . '/?confirmation=' . $transient),
+            __('Confirm subscription to the newsletter.', 'rrze-newsletter')
+        );
+
+        $hostname = parse_url(site_url(), PHP_URL_HOST);
+        $siteLink = sprintf(
+            '<a href="%1$s">%2$s',
+            site_url(),
+            $hostname
+        );
 
         $blogName = get_bloginfo('name');
 
@@ -494,8 +490,19 @@ class Subscription
         $fromName = $blogName ? $blogName : $hostname;
         $replyTo = $from;
 
-        $title = __('Newsletter subscription', 'rrze-newsletter');
-        $content = str_replace(PHP_EOL, '', Templates::getContent('subscription/email-confirmation.html', $tplData));
+        $title = $options->subscription_confirmation_title;
+        $message = $options->subscription_confirmation_message;
+
+        $content = $message;
+        $content = strip_tags($content);
+        $content = wpautop($content);
+        $content = str_replace(['<p>', '</p>'], ['<!-- wp:paragraph --><p>', '</p><!-- /wp:paragraph -->'], $content);
+        $content = str_replace('CONFIRMATION_LINK', $confirmationLink, $content);
+        $content = str_replace('SITE_LINK', $siteLink, $content);
+        $content = sprintf(
+            '<!-- wp:heading {"textAlign":"center","level":1} --><h1 class="has-text-align-center">%s</h1><!-- /wp:heading -->',
+            $title
+        ) . $content;
 
         $mjmlData = [
             'title' => $title,
@@ -525,6 +532,21 @@ class Subscription
 
         $send = new Send;
         return $send->email($args);
+    }
+
+    public static function confirmationTitle()
+    {
+        return __('Newsletter Subscription', 'rrze-newsletter');
+    }
+
+    public static function confirmationMsg()
+    {
+        $text = __('Click on the link below to confirm your subscription to the newsletter.', 'rrze-newsletter') . "\n\n";
+        $text .= 'CONFIRMATION_LINK' . "\n\n";
+        $text .= __('If you have not subscribed to the newsletter, please ignore this email.', 'rrze-newsletter') . "\n\n";
+        $text .= __('Sincerely', 'rrze-newsletter') . "\n";
+        $text .= 'SITE_LINK';
+        return $text;
     }
 
     public function enqueueScripts($hook)
