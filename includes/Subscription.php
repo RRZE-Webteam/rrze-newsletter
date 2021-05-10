@@ -490,7 +490,7 @@ class Subscription
         $fromName = $blogName ? $blogName : $hostname;
         $replyTo = $from;
 
-        $title = $options->subscription_confirmation_title;
+        $title = $options->subscription_confirmation_subject;
         $message = $options->subscription_confirmation_message;
 
         $content = $message;
