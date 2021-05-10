@@ -44,12 +44,12 @@ class Tags
 
         $email = Utils::sanitizeEmail($tags['EMAIL']);
 
-        $subscPageSlug = Newsletter::POST_TYPE . 's';
+        $subscPageSlug = Subscription::getPageBase();
         $unsubUrl = site_url($subscPageSlug . '/?update=' . Utils::encryptUrlQuery($email));
 
-        $archiveSlug = Newsletter::POST_TYPE . 's/archive';
+        $archivePageBase = Archive::getPageBase();
         $archiveQuery = Utils::encryptUrlQuery($postId . '|' . $email);
-        $archiveUrl = site_url($archiveSlug . '/' . $archiveQuery);
+        $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
 
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
