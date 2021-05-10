@@ -25,6 +25,11 @@ class Archive
         add_action('template_redirect', [$this, 'redirectTemplate']);
     }
 
+    public static function getPageBase()
+    {
+        return Newsletter::POST_TYPE . 's/archive';
+    }
+
     public function redirectTemplate()
     {
         if (empty($_SERVER['REQUEST_URI'])) {
@@ -36,8 +41,7 @@ class Archive
             !isset($segments[0])
             || !isset($segments[1])
             || !isset($segments[2])
-            || $segments[0] != Newsletter::POST_TYPE . 's'
-            || $segments[1] != 'archive'
+            || $segments[0] . '/' . $segments[1] != self::getPageBase()
         ) {
             return;
         }
