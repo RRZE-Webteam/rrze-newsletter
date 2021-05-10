@@ -46,6 +46,10 @@ function getSections(): array
             'desc' => ''
         ],
         [
+            'id'    => 'subscription',
+            'title' => __('Subscription', 'rrze-newsletter'),
+            'desc' => ''
+        ],        [
             'id'    => 'mailing_list',
             'title' => __('Mailing List', 'rrze-newsletter'),
             'desc' => ''
@@ -163,9 +167,9 @@ function getFields(): array
                 ]
             ]
         ],
-        'mailing_list' => [
+        'subscription' => [
             [
-                'name'              => 'subsc_page_title',
+                'name'              => 'page_title',
                 'label'             => __('Subscription Page Title', 'rrze-newsletter'),
                 'desc'              => __('Main title of the subscription page.', 'rrze-newsletter'),
                 'placeholder'       => '',
@@ -174,7 +178,7 @@ function getFields(): array
                 'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageTitle']
             ],
             [
-                'name'              => 'subsc_page_url',
+                'name'              => 'page_url',
                 'label'             => __('Subscription Page URL', 'rrze-newsletter'),
                 'desc'              => __('URL of the subscripcion page.', 'rrze-newsletter'),
                 'placeholder'       => '',
@@ -183,6 +187,26 @@ function getFields(): array
                 'default'           => \RRZE\Newsletter\Subscription::getPageUrl(),
                 'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl']
             ],
+            [
+                'name'              => 'confirmation_subject',
+                'label'             => __('Subject of the email confirmation', 'rrze-newsletter'),
+                'desc'              => __('Email subject of the confirmation of the newsletter subscription.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'text',
+                'default'           => \RRZE\Newsletter\Subscription::confirmationTitle(),
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            [
+                'name'              => 'confirmation_message',
+                'label'             => __('Message of the email confirmation', 'rrze-newsletter'),
+                'desc'              => __('Email message of the confirmation of the newsletter subscription.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'textarea',
+                'default'           => \RRZE\Newsletter\Subscription::confirmationMsg(),
+                'sanitize_callback' => 'sanitize_textarea_field'
+            ]
+        ],
+        'mailing_list' => [
             [
                 'name'              => 'unsubscribed',
                 'label'             => __('Unsubscribed E-mail Addresses', 'rrze-newsletter'),
