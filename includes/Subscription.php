@@ -23,7 +23,7 @@ class Subscription
      */
     protected $options;
 
-    protected $pageSlug;
+    protected $pageBase;
 
     protected $pageTitle;
 
@@ -34,22 +34,36 @@ class Subscription
         $this->optionName = Settings::getOptionName();
         $this->options = (object) Settings::getOptions();
 
-        $this->pageSlug = Newsletter::POST_TYPE . 's';
+        $this->pageBase = self::getPageBase();
         $this->pageTitle = $this->options->mailing_list_subsc_page_title;
 
         add_action('init', [$this, 'init']);
     }
 
+    public static function getPageBase()
+    {
+        return Newsletter::POST_TYPE . 's/subscription';
+    }
+
+    public static function getPageUrl()
+    {
+        return site_url(\RRZE\Newsletter\Subscription::getPageBase());
+    }
+
     public function init()
     {
-        $pageSlug = '';
-        if (get_option('permalink_structure')) {
-            $pageSlug = trim(basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/'));
+        if (!get_option('permalink_structure')) {
+            return;
         }
+
+        $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $segments = array_values(array_filter(explode('/', $path)));
         if (
-            $pageSlug !== $this->pageSlug
-            || is_admin()
+            is_admin()
             || !is_main_query()
+            || !isset($segments[0])
+            || !isset($segments[1])
+            || $segments[0] . '/' . $segments[1] != self::getPageBase()
         ) {
             return;
         }
@@ -72,7 +86,7 @@ class Subscription
 
                 $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
                 set_transient($transient, $email, 30);
-                wp_redirect(site_url($this->pageSlug . '/?updated=' . $transient));
+                wp_redirect(site_url($this->pageBase . '/?updated=' . $transient));
                 exit();
             }
             $this->updateSubscription($email);
@@ -88,7 +102,7 @@ class Subscription
 
                 $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
                 set_transient($transient, $email, 30);
-                wp_redirect(site_url($this->pageSlug . '/?added=' . $transient));
+                wp_redirect(site_url($this->pageBase . '/?added=' . $transient));
                 exit();
             } elseif ($submitted && !$postEmail) {
                 $error = __('Please fill in this field.', 'rrze-newsletter');
@@ -103,7 +117,7 @@ class Subscription
                 ];
                 $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
                 set_transient($transient, $errorData, 30);
-                wp_redirect(site_url($this->pageSlug . '/?error=' . $transient));
+                wp_redirect(site_url($this->pageBase . '/?error=' . $transient));
                 exit();
             }
             $this->addSubscription();
@@ -118,7 +132,7 @@ class Subscription
 
             $transient = Utils::encryptUrlQuery(bin2hex(random_bytes(8)));
             set_transient($transient, $email, 30);
-            wp_redirect(site_url($this->pageSlug . '/?confirmed=' . $transient));
+            wp_redirect(site_url($this->pageBase . '/?confirmed=' . $transient));
             exit();
         } elseif (strpos($urlQuery, 'confirmed') !== false && $email = $this->getConfirmed()) {
             $this->confirmedNotice($email);
@@ -209,13 +223,14 @@ class Subscription
         $data = [
             'title' => __('Add newsletter subscription', 'rrze-newsletter'),
             'description' => __('Please check the newsletters below that you would like to receive from us and then enter your email address to add your subscription.', 'rrze-newsletter'),
+            'no_newsletters_available' => __('At the moment there are no newsletters available to subscribe.', 'rrze-newsletter'),
             'button_label' => __('Add subscription', 'rrze-newsletter'),
             'mailing_lists' => $mailingLists,
             'email_placeholder' => __('Enter your email address.', 'rrze-newsletter'),
             'nonce_field' => wp_nonce_field('rrze_newsletter_subscription', 'rrze_newsletter_subscription_field'),
             'email' => $email,
             'error' => $error,
-            'action' => site_url($this->pageSlug),
+            'action' => site_url($this->pageBase),
             'add' => 'true',
         ];
 
@@ -233,10 +248,11 @@ class Subscription
         $data = [
             'title' => sprintf(
                 /* translators: Email address to subscribe to the newsletter */
-                __('Manage newsletter subscription for %s', 'rrze-newsletter'),
+                __('Newsletter subscription for %s', 'rrze-newsletter'),
                 $email
             ),
             'description' => __('Please check the newsletters below that you would like to receive from us to update your subscription.', 'rrze-newsletter'),
+            'no_newsletters_available' => __('At the moment there are no newsletters available to subscribe.', 'rrze-newsletter'),
             'unsubscribe_all_label' => __('Cancel my subscription to all future newsletters.', 'rrze-newsletter'),
             'button_label' => __('Update subscription', 'rrze-newsletter'),
             'email' => $email,
@@ -262,7 +278,7 @@ class Subscription
             'notice' => __('Thank you', 'rrze-newsletter'),
             'description' => __('Your newsletter settings have been updated.', 'rrze-newsletter'),
             'link_text' => __('Back to manage newsletter subscription page', 'rrze-newsletter'),
-            'link_url' => site_url($this->pageSlug . '/?update=' . $encryptedEmail)
+            'link_url' => site_url($this->pageBase . '/?update=' . $encryptedEmail)
         ];
 
         $this->content = str_replace(PHP_EOL, '', Templates::getContent('subscription/notice.html', $data));
@@ -295,7 +311,7 @@ class Subscription
             'notice' => __('Thank you', 'rrze-newsletter'),
             'description' => __('Your newsletter subscription has been confirmed.', 'rrze-newsletter'),
             'link_text' => __('Manage newsletter subscription page', 'rrze-newsletter'),
-            'link_url' => site_url($this->pageSlug . '/?update=' . $encryptedEmail)
+            'link_url' => site_url($this->pageBase . '/?update=' . $encryptedEmail)
         ];
 
         $this->content = str_replace(PHP_EOL, '', Templates::getContent('subscription/notice.html', $data));
@@ -311,7 +327,7 @@ class Subscription
         $mailingLists = [];
         if (!empty($mailingListTerms)) {
             $options = (object) Settings::getOptions();
-            $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
+            $unsubscribed = Utils::sanitizeUnsubscribedList((string) $options->mailing_list_unsubscribed, \ARRAY_N);
 
             foreach ($mailingListTerms as $term) {
                 $mailingLists = array_merge($mailingLists, [
@@ -322,37 +338,40 @@ class Subscription
                         'checked' => false
                     ]
                 ]);
+
                 if (empty($list = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true))) {
                     continue;
                 }
 
-                $unsubscribedFromList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
-                $unsubscribedFromList = explode(
-                    PHP_EOL,
-                    sanitize_textarea_field($unsubscribedFromList)
+                $isPublic = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
+
+                $unsubscribedFromList = Utils::sanitizeUnsubscribedList(
+                    (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true),
+                    \ARRAY_N
                 );
-                $unsubscribedFromList = array_unique(
+
+                $unsubscribed = array_unique(
                     array_merge($unsubscribed, $unsubscribedFromList)
                 );
 
                 $subscriptions = [];
-                $aryList = explode(PHP_EOL, sanitize_textarea_field($list));
-                foreach ($aryList as $row) {
-                    $aryRow = explode(',', $row);
-                    $emailAddress = isset($aryRow[0]) ? trim($aryRow[0]) : ''; // Email Address
 
-                    if (
-                        !Utils::sanitizeEmail($emailAddress)
-                        || in_array($emailAddress, $unsubscribedFromList)
-                    ) {
-                        continue;
-                    }
-
-                    $subscriptions[] = $emailAddress;
+                $aryList = Utils::sanitizeMailingList($list, \ARRAY_N);
+                if (
+                    isset($aryList[$email])
+                    && !isset($unsubscribed[$email])
+                ) {
+                    $subscriptions[$email] = $email;
                 }
-
-                $checked = in_array($email, $subscriptions) ? 'checked="checked"' : '';
-                $mailingLists[array_key_last($mailingLists)]['checked'] = $checked;
+                if (
+                    !isset($aryList[$email])
+                    && !$isPublic
+                ) {
+                    unset($mailingLists[array_key_last($mailingLists)]);
+                } elseif (isset($subscriptions[$email])) {
+                    $checked = in_array($email, $subscriptions) ? 'checked="checked"' : '';
+                    $mailingLists[array_key_last($mailingLists)]['checked'] = $checked;
+                }
             }
         }
         return $mailingLists;
@@ -457,7 +476,7 @@ class Subscription
             'confirm_text' => __('Click below to confirm you subscription for the newsletter.', 'rrze-newsletter'),
             'confirm_link' => sprintf(
                 '<a href="%1$s">%2$s',
-                site_url($this->pageSlug . '/?confirmation=' . $transient),
+                site_url($this->pageBase . '/?confirmation=' . $transient),
                 __('Confirmation link', 'rrze-newsletter')
             ),
             'site_link' => sprintf(
@@ -530,7 +549,7 @@ class Subscription
     {
         global $wp, $wp_query;
 
-        if (strcasecmp($wp->request, $this->pageSlug) !== 0) {
+        if (strcasecmp($wp->request, $this->pageBase) !== 0) {
             return $posts;
         }
 
@@ -566,14 +585,14 @@ class Subscription
         $post->comment_status        = 'closed';
         $post->ping_status           = 'closed';
         $post->post_password         = '';
-        $post->post_name             = $this->pageSlug;
+        $post->post_name             = sanitize_title($this->pageBase);
         $post->to_ping               = '';
         $post->pinged                = '';
         $post->modified              = $post->post_date;
         $post->modified_gmt          = $post->post_date_gmt;
         $post->post_content_filtered = '';
         $post->post_parent           = 0;
-        $post->guid                  = get_home_url(1, '/' . $this->pageSlug);
+        $post->guid                  = get_home_url(1, '/' . $this->pageBase);
         $post->menu_order            = 0;
         $post->post_type             = 'page';
         $post->post_mime_type        = '';
