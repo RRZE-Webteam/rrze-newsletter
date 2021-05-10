@@ -167,11 +167,21 @@ function getFields(): array
             [
                 'name'              => 'subsc_page_title',
                 'label'             => __('Subscription Page Title', 'rrze-newsletter'),
-                'desc'              => __('Corresponds to the main title of the subscription page.', 'rrze-newsletter'),
+                'desc'              => __('Main title of the subscription page.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => __('Newsletter Subscription', 'rrze-newsletter'),
                 'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageTitle']
+            ],
+            [
+                'name'              => 'subsc_page_url',
+                'label'             => __('Subscription Page URL', 'rrze-newsletter'),
+                'desc'              => __('URL of the subscripcion page.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'text',
+                'disabled'          => 'disabled',
+                'default'           => \RRZE\Newsletter\Subscription::getPageUrl(),
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl']
             ],
             [
                 'name'              => 'unsubscribed',
