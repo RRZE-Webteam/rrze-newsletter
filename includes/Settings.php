@@ -148,6 +148,8 @@ class Settings
         $options = wp_parse_args($options, $defaults);
         $options = array_intersect_key($options, $defaults);
 
+        $options['mailing_list_subsc_page_url'] = Subscription::getPageUrl();
+
         if ($customMjmlEndpoint = Utils::getCustomMjmlEndpoint()) {
             $options['mjml_api_endpoint'] = $customMjmlEndpoint;
             $options['mjml_api_key'] = '';
