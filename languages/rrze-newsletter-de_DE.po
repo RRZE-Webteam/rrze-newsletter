@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-05-10T10:52:43+00:00\n"
-"PO-Revision-Date: 2021-05-10 12:55+0200\n"
+"POT-Creation-Date: 2021-05-10T14:41:34+00:00\n"
+"PO-Revision-Date: 2021-05-10 16:44+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -51,116 +51,136 @@ msgid "Mail Queue"
 msgstr "Mail-Queue"
 
 #: config/settings.php:50
+msgid "Subscription"
+msgstr "Abonnement"
+
+#: config/settings.php:54
 msgid "Mailing List"
 msgstr "Mailingliste"
 
-#: config/settings.php:55
+#: config/settings.php:59
 msgid "MJML API Service"
 msgstr "MJML-API-Dienst"
 
-#: config/settings.php:56
+#: config/settings.php:60
 msgid ""
 "Please note that some MJML API Services require HTTP Basic Authentication."
 msgstr ""
 "Bitte beachten Sie, dass einige MJML-API-Dienste eine HTTP-"
 "Basisauthentifizierung erfordern."
 
-#: config/settings.php:71
+#: config/settings.php:75
 msgid "Encryption"
 msgstr "Verschlüsselung"
 
-#: config/settings.php:75
+#: config/settings.php:79
 msgid "None"
 msgstr "Keiner"
 
-#: config/settings.php:76
+#: config/settings.php:80
 msgid "TLS"
 msgstr "TLS"
 
-#: config/settings.php:77
+#: config/settings.php:81
 msgid "SSL"
 msgstr "SSL"
 
-#: config/settings.php:83
+#: config/settings.php:87
 msgid "Host"
 msgstr "Servername"
 
-#: config/settings.php:84
+#: config/settings.php:88
 msgid "Host ip address."
 msgstr "Server IP Adresse."
 
-#: config/settings.php:92
+#: config/settings.php:96
 msgid "Port"
 msgstr "Port"
 
-#: config/settings.php:93
+#: config/settings.php:97
 msgid "Host port."
 msgstr "Server Port."
 
-#: config/settings.php:101
+#: config/settings.php:105
 msgid "Sender Addresse"
 msgstr "Sender-Adresse"
 
-#: config/settings.php:110
+#: config/settings.php:114
 msgid "Authentication"
 msgstr "Authentifizierung"
 
-#: config/settings.php:111
+#: config/settings.php:115
 msgid "Authentication is required to access the SMTP server"
 msgstr ""
 "Für den Zugriff auf den SMTP-Server ist eine Authentifizierung erforderlich"
 
-#: config/settings.php:116
+#: config/settings.php:120
 msgid "Username"
 msgstr "Benutzername"
 
-#: config/settings.php:125
+#: config/settings.php:129
 msgid "Password"
 msgstr "Passwort"
 
-#: config/settings.php:135
+#: config/settings.php:139
 msgid "Send Limit"
 msgstr "Sende-Limit"
 
-#: config/settings.php:136
+#: config/settings.php:140
 msgid "Maximum number of emails that can be sent per minute."
 msgstr "Maximale Anzahl von E-Mails, die pro Minute gesendet werden können."
 
-#: config/settings.php:151
+#: config/settings.php:155
 msgid "Max. Retries"
 msgstr "Max. Wiederholungen"
 
-#: config/settings.php:152
+#: config/settings.php:156
 msgid "Maximum number of retries until an email is sent successfully."
 msgstr ""
 "Maximale Anzahl von Wiederholungsversuchen, bis eine E-Mail erfolgreich "
 "gesendet wurde."
 
-#: config/settings.php:169
+#: config/settings.php:173
 msgid "Subscription Page Title"
 msgstr "Titel der Abonnementseite"
 
-#: config/settings.php:170
+#: config/settings.php:174
 msgid "Main title of the subscription page."
 msgstr "Haupttitel der Abonnementseite."
 
-#: config/settings.php:173 includes/Subscription.php:475
+#: config/settings.php:177 includes/Subscription.php:539
 msgid "Newsletter Subscription"
 msgstr "Newsletter-Abonnement"
 
-#: config/settings.php:178
+#: config/settings.php:182
 msgid "Subscription Page URL"
 msgstr "Abonnementseite-URL"
 
-#: config/settings.php:179
+#: config/settings.php:183
 msgid "URL of the subscripcion page."
 msgstr "URL der Abonnementseite."
 
-#: config/settings.php:188 includes/CPT/Newsletter.php:375
+#: config/settings.php:192
+msgid "Subject of the email confirmation"
+msgstr "Betreff der E-Mail-Bestätigung"
+
+#: config/settings.php:193
+msgid "Email subject of the confirmation of the newsletter subscription."
+msgstr "E-Mail-Betreff der Bestätigung des Newsletter-Abonnements."
+
+#: config/settings.php:201
+msgid "Message of the email confirmation"
+msgstr "Nachricht der E-Mail-Bestätigung"
+
+#: config/settings.php:202
+msgid "Email message of the confirmation of the newsletter subscription."
+msgstr "E-Mail-Nachricht zur Bestätigung des Newsletter-Abonnements."
+
+#: config/settings.php:212 includes/CPT/Newsletter.php:375
 msgid "Unsubscribed E-mail Addresses"
 msgstr "Abgemeldete E-Mail-Adressen"
 
-#: config/settings.php:189
+#: config/settings.php:213
 msgid ""
 "List of email addresses that do not subscribe to any mailing list. Enter one "
 "email address per line."
@@ -168,27 +188,27 @@ msgstr ""
 "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine "
 "E-Mail-Adresse pro Zeile ein."
 
-#: config/settings.php:199
+#: config/settings.php:223
 msgid "API Endpoint"
 msgstr "API-Endpoint"
 
-#: config/settings.php:200
+#: config/settings.php:224
 msgid "URL of the MJML API Service."
 msgstr "URL des MJML-API-Dienstes."
 
-#: config/settings.php:208
+#: config/settings.php:232
 msgid "Application ID"
 msgstr "Anwendungs-ID"
 
-#: config/settings.php:209
+#: config/settings.php:233
 msgid "The Application ID acts as a username."
 msgstr "Die Anwendungs-ID fungiert als Benutzername."
 
-#: config/settings.php:217
+#: config/settings.php:241
 msgid "Secret Key"
 msgstr "Secret-Key"
 
-#: config/settings.php:218
+#: config/settings.php:242
 msgid "The API Key act as a password."
 msgstr "Der API-Key fungiert als Kennwort."
 
@@ -728,25 +748,27 @@ msgstr "Ihr Newsletter-Abonnement wurde bestätigt."
 msgid "Manage newsletter subscription page"
 msgstr "Newsletter-Abonnementseite verwalten"
 
-#: includes/Subscription.php:476
-msgid "Click below to confirm you subscription for the newsletter."
+#: includes/Subscription.php:477
+#, fuzzy
+#| msgid "Click below to confirm you subscription for the newsletter."
+msgid "Confirm subscription to the newsletter."
 msgstr "Klicken Sie unten, um Ihr Abonnement für den Newsletter zu bestätigen."
 
-#: includes/Subscription.php:480
-msgid "Confirmation link"
-msgstr "Bestätigungslink"
+#: includes/Subscription.php:544
+#, fuzzy
+#| msgid "Click below to confirm you subscription for the newsletter."
+msgid "Click on the link below to confirm your subscription to the newsletter."
+msgstr "Klicken Sie unten, um Ihr Abonnement für den Newsletter zu bestätigen."
 
-#: includes/Subscription.php:487
-msgid "If you haven't subscribed for it, please ignore this email."
+#: includes/Subscription.php:546
+#, fuzzy
+#| msgid "If you haven't subscribed for it, please ignore this email."
+msgid "If you have not subscribed to the newsletter, please ignore this email."
 msgstr "Wenn Sie es nicht abonniert haben, ignorieren Sie bitte diese E-Mail."
 
-#: includes/Subscription.php:488
+#: includes/Subscription.php:547
 msgid "Sincerely"
 msgstr "Mit freundlichen Grüßen"
-
-#: includes/Subscription.php:497
-msgid "Newsletter subscription"
-msgstr "Newsletter-Abonnement"
 
 #. translators: 1: Server PHP version number, 2: Required PHP version number.
 #: rrze-newsletter.php:92
@@ -1073,6 +1095,21 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:92
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#, fuzzy
+#~| msgid "Confirmation Title"
+#~ msgid "Confirmation Subject"
+#~ msgstr "Bestätigungstitel"
+
+#~ msgid "Confirmation Message"
+#~ msgstr "Bestätigungsmeldung"
+
+#~ msgid "Title of the newsletter subscription confirmation sent by email."
+#~ msgstr ""
+#~ "Titel der Bestätigung des Newsletter-Abonnements per E-Mail gesendet."
+
+#~ msgid "Newsletter subscription"
+#~ msgstr "Newsletter-Abonnement"
 
 #~ msgid "Manage newsletter subscription for %s"
 #~ msgstr "Verwalten Sie das Newsletter-Abonnement für %s"
