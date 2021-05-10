@@ -6,6 +6,7 @@
             </h2>
         </div>
         <div>
+            {{mailing_lists}}
             <p class="u-text-center">
                 {{=description}}
             </p>
@@ -35,7 +36,7 @@
                             {{=error}}
                         </p>
                     </div>
-                    {{/error}}                    
+                    {{/error}}
                     {{add}}
                     <div class="u-px-48">
                         <input type="email" name="email" id="email" class="u-mb-24" value="{{=email}}"
@@ -47,6 +48,11 @@
                 <button type="submit"
                     class="newsl-subsc-btn u-mt-24  u-py-18  u-px-48  u-caps">{{=button_label}}</button>
             </form>
+            {{:mailing_lists}}
+            <p class="u-text-center">
+                {{=no_newsletters_available}}
+            </p>
+            {{/mailing_lists}}
         </div>
     </div>
 </div>
