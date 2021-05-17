@@ -5,7 +5,6 @@ namespace RRZE\Newsletter;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
-use RRZE\Newsletter\MJML\Render;
 
 /**
  * Generates a virtual page showing the output of the newsletter 
@@ -25,6 +24,11 @@ class Archive
         add_action('template_redirect', [$this, 'redirectTemplate']);
     }
 
+    public static function getPageBase()
+    {
+        return Newsletter::POST_TYPE . '/archive';
+    }
+
     public function redirectTemplate()
     {
         if (empty($_SERVER['REQUEST_URI'])) {
@@ -36,8 +40,7 @@ class Archive
             !isset($segments[0])
             || !isset($segments[1])
             || !isset($segments[2])
-            || $segments[0] != Newsletter::POST_TYPE . 's'
-            || $segments[1] != 'archive'
+            || $segments[0] . '/' . $segments[1] != self::getPageBase()
         ) {
             return;
         }
@@ -60,7 +63,7 @@ class Archive
 
     protected function getArchive(string $string)
     {
-        $archive = Utils::decryptUrlQuery(trim($string));
+        $archive = Utils::decryptQueryVar(trim($string));
         $archive = explode('|', $archive);
         $data = [
             'post' => $archive[0] ?? '',

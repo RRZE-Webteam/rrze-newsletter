@@ -15,6 +15,22 @@
         margin: auto;
     }
 
+    .u-mt-0 {
+        margin-top: 0 !important;
+    }
+
+    .u-mt-6 {
+        margin-top: 6px !important;
+    }
+
+    .u-mt-12 {
+        margin-top: 12px !important;
+    }
+
+    .u-mt-24 {
+        margin-top: 24px !important;
+    }
+
     .u-mb-0 {
         margin-bottom: 0 !important;
     }
@@ -51,9 +67,14 @@
         color: $color-black !important;
     }
 
-    .u-px-48 {
+    .s-px-48 {
         padding-right: 60px !important;
         padding-left: 60px !important;
+    }
+
+    .u-px-18 {
+        padding-right: 18px !important;
+        padding-left: 18px !important;
     }
 
     .u-py-18 {
@@ -68,6 +89,38 @@
 
     .u-mt-24 {
         margin-top: 24px !important;
+    }
+
+    .u-mr-0 {
+        margin-right: 0 !important;
+    }
+
+    .u-mr-6 {
+        margin-right: 6px !important;
+    }
+
+    .u-mr-12 {
+        margin-right: 12px !important;
+    }
+
+    .u-mr-18 {
+        margin-right: 18px !important;
+    }
+
+    .u-mr-24 {
+        margin-right: 24px !important;
+    }
+
+    .u-ml-6 {
+        margin-left: 6px !important;
+    }
+
+    .u-ml-12 {
+        margin-left: 12px !important;
+    }
+
+    .u-ml-24 {
+        margin-left: 24px !important;
     }
 
     .u-caps {
@@ -127,7 +180,7 @@
     }
 
     .newsl-subsc-btn {
-        display: block;
+        display: inline;
         margin: auto;
         border: 0;
         border-radius: 5px;
@@ -145,6 +198,10 @@
 
     .newsl-subsc-btn:hover {
         background-color: $color-light-grey;
+    }
+
+    input[type="email"] {
+        width: 100%;
     }
 
     input[type="checkbox"] {
@@ -209,5 +266,17 @@
         border: 2px solid $color-blue;
         border-radius: 4px;
         background-color: $color-white;
+    }
+
+    @media screen and (max-width: 600px) {
+        .u-text-center {
+            text-align: left !important;
+        }
+
+        .newsl-subsc-btn {
+            margin: 0 !important;
+            margin-top: 6px !important;
+            width: 100% !important;
+        }
     }
 }

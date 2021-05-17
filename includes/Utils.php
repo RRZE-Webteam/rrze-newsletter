@@ -9,7 +9,7 @@ class Utils
     public static function sanitizePageTitle(string $title): string
     {
         $options = (object) Settings::getOptions();
-        $default = $options->mailing_list_subsc_page_title;
+        $default = $options->subscription_page_title;
         $sanitizedTitle = sanitize_text_field($title);
         return mb_strlen($sanitizedTitle) > 3 ? $sanitizedTitle : $default;
     }
@@ -127,12 +127,12 @@ class Utils
         return self::encrypt($string, 'decrypt');
     }
 
-    public static function encryptUrlQuery(string $string)
+    public static function encryptQueryVar(string $string)
     {
         return self::encrypt($string, 'encrypt', true);
     }
 
-    public static function decryptUrlQuery(string $string)
+    public static function decryptQueryVar(string $string)
     {
         return self::encrypt($string, 'decrypt', true);
     }

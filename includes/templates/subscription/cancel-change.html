@@ -1,0 +1,36 @@
+<div class="rrze-newsl-subsc">
+    <div class="o-container o-container--mw700 u-py-60">
+        <div class="u-bb u-bc-spacer u-mb-24 u-pb-24 u-text-center">
+            <h2 class="c-content-heading u-mb-6 u-text-black u-text-center">
+                {{=title}}
+            </h2>
+        </div>
+        <p class="u-mb-24">
+            {{=description}}
+        </p>
+        <form class="u-block">
+            <label for="email-address" class="u-block">{{=email_address_label}} <span>*</span></label>
+            <input type="email" name="email" id="email" value="{{=email}}" required="required">
+
+            {{email_error}}
+            <p class="u-text-error u-mb-24">
+                {{=email_error}}
+            </p>
+            {{:email_error}}
+            <p class="u-mb-24"></p>
+            {{/email_error}}
+
+            {{=nonce_field}}
+            <div class="u-block u-text-center">
+                <button type="submit" class="newsl-subsc-btn u-py-18 u-px-18 u-mr-12 u-caps"
+                    formaction="{{=formaction_cancel}}" formmethod="post">
+                    {{=button_cancel_label}}
+                </button>
+                <button type="submit" class="newsl-subsc-btn u-py-18 u-px-18 u-caps" formaction="{{=formaction_change}}"
+                    formmethod="post">
+                    {{=button_change_label}}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
