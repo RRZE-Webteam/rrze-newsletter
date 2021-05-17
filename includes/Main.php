@@ -39,8 +39,8 @@ class Main
         // Editor
         Editor::instance();
 
-        // MJML API
-        MjmlApi::activationNotice();
+        // Notices
+        new Notices;
 
         // RestApi
         new RestApi;
