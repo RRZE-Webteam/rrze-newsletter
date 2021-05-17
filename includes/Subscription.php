@@ -635,20 +635,14 @@ class Subscription
     protected function getAllEmails()
     {
         $emails = [];
-        $unsubscribed = $this->options->mailing_list_unsubscribed;
-        $unsubscribed = Utils::sanitizeUnsubscribedList($unsubscribed, \ARRAY_N);
         $mailingListTerms = get_terms([
             'taxonomy' => Newsletter::MAILING_LIST,
             'hide_empty' => false,
         ]);
-        $emails = array_merge($unsubscribed, $emails);
         foreach ($mailingListTerms as $term) {
             $mailingList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true);
             $mailingList = Utils::sanitizeMailingList($mailingList, \ARRAY_N);
             $emails = array_merge($mailingList, $emails);
-            $unsubscribedFromList = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_unsubscribed', true);
-            $unsubscribedFromList = Utils::sanitizeUnsubscribedList($unsubscribedFromList, \ARRAY_N);
-            $emails = array_merge($unsubscribedFromList, $emails);
         }
         return $emails;
     }
