@@ -32,8 +32,6 @@ class Newsletter
         // Register Taxonomies.
         add_action('init', [__CLASS__, 'registerCategory']);
         add_action('init', [__CLASS__, 'registerMailingList']);
-        // Redirect Canonical
-        add_filter('redirect_canonical', [__CLASS__, 'redirectCanonical']);
     }
 
     public function onLoaded()
@@ -531,13 +529,12 @@ class Newsletter
             $fontHeader = get_post_meta($post->ID, 'font_header', true);
             $fontBody = get_post_meta($post->ID, 'font_body', true);
             $backgroundColor = get_post_meta($post->ID, 'background_color', true);
-?>
+            ?>
             <style>
                 .main-content {
                     background-color: <?php echo esc_attr($backgroundColor); ?>;
                     font-family: <?php echo esc_attr($fontBody); ?>;
                 }
-
                 .main-content h1,
                 .main-content h2,
                 .main-content h3,
@@ -546,15 +543,13 @@ class Newsletter
                 .main-content h6 {
                     font-family: <?php echo esc_attr($fontHeader); ?>;
                 }
-
-                <?php if ($backgroundColor) : ?>.entry-content {
+                <?php if ($backgroundColor) : ?>
+                .entry-content {
                     padding: 0 32px;
-                    ;
                 }
-
                 <?php endif; ?>
             </style>
-<?php
+            <?php
         }
     }
 
@@ -754,17 +749,5 @@ class Newsletter
             $postTypes,
             [self::POST_TYPE]
         );
-    }
-
-    public static function redirectCanonical($redirectUrl)
-    {
-        if (self::POST_TYPE == get_post_type()) {
-            global $wp_query;
-            $wp_query->set_404();
-            status_header(404);
-            nocache_headers();
-            return false;
-        }
-        return $redirectUrl;
     }
 }
