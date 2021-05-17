@@ -144,11 +144,9 @@ function getFields(): array
                 'step'              => '1',
                 'type'              => 'number',
                 'default'           => '15',
-                'sanitize_callback' => [
-                    function ($input) {
-                        return \RRZE\Newsletter\Utils::validateIntRange($input, 15, 1, 60);
-                    }
-                ]
+                'sanitize_callback' => function ($input) {
+                    return \RRZE\Newsletter\Utils::validateIntRange($input, 15, 1, 60);
+                }
             ],
             [
                 'name'              => 'max_retries',
@@ -160,50 +158,68 @@ function getFields(): array
                 'step'              => '1',
                 'type'              => 'number',
                 'default'           => '1',
-                'sanitize_callback' => [
-                    function ($input) {
-                        return \RRZE\Newsletter\Utils::validateIntRange($input, 1, 0, 10);
-                    }
-                ]
+                'sanitize_callback' => function ($input) {
+                    return \RRZE\Newsletter\Utils::validateIntRange($input, 1, 0, 10);
+                }
             ]
         ],
         'subscription' => [
             [
-                'name'              => 'page_title',
-                'label'             => __('Subscription Page Title', 'rrze-newsletter'),
-                'desc'              => __('Main title of the subscription page.', 'rrze-newsletter'),
+                'name'              => 'page_id',
+                'label'             => __('Subscription Page', 'rrze-newsletter'),
+                'desc'              => __('Select a current page for the newsletter subscription page.', 'rrze-newsletter'),
                 'placeholder'       => '',
-                'type'              => 'text',
-                'default'           => __('Newsletter Subscription', 'rrze-newsletter'),
-                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizePageTitle']
-            ],
-            [
-                'name'              => 'page_url',
-                'label'             => __('Subscription Page URL', 'rrze-newsletter'),
-                'desc'              => __('URL of the subscripcion page.', 'rrze-newsletter'),
-                'placeholder'       => '',
-                'type'              => 'text',
-                'disabled'          => 'disabled',
-                'default'           => \RRZE\Newsletter\Subscription::getPageUrl(),
-                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl']
+                'type'              => 'selectpage',
+                'default'           => '0',
+                'sanitize_callback' => 'sanitize_text_field'
             ],
             [
                 'name'              => 'confirmation_subject',
                 'label'             => __('Subject of the email confirmation', 'rrze-newsletter'),
-                'desc'              => __('Email subject of the confirmation of the newsletter subscription.', 'rrze-newsletter'),
+                'desc'              => __('Email subject of the email to confirm the newsletter subscription.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'text',
-                'default'           => \RRZE\Newsletter\Subscription::confirmationTitle(),
-                'sanitize_callback' => 'sanitize_text_field'
+                'default'           => \RRZE\Newsletter\Subscription::confirmationSubject(),
+                'sanitize_callback' => function ($input) {
+                    $input = sanitize_text_field($input);
+                    return $input ? $input : \RRZE\Newsletter\Subscription::confirmationSubject();
+                }
             ],
             [
                 'name'              => 'confirmation_message',
                 'label'             => __('Message of the email confirmation', 'rrze-newsletter'),
-                'desc'              => __('Email message of the confirmation of the newsletter subscription.', 'rrze-newsletter'),
+                'desc'              => __('Email message of the email to confirm the newsletter subscription.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'textarea',
-                'default'           => \RRZE\Newsletter\Subscription::confirmationMsg(),
-                'sanitize_callback' => 'sanitize_textarea_field'
+                'default'           => \RRZE\Newsletter\Subscription::confirmationMessage(),
+                'sanitize_callback' => function ($input) {
+                    $input = sanitize_textarea_field($input);
+                    return $input ? $input : \RRZE\Newsletter\Subscription::confirmationMessage();
+                }
+            ],
+            [
+                'name'              => 'change_cancel_subject',
+                'label'             => __('Subject of the email to change or cancel', 'rrze-newsletter'),
+                'desc'              => __('Email subject of the email to change or cancel the newsletter subscription.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'text',
+                'default'           => \RRZE\Newsletter\Subscription::changeOrCancelSubject(),
+                'sanitize_callback' => function ($input) {
+                    $input = sanitize_text_field($input);
+                    return $input ? $input : \RRZE\Newsletter\Subscription::changeOrCancelSubject();
+                }
+            ],
+            [
+                'name'              => 'change_cancel_message',
+                'label'             => __('Message of the email to change or cancel', 'rrze-newsletter'),
+                'desc'              => __('Email message of the email to change or cancel the newsletter subscription.', 'rrze-newsletter'),
+                'placeholder'       => '',
+                'type'              => 'textarea',
+                'default'           => \RRZE\Newsletter\Subscription::changeOrCancelMessage(),
+                'sanitize_callback' => function ($input) {
+                    $input = sanitize_textarea_field($input);
+                    return $input ? $input : \RRZE\Newsletter\Subscription::changeOrCancelMessage();
+                }
             ]
         ],
         'mailing_list' => [
