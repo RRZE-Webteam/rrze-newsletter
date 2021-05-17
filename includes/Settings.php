@@ -148,8 +148,6 @@ class Settings
         $options = wp_parse_args($options, $defaults);
         $options = array_intersect_key($options, $defaults);
 
-        $options['mailing_list_subsc_page_url'] = Subscription::getPageUrl();
-
         if ($customMjmlEndpoint = Utils::getCustomMjmlEndpoint()) {
             $options['mjml_api_endpoint'] = $customMjmlEndpoint;
             $options['mjml_api_key'] = '';
@@ -572,10 +570,10 @@ class Settings
     public function callbackSelect(array $args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
-        $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $class  = isset($args['class']) && !is_null($args['class']) ? $args['class'] : '';
         $html  = sprintf(
             '<select class="%1$s" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]">',
-            $size,
+            $class,
             self::$optionName,
             $args['section'],
             $args['id']
@@ -591,6 +589,36 @@ class Settings
         }
 
         $html .= sprintf('</select>');
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+    /**
+     * Displays a selectbox field with all pages available to select from.
+     * @param array   $args Field settings arguments
+     */
+    public function callbackSelectPage(array $args)
+    {
+        $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
+        $class  = isset($args['class']) && !is_null($args['class']) ? $args['class'] : 'none';
+        $name = sprintf(
+            '%1$s[%2$s_%3$s]',
+            self::$optionName,
+            $args['section'],
+            $args['id']
+        );
+
+        $html = wp_dropdown_pages(
+            [
+                'name'              => $name,
+                'echo'              => 0,
+                'show_option_none'  => __('&mdash; Select &mdash;', 'rrze-newsletter'),
+                'option_none_value' => $args['default'],
+                'selected'          => $value,
+                'class'             => $class
+            ]
+        );
         $html .= $this->getFieldDescription($args);
 
         echo $html;
