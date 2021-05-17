@@ -75,6 +75,6 @@ Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung d
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
 ```shell
- npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed1.x -p
- npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed1.x -p
+ npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed -p
+ npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed -p
 ```
