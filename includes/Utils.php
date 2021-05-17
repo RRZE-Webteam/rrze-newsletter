@@ -127,12 +127,12 @@ class Utils
         return self::encrypt($string, 'decrypt');
     }
 
-    public static function encryptUrlQuery(string $string)
+    public static function encryptQueryVar(string $string)
     {
         return self::encrypt($string, 'encrypt', true);
     }
 
-    public static function decryptUrlQuery(string $string)
+    public static function decryptQueryVar(string $string)
     {
         return self::encrypt($string, 'decrypt', true);
     }
