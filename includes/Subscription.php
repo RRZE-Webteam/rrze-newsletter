@@ -77,9 +77,14 @@ class Subscription
                     'email' => $email,
                     'mailing_lists' => $mailingLists,
                 ];
-                if ($submitted && $email && !empty($mailingLists)) {
+                if (
+                    $submitted
+                    && $email
+                    && !empty($mailingLists)
+                    && !$this->emailExists($email)
+                ) {
                     $this->sendConfirmation($this->sanitizeData($data));
-                    $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+                    $transient = bin2hex(random_bytes(4));
                     set_transient($transient, $email, 30);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('added|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -92,6 +97,8 @@ class Subscription
                     $emailError = __('Please fill in this field.', 'rrze-newsletter');
                 } elseif ($submitted && !$email) {
                     $emailError = __('The email address does not meet the requirements.', 'rrze-newsletter');
+                } elseif ($submitted && $this->emailExists($email)) {
+                    $emailError = __('The email address for the subscription is already registered.', 'rrze-newsletter');
                 }
                 if ($mlError || $emailError) {
                     $data = [
@@ -99,13 +106,17 @@ class Subscription
                         'ml_error' => $mlError,
                         'email_error' => $emailError
                     ];
-                    $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+                    $transient = bin2hex(random_bytes(4));
                     set_transient($transient, $this->sanitizeData($data), 30);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('add_error|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
                     exit();
                 }
-                $this->addSubscription();
+                if ($this->publicMailingLists()) {
+                    $this->addSubscription();
+                } else {
+                    $this->noNewslettersAvailable();
+                }
                 break;
             case 'added':
                 if ($email = $this->getEmailFromTransient($hash)) {
@@ -125,7 +136,7 @@ class Subscription
                             'mailing_lists' => $mailingLists
                         ];
                         $this->updateMailingLists($this->sanitizeData($data), $unsubscribeAll);
-                        $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+                        $transient = bin2hex(random_bytes(4));
                         set_transient($transient, $email, 30);
                         $redirect = add_query_arg('a', Utils::encryptQueryVar('updated|' . $transient), $this->pageLink);
                         wp_redirect($redirect);
@@ -151,7 +162,7 @@ class Subscription
                 ];
                 if ($submitted && $email) {
                     $this->sendConfirmation($this->sanitizeData($data));
-                    $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+                    $transient = bin2hex(random_bytes(4));
                     set_transient($transient, $email, 30);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('cancel_change|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -167,7 +178,7 @@ class Subscription
                         'email' => $postEmail,
                         'email_error' => $error
                     ];
-                    $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+                    $transient = bin2hex(random_bytes(4));
                     set_transient($transient, $this->sanitizeData($data), 30);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('cancel_change_error|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -191,7 +202,7 @@ class Subscription
                     if (!empty($data['mailing_lists'])) {
                         $this->updateMailingLists($this->sanitizeData($data), false, false);
                     }
-                    $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+                    $transient = bin2hex(random_bytes(4));
                     if ($data['action'] == 'cancel') {
                         $unsubscribed = $this->options->mailing_list_unsubscribed;
                         $unsubscribed = Utils::sanitizeUnsubscribedList($unsubscribed, \ARRAY_N);
@@ -434,6 +445,19 @@ class Subscription
         $this->content = str_replace(PHP_EOL, '', Templates::getContent('subscription/notice.html', $data));
     }
 
+    public function noNewslettersAvailable()
+    {
+        $data = [
+            'title' => __('Newsletter subscription', 'rrze-newsletter'),
+            'notice' => __('No newsletters available', 'rrze-newsletter'),
+            'description' => __('At the moment there are no newsletters available to subscribe.', 'rrze-newsletter'),
+            'link_text' => __('Back to home page', 'rrze-newsletter'),
+            'link_url' => site_url()
+        ];
+
+        $this->content = str_replace(PHP_EOL, '', Templates::getContent('subscription/notice.html', $data));
+    }
+
     public static function confirmationSubject()
     {
         return __('Newsletter subscription confirmation', 'rrze-newsletter');
@@ -471,7 +495,7 @@ class Subscription
         $action = $data['action'];
         $email = $data['email'];
 
-        $transient = Utils::encryptQueryVar(bin2hex(random_bytes(2)));
+        $transient = bin2hex(random_bytes(4));
         set_transient($transient, $data, DAY_IN_SECONDS);
 
         $options = (object) Settings::getOptions();
