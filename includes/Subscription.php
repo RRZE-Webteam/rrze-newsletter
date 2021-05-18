@@ -142,13 +142,30 @@ class Subscription
                         wp_redirect($redirect);
                         exit();
                     }
-                } elseif ($email) {
+                } elseif ($email && $this->emailExists($email)) {
                     $this->updateSubscription($email);
                 }
                 break;
             case 'updated':
                 if ($email = $this->getEmailFromTransient($hash)) {
                     $this->updatedNotice($email);
+                }
+                break;
+            case 'unsub':
+                if ($email && $this->emailExists($email)) {
+                    $unsubscribed = $this->options->mailing_list_unsubscribed;
+                    $unsubscribed = Utils::sanitizeUnsubscribedList($unsubscribed, \ARRAY_N);
+                    if (!in_array($email, $unsubscribed)) {
+                        $unsubscribed[] = $email;
+                        $this->updateUnsubscribed($unsubscribed);
+                    }
+                    $transient = bin2hex(random_bytes(4));
+                    set_transient($transient, $email, 30);
+                    $redirect = add_query_arg('a', Utils::encryptQueryVar('canceled|' . $transient), $this->pageLink);
+                    wp_redirect($redirect);
+                    exit();
+                } else {
+                    $this->emailDoesNotExistNotice();
                 }
                 break;
             case 'cancel':
