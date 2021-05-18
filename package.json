@@ -1,6 +1,6 @@
 {
     "name": "rrze-newsletter",
-    "version": "0.10.0",
+    "version": "0.11.0",
     "description": "Plugin for creating and sending HTML Newsletters.",
     "main": "rrze-newsletter.php",
     "scripts": {
@@ -51,6 +51,7 @@
         "@babel/plugin-syntax-jsx": "^7.12.13",
         "@babel/preset-env": "^7.13.10",
         "@babel/preset-react": "^7.12.13",
+        "@shavenzov/po2json": "*",
         "@wordpress/base-styles": "^3.4.2",
         "@wordpress/browserslist-config": "^3.0.1",
         "@wordpress/editor": "^9.26.0",
@@ -60,6 +61,7 @@
         "classnames": "^2.2.6",
         "clean-webpack-plugin": "^3.0.0",
         "css-loader": "^5.2.4",
+        "css-minimizer-webpack-plugin": "^3.0.0",
         "eslint": "^7.22.0",
         "eslint-config-prettier": "^8.1.0",
         "eslint-plugin-react": "^7.22.0",
@@ -71,8 +73,6 @@
         "lodash": "^4.17.21",
         "mini-css-extract-plugin": "^1.5.0",
         "node-sass": "^5.0.0",
-        "optimize-css-assets-webpack-plugin": "^5.0.4",
-        "po2json": "^0.4.5",
         "postcss-loader": "^5.2.0",
         "prettier": "^2.2.1",
         "sass-loader": "^11.0.1",

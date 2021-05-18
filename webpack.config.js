@@ -1,6 +1,6 @@
 const autoprefixer = require("autoprefixer");
 const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CSSMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const path = require("path");
@@ -24,15 +24,8 @@ module.exports = (env, argv) => {
         },
         optimization: {
             minimizer: [
-                new TerserPlugin({ terserOptions: { sourceMap: true } }),
-                new OptimizeCSSAssetsPlugin({
-                    cssProcessorOptions: {
-                        map: {
-                            inline: false,
-                            annotation: true
-                        }
-                    }
-                })
+                new CSSMinimizerPlugin(),
+                new TerserPlugin({ terserOptions: { sourceMap: true } })
             ]
         },
         plugins: [

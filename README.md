@@ -19,6 +19,7 @@ Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den N
 -   `{{=NAME}}` Der vollständige Name des Abonnenten (generiert aus FNAME und LNAME)
 -   `{{=EMAIL}}` Die E-Mail-Adresse des Abonnenten
 -   `{{=UNSUB}}` Die URL zum Abbestellen des Newsletters
+-   `{{=UPDATE}}` Die URL zum Ändern des Newsletters
 -   `{{=PERMALINK}}` Der Permalink des Newsletters
 -   `{{=DATE}}` Das Datum, an dem das Bulletin gesendet wurde
 -   `{{=CURRENT_YEAR}}` Das laufende Jahr
@@ -75,6 +76,6 @@ Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung d
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
 ```shell
- npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed1.x -p
- npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed1.x -p
+ npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
+ npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
 ```
