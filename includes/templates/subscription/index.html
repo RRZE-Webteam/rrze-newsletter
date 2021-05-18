@@ -1,18 +1,22 @@
-<div class="rrze-newsl-subsc">
+<div class="rrze-newsletter-subscription">
     <div class="o-container o-container--mw700 u-py-60">
         <div class="u-bb u-bc-spacer u-mb-24 u-pb-24 u-text-center">
             <h2 class="c-content-heading u-mb-6 u-text-black u-text-center">
                 {{=title}}
             </h2>
+            {{subtitle}}
+            <p class="u-mb-0  u-text-center">
+                {{=subtitle}}
+            </p>
+            {{/subtitle}}
         </div>
-
         <p class="u-mb-24">
             {{=description}}
         </p>
 
         {{ml_error}}
         <div>
-            <p class="u-text-error">
+            <p class="u-text-error u-mb-12">
                 {{=ml_error}}
             </p>
         </div>
@@ -21,29 +25,29 @@
         <form class="u-block">
 
             {{@mailing_lists}}
-            <div class="newsl-subsc-list u-mb-24 u-pb-24 u-bb u-bc-spacer">
+            <div class="list u-mb-24 u-pb-24 u-bb u-bc-spacer">
                 <div>
-                    <input type="checkbox" name="mailing_lists[{{=_val.id}}]" id="{{=_val.id}}"
-                        class="newsl-subsc-checkbox" value="true" {{=_val.checked}}>
-                    <label for="{{=_val.id}}" class="newsl-subsc-list__title">{{=_val.title}}</label>
-                    <span class="u-block newsl-subsc-list__info">{{=_val.description}}</span>
+                    <input type="checkbox" name="mailing_lists[{{=_val.id}}]" id="{{=_val.id}}" class="checkbox"
+                        value="true" {{=_val.checked}}>
+                    <label for="{{=_val.id}}" class="list__title">{{=_val.title}}</label>
+                    <span class="u-block list__info">{{=_val.description}}</span>
                 </div>
             </div>
             {{/@mailing_lists}}
 
             {{update}}
-            <div class="u-text-center">
+            <div class="u-text-center u-mb-24">
                 <input type="checkbox" name="unsubscribe_all" id="unsubscribe-all" value="true" {{=canceled}}>
                 <label for="unsubscribe-all" class="u-mb-24 u-text-beta">{{=unsubscribe_all_label}}</label>
             </div>
-            <input type="hidden" name="email" value="{{=email}}" id="newsl-email">
+            <input type="hidden" name="email" value="{{=email}}">
             {{/update}}
 
             {{!update}}
             <label for="email-address" class="u-block">{{=email_address_label}} <span>*</span></label>
             <input type="email" name="email" id="email" value="{{=email}}" required="required">
             {{email_error}}
-            <p class="u-text-error u-mb-24">
+            <p class="u-text-error u-mt-12 u-mb-24">
                 {{=email_error}}
             </p>
             {{:email_error}}
@@ -53,8 +57,7 @@
 
             {{=nonce_field}}
             <div class="u-text-center">
-                <button type="submit" class="newsl-subsc-btn u-py-18 u-px-18 u-caps" formaction="{{=formaction}}"
-                    formmethod="post">
+                <button type="submit" class="btn u-py-18 u-px-18 u-caps" formaction="{{=formaction}}" formmethod="post">
                     {{=button_label}}
                 </button>
             </div>
