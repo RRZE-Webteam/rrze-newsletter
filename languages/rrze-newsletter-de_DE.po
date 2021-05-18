@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-05-18T15:28:57+00:00\n"
-"PO-Revision-Date: 2021-05-18 17:34+0200\n"
+"POT-Creation-Date: 2021-05-18T15:44:14+00:00\n"
+"PO-Revision-Date: 2021-05-18 17:45+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -658,13 +658,13 @@ msgstr "MJML-Rendering-Fehler."
 
 #. translators: Notify users to set up the API Endpoint on the settings page.
 #: includes/Notices.php:33
-msgid "Newsletter Settings: Please set up the MJML API Endpoint."
-msgstr "Newsletter-Einstellungen: Bitte richten Sie den MJML-API-Endpunkt ein."
+msgid "Please set up the MJML API Endpoint."
+msgstr "Bitte richten Sie den MJML-API-Endpunkt ein."
 
 #. translators: Notify users to set up the subscription page on the settings page.
 #: includes/Notices.php:47
 msgid "Please set up the subscripction page."
-msgstr "Newsletter-Einstellungen: Bitte richten Sie die Abonnementseite ein."
+msgstr "Bitte richten Sie die Abonnementseite ein."
 
 #: includes/RestApi.php:162 includes/RestApi.php:176
 msgid "You cannot use this resource."
