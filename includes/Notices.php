@@ -30,7 +30,7 @@ class Notices
                     // translators: Notify users to set up the newsletter settings.
                     __('Newsletter Settings', 'rrze-newsletter'),
                     // translators: Notify users to set up the API Endpoint on the settings page.
-                    __('Newsletter Settings: Please set up the MJML API Endpoint.', 'rrze-newsletter')
+                    __('Please set up the MJML API Endpoint.', 'rrze-newsletter')
                 )
             );
         }

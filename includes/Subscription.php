@@ -23,6 +23,8 @@ class Subscription
      */
     protected $options;
 
+    protected $postId;
+
     protected $pageLink;
 
     protected $content = '';
@@ -37,10 +39,17 @@ class Subscription
 
     public function init()
     {
-        $postId = absint($this->options->subscription_page_id);
-        if (is_admin() || !is_page($postId)) {
+        if (is_admin() || !is_page()) {
             return;
         }
+
+        $slug = get_post_field('post_name', absint($this->options->subscription_page_id));
+
+        $post = get_post();
+        if ($slug != $post->post_name) {
+            return;
+        }
+        $this->postId = $post->ID;
 
         $action = '';
         $hash = '';
@@ -55,8 +64,8 @@ class Subscription
         }
 
         $this->pageLink = get_option('permalink_structure')
-            ? get_page_link($postId)
-            : add_query_arg('page_id', $postId, site_url());
+            ? get_page_link($this->postId)
+            : add_query_arg('page_id', $this->postId, site_url());
 
         $submitted = false;
         if (
@@ -284,8 +293,7 @@ class Subscription
     {
         global $post;
 
-        $postId = absint($this->options->subscription_page_id);
-        if ($post->ID != $postId) {
+        if ($post->ID != $this->postId) {
             return $content;
         }
         return $this->content;
@@ -311,7 +319,7 @@ class Subscription
             'no_newsletters_available' => __('At the moment there are no newsletters available to subscribe.', 'rrze-newsletter'),
             'button_label' => __('Subscribe to Newsletter', 'rrze-newsletter'),
             'change_cancel_subscription_href' => add_query_arg('a', Utils::encryptQueryVar('change|change'), $this->pageLink),
-            'change_cancel_subscription_text' => __('Change or cancel your subscription', 'rrze-newsletter'),
+            'change_cancel_subscription_text' => __('Cancel or change your subscription', 'rrze-newsletter'),
             'mailing_lists' => $mailingLists,
             'email_address_label' => __('Email address', 'rrze-newsletter'),
             'nonce_field' => wp_nonce_field('rrze_newsletter_subscription', 'rrze_newsletter_subscription_field'),
@@ -332,9 +340,9 @@ class Subscription
 
         $data = [
             'title' => __('Cancel or change your newsletter subscription', 'rrze-newsletter'),
-            'description' => __('To unsubscribe from your newsletter subscription or to change your existing subscription, please fill out the form below. You will then receive an email confirming your subscription.', 'rrze-newsletter'),
-            'button_cancel_label' => __('Unsubscribe to all', 'rrze-newsletter'),
+            'description' => __('To unsubscribe from all newsletters or to change your current newsletter subscription, please complete the form below. You will then receive an email confirming your subscription.', 'rrze-newsletter'),
             'button_change_label' => __('Change subscription', 'rrze-newsletter'),
+            'button_cancel_label' => __('Unsubscribe from all', 'rrze-newsletter'),
             'email_address_label' => __('Email address', 'rrze-newsletter'),
             'nonce_field' => wp_nonce_field('rrze_newsletter_subscription', 'rrze_newsletter_subscription_field'),
             'email' => $email,
@@ -355,14 +363,15 @@ class Subscription
         $mailingLists = $this->getMailingLists($email);
 
         $data = [
-            'title' => sprintf(
+            'title' => __('Newsletter subscription', 'rrze-newsletter'),
+            'subtitle' => sprintf(
                 /* translators: Email address to subscribe to the newsletter */
-                __('Newsletter subscription for %s', 'rrze-newsletter'),
+                __('Manage newsletter subscription for %s', 'rrze-newsletter'),
                 $email
             ),
             'description' => __('Please check the newsletters below that you would like to receive from us to update your subscription.', 'rrze-newsletter'),
             'no_newsletters_available' => __('At the moment there are no newsletters available to subscribe.', 'rrze-newsletter'),
-            'unsubscribe_all_label' => __('Cancel my subscription to all future newsletters.', 'rrze-newsletter'),
+            'unsubscribe_all_label' => __('Unsubscribe me from all future newsletters', 'rrze-newsletter'),
             'button_label' => __('Update subscription', 'rrze-newsletter'),
             'email' => $email,
             'mailing_lists' => $mailingLists,
@@ -410,8 +419,8 @@ class Subscription
                 $email
             ),
             'notice' => __('Thank you', 'rrze-newsletter'),
-            'description' => __('Your newsletter settings have been updated.', 'rrze-newsletter'),
-            'link_text' => __('Back to newsletter subscription management page', 'rrze-newsletter'),
+            'description' => __('Your newsletter subscription have been updated.', 'rrze-newsletter'),
+            'link_text' => __('Back to newsletter subscription management', 'rrze-newsletter'),
             'link_url' => add_query_arg('a', Utils::encryptQueryVar('update|' . $email), $this->pageLink)
         ];
 
@@ -557,8 +566,7 @@ class Subscription
             'content' => $content
         ];
 
-        $mjmlRender = new Render;
-        $body = $mjmlRender->toHtml($mjmlData);
+        $body = Render::toHtml($mjmlData);
         if (is_wp_error($body)) {
             return $body;
         }

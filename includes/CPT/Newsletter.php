@@ -688,11 +688,10 @@ class Newsletter
             update_post_meta($postId, 'rrze_newsletter_template_id', -1);
         }
 
-        $render = new Render;
-        if (is_wp_error($render)) {
-            return;
+        $body = Render::toHtml($post);
+        if (is_wp_error($body)) {
+            return $body;
         }
-        $body = $render->toHtml($post);
         self::setBody($postId, $body);
 
         $html2text = new Html2Text($body);
