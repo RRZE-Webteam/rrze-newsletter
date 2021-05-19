@@ -218,8 +218,7 @@ class RestApi
         $post = get_post($postId);
         $subject = $post->post_title;
 
-        $mjmlRender = new Render;
-        $body = $mjmlRender->toHtml($post);
+        $body = Render::toHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }
