@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-05-18T15:44:14+00:00\n"
-"PO-Revision-Date: 2021-05-18 17:45+0200\n"
+"POT-Creation-Date: 2021-05-19T07:29:38+00:00\n"
+"PO-Revision-Date: 2021-05-19 09:30+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -634,7 +634,7 @@ msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
 #. translators: Message after the email was sent successfully.
-#: includes/Mail/Send.php:79 includes/RestApi.php:274
+#: includes/Mail/Send.php:79 includes/RestApi.php:273
 msgid "Email sent successfully to %s."
 msgstr "E-Mail erfolgreich an %s gesendet."
 
@@ -670,7 +670,7 @@ msgstr "Bitte richten Sie die Abonnementseite ein."
 msgid "You cannot use this resource."
 msgstr "Sie können diese Ressource nicht verwenden."
 
-#: includes/RestApi.php:280
+#: includes/RestApi.php:279
 msgid "There was an error sending the email."
 msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 
