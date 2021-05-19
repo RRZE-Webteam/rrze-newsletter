@@ -566,8 +566,7 @@ class Subscription
             'content' => $content
         ];
 
-        $mjmlRender = new Render;
-        $body = $mjmlRender->toHtml($mjmlData);
+        $body = Render::toHtml($mjmlData);
         if (is_wp_error($body)) {
             return $body;
         }
