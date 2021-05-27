@@ -176,7 +176,7 @@ function getFields(): array
             [
                 'name'              => 'confirmation_subject',
                 'label'             => __('Subject of the email confirmation', 'rrze-newsletter'),
-                'desc'              => __('Email subject of the email to confirm the newsletter subscription.', 'rrze-newsletter'),
+                'desc'              => __('The subject of the email to confirm the newsletter subscription.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => \RRZE\Newsletter\Subscription::confirmationSubject(),
@@ -188,7 +188,7 @@ function getFields(): array
             [
                 'name'              => 'confirmation_message',
                 'label'             => __('Message of the email confirmation', 'rrze-newsletter'),
-                'desc'              => __('Email message of the email to confirm the newsletter subscription.', 'rrze-newsletter'),
+                'desc'              => __('The message of the email to confirm the newsletter subscription.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'textarea',
                 'default'           => \RRZE\Newsletter\Subscription::confirmationMessage(),
@@ -200,7 +200,7 @@ function getFields(): array
             [
                 'name'              => 'change_cancel_subject',
                 'label'             => __('Subject of the email to change or cancel', 'rrze-newsletter'),
-                'desc'              => __('Email subject of the email to change or cancel the newsletter subscription.', 'rrze-newsletter'),
+                'desc'              => __('The subject of the email to change or cancel the newsletter subscription.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => \RRZE\Newsletter\Subscription::changeOrCancelSubject(),
@@ -212,7 +212,7 @@ function getFields(): array
             [
                 'name'              => 'change_cancel_message',
                 'label'             => __('Message of the email to change or cancel', 'rrze-newsletter'),
-                'desc'              => __('Email message of the email to change or cancel the newsletter subscription.', 'rrze-newsletter'),
+                'desc'              => __('The message of the email to change or cancel the newsletter subscription.', 'rrze-newsletter'),
                 'placeholder'       => '',
                 'type'              => 'textarea',
                 'default'           => \RRZE\Newsletter\Subscription::changeOrCancelMessage(),
