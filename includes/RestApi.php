@@ -113,6 +113,19 @@ class RestApi
                 'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
             ]
         );
+        register_rest_field(
+            'post',
+            'newsletter_author_info',
+            [
+                'get_callback' => [$this, 'getAuthorInfo'],
+                'schema'       => [
+                    'context' => [
+                        'edit',
+                    ],
+                    'type'    => 'array',
+                ],
+            ]
+        );
     }
 
     public function validateNewsletterId($id)
@@ -152,6 +165,16 @@ class RestApi
     {
         $response = json_encode($request['id']);
         return rest_ensure_response($response);
+    }
+
+    public function getAuthorInfo($post)
+    {
+        $author_data[] = [
+            'display_name' => get_the_author_meta('display_name', $post['author']),
+            'id'           => $post['author'],
+            'author_link'  => get_author_posts_url($post['author']),
+        ];
+        return $author_data;
     }
 
     public function apiAuthoringPermissionsCheck($request)
