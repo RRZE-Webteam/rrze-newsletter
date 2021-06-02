@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
 "POT-Creation-Date: 2021-05-19T07:29:38+00:00\n"
-"PO-Revision-Date: 2021-05-27 16:39+0200\n"
+"PO-Revision-Date: 2021-06-01 22:35+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -636,7 +636,7 @@ msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
 #. translators: Message after the email was sent successfully.
-#: includes/Mail/Send.php:79 includes/RestApi.php:273
+#: includes/Mail/Send.php:79 includes/RestApi.php:296
 msgid "Email sent successfully to %s."
 msgstr "E-Mail erfolgreich an %s gesendet."
 
@@ -668,11 +668,11 @@ msgstr "Bitte richten Sie den MJML-API-Endpunkt ein."
 msgid "Please set up the subscripction page."
 msgstr "Bitte richten Sie die Abonnementseite ein."
 
-#: includes/RestApi.php:162 includes/RestApi.php:176
+#: includes/RestApi.php:185 includes/RestApi.php:199
 msgid "You cannot use this resource."
 msgstr "Sie können diese Ressource nicht verwenden."
 
-#: includes/RestApi.php:279
+#: includes/RestApi.php:302
 msgid "There was an error sending the email."
 msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 
@@ -1049,6 +1049,119 @@ msgid ""
 msgstr ""
 "Diese Eigenschaften werden in einer E-Mail nicht korrekt angezeigt. Bitte "
 "entfernen Sie sie:"
+
+#: src/editor/blocks/post-inserter/index.js:129
+msgid "Show image on top"
+msgstr "Bild oben anzeigen"
+
+#: src/editor/blocks/post-inserter/index.js:135
+msgid "Show image on left"
+msgstr "Bild links anzeigen"
+
+#: src/editor/blocks/post-inserter/index.js:141
+msgid "Show image on right"
+msgstr "Bild rechts anzeigen"
+
+#: src/editor/blocks/post-inserter/index.js:151
+msgid "Post content settings"
+msgstr "Einstellungen für Beitragsinhalte"
+
+#: src/editor/blocks/post-inserter/index.js:154
+msgid "Post excerpt"
+msgstr "Textauszug"
+
+#: src/editor/blocks/post-inserter/index.js:162
+msgid "Max number of words in excerpt"
+msgstr "Maximale Anzahl von Wörtern im Textauszug"
+
+#: src/editor/blocks/post-inserter/index.js:175
+msgid "Date"
+msgstr "Datum"
+
+#: src/editor/blocks/post-inserter/index.js:182
+msgid "Featured image"
+msgstr "Beitragsbild"
+
+#: src/editor/blocks/post-inserter/index.js:189
+msgid "Author's name"
+msgstr "Name des Autors"
+
+#: src/editor/blocks/post-inserter/index.js:196
+msgid "\"Continue reading…\" link"
+msgstr "„Weiterlesen…“-Link"
+
+#: src/editor/blocks/post-inserter/index.js:207
+msgid "Sorting and filtering"
+msgstr "Sortieren und filtern"
+
+#: src/editor/blocks/post-inserter/index.js:214
+msgid "Text"
+msgstr "Text"
+
+#: src/editor/blocks/post-inserter/index.js:233
+msgid "Heading"
+msgstr "Überschrift"
+
+#: src/editor/blocks/post-inserter/index.js:263
+msgid "Post Inserter"
+msgstr "Beitrag-Inserter"
+
+#: src/editor/blocks/post-inserter/index.js:282
+msgid "Insert"
+msgstr "Einfügen"
+
+#: src/editor/blocks/post-inserter/query-controls.js:41
+#: src/editor/blocks/post-inserter/query-controls.js:156
+#: src/editor/blocks/post-inserter/query-controls.js:173
+#: src/editor/blocks/post-inserter/query-controls.js:192
+#: src/editor/blocks/post-inserter/query-controls.js:209
+msgid "(no title)"
+msgstr "(kein Titel)"
+
+#: src/editor/blocks/post-inserter/query-controls.js:217
+msgid "Display specific posts"
+msgstr "Spezifische Beiträge anzeigen"
+
+#: src/editor/blocks/post-inserter/query-controls.js:227
+msgid "Add posts"
+msgstr "Beiträge hinzufügen"
+
+#: src/editor/blocks/post-inserter/query-controls.js:261
+msgid "Hide Advanced Filters"
+msgstr "Erweiterte Filter ausblenden"
+
+#: src/editor/blocks/post-inserter/query-controls.js:262
+msgid "Show Advanced Filters"
+msgstr "Erweiterte Filter anzeigen"
+
+#: src/editor/blocks/post-inserter/query-controls.js:276
+msgid "Tags"
+msgstr "Schlagwörter"
+
+#: src/editor/blocks/post-inserter/query-controls.js:284
+msgid "Excluded Categories"
+msgstr "Ausgenommene Kategorien"
+
+#: src/editor/blocks/post-inserter/query-controls.js:295
+msgid "Excluded Tags"
+msgstr "Ausgenommene Schlagwörter"
+
+#: src/editor/blocks/post-inserter/utils.js:78
+msgid "Continue reading…"
+msgstr "Weiterlesen…"
+
+#: src/editor/blocks/post-inserter/utils.js:102
+msgctxt "comma separator for multiple authors"
+msgid ","
+msgstr ","
+
+#: src/editor/blocks/post-inserter/utils.js:111
+msgid "and"
+msgstr "und"
+
+#: src/editor/blocks/post-inserter/utils.js:126
+msgid "By"
+msgstr "Von"
 
 #: src/newsletter-editor/index.js:49
 msgid "Styling"
