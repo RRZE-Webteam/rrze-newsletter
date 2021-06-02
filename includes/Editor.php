@@ -70,7 +70,8 @@ final class Editor
             'core/separator',
             'core/list',
             'core/quote',
-            'core/social-links'
+            'core/social-links',
+            'rrze-newsletter/post-inserter'
         ];
     }
 

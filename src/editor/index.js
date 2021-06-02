@@ -10,11 +10,13 @@ import { registerPlugin } from "@wordpress/plugins";
  * Plugin dependencies
  */
 import "./style.scss";
+import registerPostInserterBlock from './blocks/post-inserter';
 import { addBlocksValidationFilter } from "./blocks-validation/blocks-filters";
 import { NestedColumnsDetection } from "./blocks-validation/nesting-detection";
 import "../newsletter-editor";
 
 addBlocksValidationFilter();
+registerPostInserterBlock();
 
 /* Unregister core block styles that are unsupported in emails */
 domReady(() => {
