@@ -47,13 +47,13 @@ class Utils
         return self::decrypt($password);
     }
 
-    public static function validateIntRange(string $input, int $default, int $min, int $max, bool $absint = true): int
+    public static function validateIntRange(string $input, int $default, int $min, int $max): int
     {
-        $integer = $absint ? absint($input) : intval($input);
-        if (filter_var(absint($input), FILTER_VALIDATE_INT, ['options' => ['min_range' => $min, 'max_range' => $max]]) === false) {
-            return $integer;
-        } else {
+        $integer = intval($input);
+        if (filter_var($integer, FILTER_VALIDATE_INT, ['options' => ['min_range' => $min, 'max_range' => $max]]) === false) {
             return $default;
+        } else {
+            return $integer;
         }
     }
 
@@ -160,25 +160,5 @@ class Utils
             include_once(ABSPATH . 'wp-admin/includes/plugin.php');
         }
         return is_plugin_active($plugin);
-    }
-
-    public static function getCustomMjmlEndpoint()
-    {
-        if (
-            self::isPluginAvailable('rrze-settings/rrze-settings.php')
-            && class_exists('\RRZE\Settings\Options')
-        ) {
-            $optionName = method_exists('\RRZE\Settings\Options', 'getOptionName')
-                ? \RRZE\Settings\Options::getOptionName()
-                : '';
-            $options = (array) get_site_option($optionName);
-            if (isset($options['plugins'])) {
-                $plugins = (array) $options['plugins'];
-                return !empty($plugins['rrze_newsletter_mjml_endpoint'])
-                    ? $plugins['rrze_newsletter_mjml_endpoint']
-                    : '';
-            }
-        }
-        return '';
     }
 }

@@ -92,7 +92,8 @@ class Queue
 
         // Set the mailing list.
         $mailingList = [];
-        if (!empty($data['mailing_list_terms'])) {
+        $disableMailingList = apply_filters('rrze_newsletter_disable_mailing_list', false);
+        if (!$disableMailingList && !empty($data['mailing_list_terms'])) {
             $options = (object) Settings::getOptions();
             $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
 
@@ -133,6 +134,16 @@ class Queue
                         'to' => $to
                     ];
                 }
+            }
+        } elseif ($disableMailingList) {
+            $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
+            if (Utils::sanitizeEmail($email)) {
+                $mailingList[$email] = [
+                    'to_fname' => '',
+                    'to_lname' => '',
+                    'to_email' => $email,
+                    'to' => $email
+                ];
             }
         }
 

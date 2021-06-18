@@ -67,6 +67,18 @@ class Settings
     protected $settingsPrefix;
 
     /**
+     * Hidden sections.
+     * @var array
+     */
+    protected $hiddenSections = [];
+
+    /**
+     * Disabled fields.
+     * @var array
+     */
+    protected $hiddenFields = [];
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -81,12 +93,11 @@ class Settings
      */
     public function onLoaded()
     {
-        $this->setMenu();
-        $this->setSections();
-        $this->setTabs();
-
         self::$optionName = getOptionName();
         self::$options = self::getOptions();
+
+        $this->setMenu();
+        $this->setSections();
 
         add_action('admin_init', [$this, 'adminInit']);
         add_action('admin_menu', [$this, 'adminMenu']);
@@ -148,11 +159,8 @@ class Settings
         $options = wp_parse_args($options, $defaults);
         $options = array_intersect_key($options, $defaults);
 
-        if ($customMjmlEndpoint = Utils::getCustomMjmlEndpoint()) {
-            $options['mjml_api_endpoint'] = $customMjmlEndpoint;
-            $options['mjml_api_key'] = '';
-            $options['mjml_api_secret'] = '';
-        }
+        $options['mail_queue_send_limit'] = apply_filters('rrze_newsletter_mail_queue_send_limit', $options['mail_queue_send_limit']);
+        $options['mjml_api_endpoint'] = apply_filters('rrze_newsletter_mjml_api_endpoint', $options['mjml_api_endpoint']);
 
         return $options;
     }
@@ -231,13 +239,16 @@ class Settings
     {
         $html = '<h1>' . $this->settingsMenu['title'] . '</h1>' . PHP_EOL;
 
-        if (count($this->settingsSections) < 2) {
+        if (count($this->settingsSections) - count($this->hiddenSections) < 2) {
             return;
         }
 
         $html .= '<h2 class="nav-tab-wrapper wp-clearfix">';
 
         foreach ($this->settingsSections as $section) {
+            if (in_array($section['id'], $this->hiddenSections)) {
+                continue;
+            }
             $class = $this->settingsPrefix . $section['id'] == $this->currentTab ? 'nav-tab-active' : $this->defaultTab;
             $html .= sprintf(
                 '<a href="?page=%4$s&current-tab=%1$s" class="nav-tab %3$s" id="%1$s-tab">%2$s</a>',
@@ -291,9 +302,17 @@ class Settings
      */
     public function adminInit()
     {
+        // Add hidden sections
+        foreach ($this->settingsSections as $section) {
+            $hide = (bool) apply_filters('rrze_newsletter_hide_section_' . $section['id'], false);
+            if ($hide) {
+                $this->hiddenSections[] = $section['id'];
+            }
+        }
+
         // Add setting sections
         foreach ($this->settingsSections as $section) {
-            if (isset($section['desc']) && !empty($section['desc'])) {
+            if (!empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
                 $callback = function () use ($section) {
                     echo $section['desc'];
@@ -307,11 +326,25 @@ class Settings
             add_settings_section($this->settingsPrefix . $section['id'], $section['title'], $callback, $this->settingsPrefix . $section['id']);
         }
 
-        // Add setting fields
-        foreach (getFields() as $section => $field) {
+        $fields = getFields();
+        // Add hidden fields
+        foreach ($fields as $section => $field) {
             foreach ($field as $option) {
-                if (Utils::getCustomMjmlEndpoint() && $section == 'mjml_api') {
-                    $option['disabled'] = 'disabled';
+                $hide = (bool) apply_filters('rrze_newsletter_hide_field_' . $section . '_' . $option['name'], false);
+                if ($hide) {
+                    $this->hiddenFields[] = $section . '_' . $option['name'];
+                }
+            }
+        }
+
+        // Add setting fields
+        foreach ($fields as $section => $field) {
+            if (in_array($section, $this->hiddenSections)) {
+                continue;
+            }
+            foreach ($field as $option) {
+                if (in_array($section . '_' . $option['name'], $this->hiddenFields)) {
+                    continue;
                 }
                 $name = $option['name'];
                 $type = isset($option['type']) ? $option['type'] : 'text';
@@ -353,6 +386,8 @@ class Settings
      */
     public function adminMenu()
     {
+        $this->setTabs();
+
         add_options_page(
             $this->settingsMenu['page_title'],
             $this->settingsMenu['menu_title'],
@@ -402,18 +437,16 @@ class Settings
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
         $type = isset($args['type']) ? $args['type'] : 'text';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
-        $disabled = $args['disabled'] != 'disabled' ? '' : ' disabled';
 
         $html = sprintf(
-            '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s%8$s>',
+            '<input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s>',
             $type,
             $size,
             self::$optionName,
             $args['section'],
             $args['id'],
             $value,
-            $placeholder,
-            $disabled
+            $placeholder
         );
         $html .= $this->getFieldDescription($args);
 

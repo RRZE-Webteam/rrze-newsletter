@@ -72,7 +72,27 @@ class RestApi
                 ],
             ]
         );
-
+        register_rest_route(
+            'rrze-newsletter/v1',
+            'email/(?P<id>[\a-z]+)/recipient',
+            [
+                'methods'             => \WP_REST_Server::EDITABLE,
+                'callback'            => [$this, 'apiRecipient'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
+                'args'                => [
+                    'id'        => [
+                        'sanitize_callback' => 'absint',
+                        'validate_callback' => [$this, 'validateNewsletterId'],
+                    ],
+                    'from_name' => [
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ],
+                    'replyto'  => [
+                        'sanitize_callback' => 'sanitize_email',
+                    ],
+                ],
+            ]
+        );
         register_rest_route(
             'rrze-newsletter/v1',
             'layouts',
@@ -210,12 +230,30 @@ class RestApi
         $response = $this->sender(
             $request['id'],
             $request['from_name'],
+            $request['from_email'],
             $request['replyto']
         );
         return rest_ensure_response($response);
     }
 
-    public function sender($postId, $fromName, $replyTo)
+    public function sender($postId, $fromName, $fromEmail, $replyTo)
+    {
+        $data = [];
+        $data['result'] = [];
+        // @todo
+        return rest_ensure_response($data);
+    }
+
+    public function apiRecipient($request)
+    {
+        $response = $this->recipient(
+            $request['id'],
+            $request['to_email']
+        );
+        return rest_ensure_response($response);
+    }
+
+    public function recipient($postId, $toEmail)
     {
         $data = [];
         $data['result'] = [];

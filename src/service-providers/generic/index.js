@@ -4,6 +4,8 @@
 import { __ } from "@wordpress/i18n";
 import { Fragment } from "@wordpress/element";
 
+const { useSelect } = wp.data;
+
 /**
  * Validation utility.
  *
@@ -55,29 +57,59 @@ const ProviderSidebar = ({
      */
     renderSubject,
     /**
-     * Function that renders from inputs - sender name and email.
+     * Function that renders from inputs - recipient email.
+     */
+    renderTo,
+    /**
+     * Function that renders from inputs - sender name, email and replyto.
      * Has to receive an object with `handleSenderUpdate` function,
-     * which will receive a `{senderName, senderEmail}` object – so that
+     * which will receive a `{senderName, senderEmail, replytoEmail}` object – so that
      * the data can be sent to the backend.
      */
     renderFrom
 }) => {
-    const handleSenderUpdate = ({ senderName, senderEmail }) =>
+    const handleSenderUpdate = ({ senderName, senderEmail, replytoEmail }) =>
         apiFetch({
             path: `/rrze-newsletter/v1/email/${postId}/sender`,
             data: {
                 rrze_newsletter_from_name: senderName,
-                rrze_newsletter_replyto: senderEmail
+                rrze_newsletter_from_email: senderEmail,
+                rrze_newsletter_replyto: replytoEmail
             },
             method: "POST"
         });
 
-    return (
-        <Fragment>
-            {renderSubject()}
-            {renderFrom({ handleSenderUpdate })}
-        </Fragment>
+    const handleRecipientUpdate = ({ recipientEmail }) =>
+        apiFetch({
+            path: `/rrze-newsletter/v1/email/${postId}/recipient`,
+            data: {
+                rrze_newsletter_to_email: recipientEmail
+            },
+            method: "POST"
+        });
+
+    const toEmail = useSelect(
+        select =>
+            select("core/editor").getEditedPostAttribute("meta")
+                .rrze_newsletter_to_email
     );
+
+    if (typeof toEmail == "string") {
+        return (
+            <Fragment>
+                {renderSubject()}
+                {renderTo({ handleRecipientUpdate })}
+                {renderFrom({ handleSenderUpdate })}
+            </Fragment>
+        );
+    } else {
+        return (
+            <Fragment>
+                {renderSubject()}
+                {renderFrom({ handleSenderUpdate })}
+            </Fragment>
+        );
+    }
 };
 
 /**
