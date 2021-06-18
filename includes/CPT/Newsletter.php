@@ -36,14 +36,17 @@ class Newsletter
 
     public function onLoaded()
     {
-        // Taxonomy Terms Fields.
-        add_action('newsletter_mailing_list_add_form_fields', [__CLASS__, 'addFormFields']);
-        add_action('newsletter_mailing_list_edit_form_fields', [__CLASS__, 'editFormFields'], 10, 2);
-        add_action('created_newsletter_mailing_list', [__CLASS__, 'saveFormFields']);
-        add_action('edited_newsletter_mailing_list', [__CLASS__, 'saveFormFields']);
-        // Taxonomy Custom Columns.
-        add_filter('manage_edit-newsletter_mailing_list_columns', [__CLASS__, 'mailListColumns']);
-        add_filter('manage_newsletter_mailing_list_custom_column', [__CLASS__, 'mailListCustomColumns'], 10, 3);
+        if (!apply_filters('rrze_newsletter_disable_mailing_list', false)) {
+            // Taxonomy Terms Fields.
+            add_action('newsletter_mailing_list_add_form_fields', [__CLASS__, 'addFormFields']);
+            add_action('newsletter_mailing_list_edit_form_fields', [__CLASS__, 'editFormFields'], 10, 2);
+            add_action('created_newsletter_mailing_list', [__CLASS__, 'saveFormFields']);
+            add_action('edited_newsletter_mailing_list', [__CLASS__, 'saveFormFields']);
+            // Taxonomy Custom Columns.
+            add_filter('manage_edit-newsletter_mailing_list_columns', [__CLASS__, 'mailListColumns']);
+            add_filter('manage_newsletter_mailing_list_custom_column', [__CLASS__, 'mailListCustomColumns'], 10, 3);
+        }
+
         // Post Stuff.  
         add_action('default_title', [__CLASS__, 'defaultTitle'], 10, 2);
         add_filter('the_content', [__CLASS__, 'theContent']);
@@ -166,6 +169,23 @@ class Newsletter
                 'auth_callback'  => '__return_true',
             ]
         );
+        if (apply_filters('rrze_newsletter_disable_mailing_list', false)) {
+            register_meta(
+                'post',
+                'rrze_newsletter_to_email',
+                [
+                    'object_subtype' => self::POST_TYPE,
+                    'show_in_rest'   => [
+                        'schema' => [
+                            'context' => ['edit'],
+                        ],
+                    ],
+                    'type'           => 'string',
+                    'single'         => true,
+                    'auth_callback'  => '__return_true'
+                ]
+            );  
+        }      
         register_meta(
             'post',
             'rrze_newsletter_replyto',
@@ -327,7 +347,9 @@ class Newsletter
             'show_admin_column' => true,
             'show_in_rest' => true
         ];
-        register_taxonomy(self::MAILING_LIST, self::POST_TYPE, $args);
+        if (!apply_filters('rrze_newsletter_disable_mailing_list', false)) {
+            register_taxonomy(self::MAILING_LIST, self::POST_TYPE, $args);
+        }
     }
 
     public static function addFormFields($taxonomy)
@@ -339,7 +361,7 @@ class Newsletter
         '</div>';
 
         echo '<div class="form-field">',
-        '<label for="newsletter_mailing_list">', __('Subscribed email addresses', 'rrze-newsletter'), '</label>',
+        '<label for="rrze_newsletter_mailing_list">', __('Subscribed email addresses', 'rrze-newsletter'), '</label>',
         '<textarea id="newsletter_mailing_list" rows="5" cols="40" name="rrze_newsletter_mailing_list"></textarea>',
         '<p>', __("Enter one email address per line. Note: The recipient's first and last name separated by a comma are optional and can be added using a comma after the email address using the following format: email-address,first name,last name", 'rrze-newsletter'), '</p>',
         '</div>';
@@ -350,7 +372,7 @@ class Newsletter
         $value = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
 
         echo '<tr class="form-field">',
-        '<th>', '<label for="newsletter_mailing_list">' . __('Public Mailing List', 'rrze-newsletter') . '</label>', '</th>',
+        '<th>', '<label for="rrze_newsletter_mailing_list_public">' . __('Public Mailing List', 'rrze-newsletter') . '</label>', '</th>',
         '<td>',
         '<input type="checkbox" name="rrze_newsletter_mailing_list_public" value="true" ', checked($value, true, false), '>',
         '<span>', __('It can be listed on the subscription page and seen by everyone.', 'rrze-newsletter'), '</span>',
@@ -360,9 +382,9 @@ class Newsletter
         $value = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true);
 
         echo '<tr class="form-field">',
-        '<th><label for="newsletter_mailing_list">' . __('Subscribed email addresses', 'rrze-newsletter') . '</label></th>',
+        '<th><label for="rrze_newsletter_mailing_list">' . __('Subscribed email addresses', 'rrze-newsletter') . '</label></th>',
         '<td>',
-        '<textarea id="newsletter_mailing_list" rows="5" cols="50" name="rrze_newsletter_mailing_list">', $value, '</textarea>',
+        '<textarea id="rrze_newsletter_mailing_list" rows="5" cols="50" name="rrze_newsletter_mailing_list">', $value, '</textarea>',
         '<p class="description">', __("List of email addresses that have been subscribed to this mailing list. Enter one email address per line. Note: The recipient's first and last name separated by a comma are optional and can be added using a comma after the email address using the following format: email-address,first name,last name", 'rrze-newsletter'), '</p>',
         '</td>',
         '</tr>';
@@ -529,12 +551,13 @@ class Newsletter
             $fontHeader = get_post_meta($post->ID, 'font_header', true);
             $fontBody = get_post_meta($post->ID, 'font_body', true);
             $backgroundColor = get_post_meta($post->ID, 'background_color', true);
-            ?>
+?>
             <style>
                 .main-content {
                     background-color: <?php echo esc_attr($backgroundColor); ?>;
                     font-family: <?php echo esc_attr($fontBody); ?>;
                 }
+
                 .main-content h1,
                 .main-content h2,
                 .main-content h3,
@@ -543,13 +566,14 @@ class Newsletter
                 .main-content h6 {
                     font-family: <?php echo esc_attr($fontHeader); ?>;
                 }
-                <?php if ($backgroundColor) : ?>
-                .entry-content {
+
+                <?php if ($backgroundColor) : ?>.entry-content {
                     padding: 0 32px;
                 }
+
                 <?php endif; ?>
             </style>
-            <?php
+<?php
         }
     }
 
