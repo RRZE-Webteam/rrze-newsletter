@@ -27,6 +27,7 @@ const Sidebar = ({
     title,
     senderName,
     senderEmail,
+    recipientEmail,
     replytoEmail,
     previewText,
     newsletterData,
@@ -43,6 +44,12 @@ const Sidebar = ({
         />
     );
 
+    const recipientEmailClasses = classnames(
+        "rrze-newsletter__recipient-textcontrol",
+        errors.rrze_newsletter_unverified_recipient_domain &&
+            "rrze-newsletter__error"
+    );
+
     const senderEmailClasses = classnames(
         "rrze-newsletter__email-textcontrol",
         errors.rrze_newsletter_unverified_sender_domain &&
@@ -55,6 +62,19 @@ const Sidebar = ({
             method: "POST",
             path: `/rrze-newsletter/v1/post-meta/${postId}`
         });
+
+    const renderTo = () => (
+        <TextControl
+            label={__("Empfänger (E-Mail-Verteiler)", "rrze-newsletter")}
+            className={recipientEmailClasses}
+            value={recipientEmail}
+            type="email"
+            disabled={inFlight}
+            onChange={value =>
+                editPost({ meta: { rrze_newsletter_to_email: value } })
+            }
+        />
+    );
 
     const renderFrom = () => (
         <Fragment>
@@ -108,8 +128,7 @@ const Sidebar = ({
                     inFlight ||
                     (senderEmail.length
                         ? !hasValidEmail(senderEmail)
-                        : false) ||
-                    (replytoEmail.length ? !hasValidEmail(replytoEmail) : false)
+                        : false)
                 }
             >
                 {__("Update Sender", "rrze-newsletter")}
@@ -147,6 +166,7 @@ const Sidebar = ({
                 newsletterData={newsletterData}
                 inFlight={inFlight}
                 renderSubject={renderSubject}
+                renderTo={renderTo}
                 renderFrom={renderFrom}
                 updateMeta={meta => editPost({ meta })}
             />
@@ -157,15 +177,15 @@ const Sidebar = ({
 export default compose([
     withApiHandler(),
     withSelect(select => {
-        const { getEditedPostAttribute, getCurrentPostId } = select(
-            "core/editor"
-        );
+        const { getEditedPostAttribute, getCurrentPostId } =
+            select("core/editor");
         const meta = getEditedPostAttribute("meta");
         return {
             title: getEditedPostAttribute("title"),
             postId: getCurrentPostId(),
             senderName: meta.rrze_newsletter_from_name || "",
             senderEmail: meta.rrze_newsletter_from_email || "",
+            recipientEmail: meta.rrze_newsletter_to_email || "",
             replytoEmail: meta.rrze_newsletter_replyto || "",
             previewText: meta.rrze_newsletter_preview_text || "",
             newsletterData: meta.newsletterData || {}
