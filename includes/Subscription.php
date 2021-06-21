@@ -39,7 +39,8 @@ class Subscription
 
     public function init()
     {
-        if (is_admin() || !is_page()) {
+        $isMailingListDisabled = apply_filters('rrze_newsletter_disable_mailing_list', false);
+        if ($isMailingListDisabled || is_admin() || !is_page()) {
             return;
         }
 
