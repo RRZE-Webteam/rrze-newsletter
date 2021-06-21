@@ -91,9 +91,9 @@ class Queue
         }
 
         // Set the mailing list.
-        $mailingList = [];
-        $disableMailingList = apply_filters('rrze_newsletter_disable_mailing_list', false);
-        if (!$disableMailingList && !empty($data['mailing_list_terms'])) {
+        $recipient = [];
+        $isMailingListDisabled = apply_filters('rrze_newsletter_disable_mailing_list', false);
+        if (!$isMailingListDisabled && !empty($data['mailing_list_terms'])) {
             $options = (object) Settings::getOptions();
             $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
 
@@ -127,7 +127,7 @@ class Queue
 
                     $to = !empty($name) ? sprintf('%1$s <%2$s>', $name, $email) : $email;
 
-                    $mailingList[$email] = [
+                    $recipient[$email] = [
                         'to_fname' => $fname,
                         'to_lname' => $lname,
                         'to_email' => $email,
@@ -135,10 +135,10 @@ class Queue
                     ];
                 }
             }
-        } elseif ($disableMailingList) {
+        } elseif ($isMailingListDisabled) {
             $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
             if (Utils::sanitizeEmail($email)) {
-                $mailingList[$email] = [
+                $recipient[$email] = [
                     'to_fname' => '',
                     'to_lname' => '',
                     'to_email' => $email,
@@ -147,7 +147,7 @@ class Queue
             }
         }
 
-        if (empty($mailingList)) {
+        if (empty($recipient)) {
             Newsletter::setStatus($postId, 'error');
             return;
         }
@@ -170,7 +170,7 @@ class Queue
             'post_author' => 1
         ];
 
-        foreach ($mailingList as $mail) {
+        foreach ($recipient as $mail) {
             remove_filter('content_save_pre', 'wp_filter_post_kses');
             remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
 
