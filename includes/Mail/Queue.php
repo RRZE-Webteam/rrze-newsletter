@@ -90,8 +90,9 @@ class Queue
             return;
         }
 
-        // Set the mailing list.
+        // Set recipient.
         $recipient = [];
+
         $isMailingListDisabled = apply_filters('rrze_newsletter_disable_mailing_list', false);
         if (!$isMailingListDisabled && !empty($data['mailing_list_terms'])) {
             $options = (object) Settings::getOptions();
@@ -137,7 +138,15 @@ class Queue
             }
         } elseif ($isMailingListDisabled) {
             $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
-            if (Utils::sanitizeEmail($email)) {
+
+            $parts = explode('@', $email);
+            $domain = array_pop($parts);
+            $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
+
+            if (
+                filter_var($email, FILTER_VALIDATE_EMAIL)
+                && (empty($allowedDomains) || in_array($domain, $allowedDomains))
+            ) {
                 $recipient[$email] = [
                     'to_fname' => '',
                     'to_lname' => '',
