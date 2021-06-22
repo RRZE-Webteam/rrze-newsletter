@@ -66,6 +66,9 @@ class RestApi
                     'from_name' => [
                         'sanitize_callback' => 'sanitize_text_field',
                     ],
+                    'from_email'  => [
+                        'sanitize_callback' => 'sanitize_email',
+                    ],
                     'replyto'  => [
                         'sanitize_callback' => 'sanitize_email',
                     ],
@@ -84,12 +87,9 @@ class RestApi
                         'sanitize_callback' => 'absint',
                         'validate_callback' => [$this, 'validateNewsletterId'],
                     ],
-                    'from_name' => [
-                        'sanitize_callback' => 'sanitize_text_field',
-                    ],
-                    'replyto'  => [
+                    'to_email' => [
                         'sanitize_callback' => 'sanitize_email',
-                    ],
+                    ]
                 ],
             ]
         );
@@ -238,10 +238,20 @@ class RestApi
 
     public function sender($postId, $fromName, $fromEmail, $replyTo)
     {
-        $data = [];
-        $data['result'] = [];
-        // @todo
-        return rest_ensure_response($data);
+        $fromEmail = sanitize_email(trim($fromEmail));
+
+        $message = '';
+        if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
+            $message = sprintf(
+                // translators: Message if the email address is not valid.
+                __('The sender email address is not valid.', 'rrze-newsletter'),
+                $fromEmail
+            );
+        }
+
+        $response = is_wp_error($message) ? $message : ['message' => $message];
+
+        return rest_ensure_response($response);
     }
 
     public function apiRecipient($request)
@@ -255,10 +265,30 @@ class RestApi
 
     public function recipient($postId, $toEmail)
     {
-        $data = [];
-        $data['result'] = [];
-        // @todo
-        return rest_ensure_response($data);
+        $toEmail = sanitize_email(trim($toEmail));
+
+        $parts = explode('@', $toEmail);
+        $domain = array_pop($parts);
+        $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
+
+        $message = '';
+        if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+            $message = sprintf(
+                // translators: Message if the email address is not valid.
+                __('The recipient email address is not valid.', 'rrze-newsletter'),
+                $toEmail
+            );
+        } elseif (!empty($allowedDomains) && !in_array($domain, $allowedDomains)) {
+            $message = sprintf(
+                // translators: Message if the email domain is not allowed.
+                __('The recipient email domain is not allowed.', 'rrze-newsletter'),
+                $toEmail
+            );
+        }
+
+        $response = is_wp_error($message) ? $message : ['message' => $message];
+
+        return rest_ensure_response($response);
     }
 
     public function apiTest($request)

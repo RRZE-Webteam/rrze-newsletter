@@ -65,7 +65,7 @@ const Sidebar = ({
 
     const renderTo = () => (
         <TextControl
-            label={__("Empfänger (E-Mail-Verteiler)", "rrze-newsletter")}
+            label={__("Recipient (Email Distribution List)", "rrze-newsletter")}
             className={recipientEmailClasses}
             value={recipientEmail}
             type="email"

@@ -72,9 +72,9 @@ const ProviderSidebar = ({
         apiFetch({
             path: `/rrze-newsletter/v1/email/${postId}/sender`,
             data: {
-                rrze_newsletter_from_name: senderName,
-                rrze_newsletter_from_email: senderEmail,
-                rrze_newsletter_replyto: replytoEmail
+                from_name: senderName,
+                from_email: senderEmail,
+                replyto: replytoEmail
             },
             method: "POST"
         });
@@ -83,7 +83,7 @@ const ProviderSidebar = ({
         apiFetch({
             path: `/rrze-newsletter/v1/email/${postId}/recipient`,
             data: {
-                rrze_newsletter_to_email: recipientEmail
+                to_email: recipientEmail
             },
             method: "POST"
         });

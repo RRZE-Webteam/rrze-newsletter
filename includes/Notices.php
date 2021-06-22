@@ -35,18 +35,21 @@ class Notices
             );
         }
 
-        $subscriptionPageId = absint($options->subscription_page_id);
-        if (!$subscriptionPageId) {
-            $this->notices[] = wp_kses_post(
-                sprintf(
-                    '<span class="dashicons dashicons-info"></span> <a href="%1$s">%2$s &mdash; %3$s</a>',
-                    admin_url('options-general.php?page=rrze-newsletter&current-tab=rrze-newsletter-subscription'),
-                    // translators: Notify users to set up the newsletter settings.
-                    __('Newsletter Settings', 'rrze-newsletter'),
-                    // translators: Notify users to set up the subscription page on the settings page.
-                    __('Please set up the subscripction page.', 'rrze-newsletter')
-                )
-            );
+        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', false);
+        if (!$isSubscriptionDisabled) {
+            $subscriptionPageId = absint($options->subscription_page_id);
+            if (!$subscriptionPageId) {
+                $this->notices[] = wp_kses_post(
+                    sprintf(
+                        '<span class="dashicons dashicons-info"></span> <a href="%1$s">%2$s &mdash; %3$s</a>',
+                        admin_url('options-general.php?page=rrze-newsletter&current-tab=rrze-newsletter-subscription'),
+                        // translators: Notify users to set up the newsletter settings.
+                        __('Newsletter Settings', 'rrze-newsletter'),
+                        // translators: Notify users to set up the subscription page on the settings page.
+                        __('Please set up the subscripction page.', 'rrze-newsletter')
+                    )
+                );
+            }
         }
     }
 

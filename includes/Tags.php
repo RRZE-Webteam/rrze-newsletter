@@ -46,16 +46,23 @@ class Tags
 
         $email = Utils::sanitizeEmail($tags['EMAIL']);
 
-        $subscriptionPageSlug = get_post_field('post_name', absint($options->subscription_page_id));
-        $subscriptionPage = get_page_by_path($subscriptionPageSlug);
-        $subscriptionPageId = $subscriptionPage->ID;
+        $unsubUrl = '';
+        $updateUrl = '';
+        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', false);
+        if (!$isSubscriptionDisabled) {
+            $subscriptionPageSlug = get_post_field('post_name', absint($options->subscription_page_id));
+            $subscriptionPage = get_page_by_path($subscriptionPageSlug);
+            if (!is_null($subscriptionPage)) {
+                $subscriptionPageId = $subscriptionPage->ID;
 
-        $subscriptionPageUrl = get_option('permalink_structure')
-            ? get_page_link($subscriptionPageId)
-            : add_query_arg('page_id', $subscriptionPageId, site_url());
+                $subscriptionPageUrl = get_option('permalink_structure')
+                    ? get_page_link($subscriptionPageId)
+                    : add_query_arg('page_id', $subscriptionPageId, site_url());
 
-        $unsubUrl = add_query_arg('a', Utils::encryptQueryVar('unsub|' . $email), $subscriptionPageUrl);
-        $updateUrl = add_query_arg('a', Utils::encryptQueryVar('update|' . $email), $subscriptionPageUrl);
+                $unsubUrl = add_query_arg('a', Utils::encryptQueryVar('unsub|' . $email), $subscriptionPageUrl);
+                $updateUrl = add_query_arg('a', Utils::encryptQueryVar('update|' . $email), $subscriptionPageUrl);
+            }
+        }
 
         $archivePageBase = Archive::getPageBase();
         $archiveQuery = Utils::encryptQueryVar($postId . '|' . $email);
