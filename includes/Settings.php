@@ -160,6 +160,7 @@ class Settings
         $options = array_intersect_key($options, $defaults);
 
         $options['mail_queue_send_limit'] = apply_filters('rrze_newsletter_mail_queue_send_limit', $options['mail_queue_send_limit']);
+        $options['mail_queue_max_retries'] = apply_filters('rrze_newsletter_mail_queue_max_retries', $options['mail_queue_max_retries']);
         $options['mjml_api_endpoint'] = apply_filters('rrze_newsletter_mjml_api_endpoint', $options['mjml_api_endpoint']);
 
         return $options;
@@ -240,6 +241,7 @@ class Settings
         $html = '<h1>' . $this->settingsMenu['title'] . '</h1>' . PHP_EOL;
 
         if (count($this->settingsSections) - count($this->hiddenSections) < 2) {
+            echo $html;
             return;
         }
 
