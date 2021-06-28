@@ -90,8 +90,7 @@ const PostInserterBlock = ({
 
             // Wait for image blocks to be added to the BlockPreview.
             const imageBlocks =
-                stringifiedTemplateBlocks.match(/"name":"core\/image"/g) ||
-                [];
+                stringifiedTemplateBlocks.match(/"name":"core\/image"/g) || [];
 
             // Preview is ready once all image blocks are accounted for.
             if (imageBlocks.length === images.length) {
@@ -398,6 +397,7 @@ export default () => {
         category: "widgets",
         icon: Icon,
         edit: PostInserterBlockWithSelect,
+        save: () => <InnerBlocks.Content />,
         attributes: {
             areBlocksInserted: {
                 type: "boolean",
@@ -471,7 +471,6 @@ export default () => {
                 type: "array",
                 default: []
             }
-        },
-        save: () => <InnerBlocks.Content />
+        }
     });
 };
