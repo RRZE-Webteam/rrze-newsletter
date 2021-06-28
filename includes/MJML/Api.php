@@ -5,8 +5,6 @@ namespace RRZE\Newsletter\MJML;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Settings;
-use RRZE\Newsletter\CPT\Newsletter;
-use function RRZE\Newsletter\plugin;
 
 class Api
 {
@@ -55,12 +53,14 @@ class Api
         $response = wp_remote_post(
             $endPoint,
             [
-                'body' => wp_json_encode(
+                'body' => json_encode(
                     [
                         'mjml' => $markup,
-                    ]
+                    ],
+                    JSON_UNESCAPED_UNICODE
                 ),
                 'headers' => [
+                    'Content-Type' => 'application/json; charset=utf-8',
                     'Authorization' => 'Basic ' . base64_encode($credentials),
                 ],
                 'timeout' => 45,
