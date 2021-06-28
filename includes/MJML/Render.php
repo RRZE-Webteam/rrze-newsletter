@@ -297,7 +297,7 @@ final class Render
             case 'core/image':
                 // Parse block content.
                 $dom = new \DomDocument();
-                @$dom->loadHTML($innerHtml);
+                @$dom->loadHtml(mb_convert_encoding($innerHtml, 'HTML-ENTITIES', "UTF-8"));
                 $xpath = new \DOMXpath($dom);
                 $img = $xpath->query('//img')[0];
                 $imgSrc = $img->getAttribute('src');
@@ -361,13 +361,16 @@ final class Render
                 foreach ($innerBlocks as $buttonBlock) {
                     // Parse block content.
                     $dom = new \DomDocument();
-                    @$dom->loadHTML($buttonBlock['innerHTML']);
+                    @$dom->loadHtml(mb_convert_encoding($buttonBlock['innerHTML'], 'HTML-ENTITIES', "UTF-8"));
                     $xpath = new \DOMXpath($dom);
                     $anchor = $xpath->query('//a')[0];
                     $atts = $buttonBlock['attrs'];
                     $text = $anchor->textContent;
+                    $width = isset($atts['width']) ? $atts['width'] : 100;
                     $borderRadius = isset($atts['borderRadius']) ? $atts['borderRadius'] : 5;
                     $isOutlined = isset($atts['className']) && 'is-style-outline' == $atts['className'];
+                    //\RRZE\Debug\log('core/buttons');
+                    //\RRZE\Debug\log($atts);
 
                     $defaultButtonAtts = [
                         'padding' => '0',
@@ -394,10 +397,31 @@ final class Render
                         $buttonAtts['css-class'] = $atts['className'];
                     }
 
+                    $columnAtts['width'] = $width . '%';
+
                     $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAtts) . '><mj-button ' . self::arrayToAttributes($buttonAtts) . ">$text</mj-button></mj-column>";
                 }
                 break;
 
+                // rrze-newsletter/rss block
+                // <!-- wp:rrze-newsletter/rss {"feedURL":"https://www.rrze.fau.de/feeds","itemsToShow":3,"displayExcerpt":true,"displayAuthor":true,"displayDate":true,"excerptLength":15} /-->
+            /**
+            case 'rrze-newsletter/rss':
+                foreach ($innerBlocks as $rssBlock) {
+                    // Parse block content.
+                    $dom = new \DomDocument();
+                    @$dom->loadHtml($rssBlock['innerHTML']);
+                    $xpath = new \DOMXpath($dom);
+                    $anchor = $xpath->query('//a')[0];
+                    $atts = $rssBlock['attrs'];
+                    $text = $anchor->textContent;
+                    //\RRZE\Debug\log('rrze-newsletter/rss');
+                    //\RRZE\Debug\log($atts);
+                    $blockMjmlMarkup = '';
+                }
+
+                break;
+            */
                 // Separator block.
             case 'core/separator':
                 $isStyleDefault = isset($atts['className']) ? 'is-style-default' == $atts['className'] : true;
