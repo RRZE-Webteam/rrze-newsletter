@@ -4,6 +4,7 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Blocks;
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
 
@@ -54,11 +55,12 @@ final class Render
      */
     private static function arrayToAttributes($attributes)
     {
+        if (!is_array($attributes)) return $attributes;
         return implode(
             ' ',
             array_map(
                 function ($key) use ($attributes) {
-                    if (isset($attributes[$key])) {
+                    if (isset($attributes[$key]) && !is_array($attributes[$key])) {
                         return $key . '="' . $attributes[$key] . '"';
                     } else {
                         return '';
@@ -238,7 +240,7 @@ final class Render
         $innerBlocks = $block['innerBlocks'];
         $innerHtml = $block['innerHTML'];
 
-        if (!isset($atts['innerBlocksToInsert']) && (empty($blockName) || empty($innerHtml))) {
+        if (empty($blockName)) {
             return '';
         }
 
@@ -268,6 +270,7 @@ final class Render
             case 'core/list':
             case 'core/heading':
             case 'core/quote':
+            case 'rrze-newsletter/rss':
                 $textAtts = array_merge(
                     [
                         'padding' => '0',
@@ -290,7 +293,12 @@ final class Render
                     unset($textAtts['textAlign']);
                 }
 
+                if ($blockName == 'rrze-newsletter/rss') {
+                    $innerHtml = Blocks::mjmlRenderBlockRSS($atts);
+                }
+
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
+
                 break;
 
                 // Image block.
@@ -369,8 +377,6 @@ final class Render
                     $width = isset($atts['width']) ? $atts['width'] : 100;
                     $borderRadius = isset($atts['borderRadius']) ? $atts['borderRadius'] : 5;
                     $isOutlined = isset($atts['className']) && 'is-style-outline' == $atts['className'];
-                    //\RRZE\Debug\log('core/buttons');
-                    //\RRZE\Debug\log($atts);
 
                     $defaultButtonAtts = [
                         'padding' => '0',
@@ -403,25 +409,6 @@ final class Render
                 }
                 break;
 
-                // rrze-newsletter/rss block
-                // <!-- wp:rrze-newsletter/rss {"feedURL":"https://www.rrze.fau.de/feeds","itemsToShow":3,"displayExcerpt":true,"displayAuthor":true,"displayDate":true,"excerptLength":15} /-->
-            /**
-            case 'rrze-newsletter/rss':
-                foreach ($innerBlocks as $rssBlock) {
-                    // Parse block content.
-                    $dom = new \DomDocument();
-                    @$dom->loadHtml($rssBlock['innerHTML']);
-                    $xpath = new \DOMXpath($dom);
-                    $anchor = $xpath->query('//a')[0];
-                    $atts = $rssBlock['attrs'];
-                    $text = $anchor->textContent;
-                    //\RRZE\Debug\log('rrze-newsletter/rss');
-                    //\RRZE\Debug\log($atts);
-                    $blockMjmlMarkup = '';
-                }
-
-                break;
-            */
                 // Separator block.
             case 'core/separator':
                 $isStyleDefault = isset($atts['className']) ? 'is-style-default' == $atts['className'] : true;
