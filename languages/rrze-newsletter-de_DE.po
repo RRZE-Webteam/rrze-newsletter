@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-06-24T18:52:22+00:00\n"
-"PO-Revision-Date: 2021-06-25 10:49+0200\n"
+"POT-Creation-Date: 2021-06-28T15:47:23+00:00\n"
+"PO-Revision-Date: 2021-06-28 17:49+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -234,6 +234,20 @@ msgid ""
 msgstr ""
 "Ein Fehler ist aufgetreten – der Feed funktioniert zurzeit nicht. Versuchen "
 "Sie es später nochmal."
+
+#: includes/Blocks.php:90 includes/Blocks.php:169
+#: src/editor/blocks/post-inserter/query-controls.js:41
+#: src/editor/blocks/post-inserter/query-controls.js:156
+#: src/editor/blocks/post-inserter/query-controls.js:173
+#: src/editor/blocks/post-inserter/query-controls.js:192
+#: src/editor/blocks/post-inserter/query-controls.js:209
+msgid "(no title)"
+msgstr "(kein Titel)"
+
+#. translators: %s: the author.
+#: includes/Blocks.php:119 includes/Blocks.php:198
+msgid "by %s"
+msgstr "von %s"
 
 #: includes/CPT/Newsletter.php:66
 msgctxt "post type general name"
@@ -661,12 +675,12 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Api.php:25
+#: includes/MJML/Api.php:23
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:719 includes/MJML/Render.php:727
-#: includes/MJML/Render.php:739
+#: includes/MJML/Render.php:730 includes/MJML/Render.php:738
+#: includes/MJML/Render.php:750
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -1078,180 +1092,140 @@ msgstr ""
 "entfernen Sie sie:"
 
 #: src/editor/blocks/post-inserter/index.js:128
-#: _tmp/blocks/post-inserter/index.js:130
 msgid "Show image on top"
 msgstr "Bild oben anzeigen"
 
 #: src/editor/blocks/post-inserter/index.js:134
-#: _tmp/blocks/post-inserter/index.js:136
 msgid "Show image on left"
 msgstr "Bild links anzeigen"
 
 #: src/editor/blocks/post-inserter/index.js:140
-#: _tmp/blocks/post-inserter/index.js:142
 msgid "Show image on right"
 msgstr "Bild rechts anzeigen"
 
 #: src/editor/blocks/post-inserter/index.js:150
-#: _tmp/blocks/post-inserter/index.js:152
 msgid "Post content settings"
 msgstr "Einstellungen für Beitragsinhalte"
 
 #: src/editor/blocks/post-inserter/index.js:153
-#: _tmp/blocks/post-inserter/index.js:155
 msgid "Post excerpt"
 msgstr "Textauszug"
 
 #: src/editor/blocks/post-inserter/index.js:161
-#: src/editor/blocks/rss/edit.js:125 _tmp/blocks/post-inserter/index.js:163
-#: _tmp/blocks/rss/edit.js:125
+#: src/editor/blocks/rss/edit.js:125
 msgid "Max number of words in excerpt"
 msgstr "Maximale Anzahl von Wörtern im Textauszug"
 
 #: src/editor/blocks/post-inserter/index.js:174
-#: _tmp/blocks/post-inserter/index.js:176
 msgid "Date"
 msgstr "Datum"
 
 #: src/editor/blocks/post-inserter/index.js:181
-#: _tmp/blocks/post-inserter/index.js:183
 msgid "Featured image"
 msgstr "Beitragsbild"
 
 #: src/editor/blocks/post-inserter/index.js:188
-#: _tmp/blocks/post-inserter/index.js:190
 msgid "Author's name"
 msgstr "Name des Autors"
 
 #: src/editor/blocks/post-inserter/index.js:195
-#: _tmp/blocks/post-inserter/index.js:197
 msgid "\"Continue reading…\" link"
 msgstr "„Weiterlesen…“-Link"
 
 #: src/editor/blocks/post-inserter/index.js:206
-#: _tmp/blocks/post-inserter/index.js:208
 msgid "Sorting and filtering"
 msgstr "Sortieren und filtern"
 
 #: src/editor/blocks/post-inserter/index.js:213
-#: _tmp/blocks/post-inserter/index.js:215
 msgid "Text"
 msgstr "Text"
 
 #: src/editor/blocks/post-inserter/index.js:232
-#: _tmp/blocks/post-inserter/index.js:234
 msgid "Heading"
 msgstr "Überschrift"
 
 #: src/editor/blocks/post-inserter/index.js:262
-#: _tmp/blocks/post-inserter/index.js:264
-#: _tmp/blocks/post-inserter/index.js:399
 msgid "Post Inserter"
 msgstr "Beitrag-Inserter"
 
 #: src/editor/blocks/post-inserter/index.js:281
-#: _tmp/blocks/post-inserter/index.js:283
 msgid "Insert"
 msgstr "Einfügen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:41
-#: src/editor/blocks/post-inserter/query-controls.js:156
-#: src/editor/blocks/post-inserter/query-controls.js:173
-#: src/editor/blocks/post-inserter/query-controls.js:192
-#: src/editor/blocks/post-inserter/query-controls.js:209
-#: _tmp/blocks/post-inserter/query-controls.js:41
-#: _tmp/blocks/post-inserter/query-controls.js:156
-#: _tmp/blocks/post-inserter/query-controls.js:173
-#: _tmp/blocks/post-inserter/query-controls.js:192
-#: _tmp/blocks/post-inserter/query-controls.js:209
-msgid "(no title)"
-msgstr "(kein Titel)"
-
 #: src/editor/blocks/post-inserter/query-controls.js:217
-#: _tmp/blocks/post-inserter/query-controls.js:217
 msgid "Display specific posts"
 msgstr "Spezifische Beiträge anzeigen"
 
 #: src/editor/blocks/post-inserter/query-controls.js:227
-#: _tmp/blocks/post-inserter/query-controls.js:227
 msgid "Add posts"
 msgstr "Beiträge hinzufügen"
 
 #: src/editor/blocks/post-inserter/query-controls.js:261
-#: _tmp/blocks/post-inserter/query-controls.js:261
 msgid "Hide Advanced Filters"
 msgstr "Erweiterte Filter ausblenden"
 
 #: src/editor/blocks/post-inserter/query-controls.js:262
-#: _tmp/blocks/post-inserter/query-controls.js:265
 msgid "Show Advanced Filters"
 msgstr "Erweiterte Filter anzeigen"
 
 #: src/editor/blocks/post-inserter/query-controls.js:276
-#: _tmp/blocks/post-inserter/query-controls.js:279
 msgid "Tags"
 msgstr "Schlagwörter"
 
 #: src/editor/blocks/post-inserter/query-controls.js:284
-#: _tmp/blocks/post-inserter/query-controls.js:287
 msgid "Excluded Categories"
 msgstr "Ausgenommene Kategorien"
 
 #: src/editor/blocks/post-inserter/query-controls.js:295
-#: _tmp/blocks/post-inserter/query-controls.js:298
 msgid "Excluded Tags"
 msgstr "Ausgenommene Schlagwörter"
 
 #: src/editor/blocks/post-inserter/utils.js:78
-#: _tmp/blocks/post-inserter/utils.js:78
 msgid "Continue reading…"
 msgstr "Weiterlesen…"
 
 #: src/editor/blocks/post-inserter/utils.js:102
-#: _tmp/blocks/post-inserter/utils.js:102
 msgctxt "comma separator for multiple authors"
 msgid ","
 msgstr ","
 
 #: src/editor/blocks/post-inserter/utils.js:111
-#: _tmp/blocks/post-inserter/utils.js:111
 msgid "and"
 msgstr "und"
 
 #: src/editor/blocks/post-inserter/utils.js:126
-#: _tmp/blocks/post-inserter/utils.js:126
 msgid "By"
 msgstr "Von"
 
-#: src/editor/blocks/rss/edit.js:67 _tmp/blocks/rss/edit.js:67
+#: src/editor/blocks/rss/edit.js:67
 msgid "Enter URL here…"
 msgstr "URL hier eingeben…"
 
-#: src/editor/blocks/rss/edit.js:75 _tmp/blocks/rss/edit.js:75
+#: src/editor/blocks/rss/edit.js:75
 msgid "Use URL"
 msgstr "URL verwenden"
 
-#: src/editor/blocks/rss/edit.js:86 _tmp/blocks/rss/edit.js:86
+#: src/editor/blocks/rss/edit.js:86
 msgid "Edit RSS URL"
 msgstr "RSS-URL bearbeiten"
 
-#: src/editor/blocks/rss/edit.js:97 _tmp/blocks/rss/edit.js:97
+#: src/editor/blocks/rss/edit.js:97
 msgid "RSS settings"
 msgstr "RSS-Einstellungen"
 
-#: src/editor/blocks/rss/edit.js:99 _tmp/blocks/rss/edit.js:99
+#: src/editor/blocks/rss/edit.js:99
 msgid "Number of items"
 msgstr "Anzahl Elemente"
 
-#: src/editor/blocks/rss/edit.js:109 _tmp/blocks/rss/edit.js:109
+#: src/editor/blocks/rss/edit.js:109
 msgid "Display author"
 msgstr "Autor anzeigen"
 
-#: src/editor/blocks/rss/edit.js:114 _tmp/blocks/rss/edit.js:114
+#: src/editor/blocks/rss/edit.js:114
 msgid "Display date"
 msgstr "Datum anzeigen"
 
-#: src/editor/blocks/rss/edit.js:119 _tmp/blocks/rss/edit.js:119
+#: src/editor/blocks/rss/edit.js:119
 msgid "Display excerpt"
 msgstr "Textauszug anzeigen"
 
@@ -1259,7 +1233,7 @@ msgstr "Textauszug anzeigen"
 msgid "RSS"
 msgstr "RSS"
 
-#: src/editor/blocks/rss/index.js:21 _tmp/blocks/rss/index.js:22
+#: src/editor/blocks/rss/index.js:21
 msgid "Display entries from any RSS or Atom feed."
 msgstr "Einträge von jedem RSS- oder Atom-Feed anzeigen."
 
@@ -1435,12 +1409,10 @@ msgstr "Newsletter wurde bereits verschickt."
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
 
-#: _tmp/blocks/rss/block.json
-msgctxt "block keyword"
-msgid "atom"
-msgstr "Atom"
+#~ msgctxt "block keyword"
+#~ msgid "atom"
+#~ msgstr "Atom"
 
-#: _tmp/blocks/rss/block.json
-msgctxt "block keyword"
-msgid "feed"
-msgstr "Feed"
+#~ msgctxt "block keyword"
+#~ msgid "feed"
+#~ msgstr "Feed"
