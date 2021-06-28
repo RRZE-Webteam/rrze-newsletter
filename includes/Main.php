@@ -36,8 +36,11 @@ class Main
         // Newsletter Archive
         new Archive;
 
+        // Blocks
+        Blocks::instance();
+                
         // Editor
-        Editor::instance();
+        Editor::instance();        
 
         // Notices
         new Notices;
