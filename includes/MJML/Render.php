@@ -4,7 +4,7 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Blocks;
+use RRZE\Newsletter\Blocks\RSS;
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
 
@@ -294,7 +294,7 @@ final class Render
                 }
 
                 if ($blockName == 'rrze-newsletter/rss') {
-                    $innerHtml = Blocks::mjmlRenderBlockRSS($atts);
+                    $innerHtml = RSS::renderMJML($atts);
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
