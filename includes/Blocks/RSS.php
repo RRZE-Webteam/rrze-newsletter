@@ -58,6 +58,22 @@ final class RSS
                     'excerptLength' => [
                         'type' => 'number',
                         'default' => 25,
+                    ],
+                    'textFontSize' => [
+                        'type' => 'number',
+                        'default' => 16
+                    ],
+                    'headingFontSize' => [
+                        'type' => 'number',
+                        'default' => 25
+                    ],
+                    'textColor' => [
+                        'type' => 'string',
+                        'default' => '#000'
+                    ],
+                    'headingColor' => [
+                        'type' => 'string',
+                        'default' => '#000'
                     ]
                 ],
                 'render_callback' => [__CLASS__, 'renderHTML'],
@@ -82,9 +98,17 @@ final class RSS
             return '<div class="components-placeholder"><div class="notice notice-error">' . __('An error has occurred, which probably means the feed is down. Try again later.', 'rrze-newsletter') . '</div></div>';
         }
 
+        $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
+        $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
+        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
+
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';            
+        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
         $rssItems  = $rss->get_items(0, $atts['itemsToShow']);
         $listItems = '';
-        foreach ($rssItems as $item) {
+        foreach ($rssItems as $item) {            
             $title = esc_html(trim(strip_tags($item->get_title())));
             if (empty($title)) {
                 $title = __('(no title)', 'rrze-newsletter');
@@ -92,9 +116,9 @@ final class RSS
             $link = $item->get_link();
             $link = esc_url($link);
             if ($link) {
-                $title = "<a href='{$link}'>{$title}</a>";
+                $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
-            $title = "<h3>{$title}</h3>";
+            $title = "<h3{$headingStyle}>{$title}</h3>";
 
             $date = '';
             if ($atts['displayDate']) {
@@ -132,16 +156,13 @@ final class RSS
                     $excerpt = substr($excerpt, 0, -5) . '[&hellip;]';
                 }
 
-                $excerpt = '<div class="wp-block-rss__item-excerpt">' . esc_html($excerpt) . '</div>';
+                $excerpt = "<div>" . esc_html($excerpt) . '</div>';
             }
 
             $listItems .= "{$title}{$date}{$author}{$excerpt}";
         }
 
-        $classnames = [];
-        $wrapperAtts = get_block_wrapper_attributes(['class' => implode(' ', $classnames)]);
-
-        return sprintf('<div %s>%s</div>', $wrapperAtts, $listItems);
+        return sprintf('<div%s>%s</div>', $textStyle, $listItems);
     }
 
     /**
@@ -161,6 +182,14 @@ final class RSS
             return '';
         }
 
+        $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
+        $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
+        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
+
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';            
+        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
         $rssItems  = $rss->get_items(0, $atts['itemsToShow']);
         $listItems = '';
         foreach ($rssItems as $item) {
@@ -171,9 +200,9 @@ final class RSS
             $link = $item->get_link();
             $link = esc_url($link);
             if ($link) {
-                $title = "<a href='{$link}'>{$title}</a>";
+                $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
-            $title = "<h3>{$title}</h3>";
+            $title = "<h3{$headingStyle}>{$title}</h3>";
 
             $date = '';
             if ($atts['displayDate']) {
@@ -181,8 +210,8 @@ final class RSS
 
                 if ($date) {
                     $date = sprintf(
-                        '<span>%2$s</span> ',
-                        date_i18n(get_option('c'), $date),
+                        '<span%1$s>%2$s</span> ',
+                        $textStyle,
                         date_i18n(get_option('date_format'), $date)
                     );
                 }
@@ -193,7 +222,7 @@ final class RSS
                 $author = $item->get_author();
                 if (is_object($author)) {
                     $author = $author->get_name();
-                    $author = '<span class="wp-block-rss__item-author">' . sprintf(
+                    $author = "<span{$textStyle}>" . sprintf(
                         /* translators: %s: the author. */
                         __('by %s', 'rrze-newsletter'),
                         esc_html(strip_tags($author))
@@ -211,7 +240,7 @@ final class RSS
                     $excerpt = substr($excerpt, 0, -5) . '[&hellip;]';
                 }
 
-                $excerpt = '<p>' . esc_html($excerpt) . '</p>';
+                $excerpt = "<p{$textStyle}>" . esc_html($excerpt) . '</p>';
             }
 
             $listItems .= "{$title}{$date}{$author}{$excerpt}";
