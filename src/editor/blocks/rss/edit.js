@@ -59,7 +59,9 @@ export default function RSSEdit({ attributes, setAttributes }) {
         }
     }
 
-    const blockEditorSettings = wp.data.select( 'core/block-editor' ).getSettings();
+    const blockEditorSettings = wp.data
+        .select("core/block-editor")
+        .getSettings();
 
     const blockProps = useBlockProps();
 
@@ -154,7 +156,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         fallbackFontSize={25}
                         onChange={value =>
                             setAttributes({
-                                headingFontSize: isNaN(value) ? null : value
+                                headingFontSize: isNaN(value) ? 16 : value
                             })
                         }
                     />
@@ -173,7 +175,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         fallbackFontSize={16}
                         onChange={value =>
                             setAttributes({
-                                textFontSize: isNaN(value) ? null : value
+                                textFontSize: isNaN(value) ? 16 : value
                             })
                         }
                     />
@@ -184,7 +186,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         }
                         disableAlpha
                     />
-                </PanelBody>                
+                </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
                 <Disabled>
