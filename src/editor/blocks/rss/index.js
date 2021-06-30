@@ -48,6 +48,22 @@ export default () => {
             excerptLength: {
                 type: "number",
                 default: 25
+            },
+            textFontSize: {
+                type: "number",
+                default: 16
+            },
+            headingFontSize: {
+                type: "number",
+                default: 25
+            },
+            textColor: {
+                type: "string",
+                default: "#000"
+            },
+            headingColor: {
+                type: "string",
+                default: "#000"
             }
         }
     });
