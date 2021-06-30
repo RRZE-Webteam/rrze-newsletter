@@ -4,6 +4,7 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Blocks\RSS;
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
 
@@ -54,11 +55,12 @@ final class Render
      */
     private static function arrayToAttributes($attributes)
     {
+        if (!is_array($attributes)) return $attributes;
         return implode(
             ' ',
             array_map(
                 function ($key) use ($attributes) {
-                    if (isset($attributes[$key])) {
+                    if (isset($attributes[$key]) && !is_array($attributes[$key])) {
                         return $key . '="' . $attributes[$key] . '"';
                     } else {
                         return '';
@@ -238,7 +240,7 @@ final class Render
         $innerBlocks = $block['innerBlocks'];
         $innerHtml = $block['innerHTML'];
 
-        if (!isset($atts['innerBlocksToInsert']) && (empty($blockName) || empty($innerHtml))) {
+        if (empty($blockName)) {
             return '';
         }
 
@@ -268,6 +270,7 @@ final class Render
             case 'core/list':
             case 'core/heading':
             case 'core/quote':
+            case 'rrze-newsletter/rss':
                 $textAtts = array_merge(
                     [
                         'padding' => '0',
@@ -290,14 +293,19 @@ final class Render
                     unset($textAtts['textAlign']);
                 }
 
+                if ($blockName == 'rrze-newsletter/rss') {
+                    $innerHtml = RSS::renderMJML($atts);
+                }
+
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
+
                 break;
 
                 // Image block.
             case 'core/image':
                 // Parse block content.
                 $dom = new \DomDocument();
-                @$dom->loadHTML($innerHtml);
+                @$dom->loadHtml(mb_convert_encoding($innerHtml, 'HTML-ENTITIES', "UTF-8"));
                 $xpath = new \DOMXpath($dom);
                 $img = $xpath->query('//img')[0];
                 $imgSrc = $img->getAttribute('src');
@@ -361,11 +369,12 @@ final class Render
                 foreach ($innerBlocks as $buttonBlock) {
                     // Parse block content.
                     $dom = new \DomDocument();
-                    @$dom->loadHTML($buttonBlock['innerHTML']);
+                    @$dom->loadHtml(mb_convert_encoding($buttonBlock['innerHTML'], 'HTML-ENTITIES', "UTF-8"));
                     $xpath = new \DOMXpath($dom);
                     $anchor = $xpath->query('//a')[0];
                     $atts = $buttonBlock['attrs'];
                     $text = $anchor->textContent;
+                    $width = isset($atts['width']) ? $atts['width'] : 100;
                     $borderRadius = isset($atts['borderRadius']) ? $atts['borderRadius'] : 5;
                     $isOutlined = isset($atts['className']) && 'is-style-outline' == $atts['className'];
 
@@ -393,6 +402,8 @@ final class Render
                     if ($isOutlined) {
                         $buttonAtts['css-class'] = $atts['className'];
                     }
+
+                    $columnAtts['width'] = $width . '%';
 
                     $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAtts) . '><mj-button ' . self::arrayToAttributes($buttonAtts) . ">$text</mj-button></mj-column>";
                 }

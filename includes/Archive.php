@@ -81,9 +81,11 @@ class Archive
             return '';
         }
 
-        // Set the mailing list.
-        $mailingList = [];
-        if (!empty($data['mailing_list_terms'])) {
+        // Set recipient.
+        $recipient = [];
+
+        $isMailingListDisabled = apply_filters('rrze_newsletter_disable_mailing_list', false);
+        if (!$isMailingListDisabled && !empty($data['mailing_list_terms'])) {
             foreach ($data['mailing_list_terms'] as $term) {
                 if (empty($list = (string) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list', true))) {
                     continue;
@@ -100,16 +102,33 @@ class Archive
                         continue;
                     }
 
-                    $mailingList[$toEmail] = [
+                    $recipient[$toEmail] = [
                         'to_fname' => $fname,
                         'to_lname' => $lname,
                         'to_email' => $toEmail
                     ];
                 }
             }
+        } elseif ($isMailingListDisabled) {
+            $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
+
+            $parts = explode('@', $email);
+            $domain = array_pop($parts);
+            $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
+
+            if (
+                filter_var($email, FILTER_VALIDATE_EMAIL)
+                && (empty($allowedDomains) || in_array($domain, $allowedDomains))
+            ) {
+                $recipient[$email] = [
+                    'to_fname' => '',
+                    'to_lname' => '',
+                    'to_email' => $email
+                ];
+            }
         }
 
-        $mail = $mailingList[$email] ?? ['to_email' => $email];
+        $mail = $recipient[$email] ?? ['to_email' => $email];
 
         $toFname  = $mail['to_fname'] ?? '';
         $toLname  = $mail['to_lname'] ?? '';

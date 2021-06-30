@@ -11,12 +11,14 @@ import { registerPlugin } from "@wordpress/plugins";
  */
 import "./style.scss";
 import registerPostInserterBlock from './blocks/post-inserter';
+import registerRSSBlock from './blocks/rss';
 import { addBlocksValidationFilter } from "./blocks-validation/blocks-filters";
 import { NestedColumnsDetection } from "./blocks-validation/nesting-detection";
 import "../newsletter-editor";
 
 addBlocksValidationFilter();
 registerPostInserterBlock();
+registerRSSBlock();
 
 /* Unregister core block styles that are unsupported in emails */
 domReady(() => {

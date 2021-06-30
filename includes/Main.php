@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
-use RRZE\Newsletter\MJML\Api as MjmlApi;
+use RRZE\Newsletter\Blocks\RSS;
 use RRZE\Newsletter\Mail\Queue;
 
 class Main
@@ -36,8 +36,11 @@ class Main
         // Newsletter Archive
         new Archive;
 
+        // Blocks
+        RSS::instance();
+
         // Editor
-        Editor::instance();
+        Editor::instance();        
 
         // Notices
         new Notices;

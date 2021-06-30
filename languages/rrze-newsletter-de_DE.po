@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-06-22T13:27:25+00:00\n"
-"PO-Revision-Date: 2021-06-22 15:55+0200\n"
+"POT-Creation-Date: 2021-06-28T15:47:23+00:00\n"
+"PO-Revision-Date: 2021-06-28 17:49+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -222,6 +222,32 @@ msgstr "Secret-Key"
 #: config/settings.php:258
 msgid "The API Key act as a password."
 msgstr "Der API-Key fungiert als Kennwort."
+
+#: includes/Blocks.php:78
+msgid "RSS Error:"
+msgstr "RSS-Fehler:"
+
+#: includes/Blocks.php:82
+msgid ""
+"An error has occurred, which probably means the feed is down. Try again "
+"later."
+msgstr ""
+"Ein Fehler ist aufgetreten – der Feed funktioniert zurzeit nicht. Versuchen "
+"Sie es später nochmal."
+
+#: includes/Blocks.php:90 includes/Blocks.php:169
+#: src/editor/blocks/post-inserter/query-controls.js:41
+#: src/editor/blocks/post-inserter/query-controls.js:156
+#: src/editor/blocks/post-inserter/query-controls.js:173
+#: src/editor/blocks/post-inserter/query-controls.js:192
+#: src/editor/blocks/post-inserter/query-controls.js:209
+msgid "(no title)"
+msgstr "(kein Titel)"
+
+#. translators: %s: the author.
+#: includes/Blocks.php:119 includes/Blocks.php:198
+msgid "by %s"
+msgstr "von %s"
 
 #: includes/CPT/Newsletter.php:66
 msgctxt "post type general name"
@@ -645,16 +671,16 @@ msgstr "E-Mail erfolgreich an %s gesendet."
 msgid "There was an error sending the email to %s."
 msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 
-#: includes/Main.php:60
+#: includes/Main.php:63
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Api.php:25
+#: includes/MJML/Api.php:23
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:719 includes/MJML/Render.php:727
-#: includes/MJML/Render.php:739
+#: includes/MJML/Render.php:730 includes/MJML/Render.php:738
+#: includes/MJML/Render.php:750
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -695,7 +721,7 @@ msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 msgid "Newsletter Agent"
 msgstr "Newsletter-Agent"
 
-#: includes/Settings.php:649
+#: includes/Settings.php:651
 msgid "&mdash; Select &mdash;"
 msgstr "&mdash; Seite auswählen &mdash;"
 
@@ -932,7 +958,7 @@ msgstr "Plugins: %1$s: %2$s"
 
 #: src/components/init-modal/index.js:21
 msgid "Select a layout for the newsletter"
-msgstr "Wählen Sie ein Layout für den Newsletter"
+msgstr "Wählen Sie eine Vorlage für den Newsletter"
 
 #: src/components/init-modal/screens/layout-picker/index.js:28
 msgid "Prebuilt"
@@ -944,27 +970,27 @@ msgstr "Gespeichert"
 
 #: src/components/init-modal/screens/layout-picker/index.js:81
 msgid "Select a layout to preview."
-msgstr "Wählen Sie ein Layout für die Vorschau aus."
+msgstr "Wählen Sie eine Vorlage für die Vorschau aus."
 
 #: src/components/init-modal/screens/layout-picker/index.js:146
 msgid ""
 "Turn any newsletter to a layout via the \"Layout\" sidebar menu in the "
 "editor."
 msgstr ""
-"Verwandeln Sie einen Newsletter über das Seitenleistenmenü “Layout” im "
-"Editor in ein Layout."
+"Verwandeln Sie einen Newsletter über das Seitenleistenmenü “Vorlage” im "
+"Editor in eine Vorlage."
 
 #: src/components/init-modal/screens/layout-picker/index.js:165
 msgid "Start With A Blank Layout"
-msgstr "Leeren Layout"
+msgstr "Neue Vorlage erstellen"
 
 #: src/components/init-modal/screens/layout-picker/index.js:173
 msgid "Use Selected Layout"
-msgstr "Ausgewählte Layout"
+msgstr "Vorlage auswählen"
 
 #: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:37
 msgid "Are you sure you want to delete this layout?"
-msgstr "Möchten Sie dieses Layout wirklich löschen?"
+msgstr "Möchten Sie diese Vorlage wirklich löschen?"
 
 #: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:122
 msgid "Delete"
@@ -1065,73 +1091,66 @@ msgstr ""
 "Diese Eigenschaften werden in einer E-Mail nicht korrekt angezeigt. Bitte "
 "entfernen Sie sie:"
 
-#: src/editor/blocks/post-inserter/index.js:129
+#: src/editor/blocks/post-inserter/index.js:128
 msgid "Show image on top"
 msgstr "Bild oben anzeigen"
 
-#: src/editor/blocks/post-inserter/index.js:135
+#: src/editor/blocks/post-inserter/index.js:134
 msgid "Show image on left"
 msgstr "Bild links anzeigen"
 
-#: src/editor/blocks/post-inserter/index.js:141
+#: src/editor/blocks/post-inserter/index.js:140
 msgid "Show image on right"
 msgstr "Bild rechts anzeigen"
 
-#: src/editor/blocks/post-inserter/index.js:151
+#: src/editor/blocks/post-inserter/index.js:150
 msgid "Post content settings"
 msgstr "Einstellungen für Beitragsinhalte"
 
-#: src/editor/blocks/post-inserter/index.js:154
+#: src/editor/blocks/post-inserter/index.js:153
 msgid "Post excerpt"
 msgstr "Textauszug"
 
-#: src/editor/blocks/post-inserter/index.js:162
+#: src/editor/blocks/post-inserter/index.js:161
+#: src/editor/blocks/rss/edit.js:125
 msgid "Max number of words in excerpt"
 msgstr "Maximale Anzahl von Wörtern im Textauszug"
 
-#: src/editor/blocks/post-inserter/index.js:175
+#: src/editor/blocks/post-inserter/index.js:174
 msgid "Date"
 msgstr "Datum"
 
-#: src/editor/blocks/post-inserter/index.js:182
+#: src/editor/blocks/post-inserter/index.js:181
 msgid "Featured image"
 msgstr "Beitragsbild"
 
-#: src/editor/blocks/post-inserter/index.js:189
+#: src/editor/blocks/post-inserter/index.js:188
 msgid "Author's name"
 msgstr "Name des Autors"
 
-#: src/editor/blocks/post-inserter/index.js:196
+#: src/editor/blocks/post-inserter/index.js:195
 msgid "\"Continue reading…\" link"
 msgstr "„Weiterlesen…“-Link"
 
-#: src/editor/blocks/post-inserter/index.js:207
+#: src/editor/blocks/post-inserter/index.js:206
 msgid "Sorting and filtering"
 msgstr "Sortieren und filtern"
 
-#: src/editor/blocks/post-inserter/index.js:214
+#: src/editor/blocks/post-inserter/index.js:213
 msgid "Text"
 msgstr "Text"
 
-#: src/editor/blocks/post-inserter/index.js:233
+#: src/editor/blocks/post-inserter/index.js:232
 msgid "Heading"
 msgstr "Überschrift"
 
-#: src/editor/blocks/post-inserter/index.js:263
+#: src/editor/blocks/post-inserter/index.js:262
 msgid "Post Inserter"
 msgstr "Beitrag-Inserter"
 
-#: src/editor/blocks/post-inserter/index.js:282
+#: src/editor/blocks/post-inserter/index.js:281
 msgid "Insert"
 msgstr "Einfügen"
-
-#: src/editor/blocks/post-inserter/query-controls.js:41
-#: src/editor/blocks/post-inserter/query-controls.js:156
-#: src/editor/blocks/post-inserter/query-controls.js:173
-#: src/editor/blocks/post-inserter/query-controls.js:192
-#: src/editor/blocks/post-inserter/query-controls.js:209
-msgid "(no title)"
-msgstr "(kein Titel)"
 
 #: src/editor/blocks/post-inserter/query-controls.js:217
 msgid "Display specific posts"
@@ -1178,6 +1197,46 @@ msgstr "und"
 msgid "By"
 msgstr "Von"
 
+#: src/editor/blocks/rss/edit.js:67
+msgid "Enter URL here…"
+msgstr "URL hier eingeben…"
+
+#: src/editor/blocks/rss/edit.js:75
+msgid "Use URL"
+msgstr "URL verwenden"
+
+#: src/editor/blocks/rss/edit.js:86
+msgid "Edit RSS URL"
+msgstr "RSS-URL bearbeiten"
+
+#: src/editor/blocks/rss/edit.js:97
+msgid "RSS settings"
+msgstr "RSS-Einstellungen"
+
+#: src/editor/blocks/rss/edit.js:99
+msgid "Number of items"
+msgstr "Anzahl Elemente"
+
+#: src/editor/blocks/rss/edit.js:109
+msgid "Display author"
+msgstr "Autor anzeigen"
+
+#: src/editor/blocks/rss/edit.js:114
+msgid "Display date"
+msgstr "Datum anzeigen"
+
+#: src/editor/blocks/rss/edit.js:119
+msgid "Display excerpt"
+msgstr "Textauszug anzeigen"
+
+#: src/editor/blocks/rss/index.js:18
+msgid "RSS"
+msgstr "RSS"
+
+#: src/editor/blocks/rss/index.js:21
+msgid "Display entries from any RSS or Atom feed."
+msgstr "Einträge von jedem RSS- oder Atom-Feed anzeigen."
+
 #: src/newsletter-editor/index.js:49
 msgid "Styling"
 msgstr "Styling"
@@ -1188,11 +1247,11 @@ msgstr "Testen"
 
 #: src/newsletter-editor/index.js:61
 msgid "Layout"
-msgstr "Layout"
+msgstr "Vorlage"
 
 #: src/newsletter-editor/layout/index.js:147
 msgid "Are you sure you want to overwrite this layout?"
-msgstr "Möchten Sie dieses Layout wirklich überschreiben?"
+msgstr "Möchten Sie diese Vorlage wirklich überschreiben?"
 
 #: src/newsletter-editor/layout/index.js:194
 msgid "Save new layout"
@@ -1204,11 +1263,11 @@ msgstr "Aktualisieren"
 
 #: src/newsletter-editor/layout/index.js:218
 msgid "Reset newsletter layout"
-msgstr "Newsletter-Layout zurücksetzen"
+msgstr "Newsletter-Vorlage zurücksetzen"
 
 #: src/newsletter-editor/layout/index.js:224
 msgid "Save newsletter as a layout"
-msgstr "Der Newsletter als Layout speichern"
+msgstr "Newsletter als Vorlage speichern"
 
 #: src/newsletter-editor/layout/index.js:231
 msgid "Title"
@@ -1227,12 +1286,12 @@ msgid ""
 "Changing the newsletter's layout will remove any customizations or edits you "
 "have already made."
 msgstr ""
-"Durch Ändern des Layouts des Newsletters werden bereits vorgenommene "
-"Anpassungen oder Änderungen entfernt."
+"Durch das Ändern der Newsletter-Vorlage werden alle Anpassungen für bereits "
+"vorgenommene Änderungen entfernt."
 
 #: src/newsletter-editor/layout/index.js:277
 msgid "Reset layout"
-msgstr "Layout zurücksetzen"
+msgstr "Vorlage zurücksetzen"
 
 #: src/newsletter-editor/public/index.js:23
 msgid "Make newsletter page public?"
@@ -1349,3 +1408,11 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgctxt "block keyword"
+#~ msgid "atom"
+#~ msgstr "Atom"
+
+#~ msgctxt "block keyword"
+#~ msgid "feed"
+#~ msgstr "Feed"

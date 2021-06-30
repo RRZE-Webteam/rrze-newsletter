@@ -102,7 +102,8 @@ module.exports = (env, argv) => {
             "@wordpress/compose": ["wp", "compose"],
             "@wordpress/plugins": ["wp", "plugins"],
             "@wordpress/edit-post": ["wp", "editPost"],
-            "@wordpress/block-editor": ["wp", "blockEditor"]
+            "@wordpress/block-editor": ["wp", "blockEditor"],
+            "@wordpress/server-side-render": ["wp", "serverSideRender"],
         }
     };
     return config;
