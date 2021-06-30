@@ -210,25 +210,6 @@ const PostInserterBlock = ({
                         setAttributes={setAttributes}
                     />
                 </PanelBody>
-                <PanelBody title={__("Text", "rrze-newsletter")}>
-                    <FontSizePicker
-                        fontSizes={blockEditorSettings.fontSizes}
-                        value={attributes.textFontSize}
-                        fallbackFontSize={16}
-                        onChange={value =>
-                            setAttributes({
-                                textFontSize: isNaN(value) ? null : value
-                            })
-                        }
-                    />
-                    <ColorPicker
-                        color={attributes.textColor}
-                        onChangeComplete={value =>
-                            setAttributes({ textColor: value.hex })
-                        }
-                        disableAlpha
-                    />
-                </PanelBody>
                 <PanelBody title={__("Heading", "rrze-newsletter")}>
                     <FontSizePicker
                         fontSizes={blockEditorSettings.fontSizes}
@@ -244,6 +225,25 @@ const PostInserterBlock = ({
                         color={attributes.headingColor}
                         onChangeComplete={value =>
                             setAttributes({ headingColor: value.hex })
+                        }
+                        disableAlpha
+                    />
+                </PanelBody>
+                <PanelBody title={__("Text", "rrze-newsletter")}>
+                    <FontSizePicker
+                        fontSizes={blockEditorSettings.fontSizes}
+                        value={attributes.textFontSize}
+                        fallbackFontSize={16}
+                        onChange={value =>
+                            setAttributes({
+                                textFontSize: isNaN(value) ? null : value
+                            })
+                        }
+                    />
+                    <ColorPicker
+                        color={attributes.textColor}
+                        onChangeComplete={value =>
+                            setAttributes({ textColor: value.hex })
                         }
                         disableAlpha
                     />
