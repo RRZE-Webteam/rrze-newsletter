@@ -9,6 +9,8 @@ import {
 import {
     Button,
     Disabled,
+    FontSizePicker,
+    ColorPicker,
     PanelBody,
     Placeholder,
     RangeControl,
@@ -34,7 +36,11 @@ export default function RSSEdit({ attributes, setAttributes }) {
         displayExcerpt,
         excerptLength,
         feedURL,
-        itemsToShow
+        itemsToShow,
+        headingFontSize,
+        textFontSize,
+        headingColor,
+        textColor
     } = attributes;
 
     function toggleAttribute(propName) {
@@ -53,6 +59,8 @@ export default function RSSEdit({ attributes, setAttributes }) {
         }
     }
 
+    const blockEditorSettings = wp.data.select( 'core/block-editor' ).getSettings();
+
     const blockProps = useBlockProps();
 
     if (isEditing) {
@@ -64,7 +72,10 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         className="wp-block-rss__placeholder-form"
                     >
                         <TextControl
-                            placeholder={__("Enter URL here…", "rrze-newsletter")}
+                            placeholder={__(
+                                "Enter URL here…",
+                                "rrze-newsletter"
+                            )}
                             value={feedURL}
                             onChange={value =>
                                 setAttributes({ feedURL: value })
@@ -122,7 +133,10 @@ export default function RSSEdit({ attributes, setAttributes }) {
                     />
                     {displayExcerpt && (
                         <RangeControl
-                            label={__("Max number of words in excerpt", "rrze-newsletter")}
+                            label={__(
+                                "Max number of words in excerpt",
+                                "rrze-newsletter"
+                            )}
                             value={excerptLength}
                             onChange={value =>
                                 setAttributes({ excerptLength: value })
@@ -133,6 +147,44 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         />
                     )}
                 </PanelBody>
+                <PanelBody title={__("Heading", "rrze-newsletter")}>
+                    <FontSizePicker
+                        fontSizes={blockEditorSettings.fontSizes}
+                        value={headingFontSize}
+                        fallbackFontSize={25}
+                        onChange={value =>
+                            setAttributes({
+                                headingFontSize: isNaN(value) ? null : value
+                            })
+                        }
+                    />
+                    <ColorPicker
+                        color={headingColor}
+                        onChangeComplete={value =>
+                            setAttributes({ headingColor: value.hex })
+                        }
+                        disableAlpha
+                    />
+                </PanelBody>
+                <PanelBody title={__("Text", "rrze-newsletter")}>
+                    <FontSizePicker
+                        fontSizes={blockEditorSettings.fontSizes}
+                        value={textFontSize}
+                        fallbackFontSize={16}
+                        onChange={value =>
+                            setAttributes({
+                                textFontSize: isNaN(value) ? null : value
+                            })
+                        }
+                    />
+                    <ColorPicker
+                        color={textColor}
+                        onChangeComplete={value =>
+                            setAttributes({ textColor: value.hex })
+                        }
+                        disableAlpha
+                    />
+                </PanelBody>                
             </InspectorControls>
             <div {...blockProps}>
                 <Disabled>
