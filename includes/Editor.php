@@ -70,6 +70,7 @@ final class Editor
             'core/separator',
             'core/list',
             'core/quote',
+            'core/social-link',
             'core/social-links',
             'rrze-newsletter/post-inserter',
             'rrze-newsletter/rss'
