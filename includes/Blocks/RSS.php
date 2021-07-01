@@ -226,8 +226,8 @@ final class RSS
 
             $excerpt = '';
             if ($atts['displayExcerpt'] && $item->get_description()) {
-                $excerpt = html_entity_decode($item->get_description(), ENT_QUOTES, get_option('blog_charset'));
-                $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], '...'));
+                $excerpt = $item->get_description();
+                $excerpt = wp_trim_words($excerpt, $atts['excerptLength'], '&hellip;');
                 $excerpt = "<p{$textStyle}>" . esc_html($excerpt) . '</p>';
             }
 
