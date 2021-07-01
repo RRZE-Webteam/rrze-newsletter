@@ -149,13 +149,7 @@ final class RSS
             $excerpt = '';
             if ($atts['displayExcerpt'] && !empty($item->get_description())) {
                 $excerpt = html_entity_decode($item->get_description(), ENT_QUOTES, get_option('blog_charset'));
-                $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], ' [&hellip;]'));
-
-                // Change existing [...] to [&hellip;].
-                if ('[...]' === substr($excerpt, -5)) {
-                    $excerpt = substr($excerpt, 0, -5) . '[&hellip;]';
-                }
-
+                $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], '&hellip;'));
                 $excerpt = "<div>" . esc_html($excerpt) . '</div>';
             }
 
@@ -233,13 +227,7 @@ final class RSS
             $excerpt = '';
             if ($atts['displayExcerpt'] && $item->get_description()) {
                 $excerpt = html_entity_decode($item->get_description(), ENT_QUOTES, get_option('blog_charset'));
-                $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], ' [&hellip;]'));
-
-                // Change existing [...] to [&hellip;].
-                if ('[...]' === substr($excerpt, -5)) {
-                    $excerpt = substr($excerpt, 0, -5) . '[&hellip;]';
-                }
-
+                $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], '&hellip;'));
                 $excerpt = "<p{$textStyle}>" . esc_html($excerpt) . '</p>';
             }
 
