@@ -37,10 +37,10 @@ class Main
         new Archive;
 
         // Blocks
-        RSS::instance();
+        RSS::register();
 
         // Editor
-        Editor::instance();        
+        Editor::instance();
 
         // Notices
         new Notices;
