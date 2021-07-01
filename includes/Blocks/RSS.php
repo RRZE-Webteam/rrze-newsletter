@@ -4,21 +4,59 @@ namespace RRZE\Newsletter\Blocks;
 
 defined('ABSPATH') || exit;
 
-final class RSS
+class RSS
 {
-    protected static $instance = null;
-
-    public static function instance()
+    /**
+     * Default block attributes.
+     */
+    protected static function attributes()
     {
-        if (is_null(self::$instance)) {
-            self::$instance = new self();
-        }
-        return self::$instance;
-    }
-
-    public function __construct()
-    {
-        add_action('init', [__CLASS__, 'register']);
+        return [
+            'feedURL' => [
+                'type' => 'string',
+                'default' => '',
+            ],
+            'feedURL' => [
+                'type' => 'string',
+                'default' => '',
+            ],
+            'itemsToShow' => [
+                'type' => 'number',
+                'default' => 5,
+            ],
+            'displayExcerpt' => [
+                'type' => 'boolean',
+                'default' => false,
+            ],
+            'displayAuthor' => [
+                'type' => 'boolean',
+                'default' => false,
+            ],
+            'displayDate' => [
+                'type' => 'boolean',
+                'default' => false,
+            ],
+            'excerptLength' => [
+                'type' => 'number',
+                'default' => 25,
+            ],
+            'textFontSize' => [
+                'type' => 'number',
+                'default' => 16
+            ],
+            'headingFontSize' => [
+                'type' => 'number',
+                'default' => 25
+            ],
+            'textColor' => [
+                'type' => 'string',
+                'default' => '#000'
+            ],
+            'headingColor' => [
+                'type' => 'string',
+                'default' => '#000'
+            ]
+        ];
     }
 
     /**
@@ -30,52 +68,7 @@ final class RSS
             'rrze-newsletter/rss',
             [
                 'api_version' => 2,
-                'attributes' => [
-                    'feedURL' => [
-                        'type' => 'string',
-                        'default' => '',
-                    ],
-                    'feedURL' => [
-                        'type' => 'string',
-                        'default' => '',
-                    ],
-                    'itemsToShow' => [
-                        'type' => 'number',
-                        'default' => 5,
-                    ],
-                    'displayExcerpt' => [
-                        'type' => 'boolean',
-                        'default' => false,
-                    ],
-                    'displayAuthor' => [
-                        'type' => 'boolean',
-                        'default' => false,
-                    ],
-                    'displayDate' => [
-                        'type' => 'boolean',
-                        'default' => false,
-                    ],
-                    'excerptLength' => [
-                        'type' => 'number',
-                        'default' => 25,
-                    ],
-                    'textFontSize' => [
-                        'type' => 'number',
-                        'default' => 16
-                    ],
-                    'headingFontSize' => [
-                        'type' => 'number',
-                        'default' => 25
-                    ],
-                    'textColor' => [
-                        'type' => 'string',
-                        'default' => '#000'
-                    ],
-                    'headingColor' => [
-                        'type' => 'string',
-                        'default' => '#000'
-                    ]
-                ],
+                'attributes' => self::attributes(),
                 'render_callback' => [__CLASS__, 'renderHTML'],
             ]
         );
@@ -86,8 +79,10 @@ final class RSS
      * @param array $atts The block attributes.
      * @return string Returns the block content with received rss items.
      */
-    public static function renderHTML($atts)
+    public static function renderHTML(array $atts): string
     {
+        $atts = self::parseAtts($atts);
+
         $rss = fetch_feed($atts['feedURL']);
 
         if (is_wp_error($rss)) {
@@ -102,13 +97,13 @@ final class RSS
         $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
         $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
 
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';            
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
         $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
         $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
 
         $rssItems  = $rss->get_items(0, $atts['itemsToShow']);
         $listItems = '';
-        foreach ($rssItems as $item) {            
+        foreach ($rssItems as $item) {
             $title = esc_html(trim(strip_tags($item->get_title())));
             if (empty($title)) {
                 $title = __('(no title)', 'rrze-newsletter');
@@ -153,7 +148,7 @@ final class RSS
                 $excerpt = "<div>" . esc_html($excerpt) . '</div>';
             }
 
-            $listItems .= "{$title}{$date}{$author}{$excerpt}";
+            $listItems .= $title . $date . $author . $excerpt;
         }
 
         return sprintf('<div%s>%s</div>', $textStyle, $listItems);
@@ -164,8 +159,10 @@ final class RSS
      * @param array $atts The block attributes.
      * @return string Returns the block content with received rss items.
      */
-    public static function renderMJML($atts)
+    public static function renderMJML(array $atts): string
     {
+        $atts = self::parseAtts($atts);
+
         $rss = fetch_feed($atts['feedURL']);
 
         if (is_wp_error($rss)) {
@@ -180,7 +177,7 @@ final class RSS
         $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
         $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
 
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';            
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
         $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
         $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
 
@@ -231,9 +228,29 @@ final class RSS
                 $excerpt = "<p{$textStyle}>" . esc_html($excerpt) . '</p>';
             }
 
-            $listItems .= "{$title}{$date}{$author}{$excerpt}";
+            $listItems .= $title . $date . $author . $excerpt;
         }
 
         return $listItems;
+    }
+
+    /**
+     * Parse block attributes.
+     *
+     * @param array $atts
+     * @return array
+     */
+    protected static function parseAtts(array $atts): array
+    {
+        $default = [];
+        $attributes = self::attributes();
+        foreach ($attributes as $key => $value) {
+            $default[$key] = $value['default'];
+        }
+
+        $atts = wp_parse_args($atts, $default);
+        $atts = array_intersect_key($atts, $default);
+
+        return $atts;
     }
 }
