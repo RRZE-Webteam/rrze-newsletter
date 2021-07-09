@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\MJML;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Blocks\RSS;
+use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
 
@@ -271,6 +272,7 @@ final class Render
             case 'core/heading':
             case 'core/quote':
             case 'rrze-newsletter/rss':
+            case 'rrze-newsletter/ics':
                 $textAtts = array_merge(
                     [
                         'padding' => '0',
@@ -295,6 +297,10 @@ final class Render
 
                 if ($blockName == 'rrze-newsletter/rss') {
                     $innerHtml = RSS::renderMJML($atts);
+                }
+
+                if ($blockName == 'rrze-newsletter/ics') {
+                    $innerHtml = ICS::renderMJML($atts);
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
