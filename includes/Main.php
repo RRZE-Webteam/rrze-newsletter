@@ -8,6 +8,7 @@ use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
 use RRZE\Newsletter\Blocks\RSS;
+use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Mail\Queue;
 
 class Main
@@ -38,6 +39,7 @@ class Main
 
         // Blocks
         RSS::register();
+        ICS::register();
 
         // Editor
         Editor::instance();
