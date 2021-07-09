@@ -19,13 +19,14 @@ import {
     ToolbarGroup
 } from "@wordpress/components";
 import { useState } from "@wordpress/element";
-import { edit, rss } from "@wordpress/icons";
+import { edit } from "@wordpress/icons";
+import rss from "./icon";
 import { __ } from "@wordpress/i18n";
 import ServerSideRender from "@wordpress/server-side-render";
 import { RSS_BLOCK_NAME } from "./consts";
 
 const DEFAULT_MIN_ITEMS = 1;
-const DEFAULT_MAX_ITEMS = 10;
+const DEFAULT_MAX_ITEMS = 15;
 
 export default function RSSEdit({ attributes, setAttributes }) {
     const [isEditing, setIsEditing] = useState(!attributes.feedURL);
