@@ -73,7 +73,8 @@ final class Editor
             'core/social-link',
             'core/social-links',
             'rrze-newsletter/post-inserter',
-            'rrze-newsletter/rss'
+            'rrze-newsletter/rss',
+            'rrze-newsletter/ics'
         ];
     }
 
