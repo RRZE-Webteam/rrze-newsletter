@@ -251,7 +251,7 @@ class ICS
             }
         }
 
-        return sprintf('<div%s>%s</div>', $textStyle, $listItems);
+        return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
     }
 
     /**
@@ -261,7 +261,177 @@ class ICS
      */
     public static function renderMJML(array $atts)
     {
-        //
+        $atts = self::parseAtts($atts);
+
+        $feedItems = self::getItems($atts['feedURL'], $atts);
+
+        if (is_wp_error($feedItems)) {
+            return '';
+        }
+
+        if (!$feedItems) {
+            return '';
+        }
+
+        $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
+        $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
+        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
+
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
+        $listItems = '';
+        $dateFormat = get_option('date_format');
+
+        $i = 0;
+        $multidayEventKeysUsed = [];
+        foreach (array_keys((array)$feedItems['events']) as $year) {
+            for ($m = 1; $m <= 12; $m++) {
+                $month = $m < 10 ? '0' . $m : '' . $m;
+                $ym = $year . $month;
+                if ($ym < $feedItems['earliest']) {
+                    continue;
+                }
+                if ($ym > $feedItems['latest']) {
+                    break 2;
+                }
+
+                if (isset($feedItems['events'][$year][$month])) {
+
+                    $listItems .= '<div>';
+
+                    foreach ((array)$feedItems['events'][$year][$month] as $day => $dayEvents) {
+
+                        // Pull out multi-day events and display them separately first
+                        foreach ((array)$dayEvents as $time => $events) {
+
+                            foreach ((array)$events as $eventKey => $event) {
+                                if (empty($event['multiday'])) {
+                                    continue;
+                                }
+
+                                if (in_array($event['multiday']['event_key'], $multidayEventKeysUsed)) {
+                                    continue;
+                                }
+
+                                // Format date/time for header
+                                $mdStart = self::dateFormat($dateFormat, strtotime($event['multiday']['start_date']));
+                                $mdEnd = self::dateFormat($dateFormat, strtotime($event['multiday']['end_date']));
+                                if ($time != 'all-day') {
+                                    $mdStart .= ' ' . self::timeFormat($event['multiday']['start_time']);
+                                    $mdEnd .= ' ' . self::timeFormat($event['multiday']['end_time']);
+                                }
+
+                                // Event label (title)
+                                $title = self::eventLabelHtml($event);
+                                if (!empty($event['url'])) {
+                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
+                                }
+                                $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
+
+                                $date = $mdStart . ' &#8211; ' . $mdEnd;
+
+                                $listItems .= sprintf(
+                                    '<span%1$s>%2$s</span> ',
+                                    $textStyle,
+                                    $date
+                                );                                
+
+                                // RRULE/FREQ
+                                if (!empty($event['rrule'])) {
+                                    $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
+                                }
+
+                                $listItems .= '<div>';
+
+                                // Location/Organizer/Description
+                                $listItems .= self::eventDescriptionHtml($atts, $event);
+
+                                $listItems .= '</div>';
+
+                                // We've now used this event
+                                $multidayEventKeysUsed[] = $event['multiday']['event_key'];
+                                $i++;
+                                if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
+                                    break 5;
+                                }
+
+                                // Remove event from array (to skip day if it only has multi-day events)
+                                unset($dayEvents[$time][$eventKey]);
+                            }
+
+                            // Remove time from array if all of its events have been removed
+                            if (empty($dayEvents[$time])) {
+                                unset($dayEvents[$time]);
+                            }
+                        }
+
+                        // Skip day if all of its events were multi-day
+                        if (empty($dayEvents)) {
+                            continue;
+                        }
+
+                        // Loop through day events
+                        foreach ((array)$dayEvents as $time => $events) {
+
+                            foreach ((array)$events as $event) {
+                                if (!empty($event['multiday'])) {
+                                    continue;
+                                }
+
+                                // Event label (title)
+                                $title = self::eventLabelHtml($event);
+                                if (!empty($event['url'])) {
+                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
+                                }
+                                $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
+
+                                $date = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
+
+                                $time = '';
+                                if ($time !== 'all-day') {
+                                    if (!empty($event['start'])) {
+                                        $time .= ' ' . $event['start'];
+                                        if (!empty($event['end']) && $event['end'] != $event['start']) {
+                                            $time .= ' &#8211; ' . $event['end'];
+                                        }
+                                    }
+                                }
+
+                                $listItems .= sprintf(
+                                    '<span%1$s>%2$s%3$s</span> ',
+                                    $textStyle,
+                                    $date,
+                                    $time
+                                ); 
+
+                                // RRULE/FREQ
+                                if (!empty($event['rrule'])) {
+                                    $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
+                                }
+
+                                $listItems .= '<div>';
+
+                                // Location/Organizer/Description
+                                $listItems .= self::eventDescriptionHtml($atts, $event);
+
+                                $listItems .= '</div>';
+
+                                $i++;
+                                if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
+                                    break 5;
+                                }
+                            }
+                        }
+                    }
+
+                    $listItems .= '</div>';
+                }
+            }
+        }
+
+        return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
     }
 
     /**
@@ -1070,7 +1240,7 @@ class ICS
         $output = '';
         if (is_array($organizer)) {
             if (count((array)$organizer) == 2 && isset($organizer[0]['CN'])) {
-                $output .= '<div class="organizer_email"><a href="' . esc_url($organizer[1]) . '" rel="noopener noreferrer nofollow">' . rawurldecode($organizer[0]['CN']) . '</a></div>';
+                $output .= '<div class="organizer-email"><a href="' . esc_url($organizer[1]) . '" rel="noopener noreferrer nofollow">' . rawurldecode($organizer[0]['CN']) . '</a></div>';
             } elseif (!empty($organizer[1]) && is_scalar($organizer[1])) {
                 $output .= '<div>' . $organizer[1] . '</div>';
             }
