@@ -16,10 +16,6 @@ class RSS
                 'type' => 'string',
                 'default' => '',
             ],
-            'feedURL' => [
-                'type' => 'string',
-                'default' => '',
-            ],
             'itemsToShow' => [
                 'type' => 'number',
                 'default' => 5,
@@ -60,7 +56,7 @@ class RSS
     }
 
     /**
-     * Registers the lock on server.
+     * Registers the block on server.
      */
     public static function register()
     {
@@ -77,7 +73,7 @@ class RSS
     /**
      * Render the block on the server in HTML format.
      * @param array $atts The block attributes.
-     * @return string Returns the block content with received rss items.
+     * @return string Returns the block content.
      */
     public static function renderHTML(array $atts): string
     {
@@ -122,7 +118,7 @@ class RSS
                 if ($date) {
                     $date = sprintf(
                         '<time datetime="%1$s">%2$s</time> ',
-                        date_i18n(get_option('c'), $date),
+                        date('Y-m-d H:i:s', $date),
                         date_i18n(get_option('date_format'), $date)
                     );
                 }
@@ -157,7 +153,7 @@ class RSS
     /**
      * Render the block on the server in MJML format.
      * @param array $atts The block attributes.
-     * @return string Returns the block content with received rss items.
+     * @return string Returns the block content with received items.
      */
     public static function renderMJML(array $atts): string
     {
