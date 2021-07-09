@@ -10,8 +10,9 @@ import { registerPlugin } from "@wordpress/plugins";
  * Plugin dependencies
  */
 import "./style.scss";
-import registerPostInserterBlock from './blocks/post-inserter';
-import registerRSSBlock from './blocks/rss';
+import registerPostInserterBlock from "./blocks/post-inserter";
+import registerRSSBlock from "./blocks/rss";
+import registerICSBlock from "./blocks/ics";
 import { addBlocksValidationFilter } from "./blocks-validation/blocks-filters";
 import { NestedColumnsDetection } from "./blocks-validation/nesting-detection";
 import "../newsletter-editor";
@@ -19,6 +20,7 @@ import "../newsletter-editor";
 addBlocksValidationFilter();
 registerPostInserterBlock();
 registerRSSBlock();
+registerICSBlock();
 
 /* Unregister core block styles that are unsupported in emails */
 domReady(() => {
