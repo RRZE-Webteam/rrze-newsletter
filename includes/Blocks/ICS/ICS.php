@@ -7,7 +7,10 @@ defined('ABSPATH') || exit;
 class ICS
 {
     /**
+     * attributes
      * Default block attributes.
+     *
+     * @return array
      */
     protected static function attributes()
     {
@@ -60,6 +63,7 @@ class ICS
     }
 
     /**
+     * register
      * Registers the block on server.
      */
     public static function register()
@@ -75,8 +79,10 @@ class ICS
     }
 
     /**
+     * renderHTML
      * Render the block on the server in HTML format.
      * @param array $atts The block attributes.
+     * 
      * @return string Returns the block content.
      */
     public static function renderHTML(array $atts): string
@@ -93,173 +99,17 @@ class ICS
             return '<div class="components-placeholder"><div class="notice notice-error">' . __('An error has occurred, which probably means the feed is down. Try again later.', 'rrze-newsletter') . '</div></div>';
         }
 
-        $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
-        $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
-        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
-
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-
-        $listItems = '';
-        $dateFormat = get_option('date_format');
-
-        $i = 0;
-        $multidayEventKeysUsed = [];
-        foreach (array_keys((array)$feedItems['events']) as $year) {
-            for ($m = 1; $m <= 12; $m++) {
-                $month = $m < 10 ? '0' . $m : '' . $m;
-                $ym = $year . $month;
-                if ($ym < $feedItems['earliest']) {
-                    continue;
-                }
-                if ($ym > $feedItems['latest']) {
-                    break 2;
-                }
-
-                if (isset($feedItems['events'][$year][$month])) {
-
-                    $listItems .= '<div data-year-month="' . esc_attr($ym) . '">';
-
-                    foreach ((array)$feedItems['events'][$year][$month] as $day => $dayEvents) {
-
-                        // Pull out multi-day events and display them separately first
-                        foreach ((array)$dayEvents as $time => $events) {
-
-                            foreach ((array)$events as $eventKey => $event) {
-                                if (empty($event['multiday'])) {
-                                    continue;
-                                }
-
-                                if (in_array($event['multiday']['event_key'], $multidayEventKeysUsed)) {
-                                    continue;
-                                }
-
-                                // Format date/time for header
-                                $mdStart = self::dateFormat($dateFormat, strtotime($event['multiday']['start_date']));
-                                $mdEnd = self::dateFormat($dateFormat, strtotime($event['multiday']['end_date']));
-                                if ($time != 'all-day') {
-                                    $mdStart .= ' ' . self::timeFormat($event['multiday']['start_time']);
-                                    $mdEnd .= ' ' . self::timeFormat($event['multiday']['end_time']);
-                                }
-
-                                // Event label (title)
-                                $title = self::eventLabelHtml($event);
-                                if (!empty($event['url'])) {
-                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
-                                }
-                                $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
-
-                                $date = $mdStart . ' &#8211; ' . $mdEnd;
-
-                                $listItems .= sprintf(
-                                    '<time datetime="%1$s">%2$s</time> ',
-                                    date('Y-m-d H:i:s', strtotime($mdStart)),
-                                    $date
-                                );
-
-                                // RRULE/FREQ
-                                if (!empty($event['rrule'])) {
-                                    $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
-                                }
-
-                                $listItems .= '<div class="event">';
-
-                                // Location/Organizer/Description
-                                $listItems .= self::eventDescriptionHtml($atts, $event);
-
-                                $listItems .= '</div>';
-
-                                // We've now used this event
-                                $multidayEventKeysUsed[] = $event['multiday']['event_key'];
-                                $i++;
-                                if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
-                                    break 5;
-                                }
-
-                                // Remove event from array (to skip day if it only has multi-day events)
-                                unset($dayEvents[$time][$eventKey]);
-                            }
-
-                            // Remove time from array if all of its events have been removed
-                            if (empty($dayEvents[$time])) {
-                                unset($dayEvents[$time]);
-                            }
-                        }
-
-                        // Skip day if all of its events were multi-day
-                        if (empty($dayEvents)) {
-                            continue;
-                        }
-
-                        // Loop through day events
-                        foreach ((array)$dayEvents as $time => $events) {
-
-                            foreach ((array)$events as $event) {
-                                if (!empty($event['multiday'])) {
-                                    continue;
-                                }
-
-                                // Event label (title)
-                                $title = self::eventLabelHtml($event);
-                                if (!empty($event['url'])) {
-                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
-                                }
-                                $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
-
-                                $date = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
-
-                                $time = '';
-                                if ($time !== 'all-day') {
-                                    if (!empty($event['start'])) {
-                                        $time .= ' ' . $event['start'];
-                                        if (!empty($event['end']) && $event['end'] != $event['start']) {
-                                            $time .= ' &#8211; ' . $event['end'];
-                                        }
-                                    }
-                                }
-
-                                $listItems .= sprintf(
-                                    '<time datetime="%1$s">%2$s%3$s</time> ',
-                                    date('Y-m-d H:i:s', strtotime($month . '/' . $day . '/' . $year)),
-                                    $date,
-                                    $time
-                                );
-
-                                // RRULE/FREQ
-                                if (!empty($event['rrule'])) {
-                                    $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
-                                }
-
-                                $listItems .= '<div class="event">';
-
-                                // Location/Organizer/Description
-                                $listItems .= self::eventDescriptionHtml($atts, $event);
-
-                                $listItems .= '</div>';
-
-                                $i++;
-                                if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
-                                    break 5;
-                                }
-                            }
-                        }
-                    }
-
-                    $listItems .= '</div>';
-                }
-            }
-        }
-
-        return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
+        return self::render($atts, $feedItems);
     }
 
     /**
+     * renderMJML
      * Render the block on the server in MJML format.
+     * 
      * @param array $atts The block attributes.
      * @return string Returns the block content.
      */
-    public static function renderMJML(array $atts)
+    public static function renderMJML(array $atts): string
     {
         $atts = self::parseAtts($atts);
 
@@ -273,6 +123,20 @@ class ICS
             return '';
         }
 
+        return self::render($atts, $feedItems, true);
+    }
+
+    /**
+     * render
+     * Render the block on the server.
+     *
+     * @param array $atts
+     * @param array $feedItems
+     * @param boolean $mjml
+     * @return string
+     */
+    public static function render(array $atts, $feedItems, $mjml = false)
+    {
         $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
         $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
         $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
@@ -299,7 +163,7 @@ class ICS
 
                 if (isset($feedItems['events'][$year][$month])) {
 
-                    $listItems .= '<div>';
+                    $listItems .= $mjml ? '<div>' : '<div data-year-month="' . esc_attr($ym) . '">';
 
                     foreach ((array)$feedItems['events'][$year][$month] as $day => $dayEvents) {
 
@@ -326,24 +190,30 @@ class ICS
                                 // Event label (title)
                                 $title = self::eventLabelHtml($event);
                                 if (!empty($event['url'])) {
-                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
+                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
                                 $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
 
                                 $date = $mdStart . ' &#8211; ' . $mdEnd;
 
-                                $listItems .= sprintf(
-                                    '<span%1$s>%2$s</span> ',
-                                    $textStyle,
-                                    $date
-                                );                                
+                                $listItems .= $mjml ?
+                                    sprintf(
+                                        '<span%1$s>%2$s</span> ',
+                                        $textStyle,
+                                        $date
+                                    ) :
+                                    sprintf(
+                                        '<time datetime="%1$s">%2$s</time> ',
+                                        date('Y-m-d H:i:s', strtotime($mdStart)),
+                                        $date
+                                    );
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
                                     $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
                                 }
 
-                                $listItems .= '<div>';
+                                $listItems .= $mjml ? '<div>' : '<div class="event">';
 
                                 // Location/Organizer/Description
                                 $listItems .= self::eventDescriptionHtml($atts, $event);
@@ -383,7 +253,7 @@ class ICS
                                 // Event label (title)
                                 $title = self::eventLabelHtml($event);
                                 if (!empty($event['url'])) {
-                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
+                                    $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
                                 $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
 
@@ -399,19 +269,26 @@ class ICS
                                     }
                                 }
 
-                                $listItems .= sprintf(
-                                    '<span%1$s>%2$s%3$s</span> ',
-                                    $textStyle,
-                                    $date,
-                                    $time
-                                ); 
+                                $listItems .= $mjml ?
+                                    sprintf(
+                                        '<span%1$s>%2$s%3$s</span> ',
+                                        $textStyle,
+                                        $date,
+                                        $time
+                                    ) :
+                                    sprintf(
+                                        '<time datetime="%1$s">%2$s%3$s</time> ',
+                                        date('Y-m-d H:i:s', strtotime($month . '/' . $day . '/' . $year)),
+                                        $date,
+                                        $time
+                                    );
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
                                     $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
                                 }
 
-                                $listItems .= '<div>';
+                                $listItems .= $mjml ? '<div>' : '<div class="event">';
 
                                 // Location/Organizer/Description
                                 $listItems .= self::eventDescriptionHtml($atts, $event);
@@ -435,6 +312,7 @@ class ICS
     }
 
     /**
+     * parseAtts
      * Parse block attributes.
      *
      * @param array $atts
@@ -454,14 +332,21 @@ class ICS
         return $atts;
     }
 
+    /**
+     * getItems
+     *
+     * @param string $url
+     * @param array $atts
+     * @return mixed
+     */
     protected static function getItems(string $url, array $atts)
     {
         $feedItems = [];
 
         // Convert URL into array and iterate.
         $feedItems['events'] = [];
-        $feedItems['urls'] = self::space_pipe_explode($url);
-        $feedItems['tz'] = !empty($tz) ? self::space_pipe_explode($tz) : get_option('timezone_string');
+        $feedItems['urls'] = self::spacePipeExplode($url);
+        $feedItems['tz'] = !empty($tz) ? self::spacePipeExplode($tz) : get_option('timezone_string');
 
         // Set general calendar information.
         $feedItems['guid'] = self::createGUID();
@@ -488,7 +373,7 @@ class ICS
         foreach ((array)$feedItems['urls'] as $feedKey => $url) {
 
             // Get timezone for this feed
-            $url_tz = self::getFeedTz($feedItems, $feedKey);
+            $urlTz = self::getFeedTz($feedItems, $feedKey);
 
             // Fix URL protocol
             if (strpos($url, 'webcal://') === 0) {
@@ -506,7 +391,7 @@ class ICS
             // Parse ICS contents
             $ICal = new ICal('ICal.ics', array(
                 'defaultSpan'                 => 1,
-                'defaultTimeZone'             => $url_tz->getName(),
+                'defaultTimeZone'             => $urlTz->getName(),
                 'disableCharacterReplacement' => true,
                 'filterDaysAfter'             => $filterDaysAfter,
                 'filterDaysBefore'            => $filterDaysBefore,
@@ -529,9 +414,9 @@ class ICS
                 // Assemble events
                 foreach ((array)$ics_events as $eventKey => $event) {
                     // Set start and end dates for event
-                    $dtstartDate = wp_date('Ymd', $event->dtstart_array[2], $url_tz);
+                    $dtstartDate = wp_date('Ymd', $event->dtstart_array[2], $urlTz);
                     // Conditional is for events that are missing DTEND altogether
-                    $dtendDate = wp_date('Ymd', (!isset($event->dtend_array[2]) ? $event->dtstart_array[2] : $event->dtend_array[2]), $url_tz);
+                    $dtendDate = wp_date('Ymd', (!isset($event->dtend_array[2]) ? $event->dtstart_array[2] : $event->dtend_array[2]), $urlTz);
 
                     // All-day events
                     if (strlen($event->dtstart) == 8 || (strpos($event->dtstart, 'T000000') !== false && strpos($event->dtend, 'T000000') !== false)) {
@@ -541,9 +426,9 @@ class ICS
                     }
                     // Start/end times
                     else {
-                        $dtstartTime = wp_date('His', $event->dtstart_array[2], $url_tz);
+                        $dtstartTime = wp_date('His', $event->dtstart_array[2], $urlTz);
                         // Conditional is for events that are missing DTEND altogether
-                        $dtendTime = wp_date('His', (!isset($event->dtend_array[2]) ? $event->dtstart_array[2] : $event->dtend_array[2]), $url_tz);
+                        $dtendTime = wp_date('His', (!isset($event->dtend_array[2]) ? $event->dtstart_array[2] : $event->dtend_array[2]), $urlTz);
                         $allDay = false;
                     }
 
@@ -572,7 +457,7 @@ class ICS
                     if (
                         $dtendDate != $dtstartDate &&
                         // Events that are NOT multiday, but end at midnight of the start date!
-                        !($dtendDate == self::dateFormat('Ymd', $dtstartDate, $url_tz, '+1 day') && $dtendTime == '000000')
+                        !($dtendDate == self::dateFormat('Ymd', $dtstartDate, $urlTz, '+1 day') && $dtendTime == '000000')
                     ) {
                         $loopDate = $dtstartDate;
                         while ($loopDate <= $dtendDate) {
@@ -582,7 +467,7 @@ class ICS
                             }
                             // Multi-day events may be given with end date/time as midnight of the NEXT day
                             $actualEndDate = (!empty($allDay) && empty($dtendTime))
-                                ? self::dateFormat('Ymd', $dtendDate, $url_tz, '-1 day')
+                                ? self::dateFormat('Ymd', $dtendDate, $urlTz, '-1 day')
                                 : $dtendDate;
                             if ($dtstartDate == $actualEndDate) {
                                 $feedItems['events'][$dtstartDate]['all-day'][] = $eventItem;
@@ -627,7 +512,7 @@ class ICS
                                     $feedItems['events'][$loopDate]['t' . $dtendTime][] = $eventItem;
                                 }
                             }
-                            $loopDate = self::dateFormat('Ymd', $loopDate, $url_tz, '+1 day');
+                            $loopDate = self::dateFormat('Ymd', $loopDate, $urlTz, '+1 day');
                         }
                     }
                     // All-day events
@@ -691,8 +576,15 @@ class ICS
         return $feedItems;
     }
 
-    // Break a string into an array using any combination of spaces and/or pipes as the delimiter
-    protected static function space_pipe_explode($str)
+    /**
+     * spacePipeExplode
+     * Break a string into an array using any combination of 
+     * spaces and/or pipes as the delimiter.
+     *
+     * @param string $str
+     * @return array
+     */
+    protected static function spacePipeExplode($str)
     {
         $exploded = preg_split('/[\s\|]+/', $str);
         if (count($exploded) == 1) {
@@ -701,7 +593,14 @@ class ICS
         return $exploded;
     }
 
-    // Create a custom GUID
+    /**
+     * createGUID
+     * Create a custom GUID.
+     *
+     * @param boolean $lowercase
+     * @param boolean $prefix
+     * @return void
+     */
     protected static function createGUID($lowercase = true, $prefix = true)
     {
         $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
@@ -714,7 +613,14 @@ class ICS
         return $guid;
     }
 
-    // Get timezone for feed
+    /**
+     * getFeedTz
+     * Get timezone for feed.
+     *
+     * @param array $feedItems
+     * @param string $feedKey
+     * @return object
+     */
     protected static function getFeedTz($feedItems, $feedKey)
     {
         $tzid = null;
@@ -726,7 +632,13 @@ class ICS
         return self::isValidTz($tzid) ? timezone_open($tzid) : wp_timezone();
     }
 
-    // Check if it is a valid timezone
+    /**
+     * isValidTz
+     * Check if it is a valid timezone.
+     *
+     * @param string $tzid
+     * @return boolean
+     */
     protected static function isValidTz($tzid)
     {
         if (empty($tzid)) {
@@ -742,7 +654,16 @@ class ICS
         return false;
     }
 
-    // Formatted date strings
+    /**
+     * dateFormat
+     * Formatted date strings.
+     *
+     * @param string $format
+     * @param mixed $dtStr
+     * @param mixed $tz
+     * @param mixed $offset
+     * @return string
+     */
     protected static function dateFormat($format, $dtStr = null, $tz = null, $offset = null)
     {
         global $wp_locale;
@@ -816,7 +737,14 @@ class ICS
         return $date;
     }
 
-    // Format time string data
+    /**
+     * timeFormat
+     * Format time string data.
+     *
+     * @param string $timeString
+     * @param mixed $format
+     * @return string
+     */
     protected static function timeFormat($timeString, $format = null)
     {
         $output = null;
@@ -1010,7 +938,15 @@ class ICS
         return $output;
     }
 
-    // Retrieve file from remote server with fallback methods
+    /**
+     * urlGetContent
+     * Retrieve file from remote server with fallback methods.
+     *
+     * @param string $url
+     * @param mixed $method
+     * @param boolean $recursion
+     * @return mixed
+     */
     protected static function urlGetContent($url, $method = null, $recursion = false)
     {
         // Must have a URL
@@ -1088,19 +1024,38 @@ class ICS
         return $urlContent;
     }
 
-    // Check if a URL's domain is the same as the current site
-    protected static function domain_match($url)
+    /**
+     * domainMatch
+     * Check if a URL's domain is the same as the current site.
+     *
+     * @param string $url
+     * @return boolean
+     */
+    protected static function domainMatch($url)
     {
         return (parse_url($url, PHP_URL_HOST) == $_SERVER['SERVER_NAME']);
     }
 
-    // Check if the string has any HTML
+    /**
+     * isHtml
+     * Check if the string has any HTML.
+     *
+     * @param string $str
+     * @return boolean
+     */
     protected static function isHtml($str)
     {
         return preg_match('/\/[a-z]*>/i', $str) != 0;
     }
 
-    // Apply make_clickable() function and also deal with common quirks of iCalendar description data
+    /**
+     * makeClickable
+     * Apply make_clickable() function 
+     * and also deal with common quirks of iCalendar description data.
+     *
+     * @param string $str
+     * @return string
+     */
     protected static function makeClickable($str)
     {
         // Check if the string has any HTML
@@ -1132,6 +1087,12 @@ class ICS
         return make_clickable($str);
     }
 
+    /**
+     * numWords
+     *
+     * @param string $text
+     * @return integer
+     */
     protected static function numWords($text)
     {
         $text = wp_strip_all_tags($text);
@@ -1144,19 +1105,37 @@ class ICS
         return count($wordsAry);
     }
 
-    // Skips some of the functions WP normally runs on 'the_content'
+    /**
+     * filterTheContent
+     * Skips some of the functions WP normally runs on 'the_content'.
+     *
+     * @param [type] $text
+     * @return void
+     */
     protected static function filterTheContent($text)
     {
         return trim(wpautop(convert_chars(wptexturize($text))));
     }
 
-    // Check if a string is empty of text content
+    /**
+     * emptyContent
+     * Check if a string is empty of text content.
+     *
+     * @param string $str
+     * @return boolean
+     */
     protected static function emptyContent($str)
     {
         return empty(trim(str_replace('&nbsp;', '', strip_tags($str, '<img><iframe><audio><video>'))));
     }
 
-    // Explode a recurrence rule into an array
+    /**
+     * recurrenceExplode
+     * Explode a recurrence rule into an array.
+     *
+     * @param string $rrule
+     * @return array
+     */
     protected static function recurrenceExplode($rrule)
     {
         $output = null;
@@ -1170,7 +1149,14 @@ class ICS
         return $output;
     }
 
-    // Convert a recurrence rule into a human-readable expression (with i18n support)
+    /**
+     * recurrenceDescription
+     * Convert a recurrence rule into a human-readable expression.
+     *
+     * @param string $rrule
+     * @param boolean $html
+     * @return string
+     */
     protected static function recurrenceDescription($rrule = null, $html = true)
     {
         $output = '';
@@ -1222,11 +1208,17 @@ class ICS
         return $output;
     }
 
+    /**
+     * eventLabelHtml
+     *
+     * @param array $event
+     * @return string
+     */
     protected static function eventLabelHtml($event)
     {
         $output = '';
         if (!empty($event['url'])) {
-            $output .= '<a href="' . esc_url($event['url']) . '" ' . (!self::domain_match($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>';
+            $output .= '<a href="' . esc_url($event['url']) . '" ' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>';
         }
         $output .= html_entity_decode(str_replace('/', '/<wbr />', $event['label']));
         if (!empty($event['url'])) {
@@ -1235,6 +1227,12 @@ class ICS
         return '<span>' . $output . '</span>';
     }
 
+    /**
+     * eventOrganizerHtml
+     *
+     * @param mixed $organizer
+     * @return string
+     */
     protected static function eventOrganizerHtml($organizer = null)
     {
         $output = '';
@@ -1250,11 +1248,24 @@ class ICS
         return '<div class="organizer">' . $output . '</div>';
     }
 
+    /**
+     * eventLocationHtml
+     *
+     * @param mixed $location
+     * @return string
+     */
     protected static function eventLocationHtml($location = null)
     {
         return '<div class="location">' . self::makeClickable($location) . '</div>';
     }
 
+    /**
+     * eventDescriptionHtml
+     *
+     * @param array $atts
+     * @param array $event
+     * @return mixed
+     */
     protected static function eventDescriptionHtml($atts, $event)
     {
         $output = '';
