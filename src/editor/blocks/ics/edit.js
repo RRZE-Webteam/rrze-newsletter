@@ -20,22 +20,23 @@ import {
 } from "@wordpress/components";
 import { useState } from "@wordpress/element";
 import { edit } from "@wordpress/icons";
-import rss from "./icon";
+import ics from "./icon";
 import { __ } from "@wordpress/i18n";
 import ServerSideRender from "@wordpress/server-side-render";
-import { RSS_BLOCK_NAME } from "./consts";
+import { ICS_BLOCK_NAME } from "./consts";
 
 const DEFAULT_MIN_ITEMS = 1;
 const DEFAULT_MAX_ITEMS = 15;
 
-export default function RSSEdit({ attributes, setAttributes }) {
+export default function ICSEdit({ attributes, setAttributes }) {
     const [isEditing, setIsEditing] = useState(!attributes.feedURL);
 
     const {
-        displayAuthor,
-        displayDate,
-        displayExcerpt,
-        excerptLength,
+        displayLocation,
+        displayOrganizer,
+        displayDescription,
+        descriptionLength,
+        descriptionLimit,
         feedURL,
         itemsToShow,
         headingFontSize,
@@ -69,7 +70,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
     if (isEditing) {
         return (
             <div {...blockProps}>
-                <Placeholder icon={rss} label="RSS">
+                <Placeholder icon={ics} label="ICS">
                     <form
                         onSubmit={onSubmitURL}
                         className="wp-block-rss__placeholder-form"
@@ -97,7 +98,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
     const toolbarControls = [
         {
             icon: edit,
-            title: __("Edit RSS URL", "rrze-newsletter"),
+            title: __("Edit ICS URL", "rrze-newsletter"),
             onClick: () => setIsEditing(true)
         }
     ];
@@ -108,7 +109,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
                 <ToolbarGroup controls={toolbarControls} />
             </BlockControls>
             <InspectorControls>
-                <PanelBody title={__("RSS settings", "rrze-newsletter")}>
+                <PanelBody title={__("ICS settings", "rrze-newsletter")}>
                     <RangeControl
                         label={__("Number of items", "rrze-newsletter")}
                         value={itemsToShow}
@@ -120,29 +121,36 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         required
                     />
                     <ToggleControl
-                        label={__("Display author", "rrze-newsletter")}
-                        checked={displayAuthor}
-                        onChange={toggleAttribute("displayAuthor")}
+                        label={__("Display location", "rrze-newsletter")}
+                        checked={displayLocation}
+                        onChange={toggleAttribute("displayLocation")}
                     />
                     <ToggleControl
-                        label={__("Display date", "rrze-newsletter")}
-                        checked={displayDate}
-                        onChange={toggleAttribute("displayDate")}
+                        label={__("Display organizer", "rrze-newsletter")}
+                        checked={displayOrganizer}
+                        onChange={toggleAttribute("displayOrganizer")}
                     />
                     <ToggleControl
-                        label={__("Display excerpt", "rrze-newsletter")}
-                        checked={displayExcerpt}
-                        onChange={toggleAttribute("displayExcerpt")}
+                        label={__("Display description", "rrze-newsletter")}
+                        checked={displayDescription}
+                        onChange={toggleAttribute("displayDescription")}
                     />
-                    {displayExcerpt && (
+                    {displayDescription && (
+                        <ToggleControl
+                            label={__("Limit length of description", "rrze-newsletter")}
+                            checked={descriptionLimit}
+                            onChange={toggleAttribute("descriptionLimit")}
+                        />
+                    )}
+                    {descriptionLimit && (
                         <RangeControl
                             label={__(
-                                "Max number of words in excerpt",
+                                "Max number of words in description",
                                 "rrze-newsletter"
                             )}
-                            value={excerptLength}
+                            value={descriptionLength}
                             onChange={value =>
-                                setAttributes({ excerptLength: value })
+                                setAttributes({ descriptionLength: value })
                             }
                             min={10}
                             max={100}
@@ -192,7 +200,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
             <div {...blockProps}>
                 <Disabled>
                     <ServerSideRender
-                        block={RSS_BLOCK_NAME}
+                        block={ICS_BLOCK_NAME}
                         attributes={attributes}
                     />
                 </Disabled>
