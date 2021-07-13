@@ -135,7 +135,7 @@ class ICS
      * @param boolean $mjml
      * @return string
      */
-    public static function render(array $atts, $feedItems, $mjml = false)
+    protected static function render(array $atts, $feedItems, $mjml = false)
     {
         $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
         $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
@@ -1224,7 +1224,7 @@ class ICS
         if (!empty($event['url'])) {
             $output .= '</a>';
         }
-        return '<span>' . $output . '</span>';
+        return $output;
     }
 
     /**
