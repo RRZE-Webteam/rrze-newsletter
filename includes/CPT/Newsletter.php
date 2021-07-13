@@ -184,8 +184,8 @@ class Newsletter
                     'single'         => true,
                     'auth_callback'  => '__return_true'
                 ]
-            );  
-        }      
+            );
+        }
         register_meta(
             'post',
             'rrze_newsletter_replyto',
@@ -212,6 +212,53 @@ class Newsletter
                     ],
                 ],
                 'type'           => 'string',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_is_recurring',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'boolean',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_recurrence_in_days',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'integer',
+                'default'        => 0,
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_recurrence_in_hours',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'integer',
+                'default'        => 1,
                 'single'         => true,
                 'auth_callback'  => '__return_true',
             ]
