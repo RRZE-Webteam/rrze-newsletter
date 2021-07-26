@@ -61,31 +61,58 @@ class Queue
      */
     public function set($postId)
     {
-        if ('newsletter' !== get_post_type($postId)) {
-            return;
-        }
-
-        $post = get_post($postId);
-
-        if (
-            $post->post_status = 'publish'
-            && get_post_meta($postId, 'rrze_newsletter_status', true) == 'send'
-        ) {
+        if (Newsletter::POST_TYPE == get_post_type($postId)) {
             $this->add($postId);
         }
     }
 
-    public function add(int $postId)
+    protected function add(int $postId)
     {
-        $status = Newsletter::getStatus($postId);
-        if ($status != 'send') {
+        $post = get_post($postId);
+
+        if (
+            $post->post_status !== 'publish'
+            || Newsletter::getStatus($postId) !== 'send'
+        ) {
             return;
+        }
+
+        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
+        if ($hasConditionals) {
+            $condition = false;
+            $rssCondition = false;
+            $icsCondition = false;
+            $operator = get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
+            $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
+            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
+            $isRssBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_rss_block_empty', true);
+            delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
+            $isIcsBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_ics_block_empty', true);
+            delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
+            if ($rssBlock && $isRssBlockEmpty) {
+                $rssCondition = true;
+            }
+            if ($icsBlock && $isIcsBlockEmpty) {
+                $icsCondition = true;
+            }
+            if ($operator == 'or') {
+                $condition = $rssCondition || $icsCondition;
+            } else {
+                $condition = $rssCondition && $icsCondition;
+            }
+            if ($condition) {
+                // Maybe the newsletter is recurring.
+                Newsletter::maybeSetRecurrence($postId);
+                // Set the newsletter status to 'skipped'.
+                Newsletter::setStatus($postId, 'skipped');
+                return;
+            }
         }
 
         Newsletter::setStatus($postId, 'queued');
 
         $data = Newsletter::getData($postId);
-        if (empty($data)) {
+        if (empty($data) || is_wp_error($data)) {
             Newsletter::setStatus($postId, 'error');
             return;
         }
@@ -202,6 +229,13 @@ class Queue
             }
         }
 
+        $sendTimestamp = get_post_time('U', true, $postId);
+        update_post_meta($postId, 'rrze_newsletter_send_timestamp', $sendTimestamp, true);
+
+        // Maybe the newsletter is recurring.
+        Newsletter::maybeSetRecurrence($postId);
+
+        // Set the status of the newsletter to "sent".
         Newsletter::setStatus($postId, 'sent');
     }
 
