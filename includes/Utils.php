@@ -161,4 +161,162 @@ class Utils
         }
         return is_plugin_active($plugin);
     }
+
+    public static function getWeekDays(string $yy, string $mm, string $dw)
+    {
+        return new \DatePeriod(
+            new \DateTime("first $dw of $yy-$mm"),
+            \DateInterval::createFromDateString("next $dw"),
+            new \DateTime("last day of $yy-$mm")
+        );
+    }
+
+    public static function getWeeklyRecurrence(string $date, int $interval = 1, $verbose = false)
+    {
+        $unixTimestamp = strtotime($date);
+        $year = date('Y', $unixTimestamp);
+        $month = date('m', $unixTimestamp);
+        $dayOfWeek = date('l', $unixTimestamp);
+        $output = [];
+        $weekDays = Utils::getWeekDays($year, $month, $dayOfWeek);
+        foreach ($weekDays as $day) {
+            if ($verbose) {
+                $value = sprintf(
+                    /* translators: %s: the day of the week. */
+                    __('Weekly on %s', 'rrze-newsletter'),
+                    __($day->format('l'))
+                );
+            } else {
+                $value = sprintf(
+                    'FREQ=WEEKLY;BYDAY=%1$s;INTERVAL=%2$s',
+                    strtoupper(substr($day->format('l'), 0, 2)),
+                    $interval
+                );
+            }
+            $output[$day->format('Y-m-d')] = $value;
+        }
+        return $output;
+    }
+
+    public static function getMonthlyRecurrence(string $date, int $interval = 1, $verbose = false)
+    {
+        $unixTimestamp = strtotime($date);
+        $year = date('Y', $unixTimestamp);
+        $month = date('m', $unixTimestamp);
+        $dayOfWeek = date('l', $unixTimestamp);
+        $pos = [
+            1 => __('first', 'rrze-newsletter'),
+            2 => __('second', 'rrze-newsletter'),
+            3 => __('third', 'rrze-newsletter'),
+            4 => __('fourth', 'rrze-newsletter'),
+            -1 => __('last', 'rrze-newsletter')
+        ];
+        $output = [];
+        $weekDays = Utils::getWeekDays($year, $month, $dayOfWeek);
+        $count = 0;
+        foreach ($weekDays as $day) {
+            $count++;
+        }
+        $i = 1;
+        foreach ($weekDays as $day) {
+            if ($verbose) {
+                $value = [
+                    [
+                        'BYMONTHDAY' =>
+                        sprintf(
+                            /* translators: %s: the number of the day. */
+                            __('Monthly on day %s', 'rrze-newsletter'),
+                            $day->format('j')
+                        )
+                    ],
+                    [
+                        'BYSETPOS' =>
+                        sprintf(
+                            /* translators: 1: The number of the day, 2: The day of the week. */
+                            __('Monthly on the %1$s %2$s', 'rrze-newsletter'),
+                            $pos[$i],
+                            __($day->format('l'))
+                        )
+                    ]
+                ];
+            } else {
+                $value = [
+                    'BYMONTHDAY' =>
+                    sprintf(
+                        'FREQ=MONTHLY;BYMONTHDAY=%1$s;INTERVAL=%2$s',
+                        $day->format('j'),
+                        $interval
+                    ),
+                    'BYSETPOS' =>
+                    sprintf(
+                        'FREQ=MONTHLY;BYSETPOS=%1$s;BYDAY=%2$s;INTERVAL=%3$s',
+                        $i,
+                        strtoupper(substr($day->format('l'), 0, 2)),
+                        $interval
+                    )
+
+                ];
+            }
+            $i++;
+            if ($i == $count) {
+                $i = -1;
+            }
+            $output[$day->format('Y-m-d')] = $value;
+        }
+        return $output;
+    }
+
+    /**
+     *  Returns the current timezone
+     *
+     * Gets timezone settings from the db. If a timezone identifier is used just turns
+     * it into a DateTimeZone. If an offset is used, it tries to find a suitable timezone.
+     * If all else fails it uses UTC.
+     *
+     * @return \DateTimeZone The current timezone.
+     */
+    public static function currentTimeZone()
+    {
+
+        $tzStr = get_option('timezone_string');
+        $offset = get_option('gmt_offset');
+
+        //Manual offset...
+        //@see http://us.php.net/manual/en/timezones.others.php
+        //@see https://bugs.php.net/bug.php?id=45543
+        //@see https://bugs.php.net/bug.php?id=45528
+        //IANA timezone database that provides PHP's timezone support uses POSIX (i.e. reversed) style signs
+        if (empty($tzStr) && 0 != $offset && floor($offset) == $offset) {
+            $offsetStr = $offset > 0 ? "-$offset" : '+' . absint($offset);
+            $tzStr  = 'Etc/GMT' . $offsetStr;
+        }
+
+        //Issue with the timezone selected, set to 'UTC'
+        if (empty($tzStr)) {
+            $tzStr = 'UTC';
+        }
+
+        $timezone = new \DateTimeZone($tzStr);
+        return $timezone;
+    }
+
+    /**
+     * Returns the next occurrences rrule
+     *
+     * @param string $dtStart
+     * @param string $rrule
+     * @param integer $count
+     * @return array The next ocurrences. An array of \DateTime objects.
+     */
+    public static function nextOcurrences(string $dtStart, string $rrule, int $count = 1)
+    {
+        $dt = new \DateTime($dtStart, Utils::currentTimeZone());
+        $r = new Recurrence();
+        $r->startDate($dt)
+            ->rrule($rrule)
+            ->exclusions([$dt])
+            ->count($count)
+            ->generateOccurrences();
+        return $r->occurrences;
+    }
 }
