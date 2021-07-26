@@ -7,7 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
-use RRZE\Newsletter\Blocks\RSS;
+use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Mail\Queue;
 
