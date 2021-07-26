@@ -229,8 +229,7 @@ class Queue
             }
         }
 
-        $sendTimestamp = get_post_time('U', true, $postId);
-        update_post_meta($postId, 'rrze_newsletter_send_timestamp', $sendTimestamp, true);
+        update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $post->post_date_gmt);
 
         // Maybe the newsletter is recurring.
         Newsletter::maybeSetRecurrence($postId);

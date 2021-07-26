@@ -901,16 +901,16 @@ class Newsletter
         ]);
     }
 
-    public static function getLastSendDate(int $postId)
+    public static function getLastSendDateGmt(int $postId)
     {
-        $timestamp = null;
+        $sendDate = date('Y-m-d H:i:s', HOUR_IN_SECONDS); // UNIX Epoch time + 1 hour
         if (in_array(get_post_status($postId), ['publish', 'future'])) {
-            if (!$timestamp = get_post_meta($postId, 'rrze_newsletter_send_timestamp', true)) {
-                $timestamp = HOUR_IN_SECONDS; // UNIX Epoch time + 1 hour
+            $sendDateGmt = get_post_meta($postId, 'rrze_newsletter_send_date_gmt', true);
+            if (\DateTime::createFromFormat('Y-m-d H:i:s', $sendDateGmt) !== false) {
+                $sendDate = $sendDateGmt;
             }
-            $timestamp = strtotime(get_date_from_gmt(date('Y-m-d H:i:s', $timestamp)));
         }
-        return $timestamp;
+        return $sendDate;
     }
 
     public static function validateNewsletterId($postId)
