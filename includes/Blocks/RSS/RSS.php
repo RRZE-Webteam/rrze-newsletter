@@ -163,14 +163,14 @@ class RSS
         $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
         $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
 
-        $sinceLastSend = (int) Newsletter::getLastSendDate($atts['postId']);
+        $sinceLastSendGmt = Newsletter::getLastSendDateGmt($atts['postId']);
 
         $feedItems  = $feed->get_items(0, $atts['itemsToShow']);
         $listItems = '';
 
         foreach ($feedItems as $item) {
             $timestamp = $item->get_date('U');
-            if ($atts['sinceLastSend'] && $timestamp < $sinceLastSend) {
+            if ($atts['sinceLastSend'] && $timestamp < strtotime($sinceLastSendGmt)) {
                 continue;
             }
 
