@@ -2,7 +2,11 @@
  * WordPress dependencies
  */
 import { __ } from "@wordpress/i18n";
-import { ToggleControl, RangeControl } from "@wordpress/components";
+import {
+    ToggleControl,
+    SelectControl,
+    __experimentalText as Text
+} from "@wordpress/components";
 import { compose } from "@wordpress/compose";
 import { withDispatch, withSelect } from "@wordpress/data";
 import { Fragment } from "@wordpress/element";
@@ -10,28 +14,50 @@ import { Fragment } from "@wordpress/element";
 /**
  * Plugin dependencies
  */
+import RepeatWeekly from "./repeat-weekly";
+import RepeatMonthly from "./repeat-monthly";
 import "./style.scss";
+
+const units = [
+    {
+        label: __("Hourly", "rrze-newsletter"),
+        value: "HOURLY"
+    },
+    {
+        label: __("Daily", "rrze-newsletter"),
+        value: "DAILY"
+    },
+    {
+        label: __("Weekly", "rrze-newsletter"),
+        value: "WEEKLY"
+    },
+    {
+        label: __("Monthly", "rrze-newsletter"),
+        value: "MONTHLY"
+    }
+];
 
 const RecurrenceSettingsComponent = props => {
     const {
         meta,
         updateIsRecurring,
-        updateRecurrenceInDays,
-        updateRecurrenceInHours
+        updateRecurrenceRepeat,
+        updateRecurrenceMonthly
     } = props;
+
     const {
         rrze_newsletter_is_recurring,
-        rrze_newsletter_recurrence_in_days,
-        rrze_newsletter_recurrence_in_hours
+        rrze_newsletter_recurrence_repeat,
+        rrze_newsletter_recurrence_monthly
     } = meta;
 
     return (
         <Fragment>
             <ToggleControl
                 className="rrze-newsletter__recurrence-toggle-control rrze-newsletter__recurrence-toggle-control--separated"
-                label={__("Make newsletter recurring?", "rrze-newsletter")}
+                label={__("Recurrence", "rrze-newsletter")}
                 help={__(
-                    "Make this newsletter recurring once it’s been sent.",
+                    "Apply recurrence rules to the newsletter.",
                     "rrze-newsletter"
                 )}
                 checked={rrze_newsletter_is_recurring}
@@ -39,28 +65,23 @@ const RecurrenceSettingsComponent = props => {
             />
             {rrze_newsletter_is_recurring && (
                 <Fragment>
-                    <RangeControl
-                        label={__(
-                            "Recurrence interval in days",
-                            "rrze-newsletter"
-                        )}
-                        value={rrze_newsletter_recurrence_in_days}
-                        onChange={value => updateRecurrenceInDays(value)}
-                        min={0}
-                        max={30}
-                        required
+                    <Text>{__("Repeat", "rrze-newsletter")}</Text>
+                    <SelectControl
+                        value={rrze_newsletter_recurrence_repeat}
+                        options={units}
+                        onChange={value => updateRecurrenceRepeat(value)}
                     />
-                    <RangeControl
-                        label={__(
-                            "Recurrence interval in hours",
-                            "rrze-newsletter"
-                        )}
-                        value={rrze_newsletter_recurrence_in_hours}
-                        onChange={value => updateRecurrenceInHours(value)}
-                        min={1}
-                        max={23}
-                        required
-                    />
+                    {rrze_newsletter_recurrence_repeat == "WEEKLY" && (
+                        <RepeatWeekly />
+                    )}
+                    {rrze_newsletter_recurrence_repeat == "MONTHLY" && (
+                        <RepeatMonthly
+                            rrze_newsletter_recurrence_monthly={
+                                rrze_newsletter_recurrence_monthly
+                            }
+                            updateRecurrenceMonthly={updateRecurrenceMonthly}
+                        />
+                    )}
                 </Fragment>
             )}
         </Fragment>
@@ -69,42 +90,38 @@ const RecurrenceSettingsComponent = props => {
 
 const mapStateToProps = select => {
     const { getEditedPostAttribute } = select("core/editor");
-
     return {
         meta: getEditedPostAttribute("meta")
     };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToIsRecurring = dispatch => {
     const { editPost } = dispatch("core/editor");
-
     return {
         updateIsRecurring: value =>
             editPost({ meta: { rrze_newsletter_is_recurring: value } })
     };
 };
 
-const mapDispatchToProps2 = dispatch => {
+const mapDispatchToRepeat = dispatch => {
     const { editPost } = dispatch("core/editor");
-
     return {
-        updateRecurrenceInDays: value =>
-            editPost({ meta: { rrze_newsletter_recurrence_in_days: value } })
+        updateRecurrenceRepeat: value =>
+            editPost({ meta: { rrze_newsletter_recurrence_repeat: value } })
     };
 };
 
-const mapDispatchToProps3 = dispatch => {
+const mapDispatchToMonthly = dispatch => {
     const { editPost } = dispatch("core/editor");
-
     return {
-        updateRecurrenceInHours: value =>
-            editPost({ meta: { rrze_newsletter_recurrence_in_hours: value } })
+        updateRecurrenceMonthly: value =>
+            editPost({ meta: { rrze_newsletter_recurrence_monthly: value } })
     };
 };
 
 export const RecurrenceSettings = compose([
     withSelect(mapStateToProps),
-    withDispatch(mapDispatchToProps),
-    withDispatch(mapDispatchToProps2),
-    withDispatch(mapDispatchToProps3)
+    withDispatch(mapDispatchToIsRecurring),
+    withDispatch(mapDispatchToRepeat),
+    withDispatch(mapDispatchToMonthly)
 ])(RecurrenceSettingsComponent);
