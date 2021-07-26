@@ -146,6 +146,36 @@ class RestApi
                 ],
             ]
         );
+        register_rest_route(
+            'rrze-newsletter/v1',
+            'repeat/weekly/(?P<id>[\a-z]+)',
+            [
+                'methods'             => \WP_REST_Server::READABLE,
+                'callback'            => [$this, 'apiRetrieveWeeklyRrules'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
+                'args'                => [
+                    'id' => [
+                        'sanitize_callback' => 'absint',
+                        'validate_callback' => [$this, 'validateNewsletterId'],
+                    ],
+                ],
+            ]
+        );
+        register_rest_route(
+            'rrze-newsletter/v1',
+            'repeat/monthly/(?P<id>[\a-z]+)',
+            [
+                'methods'             => \WP_REST_Server::READABLE,
+                'callback'            => [$this, 'apiRetrieveMonthlyRrules'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
+                'args'                => [
+                    'id' => [
+                        'sanitize_callback' => 'absint',
+                        'validate_callback' => [$this, 'validateNewsletterId'],
+                    ],
+                ],
+            ]
+        );
     }
 
     public function validateNewsletterId($id)
@@ -155,13 +185,13 @@ class RestApi
 
     public function apiGetLayouts()
     {
-        $layouts_query = new \WP_Query(
+        $layoutsQuery = new \WP_Query(
             [
                 'post_type'      => NewsletterLayout::POST_TYPE,
                 'posts_per_page' => -1,
             ]
         );
-        $user_layouts  = array_map(
+        $userLayouts = array_map(
             function ($post) {
                 $post->meta = [
                     'background_color' => get_post_meta($post->ID, 'background_color', true),
@@ -170,15 +200,39 @@ class RestApi
                 ];
                 return $post;
             },
-            $layouts_query->get_posts()
+            $layoutsQuery->get_posts()
         );
         $layouts = array_merge(
-            $user_layouts,
+            $userLayouts,
             NewsletterLayout::get_default_layouts(),
             apply_filters('rrze_newsletter_templates', [])
         );
 
         return rest_ensure_response($layouts);
+    }
+
+    public function apiRetrieveWeeklyRrules($request)
+    {
+        $postId = $request['id'];
+        $postDate = get_post_time('Y-m-d', false, $postId);
+        $data = Utils::getWeeklyRecurrence($postDate, 1, true);
+        $response = json_encode($data[$postDate]);
+        return rest_ensure_response($response);
+    }
+
+    public function apiRetrieveMonthlyRrules($request)
+    {
+        $postId = $request['id'];
+        $postDate = get_post_time('Y-m-d', false, $postId);
+        $monthlyRecurrence = Utils::getMonthlyRecurrence($postDate, 1, true);
+        $data = [];
+        foreach ($monthlyRecurrence[$postDate] as $recurrence) {
+            foreach ($recurrence as $key => $label) {
+                $data[] = ['label' => $label, 'value' => $key];
+            }
+        }
+        $response = json_encode($data);
+        return rest_ensure_response($response);
     }
 
     public function apiRetrieve($request)
