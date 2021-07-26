@@ -25,19 +25,23 @@ export default () => {
         keywords: ["atom", "feed"],
         edit: RSSEdit,
         attributes: {
+            postId: {
+                type: "number",
+                default: 0
+            },
             feedURL: {
                 type: "string",
                 default: ""
             },
+            sinceLastSend: {
+                type: "boolean",
+                default: false
+            },             
             itemsToShow: {
                 type: "number",
                 default: 5
             },
             displayExcerpt: {
-                type: "boolean",
-                default: false
-            },
-            displayAuthor: {
                 type: "boolean",
                 default: false
             },

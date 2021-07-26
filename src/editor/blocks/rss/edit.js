@@ -32,12 +32,12 @@ export default function RSSEdit({ attributes, setAttributes }) {
     const [isEditing, setIsEditing] = useState(!attributes.feedURL);
 
     const {
-        displayAuthor,
+        feedURL,
+        sinceLastSend,
+        itemsToShow,
         displayDate,
         displayExcerpt,
         excerptLength,
-        feedURL,
-        itemsToShow,
         headingFontSize,
         textFontSize,
         headingColor,
@@ -65,6 +65,10 @@ export default function RSSEdit({ attributes, setAttributes }) {
         .getSettings();
 
     const blockProps = useBlockProps();
+
+    const { getCurrentPostId } = wp.data.select("core/editor");
+
+    setAttributes({ postId: getCurrentPostId() });
 
     if (isEditing) {
         return (
@@ -120,9 +124,12 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         required
                     />
                     <ToggleControl
-                        label={__("Display author", "rrze-newsletter")}
-                        checked={displayAuthor}
-                        onChange={toggleAttribute("displayAuthor")}
+                        label={__(
+                            "Display only new items since the last time the newsletter was sent.",
+                            "rrze-newsletter"
+                        )}
+                        checked={sinceLastSend}
+                        onChange={toggleAttribute("sinceLastSend")}
                     />
                     <ToggleControl
                         label={__("Display date", "rrze-newsletter")}

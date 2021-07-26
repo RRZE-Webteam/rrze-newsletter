@@ -19,8 +19,8 @@ const PublicSettingsComponent = props => {
     return (
         <Fragment>
             <ToggleControl
-                className="rrze-newsletter__public-toggle-control"
-                label={__("Make newsletter page public?", "rrze-newsletter")}
+                className="rrze-newsletter__public-toggle-control rrze-newsletter__public-toggle-control--separated"
+                label={__("Public Page", "rrze-newsletter")}
                 help={__(
                     "Make this newsletter viewable as a public page once it’s been sent.",
                     "rrze-newsletter"

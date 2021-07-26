@@ -4,7 +4,7 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Blocks\RSS;
+use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
@@ -228,13 +228,14 @@ final class Render
      * MJML component will be put in an mj-column in an mj-section for consistent layout,
      * unless it's a group or a columns block.
      *
+     * @param integer $postId Maybe a \WP_Post ID.
      * @param array $block The block.
      * @param bool $isInColumn Whether the component is a child of a column component.
      * @param bool $isInGroup Whether the component is a child of a group component.
      * @param array $defaultAtts Default attributes for the component.
      * @return string MJML component.
      */
-    public static function renderMjmlComponent($block, $isInColumn = false, $isInGroup = false, $defaultAtts = [])
+    public static function renderMjmlComponent($postId, $block, $isInColumn = false, $isInGroup = false, $defaultAtts = [])
     {
         $blockName = $block['blockName'];
         $atts = $block['attrs'];
@@ -297,10 +298,20 @@ final class Render
 
                 if ($blockName == 'rrze-newsletter/rss') {
                     $innerHtml = RSS::renderMJML($atts);
+                    if (!$innerHtml) {
+                        update_post_meta($postId, 'rrze_newsletter_rss_block_empty', 1);
+                    } else {
+                        delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
+                    }
                 }
 
                 if ($blockName == 'rrze-newsletter/ics') {
                     $innerHtml = ICS::renderMJML($atts);
+                    if (!$innerHtml) {
+                        update_post_meta($postId, 'rrze_newsletter_ics_block_empty', 1);
+                    } else {
+                        delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
+                    }
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
@@ -519,7 +530,7 @@ final class Render
 
                 $markup = '<mj-column ' . self::arrayToAttributes($columnAtts) . '>';
                 foreach ($innerBlocks as $block) {
-                    $markup .= self::renderMjmlComponent($block, true, false, $defaultAtts);
+                    $markup .= self::renderMjmlComponent($postId, $block, true, false, $defaultAtts);
                 }
                 $blockMjmlMarkup = $markup . '</mj-column>';
                 break;
@@ -545,7 +556,7 @@ final class Render
                 }
                 $markup = '';
                 foreach ($innerBlocks as $block) {
-                    $markup .= self::renderMjmlComponent($block, true, false, $defaultAtts);
+                    $markup .= self::renderMjmlComponent($postId, $block, true, false, $defaultAtts);
                 }
                 $blockMjmlMarkup = $markup;
                 break;
@@ -559,7 +570,7 @@ final class Render
                 }
                 $markup = '<mj-wrapper ' . self::arrayToAttributes($atts) . '>';
                 foreach ($innerBlocks as $block) {
-                    $markup .= self::renderMjmlComponent($block, false, true, $defaultAtts);
+                    $markup .= self::renderMjmlComponent($postId, $block, false, true, $defaultAtts);
                 }
                 $blockMjmlMarkup = $markup . '</mj-wrapper>';
                 break;
@@ -610,12 +621,15 @@ final class Render
     /**
      * Convert a string or an \WP_Post object content to MJML components.
      *
+     * @param object $post Maybe a \WP_Post object.
      * @param string $content The content.
      * @param boolean $processLink Are the links processed?
      * @return string MJML markup to be injected into the template.
      */
-    private static function postToMjmlComponents(string $content, bool $processLinks)
+    private static function postToMjmlComponents(object $post, string $content, bool $processLinks)
     {
+        $postId = is_a($post, '\WP_Post') ? $post->ID : 0;
+
         $body = '';
         $validBlocks = array_filter(
             parse_blocks($content),
@@ -636,12 +650,12 @@ final class Render
                 }
                 $mjmlMarkup = '<mj-wrapper ' . self::arrayToAttributes($atts) . '>';
                 foreach ($block['innerBlocks'] as $block) {
-                    $innerBlockContent = self::renderMjmlComponent($block, false, true, $defaultAtts);
+                    $innerBlockContent = self::renderMjmlComponent($postId, $block, false, true, $defaultAtts);
                     $mjmlMarkup .= $innerBlockContent;
                 }
                 $blockContent = $mjmlMarkup . '</mj-wrapper>';
             } else {
-                $blockContent = self::renderMjmlComponent($block);
+                $blockContent = self::renderMjmlComponent($postId, $block);
             }
 
             $body .= $blockContent;
@@ -675,7 +689,7 @@ final class Render
             'title' => $post->post_title,
             'preview_text' => $previewText ? $previewText : '',
             'background_color' => $backgroundColor ? $backgroundColor : '#ffffff',
-            'body' => self::postToMjmlComponents($post->post_content, true)
+            'body' => self::postToMjmlComponents($post, $post->post_content, true)
         ];
 
         return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
@@ -707,7 +721,7 @@ final class Render
             'title' => $title,
             'preview_text' => $preview_text,
             'background_color' => $background_color,
-            'body' => self::postToMjmlComponents($content, false)
+            'body' => self::postToMjmlComponents(new \stdClass, $content, false)
         ];
 
         return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));

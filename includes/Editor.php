@@ -25,7 +25,7 @@ final class Editor
     {
         add_action('the_post', [__CLASS__, 'stripEditorModifications']);
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
-        add_filter('allowed_block_types', [__CLASS__, 'newsletterAllowedBlockTypes'], 10, 2);
+        add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
     }
@@ -51,7 +51,7 @@ final class Editor
         add_theme_support('disable-custom-gradients');
     }
 
-    public static function newsletterAllowedBlockTypes($allowedBlockTypes, $post)
+    public static function newsletterAllowedBlockTypes($allowedBlockTypes)
     {
         if (!self::isEditingNewsletter()) {
             return $allowedBlockTypes;

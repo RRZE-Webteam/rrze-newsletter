@@ -1,8 +1,10 @@
 <?php
 
-namespace RRZE\Newsletter\Blocks;
+namespace RRZE\Newsletter\Blocks\RSS;
 
 defined('ABSPATH') || exit;
+
+use RRZE\Newsletter\CPT\Newsletter;
 
 class RSS
 {
@@ -15,6 +17,10 @@ class RSS
     protected static function attributes()
     {
         return [
+            'postId' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
             'feedURL' => [
                 'type' => 'string',
                 'default' => '',
@@ -23,11 +29,11 @@ class RSS
                 'type' => 'number',
                 'default' => 5,
             ],
-            'displayExcerpt' => [
+            'sinceLastSend' => [
                 'type' => 'boolean',
                 'default' => false,
             ],
-            'displayAuthor' => [
+            'displayExcerpt' => [
                 'type' => 'boolean',
                 'default' => false,
             ],
@@ -83,6 +89,10 @@ class RSS
      */
     public static function renderHTML(array $atts): string
     {
+        add_filter('wp_feed_cache_transient_lifetime', function ($lifetime) {
+            return 0;
+        });
+
         $atts = self::parseAtts($atts);
 
         $feed = fetch_feed($atts['feedURL']);
@@ -91,11 +101,19 @@ class RSS
             return '<div class="components-placeholder"><div class="notice notice-error"><strong>' . __('RSS Error:', 'rrze-newsletter') . '</strong> ' . $feed->get_error_message() . '</div></div>';
         }
 
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
         if (!$feed->get_item_quantity()) {
-            return '<div class="components-placeholder"><div class="notice notice-error">' . __('An error has occurred, which probably means the feed is down. Try again later.', 'rrze-newsletter') . '</div></div>';
+            return sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
         }
 
-        return self::render($atts, $feed);
+        $feedItems = self::render($atts, $feed);
+        if (!$feedItems) {
+            return sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
+        }
+        return $feedItems;
     }
 
     /**
@@ -107,6 +125,10 @@ class RSS
      */
     public static function renderMJML(array $atts): string
     {
+        add_filter('wp_feed_cache_transient_lifetime', function ($lifetime) {
+            return 0;
+        });
+
         $atts = self::parseAtts($atts);
 
         $feed = fetch_feed($atts['feedURL']);
@@ -119,7 +141,7 @@ class RSS
             return '';
         }
 
-        return self::render($atts, $feed);
+        return self::render($atts, $feed, true);
     }
 
     /**
@@ -141,9 +163,17 @@ class RSS
         $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
         $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
 
+        $sinceLastSend = (int) Newsletter::getLastSendDate($atts['postId']);
+
         $feedItems  = $feed->get_items(0, $atts['itemsToShow']);
         $listItems = '';
+
         foreach ($feedItems as $item) {
+            $timestamp = $item->get_date('U');
+            if ($atts['sinceLastSend'] && $timestamp < $sinceLastSend) {
+                continue;
+            }
+
             $title = esc_html(trim(strip_tags($item->get_title())));
             if (empty($title)) {
                 $title = __('(no title)', 'rrze-newsletter');
@@ -157,33 +187,18 @@ class RSS
 
             $date = '';
             if ($atts['displayDate']) {
-                $date = $item->get_date('U');
-
-                if ($date) {
+                if ($timestamp) {
                     $mjml ?
                         $date = sprintf(
-                            '<span%1$s>%2$s</span> ',
+                            '<p%1$s>%2$s</p> ',
                             $textStyle,
-                            date_i18n(get_option('date_format'), $date)
+                            date_i18n(get_option('date_format'), $timestamp)
                         ) :
                         $date = sprintf(
                             '<time datetime="%1$s">%2$s</time> ',
-                            date('Y-m-d H:i:s', $date),
-                            date_i18n(get_option('date_format'), $date)
+                            date('Y-m-d H:i:s', $timestamp),
+                            date_i18n(get_option('date_format'), $timestamp)
                         );
-                }
-            }
-
-            $author = '';
-            if ($atts['displayAuthor']) {
-                $author = $item->get_author();
-                if (is_object($author)) {
-                    $author = $author->get_name();
-                    $author = '<span>' . sprintf(
-                        /* translators: %s: the author. */
-                        __('by %s', 'rrze-newsletter'),
-                        esc_html(strip_tags($author))
-                    ) . '</span>';
                 }
             }
 
@@ -194,10 +209,13 @@ class RSS
                 $excerpt = "<div>" . esc_html($excerpt) . '</div>';
             }
 
-            $listItems .= $title . $date . $author . $excerpt;
+            $listItems .= $title . $date . $excerpt;
         }
 
-        return sprintf('<div%s>%s</div>', $textStyle, $listItems);
+        if ($listItems) {
+            return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
+        }
+        return '';
     }
 
     /**

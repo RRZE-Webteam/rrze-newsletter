@@ -17,6 +17,8 @@ import Sidebar from "./sidebar/";
 import Testing from "./testing/";
 import { Styling, ApplyStyling } from "./styling/";
 import { PublicSettings } from "./public";
+import { ConditionalsSettings } from "./conditionals";
+import { RecurrenceSettings } from "./recurrence";
 import registerEditorPlugin from "./editor/";
 
 registerEditorPlugin();
@@ -43,6 +45,8 @@ const NewsletterEdit = ({ layoutId }) => {
             >
                 <Sidebar />
                 <PublicSettings />
+                <ConditionalsSettings />
+                <RecurrenceSettings />
             </PluginDocumentSettingPanel>
             <PluginDocumentSettingPanel
                 name="newsletters-styling-panel"

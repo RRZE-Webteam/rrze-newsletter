@@ -184,8 +184,8 @@ class Newsletter
                     'single'         => true,
                     'auth_callback'  => '__return_true'
                 ]
-            );  
-        }      
+            );
+        }
         register_meta(
             'post',
             'rrze_newsletter_replyto',
@@ -227,6 +227,114 @@ class Newsletter
                     ],
                 ],
                 'type'           => 'boolean',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_has_conditionals',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'boolean',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_conditionals_operator',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'string',
+                'default'        => 'or',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_conditionals_rss_block',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'boolean',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_conditionals_ics_block',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'boolean',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_is_recurring',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'boolean',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_recurrence_repeat',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'string',
+                'default'        => 'DAILY',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_recurrence_monthly',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'string',
+                'default'        => 'BYSETPOS',
                 'single'         => true,
                 'auth_callback'  => '__return_true',
             ]
@@ -470,6 +578,14 @@ class Newsletter
             return $data;
         }
 
+        $body = Render::toHtml($post);
+        if (is_wp_error($body)) {
+            return $body;
+        }
+
+        $html2text = new Html2Text($body);
+        $altBody = $html2text->getText();
+
         $data['id'] = $postId;
 
         $data['post_date_gmt'] = $post->post_date_gmt;
@@ -485,8 +601,8 @@ class Newsletter
         $data['send_date_format'] = $data['post_date_format'];
 
         $data['title'] = $post->post_title;
-        $data['content'] = self::getBody($postId);
-        $data['excerpt'] = self::getAltBody($postId);
+        $data['content'] = $body;
+        $data['excerpt'] = $altBody;
 
         $data['mailing_list_terms'] = self::getTermsList($postId, self::MAILING_LIST);
 
@@ -498,7 +614,7 @@ class Newsletter
         $data['from'] = $fromName != '' ? sprintf('%1$s <%2$s>', $fromName, $fromEmail) : $fromEmail;
         $data['replyto'] = $replyTo;
 
-        $data['status'] = get_post_meta($postId, 'rrze_newsletter_status', true);
+        $data['status'] = self::getStatus($postId);
         $data['post_status'] = $post->post_status;
 
         return $data;
@@ -536,7 +652,7 @@ class Newsletter
             $data = Tags::sanitizeTags($post->ID, $data);
             $parser = new Parser();
             $content = $parser->parse($content, $data);
-            // End Parse tags.            
+            // End Parse tags.
         }
         return $content;
     }
@@ -585,7 +701,6 @@ class Newsletter
 
         $post_status = get_post_status_object($post->post_status);
         $isSent = 'publish' === $post_status->name;
-        $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
 
         if ($isSent) {
             $timestamp = current_time('U');
@@ -607,11 +722,19 @@ class Newsletter
                 );
             }
 
+            $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
             $publicHtml = $isPublic
                 ? ' <span class="dashicons dashicons-visibility"></span>'
                 : ' <span class="dashicons dashicons-hidden"></span>';
 
             $postStates[$post_status->name] .= $publicHtml;
+        } elseif (isset($postStates['scheduled'])) {
+            $isRecurring = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_recurring', true);
+            $recurrenceHtml = $isRecurring
+                ? ' <span class="dashicons dashicons-image-rotate"></span>'
+                : '';
+
+            $postStates['scheduled'] .= $recurrenceHtml;
         }
 
         return $postStates;
@@ -711,46 +834,83 @@ class Newsletter
         if (!$update) {
             update_post_meta($postId, 'rrze_newsletter_template_id', -1);
         }
-
-        $body = Render::toHtml($post);
-        if (is_wp_error($body)) {
-            return $body;
-        }
-        self::setBody($postId, $body);
-
-        $html2text = new Html2Text($body);
-        $altBody = $html2text->getText();
-        self::setAltBody($postId, $altBody);
-    }
-
-    protected static function setBody(int $postId, string $body)
-    {
-        return update_post_meta($postId, 'rrze_newsletter_body', $body);
-    }
-
-    public static function getBody(int $postId)
-    {
-        return get_post_meta($postId, 'rrze_newsletter_body', true);
-    }
-
-    protected static function setAltBody(int $postId, string $altBody)
-    {
-        return update_post_meta($postId, 'rrze_newsletter_altbody', $altBody);
-    }
-
-    public static function getAltBody(int $postId)
-    {
-        return get_post_meta($postId, 'rrze_newsletter_altbody', true);
     }
 
     public static function setStatus(int $postId, string $status)
     {
-        return update_post_meta($postId, 'rrze_newsletter_status', $status);
+        if (Newsletter::POST_TYPE === get_post_type($postId)) {
+            return update_post_meta($postId, 'rrze_newsletter_status', $status);
+        }
     }
 
     public static function getStatus(int $postId)
     {
         return get_post_meta($postId, 'rrze_newsletter_status', true);
+    }
+
+    public static function maybeSetRecurrence(int $postId)
+    {
+        $isRecurring = (bool) get_post_meta($postId, 'rrze_newsletter_is_recurring', true);
+        if (!$isRecurring) {
+            return false;
+        }
+
+        $repeat = get_post_meta($postId, 'rrze_newsletter_recurrence_repeat', true);
+        switch ($repeat) {
+            case 'HOURLY':
+                $postDate = get_post_time('Y-m-d H:i:s', false, $postId);
+                $rrule = 'FREQ=HOURLY;INTERVAL=1';
+                break;
+            case 'DAILY':
+                $postDate = get_post_time('Y-m-d H:i:s', false, $postId);
+                $rrule = 'FREQ=DAILY;INTERVAL=1';
+                break;
+            case 'WEEKLY':
+                $postDate = get_post_time('Y-m-d', false, $postId);
+                $data = Utils::getWeeklyRecurrence($postDate);
+                $rrule = $data[$postDate] ?? '';
+                break;
+            case 'MONTHLY':
+                $postDate = get_post_time('Y-m-d', false, $postId);
+                $recurrenceMonthly = get_post_meta($postId, 'rrze_newsletter_recurrence_monthly', true);
+                $data = Utils::getMonthlyRecurrence($postDate);
+                $rrule = $data[$postDate][$recurrenceMonthly] ?? '';
+                break;
+            default:
+                $rrule = '';
+                break;
+        }
+        if (!$rrule) {
+            return false;
+        }
+
+        $nextOcurrence = Utils::nextOcurrences($postDate, $rrule);
+        $date = $nextOcurrence[0] ?? '';
+        if (!$date) {
+            return false;
+        }
+
+        $newDate = $date->format('Y-m-d H:i:s');
+        $newGmtDate = get_gmt_from_date($newDate);
+
+        return wp_update_post([
+            'ID'            => $postId,
+            'post_status'   => 'future',
+            'post_date'     => $newDate,
+            'post_date_gmt' => $newGmtDate,
+        ]);
+    }
+
+    public static function getLastSendDate(int $postId)
+    {
+        $timestamp = null;
+        if (in_array(get_post_status($postId), ['publish', 'future'])) {
+            if (!$timestamp = get_post_meta($postId, 'rrze_newsletter_send_timestamp', true)) {
+                $timestamp = HOUR_IN_SECONDS; // UNIX Epoch time + 1 hour
+            }
+            $timestamp = strtotime(get_date_from_gmt(date('Y-m-d H:i:s', $timestamp)));
+        }
+        return $timestamp;
     }
 
     public static function validateNewsletterId($postId)
@@ -764,13 +924,5 @@ class Newsletter
             return;
         }
         //@todo
-    }
-
-    public static function support_featured_image_options($postTypes)
-    {
-        return array_merge(
-            $postTypes,
-            [self::POST_TYPE]
-        );
     }
 }

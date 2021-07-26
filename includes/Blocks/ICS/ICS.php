@@ -95,11 +95,15 @@ class ICS
             return '<div class="components-placeholder"><div class="notice notice-error"><strong>' . __('ICS Error:', 'rrze-newsletter') . '</strong> ' . $feedItems->get_error_message() . '</div></div>';
         }
 
+        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
         if (!$feedItems) {
-            return '<div class="components-placeholder"><div class="notice notice-error">' . __('An error has occurred, which probably means the feed is down. Try again later.', 'rrze-newsletter') . '</div></div>';
+            return sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
         }
 
-        return self::render($atts, $feedItems);
+        return self::render($atts, $feedItems, true);
     }
 
     /**
@@ -150,6 +154,7 @@ class ICS
 
         $i = 0;
         $multidayEventKeysUsed = [];
+
         foreach (array_keys((array)$feedItems['events']) as $year) {
             for ($m = 1; $m <= 12; $m++) {
                 $month = $m < 10 ? '0' . $m : '' . $m;
@@ -213,12 +218,10 @@ class ICS
                                     $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
                                 }
 
-                                $listItems .= $mjml ? '<div>' : '<div class="event">';
-
                                 // Location/Organizer/Description
-                                $listItems .= self::eventDescriptionHtml($atts, $event);
-
-                                $listItems .= '</div>';
+                                $listItems .= $mjml ? '' : '<div class="event">';
+                                $listItems .= self::eventDescriptionHtml($atts, $event, $mjml);
+                                $listItems .= $mjml ? '' : '</div>';
 
                                 // We've now used this event
                                 $multidayEventKeysUsed[] = $event['multiday']['event_key'];
@@ -271,7 +274,7 @@ class ICS
 
                                 $listItems .= $mjml ?
                                     sprintf(
-                                        '<span%1$s>%2$s%3$s</span> ',
+                                        '<p%1$s>%2$s%3$s</p> ',
                                         $textStyle,
                                         $date,
                                         $time
@@ -288,12 +291,10 @@ class ICS
                                     $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
                                 }
 
-                                $listItems .= $mjml ? '<div>' : '<div class="event">';
-
                                 // Location/Organizer/Description
-                                $listItems .= self::eventDescriptionHtml($atts, $event);
-
-                                $listItems .= '</div>';
+                                $listItems .= $mjml ? '' : '<div class="event">';
+                                $listItems .= self::eventDescriptionHtml($atts, $event, $mjml);
+                                $listItems .= $mjml ? '' : '</div>';
 
                                 $i++;
                                 if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
@@ -308,6 +309,7 @@ class ICS
             }
         }
 
+        $listItems = $listItems ?: __('There are no events available.', 'rrze-newsletter');
         return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
     }
 
@@ -342,6 +344,7 @@ class ICS
     protected static function getItems(string $url, array $atts)
     {
         $feedItems = [];
+        $hasEvents = false;
 
         // Convert URL into array and iterate.
         $feedItems['events'] = [];
@@ -441,7 +444,7 @@ class ICS
                     }
 
                     // General event item details (regardless of all-day/start/end times)
-                    $eventItem = array(
+                    $eventItem = [
                         'label' => (!empty($maskinfo) ? $maskinfo : @$event->summary),
                         'dtstart_time' => @$dtstartTime,
                         'dtend_time' => @$dtendTime,
@@ -451,7 +454,7 @@ class ICS
                         'organizer' => (!empty($event->organizer_array) ? $event->organizer_array : @$event->organizer),
                         'url' => (!empty($event->url) ? $event->url : null),
                         'rrule' => (!empty($event->rrule) ? $event->rrule : null),
-                    );
+                    ];
 
                     // Events with different start and end dates
                     if (
@@ -530,7 +533,9 @@ class ICS
 
             // If no events, create empty array for today
             if (empty($feedItems['events'])) {
-                $feedItems['events'] = array(self::dateFormat('Ymd') => []);
+                $feedItems['events'] = [self::dateFormat('Ymd') => []];
+            } else {
+                $hasEvents = true;
             }
         }
 
@@ -573,7 +578,12 @@ class ICS
             ksort($feedItems['events'][$key_year]);
         }
         ksort($feedItems['events']);
-        return $feedItems;
+
+        if ($hasEvents) {
+            return $feedItems;
+        }
+
+        return null;
     }
 
     /**
@@ -1231,32 +1241,35 @@ class ICS
      * eventOrganizerHtml
      *
      * @param mixed $organizer
+     * @param boolean $mjml
      * @return string
      */
-    protected static function eventOrganizerHtml($organizer = null)
+    protected static function eventOrganizerHtml($organizer, $mjml)
     {
-        $output = '';
+        $content = '';
         if (is_array($organizer)) {
             if (count((array)$organizer) == 2 && isset($organizer[0]['CN'])) {
-                $output .= '<div class="organizer-email"><a href="' . esc_url($organizer[1]) . '" rel="noopener noreferrer nofollow">' . rawurldecode($organizer[0]['CN']) . '</a></div>';
+                $content .= '<a href="' . esc_url($organizer[1]) . '" rel="noopener noreferrer nofollow">' . rawurldecode($organizer[0]['CN']) . '</a>';
             } elseif (!empty($organizer[1]) && is_scalar($organizer[1])) {
-                $output .= '<div>' . $organizer[1] . '</div>';
+                $content .= $organizer[1];
             }
         } elseif (!empty($organizer)) {
-            $output .= '<div>' . $organizer . '</div>';
+            $content .= $organizer;
         }
-        return '<div class="organizer">' . $output . '</div>';
+        return $mjml ? '<p>' . $content . '</p>' : '<div class="organizer">' . $content . '</div>';
     }
 
     /**
      * eventLocationHtml
      *
      * @param mixed $location
+     * @param boolean $mjml
      * @return string
      */
-    protected static function eventLocationHtml($location = null)
+    protected static function eventLocationHtml($location, $mjml)
     {
-        return '<div class="location">' . self::makeClickable($location) . '</div>';
+        $content = self::makeClickable($location);
+        return $mjml ? '<p>' . $content . '</p>' : '<div class="location">' . $content . '</div>';
     }
 
     /**
@@ -1264,18 +1277,19 @@ class ICS
      *
      * @param array $atts
      * @param array $event
+     * @param boolean $mjml
      * @return mixed
      */
-    protected static function eventDescriptionHtml($atts, $event)
+    protected static function eventDescriptionHtml($atts, $event, $mjml)
     {
         $output = '';
-
         if ($atts['displayLocation'] && !empty($event['location'])) {
-            $output .= self::eventLocationHtml($event['location']);
+            $output .= self::eventLocationHtml($event['location'], $mjml);
         }
         if ($atts['displayOrganizer'] && !empty($event['organizer'])) {
-            $output .= self::eventOrganizerHtml($event['organizer']);
+            $output .= self::eventOrganizerHtml($event['organizer'], $mjml);
         }
+
         $content = '';
         if ($atts['displayDescription']) {
             if (!empty($event['eventdesc'])) {
@@ -1284,12 +1298,12 @@ class ICS
                 } else {
                     $eventdesc = self::filterTheContent(self::makeClickable($event['eventdesc']));
                 }
-                $content .= '<div>' . $eventdesc . '</div>';
+                $content .= $mjml ? '<p>' . $eventdesc . '</p>' : '<div>' . $eventdesc . '</div>';
             }
         }
 
         if (!self::emptyContent($content)) {
-            $output .= '<div class="eventdesc">' . $content . '</div>';
+            $output .= $mjml ? $content : '<div class="eventdesc">' . $content . '</div>';
         }
 
         return !self::emptyContent($output) ? $output : null;
