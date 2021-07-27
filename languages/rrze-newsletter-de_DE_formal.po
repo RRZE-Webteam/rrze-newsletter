@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-06-28T15:47:23+00:00\n"
-"PO-Revision-Date: 2021-07-25 19:57+0200\n"
+"POT-Creation-Date: 2021-07-27T07:53:30+00:00\n"
+"PO-Revision-Date: 2021-07-27 09:55+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -275,15 +275,15 @@ msgstr "Wiederholt sich alle %s Tage"
 msgid "Recurs daily"
 msgstr "Wiederholt sich täglich"
 
-#: includes/Blocks/RSS/RSS.php:101
+#: includes/Blocks/RSS/RSS.php:113
 msgid "RSS Error:"
 msgstr "RSS-Fehler:"
 
-#: includes/Blocks/RSS/RSS.php:109 includes/Blocks/RSS/RSS.php:114
+#: includes/Blocks/RSS/RSS.php:121 includes/Blocks/RSS/RSS.php:126
 msgid "There are no items available."
 msgstr "Es sind keine Artikel verfügbar."
 
-#: includes/Blocks/RSS/RSS.php:179
+#: includes/Blocks/RSS/RSS.php:191
 #: src/editor/blocks/post-inserter/query-controls.js:41
 #: src/editor/blocks/post-inserter/query-controls.js:156
 #: src/editor/blocks/post-inserter/query-controls.js:173
@@ -291,6 +291,10 @@ msgstr "Es sind keine Artikel verfügbar."
 #: src/editor/blocks/post-inserter/query-controls.js:209
 msgid "(no title)"
 msgstr "(kein Titel)"
+
+#: includes/Blocks/RSS/RSS.php:197
+msgid "Continue reading \"%s\"&hellip;"
+msgstr "Artikel „%s“ weiterlesen&hellip;"
 
 #: includes/CPT/Newsletter.php:66
 msgctxt "post type general name"
@@ -1169,11 +1173,11 @@ msgstr ""
 "Diese Eigenschaften werden in einer E-Mail nicht korrekt angezeigt. Bitte "
 "entfernen Sie sie:"
 
-#: src/editor/blocks/ics/edit.js:79 src/editor/blocks/rss/edit.js:82
+#: src/editor/blocks/ics/edit.js:79 src/editor/blocks/rss/edit.js:79
 msgid "Enter URL here…"
 msgstr "URL hier eingeben…"
 
-#: src/editor/blocks/ics/edit.js:90 src/editor/blocks/rss/edit.js:93
+#: src/editor/blocks/ics/edit.js:90 src/editor/blocks/rss/edit.js:90
 msgid "Use URL"
 msgstr "URL verwenden"
 
@@ -1185,7 +1189,7 @@ msgstr "ICS-URL bearbeiten"
 msgid "ICS settings"
 msgstr "ICS-Einstellungen"
 
-#: src/editor/blocks/ics/edit.js:114 src/editor/blocks/rss/edit.js:117
+#: src/editor/blocks/ics/edit.js:114 src/editor/blocks/rss/edit.js:114
 msgid "Number of items"
 msgstr "Anzahl Elemente"
 
@@ -1211,13 +1215,13 @@ msgstr "Maximale Anzahl von Wörtern in der Beschreibung"
 
 #: src/editor/blocks/ics/edit.js:161
 #: src/editor/blocks/post-inserter/index.js:213
-#: src/editor/blocks/rss/edit.js:160
+#: src/editor/blocks/rss/edit.js:164
 msgid "Heading"
 msgstr "Überschrift"
 
 #: src/editor/blocks/ics/edit.js:180
 #: src/editor/blocks/post-inserter/index.js:232
-#: src/editor/blocks/rss/edit.js:179
+#: src/editor/blocks/rss/edit.js:183
 msgid "Text"
 msgstr "Text"
 
@@ -1250,7 +1254,7 @@ msgid "Post excerpt"
 msgstr "Textauszug"
 
 #: src/editor/blocks/post-inserter/index.js:161
-#: src/editor/blocks/rss/edit.js:146
+#: src/editor/blocks/rss/edit.js:143
 msgid "Max number of words in excerpt"
 msgstr "Maximale Anzahl von Wörtern im Textauszug"
 
@@ -1327,25 +1331,29 @@ msgstr "und"
 msgid "By"
 msgstr "Von"
 
-#: src/editor/blocks/rss/edit.js:104
+#: src/editor/blocks/rss/edit.js:101
 msgid "Edit RSS URL"
 msgstr "RSS-URL bearbeiten"
 
-#: src/editor/blocks/rss/edit.js:115
+#: src/editor/blocks/rss/edit.js:112
 msgid "RSS settings"
 msgstr "RSS-Einstellungen"
 
-#: src/editor/blocks/rss/edit.js:127
+#: src/editor/blocks/rss/edit.js:124
 msgid "Display only new items since the last time the newsletter was sent."
 msgstr "Nur neue Artikel seit dem letzten Versand des Newsletters anzeigen."
 
-#: src/editor/blocks/rss/edit.js:135
+#: src/editor/blocks/rss/edit.js:132
 msgid "Display date"
 msgstr "Datum anzeigen"
 
-#: src/editor/blocks/rss/edit.js:140
+#: src/editor/blocks/rss/edit.js:137
 msgid "Display excerpt"
 msgstr "Textauszug anzeigen"
+
+#: src/editor/blocks/rss/edit.js:158
+msgid "Display \"Continue reading\""
+msgstr "Anzeige „Artikel weiterlesen“"
 
 #: src/editor/blocks/rss/index.js:18
 msgid "RSS"
@@ -1457,31 +1465,31 @@ msgstr "Öffentliche Seite"
 msgid "Make this newsletter viewable as a public page once it’s been sent."
 msgstr "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
 
-#: src/newsletter-editor/recurrence/index.js:31
+#: src/newsletter-editor/recurrence/index.js:23
 msgid "Hourly"
 msgstr "Stündlich"
 
-#: src/newsletter-editor/recurrence/index.js:35
+#: src/newsletter-editor/recurrence/index.js:27
 msgid "Daily"
 msgstr "Täglich"
 
-#: src/newsletter-editor/recurrence/index.js:39
+#: src/newsletter-editor/recurrence/index.js:31
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: src/newsletter-editor/recurrence/index.js:43
+#: src/newsletter-editor/recurrence/index.js:35
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: src/newsletter-editor/recurrence/index.js:66
+#: src/newsletter-editor/recurrence/index.js:58
 msgid "Recurrence"
 msgstr "Wiederholung"
 
-#: src/newsletter-editor/recurrence/index.js:67
+#: src/newsletter-editor/recurrence/index.js:59
 msgid "Apply recurrence rules to the newsletter."
 msgstr "Wiederholungsregeln auf den Newsletter anwenden."
 
-#: src/newsletter-editor/recurrence/index.js:76
+#: src/newsletter-editor/recurrence/index.js:68
 msgid "Repeat"
 msgstr "Wiederholen"
 

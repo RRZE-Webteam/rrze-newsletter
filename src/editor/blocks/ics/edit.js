@@ -32,13 +32,13 @@ export default function ICSEdit({ attributes, setAttributes }) {
     const [isEditing, setIsEditing] = useState(!attributes.feedURL);
 
     const {
+        feedURL,
+        itemsToShow,        
         displayLocation,
         displayOrganizer,
         displayDescription,
         descriptionLength,
         descriptionLimit,
-        feedURL,
-        itemsToShow,
         headingFontSize,
         textFontSize,
         headingColor,

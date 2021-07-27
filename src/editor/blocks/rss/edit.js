@@ -38,6 +38,7 @@ export default function RSSEdit({ attributes, setAttributes }) {
         displayDate,
         displayExcerpt,
         excerptLength,
+        displayReadMore,
         headingFontSize,
         textFontSize,
         headingColor,
@@ -65,10 +66,6 @@ export default function RSSEdit({ attributes, setAttributes }) {
         .getSettings();
 
     const blockProps = useBlockProps();
-
-    const { getCurrentPostId } = wp.data.select("core/editor");
-
-    setAttributes({ postId: getCurrentPostId() });
 
     if (isEditing) {
         return (
@@ -154,6 +151,13 @@ export default function RSSEdit({ attributes, setAttributes }) {
                             min={10}
                             max={100}
                             required
+                        />
+                    )}
+                    {displayExcerpt && (
+                        <ToggleControl
+                            label={__('Display "Continue reading"', "rrze-newsletter")}
+                            checked={displayReadMore}
+                            onChange={toggleAttribute("displayReadMore")}
                         />
                     )}
                 </PanelBody>

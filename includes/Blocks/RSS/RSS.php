@@ -45,6 +45,10 @@ class RSS
                 'type' => 'number',
                 'default' => 25,
             ],
+            'displayReadMore' => [
+                'type' => 'boolean',
+                'default' => false,
+            ],
             'textFontSize' => [
                 'type' => 'number',
                 'default' => 16
@@ -94,6 +98,14 @@ class RSS
         });
 
         $atts = self::parseAtts($atts);
+
+        global $post;
+        if (
+            is_a($post, '\WP_Post')
+            && Newsletter::POST_TYPE == get_post_type($post->ID)
+        ) {
+            $atts['postId'] = $post->ID;
+        }
 
         $feed = fetch_feed($atts['feedURL']);
 
@@ -180,7 +192,10 @@ class RSS
             }
             $link = $item->get_link();
             $link = esc_url($link);
-            if ($link) {
+            $readMoreLink = '';
+            if ($link && $atts['displayReadMore']) {
+                $readMoreLink = ' ' . sprintf(__('Continue reading "%s"&hellip;', 'rrze-newsletter'), "<a href='{$link}'>{$title}</a>");
+            } elseif ($link) {
                 $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
             $title = "<h3{$headingStyle}>{$title}</h3>";
@@ -206,7 +221,7 @@ class RSS
             if ($atts['displayExcerpt'] && !empty($item->get_description())) {
                 $excerpt = html_entity_decode($item->get_description(), ENT_QUOTES, get_option('blog_charset'));
                 $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], '&hellip;'));
-                $excerpt = "<div>" . esc_html($excerpt) . '</div>';
+                $excerpt = "<div>" . esc_html($excerpt) . $readMoreLink . '</div>';
             }
 
             $listItems .= $title . $date . $excerpt;

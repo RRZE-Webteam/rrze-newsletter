@@ -25,10 +25,6 @@ export default () => {
         keywords: ["atom", "feed"],
         edit: RSSEdit,
         attributes: {
-            postId: {
-                type: "number",
-                default: 0
-            },
             feedURL: {
                 type: "string",
                 default: ""
@@ -52,6 +48,10 @@ export default () => {
             excerptLength: {
                 type: "number",
                 default: 25
+            },
+            displayReadMore: {
+                type: "boolean",
+                default: false
             },
             textFontSize: {
                 type: "number",
