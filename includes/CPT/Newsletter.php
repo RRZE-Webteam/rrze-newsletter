@@ -905,8 +905,8 @@ class Newsletter
     {
         $sendDate = date('Y-m-d H:i:s', HOUR_IN_SECONDS); // UNIX Epoch time + 1 hour
         if (in_array(get_post_status($postId), ['publish', 'future'])) {
-            $sendDateGmt = get_post_meta($postId, 'rrze_newsletter_send_date_gmt', true);
-            if (\DateTime::createFromFormat('Y-m-d H:i:s', $sendDateGmt) !== false) {
+            $sendDateGmt = (string) get_post_meta($postId, 'rrze_newsletter_send_date_gmt', true);
+            if (Utils::validateDate($sendDateGmt)) {
                 $sendDate = $sendDateGmt;
             }
         }
