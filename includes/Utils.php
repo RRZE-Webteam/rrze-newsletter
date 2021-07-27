@@ -319,4 +319,10 @@ class Utils
             ->generateOccurrences();
         return $r->occurrences;
     }
+
+    public static function validateDate($date, $format = 'Y-m-d H:i:s')
+    {
+        $dt = \DateTime::createFromFormat($format, $date);
+        return $dt && $dt->format($format) === $date;
+    }
 }
