@@ -202,13 +202,12 @@ class RestApi
             },
             $layoutsQuery->get_posts()
         );
-        $layouts = array_merge(
+        $response = array_merge(
             $userLayouts,
-            NewsletterLayout::get_default_layouts(),
+            NewsletterLayout::getDefaultLayouts(),
             apply_filters('rrze_newsletter_templates', [])
         );
-
-        return rest_ensure_response($layouts);
+        return self::restEnsureResponse($response);
     }
 
     public function apiRetrieveWeeklyRrules($request)
@@ -217,7 +216,7 @@ class RestApi
         $postDate = get_post_time('Y-m-d', false, $postId);
         $data = Utils::getWeeklyRecurrence($postDate, 1, true);
         $response = json_encode($data[$postDate]);
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function apiRetrieveMonthlyRrules($request)
@@ -232,13 +231,13 @@ class RestApi
             }
         }
         $response = json_encode($data);
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function apiRetrieve($request)
     {
         $response = json_encode($request['id']);
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function getAuthorInfo($post)
@@ -287,7 +286,7 @@ class RestApi
             $request['from_email'],
             $request['replyto']
         );
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function sender($postId, $fromName, $fromEmail, $replyTo)
@@ -305,7 +304,7 @@ class RestApi
 
         $response = is_wp_error($message) ? $message : ['message' => $message];
 
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function apiRecipient($request)
@@ -314,7 +313,7 @@ class RestApi
             $request['id'],
             $request['to_email']
         );
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function recipient($postId, $toEmail)
@@ -342,7 +341,7 @@ class RestApi
 
         $response = is_wp_error($message) ? $message : ['message' => $message];
 
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function apiTest($request)
@@ -355,7 +354,7 @@ class RestApi
             $request['id'],
             $emails
         );
-        return rest_ensure_response($response);
+        return self::restEnsureResponse($response);
     }
 
     public function test($postId, $emails)
@@ -456,6 +455,31 @@ class RestApi
     public function apiSetColorPalette($request)
     {
         update_option('rrze_newsletter_color_palette', $request->get_body());
-        return rest_ensure_response([]);
+        return self::restEnsureResponse([]);
+    }
+
+    public static function restEnsureResponse($response)
+    {
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        if ($response instanceof \WP_REST_Response) {
+            return $response;
+        }
+
+        // While \WP_HTTP_Response is the base class of \WP_REST_Response, it doesn't provide
+        // all the required methods used in \WP_REST_Server::dispatch().
+        if ($response instanceof \WP_HTTP_Response) {
+            return new \WP_REST_Response(
+                $response->get_data(),
+                $response->get_status(),
+                $response->get_headers()
+            );
+        }
+
+        $response = new \WP_REST_Response($response, 200);
+        $response->set_headers(wp_get_nocache_headers());
+        return $response;
     }
 }

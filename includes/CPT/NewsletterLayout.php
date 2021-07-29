@@ -17,24 +17,24 @@ class NewsletterLayout
     public function __construct()
     {
         add_action('init', [__CLASS__, 'registerPostType']);
-        add_action('init', [__CLASS__, 'register_meta']);
+        add_action('init', [__CLASS__, 'registerMeta']);
     }
 
     public static function registerPostType()
     {
-        $cpt_args = [
+        $args = [
             'public'       => false,
             'show_in_rest' => true,
             'supports'     => ['editor', 'title', 'custom-fields'],
             'taxonomies'   => [],
         ];
-        register_post_type(self::POST_TYPE, $cpt_args);
+        register_post_type(self::POST_TYPE, $args);
     }
 
     /**
      * Register custom fields.
      */
-    public static function register_meta()
+    public static function registerMeta()
     {
         register_meta(
             'post',
@@ -71,7 +71,7 @@ class NewsletterLayout
         );
     }
 
-    public static function layout_token_replacement($content, $extra = [])
+    public static function layoutTokenReplacement($content, $extra = [])
     {
         $sitename = get_bloginfo('name');
         $customLogoId = get_theme_mod('custom_logo');
@@ -109,7 +109,7 @@ class NewsletterLayout
         return str_replace($search, $replace, $content);
     }
 
-    public static function get_default_layouts()
+    public static function getDefaultLayouts()
     {
         $layoutsBasePath = plugin()->getPath('includes/layouts/');
         $layouts = [];
@@ -120,7 +120,7 @@ class NewsletterLayout
                 $layouts[] = [
                     'ID'           => $layout_id,
                     'post_title'   => $decoded_layout->title,
-                    'post_content' => self::layout_token_replacement($decoded_layout->content),
+                    'post_content' => self::layoutTokenReplacement($decoded_layout->content),
                 ];
                 $layout_id++;
             }
