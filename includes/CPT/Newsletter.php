@@ -28,7 +28,7 @@ class Newsletter
         // Register Post Type.
         add_action('init', [__CLASS__, 'registerPostType']);
         // Register Metadata.
-        add_action('init', [__CLASS__, 'register_meta']);
+        add_action('init', [__CLASS__, 'registerMeta']);
         // Register Taxonomies.
         add_action('init', [__CLASS__, 'registerCategory']);
         add_action('init', [__CLASS__, 'registerMailingList']);
@@ -97,7 +97,7 @@ class Newsletter
         register_post_type(self::POST_TYPE, $args);
     }
 
-    public static function register_meta()
+    public static function registerMeta()
     {
         // Used only for the block editor.
         register_meta(
