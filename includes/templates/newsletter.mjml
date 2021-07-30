@@ -5,7 +5,7 @@
             /* Paragraph */
             p {
                 margin-top: 0 !important;
-                margin-bottom: 10px !important;
+                margin-bottom: 0 !important;
             }
 
             /* Link */
@@ -34,7 +34,24 @@
             h4 { font-size: 1.25em; line-height: 1.5; }
             h5 { font-size: 1em; line-height: 1.8; }
             h6 { font-size: 0.8em; line-height: 1.8; }
-            h1, h2, h3, h4, h5, h6 { margin-top: 20px; margin-bottom: 0; }
+            h1, h2, h3, h4, h5, h6 { margin-top: 0; margin-bottom: 0; }
+
+            /* Fonts Sizes */
+            .has-small-font-size {
+                font-size: 13px;
+            }
+            .has-normal-font-size {
+                font-size: 16px;
+            }
+            .has-medium-font-size {
+                font-size: 20px;
+            }
+            .has-large-font-size {
+                font-size: 36px;
+            }
+            .has-huge-font-size {
+                font-size: 42px;
+            }
 
             /* List */
             ul, ol {
