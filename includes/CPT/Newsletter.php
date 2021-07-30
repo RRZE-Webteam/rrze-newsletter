@@ -664,9 +664,9 @@ class Newsletter
         }
         $post = get_post();
         if ($post && self::POST_TYPE === $post->post_type) {
-            $fontHeader = get_post_meta($post->ID, 'font_header', true);
-            $fontBody = get_post_meta($post->ID, 'font_body', true);
-            $backgroundColor = get_post_meta($post->ID, 'background_color', true);
+            $fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
+            $fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
+            $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
 ?>
             <style>
                 .main-content {
