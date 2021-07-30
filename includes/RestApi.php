@@ -194,9 +194,9 @@ class RestApi
         $userLayouts = array_map(
             function ($post) {
                 $post->meta = [
-                    'background_color' => get_post_meta($post->ID, 'background_color', true),
-                    'font_body'        => get_post_meta($post->ID, 'font_body', true),
-                    'font_header'      => get_post_meta($post->ID, 'font_header', true),
+                    'rrze_newsletter_background_color' => get_post_meta($post->ID, 'rrze_newsletter_background_color', true),
+                    'rrze_newsletter_font_body'        => get_post_meta($post->ID, 'rrze_newsletter_font_body', true),
+                    'rrze_newsletter_font_header'      => get_post_meta($post->ID, 'rrze_newsletter_font_header', true),
                 ];
                 return $post;
             },

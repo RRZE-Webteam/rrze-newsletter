@@ -38,10 +38,14 @@ class NewsletterLayout
     {
         register_meta(
             'post',
-            'font_header',
+            'rrze_newsletter_font_header',
             [
                 'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => true,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
                 'type'           => 'string',
                 'single'         => true,
                 'auth_callback'  => '__return_true',
@@ -49,10 +53,14 @@ class NewsletterLayout
         );
         register_meta(
             'post',
-            'font_body',
+            'rrze_newsletter_font_body',
             [
                 'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => true,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
                 'type'           => 'string',
                 'single'         => true,
                 'auth_callback'  => '__return_true',
@@ -60,10 +68,14 @@ class NewsletterLayout
         );
         register_meta(
             'post',
-            'background_color',
+            'rrze_newsletter_background_color',
             [
                 'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => true,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
                 'type'           => 'string',
                 'single'         => true,
                 'auth_callback'  => '__return_true',

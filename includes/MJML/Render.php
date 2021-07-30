@@ -108,15 +108,15 @@ final class Render
         $colors = [];
 
         // For text.
-        if (isset($blockAtts['textColor'], self::$colorPalette[$blockAtts['textColor']])) {
-            $colors['color'] = self::$colorPalette[$blockAtts['textColor']];
+        if (isset($blockAtts['textColor'])) {
+            $colors['color'] = $blockAtts['textColor'];
         }
         // customTextColor is set inline, but it's passed here for consistency.
         if (isset($blockAtts['customTextColor'])) {
             $colors['color'] = $blockAtts['customTextColor'];
         }
-        if (isset($blockAtts['backgroundColor'], self::$colorPalette[$blockAtts['backgroundColor']])) {
-            $colors['background-color'] = self::$colorPalette[$blockAtts['backgroundColor']];
+        if (isset($blockAtts['backgroundColor'])) {
+            $colors['background-color'] = $blockAtts['backgroundColor'];
         }
         // customBackgroundColor is set inline, but not on mjml wrapper element.
         if (isset($blockAtts['customBackgroundColor'])) {
@@ -124,8 +124,8 @@ final class Render
         }
 
         // For separators.
-        if (isset($blockAtts['color'], self::$colorPalette[$blockAtts['color']])) {
-            $colors['border-color'] = self::$colorPalette[$blockAtts['color']];
+        if (isset($blockAtts['color'])) {
+            $colors['border-color'] = $blockAtts['color'];
         }
         if (isset($blockAtts['customColor'])) {
             $colors['border-color'] = $blockAtts['customColor'];
@@ -276,7 +276,6 @@ final class Render
             case 'rrze-newsletter/ics':
                 $textAtts = array_merge(
                     [
-                        'padding' => '0',
                         'line-height' => '1.8',
                         'font-size' => '16px',
                         'font-family' => $fontFamily,
@@ -391,7 +390,6 @@ final class Render
                     $anchor = $xpath->query('//a')[0];
                     $atts = $buttonBlock['attrs'];
                     $text = $anchor->textContent;
-                    $width = isset($atts['width']) ? $atts['width'] : 100;
                     $borderRadius = isset($atts['borderRadius']) ? $atts['borderRadius'] : 5;
                     $isOutlined = isset($atts['className']) && 'is-style-outline' == $atts['className'];
 
@@ -403,6 +401,7 @@ final class Render
                         'border-radius' => $borderRadius . 'px',
                         'font-size' => '18px',
                         'font-family' => $fontFamily,
+                        'font-weight'   => 'bold',
                         // Default color - will be replaced by getColors if there are colors set.
                         'color' => $isOutlined ? '#32373c' : '#fff !important',
                     ];
@@ -419,8 +418,6 @@ final class Render
                     if ($isOutlined) {
                         $buttonAtts['css-class'] = $atts['className'];
                     }
-
-                    $columnAtts['width'] = $width . '%';
 
                     $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAtts) . '><mj-button ' . self::arrayToAttributes($buttonAtts) . ">$text</mj-button></mj-column>";
                 }
@@ -750,6 +747,7 @@ final class Render
                 __('MJML rendering error.', 'rrze-newsletter')
             );
         }
+
         $respond = Api::request($markup);
 
         if (intval($respond['response']['code']) != 200) {
