@@ -140,7 +140,8 @@ class Archive
         $data = [
             'FNAME' => $toFname,
             'LNAME' => $toLname,
-            'EMAIL' => $toEmail
+            'EMAIL' => $toEmail,
+            'EMAIL_ONLY' => ''
         ];
         $data = Tags::sanitizeTags($postId, $data);
         $parser = new Parser();
