@@ -328,7 +328,6 @@ final class Render
                 $figcaption = $xpath->query('//figcaption/text()')[0];
 
                 $imgAtts = [
-                    'padding' => '0',
                     'align' => isset($atts['align']) ? $atts['align'] : 'left',
                     'src' => $imgSrc,
                 ];
