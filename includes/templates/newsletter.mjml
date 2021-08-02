@@ -53,6 +53,23 @@
                 font-size: 42px;
             }
 
+            /* Padding */
+            .has-small-padding {
+                padding-bottom: 5px;
+            }
+            .has-normal-padding {
+                padding-bottom: 10px;
+            }
+            .has-medium-padding {
+                padding-bottom: 15px;
+            }
+            .has-large-padding {
+                padding-bottom: 25px;
+            }
+            .has-huge-padding {
+                padding-bottom: 35px;
+            }
+
             /* List */
             ul, ol {
                 margin-bottom: 0;
