@@ -168,7 +168,7 @@ class ICS
 
                 if (isset($feedItems['events'][$year][$month])) {
 
-                    $listItems .= $mjml ? '<div>' : '<div data-year-month="' . esc_attr($ym) . '">';
+                    $listItems .= $mjml ? '' : '<div data-year-month="' . esc_attr($ym) . '">';
 
                     foreach ((array)$feedItems['events'][$year][$month] as $day => $dayEvents) {
 
@@ -197,13 +197,13 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
+                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
 
                                 $date = $mdStart . ' &#8211; ' . $mdEnd;
 
                                 $listItems .= $mjml ?
                                     sprintf(
-                                        '<span%1$s>%2$s</span> ',
+                                        '<p class="has-small-padding"%1$s>%2$s</p> ',
                                         $textStyle,
                                         $date
                                     ) :
@@ -215,7 +215,7 @@ class ICS
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
+                                    $listItems .= sprintf('<p>%s</p>', self::recurrenceDescription($event['rrule'], $mjml));
                                 }
 
                                 // Location/Organizer/Description
@@ -258,7 +258,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= "<h3{$headingStyle}>" . $title . '</h3>';
+                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
 
                                 $date = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
 
@@ -274,7 +274,7 @@ class ICS
 
                                 $listItems .= $mjml ?
                                     sprintf(
-                                        '<p%1$s>%2$s%3$s</p> ',
+                                        '<p class="has-small-padding"%1$s>%2$s%3$s</p> ',
                                         $textStyle,
                                         $date,
                                         $time
@@ -288,7 +288,7 @@ class ICS
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    $listItems .= sprintf('<div>%s</div>', self::recurrenceDescription($event['rrule']));
+                                    $listItems .= sprintf('<p>%s</p>', self::recurrenceDescription($event['rrule'], $mjml));
                                 }
 
                                 // Location/Organizer/Description
@@ -304,13 +304,13 @@ class ICS
                         }
                     }
 
-                    $listItems .= '</div>';
+                    $listItems .= $mjml ? '' : '</div>';
                 }
             }
         }
 
-        $listItems = $listItems ?: __('There are no events available.', 'rrze-newsletter');
-        return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
+        $listItems = $listItems ?: '<p>' . __('There are no events available.', 'rrze-newsletter') . '</p>';
+        return $mjml ? $listItems : sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
     }
 
     /**
@@ -1164,10 +1164,10 @@ class ICS
      * Convert a recurrence rule into a human-readable expression.
      *
      * @param string $rrule
-     * @param boolean $html
+     * @param boolean $mjml
      * @return string
      */
-    protected static function recurrenceDescription($rrule = null, $html = true)
+    protected static function recurrenceDescription($rrule, $mjml)
     {
         $output = '';
 
@@ -1213,7 +1213,7 @@ class ICS
         }
 
         if (!empty($output) && !empty($html)) {
-            $output = '<div class="recurrence">' . $output . '</div>';
+            $output = $mjml ? '<p>' . $output . '</p>' : '<div class="recurrence">' . $output . '</div>';
         }
         return $output;
     }
@@ -1256,7 +1256,7 @@ class ICS
         } elseif (!empty($organizer)) {
             $content .= $organizer;
         }
-        return $mjml ? '<p>' . $content . '</p>' : '<div class="organizer">' . $content . '</div>';
+        return $mjml ? '<p class="has-normal-padding">' . $content . '</p>' : '<div class="organizer">' . $content . '</div>';
     }
 
     /**
@@ -1269,7 +1269,7 @@ class ICS
     protected static function eventLocationHtml($location, $mjml)
     {
         $content = self::makeClickable($location);
-        return $mjml ? '<p>' . $content . '</p>' : '<div class="location">' . $content . '</div>';
+        return $mjml ? '<p class="has-normal-padding">' . $content . '</p>' : '<div class="location">' . $content . '</div>';
     }
 
     /**
@@ -1298,7 +1298,7 @@ class ICS
                 } else {
                     $eventdesc = self::filterTheContent(self::makeClickable($event['eventdesc']));
                 }
-                $content .= $mjml ? '<p>' . $eventdesc . '</p>' : '<div>' . $eventdesc . '</div>';
+                $content .= $mjml ? '<p class="has-normal-padding">' . $eventdesc . '</p>' : '<div>' . $eventdesc . '</div>';
             }
         }
 
