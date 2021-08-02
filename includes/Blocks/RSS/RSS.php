@@ -198,14 +198,14 @@ class RSS
             } elseif ($link) {
                 $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
-            $title = "<h3{$headingStyle}>{$title}</h3>";
+            $title = '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
 
             $date = '';
             if ($atts['displayDate']) {
                 if ($timestamp) {
                     $mjml ?
                         $date = sprintf(
-                            '<p%1$s>%2$s</p> ',
+                            '<p class="has-small-padding"%1$s>%2$s</p> ',
                             $textStyle,
                             date_i18n(get_option('date_format'), $timestamp)
                         ) :
@@ -221,14 +221,17 @@ class RSS
             if ($atts['displayExcerpt'] && !empty($item->get_description())) {
                 $excerpt = html_entity_decode($item->get_description(), ENT_QUOTES, get_option('blog_charset'));
                 $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], '&hellip;'));
-                $excerpt = "<div>" . esc_html($excerpt) . $readMoreLink . '</div>';
+                $excerpt = $mjml ?
+                    '<p class="has-normal-padding">' . esc_html($excerpt) . $readMoreLink . '</p>'
+                    :
+                    '<div>' . esc_html($excerpt) . $readMoreLink . '</div>';
             }
 
             $listItems .= $title . $date . $excerpt;
         }
 
         if ($listItems) {
-            return sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
+            return $mjml ? $listItems : sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
         }
         return '';
     }
