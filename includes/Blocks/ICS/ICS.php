@@ -119,7 +119,7 @@ class ICS
 
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
-        if (!is_wp_error($feedItems)) {
+        if (!is_wp_error($feedItems) && $feedItems) {
             $feedItems = self::render($atts, $feedItems, true);
         } else {
             $feedItems = '';
