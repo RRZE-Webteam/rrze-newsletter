@@ -246,6 +246,8 @@ final class Render
             return '';
         }
 
+        $defaultAtts['postId'] = $postId;
+
         $blockMjmlMarkup = '';
         $atts = self::processAttributes(array_merge($defaultAtts, $atts));
 
@@ -297,20 +299,10 @@ final class Render
 
                 if ($blockName == 'rrze-newsletter/rss') {
                     $innerHtml = RSS::renderMJML($atts);
-                    if (!$innerHtml) {
-                        update_post_meta($postId, 'rrze_newsletter_rss_block_empty', 1);
-                    } else {
-                        delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
-                    }
                 }
 
                 if ($blockName == 'rrze-newsletter/ics') {
                     $innerHtml = ICS::renderMJML($atts);
-                    if (!$innerHtml) {
-                        update_post_meta($postId, 'rrze_newsletter_ics_block_empty', 1);
-                    } else {
-                        delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
-                    }
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAtts) . '>' . $innerHtml . '</mj-text>';
