@@ -119,15 +119,18 @@ class ICS
 
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
-        if (is_wp_error($feedItems)) {
-            return '';
+        if (!is_wp_error($feedItems)) {
+            $feedItems = self::render($atts, $feedItems, true);
+        } else {
+            $feedItems = '';
         }
 
         if (!$feedItems) {
-            return '';
+            $feedItems = sprintf('<p>%s</p>', __('There are no events available.', 'rrze-newsletter'));
+            update_post_meta($atts['postId'], 'rrze_newsletter_ics_block_empty', 1);
         }
 
-        return self::render($atts, $feedItems, true);
+        return $feedItems;
     }
 
     /**
@@ -197,7 +200,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
+                                $listItems .= '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
 
                                 $date = $mdStart . ' &#8211; ' . $mdEnd;
 
@@ -258,7 +261,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
+                                $listItems .= '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
 
                                 $date = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
 
