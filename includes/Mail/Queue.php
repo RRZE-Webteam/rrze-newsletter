@@ -72,8 +72,14 @@ class Queue
 
         if (
             $post->post_status !== 'publish'
-            || Newsletter::getStatus($postId) !== 'send'
+            || !in_array(Newsletter::getStatus($postId), ['send', 'skipped'])
         ) {
+            return;
+        }
+
+        $data = Newsletter::getData($postId);
+        if (empty($data) || is_wp_error($data)) {
+            Newsletter::setStatus($postId, 'error');
             return;
         }
 
@@ -99,9 +105,6 @@ class Queue
                 $condition = $rssCondition && $icsCondition;
             }
         }
-        // Reset rrze-newsletter/rss and rrze-newsletter/ics empty blocks.
-        delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
-        delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
         if ($condition) {
             // Maybe the newsletter is recurring.
             Newsletter::maybeSetRecurrence($postId);
@@ -111,12 +114,6 @@ class Queue
         }
 
         Newsletter::setStatus($postId, 'queued');
-
-        $data = Newsletter::getData($postId);
-        if (empty($data) || is_wp_error($data)) {
-            Newsletter::setStatus($postId, 'error');
-            return;
-        }
 
         // Set recipient.
         $recipient = [];
