@@ -578,6 +578,10 @@ class Newsletter
             return $data;
         }
 
+        // Reset rrze-newsletter/rss and rrze-newsletter/ics empty blocks.
+        delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
+        delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
+
         $body = Render::toHtml($post);
         if (is_wp_error($body)) {
             return $body;
