@@ -326,6 +326,37 @@ class Utils
         return $dt && $dt->format($format) === $date;
     }
 
+    public static function fetchFeed($url)
+    {
+        if (!class_exists('\SimplePie', false)) {
+            require_once ABSPATH . WPINC . '/class-simplepie.php';
+        }
+
+        require_once ABSPATH . WPINC . '/class-wp-simplepie-file.php';
+        require_once ABSPATH . WPINC . '/class-wp-simplepie-sanitize-kses.php';
+
+        $feed = new \SimplePie();
+
+        $feed->set_sanitize_class('WP_SimplePie_Sanitize_KSES');
+
+        $feed->sanitize = new \WP_SimplePie_Sanitize_KSES();
+
+        $feed->set_file_class('WP_SimplePie_File');
+
+        $feed->set_feed_url($url);
+
+        $feed->enable_cache(false);
+
+        $feed->init();
+        $feed->set_output_encoding(get_option('blog_charset'));
+
+        if ($feed->error()) {
+            return new \WP_Error('simplepie-error', $feed->error());
+        }
+
+        return $feed;
+    }
+
     public static function log($input, string $level = 'i')
     {
         if (

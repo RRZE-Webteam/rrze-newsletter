@@ -72,23 +72,27 @@ class Queue
 
         if (
             $post->post_status !== 'publish'
-            || Newsletter::getStatus($postId) !== 'send'
+            || !in_array(Newsletter::getStatus($postId), ['send', 'skipped'])
         ) {
             return;
         }
 
+        $data = Newsletter::getData($postId);
+        if (empty($data) || is_wp_error($data)) {
+            Newsletter::setStatus($postId, 'error');
+            return;
+        }
+
+        $condition = false;
         $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
         if ($hasConditionals) {
-            $condition = false;
             $rssCondition = false;
             $icsCondition = false;
             $operator = get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
             $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
             $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
             $isRssBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_rss_block_empty', true);
-            delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
             $isIcsBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_ics_block_empty', true);
-            delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
             if ($rssBlock && $isRssBlockEmpty) {
                 $rssCondition = true;
             }
@@ -100,22 +104,16 @@ class Queue
             } else {
                 $condition = $rssCondition && $icsCondition;
             }
-            if ($condition) {
-                // Maybe the newsletter is recurring.
-                Newsletter::maybeSetRecurrence($postId);
-                // Set the newsletter status to 'skipped'.
-                Newsletter::setStatus($postId, 'skipped');
-                return;
-            }
+        }
+        if ($condition) {
+            // Maybe the newsletter is recurring.
+            Newsletter::maybeSetRecurrence($postId);
+            // Set the newsletter status to 'skipped'.
+            Newsletter::setStatus($postId, 'skipped');
+            return;
         }
 
         Newsletter::setStatus($postId, 'queued');
-
-        $data = Newsletter::getData($postId);
-        if (empty($data) || is_wp_error($data)) {
-            Newsletter::setStatus($postId, 'error');
-            return;
-        }
 
         // Set recipient.
         $recipient = [];
@@ -229,7 +227,7 @@ class Queue
             }
         }
 
-        update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $post->post_date_gmt);
+        update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $data['send_date_gmt']);
 
         // Maybe the newsletter is recurring.
         Newsletter::maybeSetRecurrence($postId);

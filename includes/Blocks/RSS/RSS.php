@@ -4,6 +4,7 @@ namespace RRZE\Newsletter\Blocks\RSS;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 
 class RSS
@@ -107,7 +108,7 @@ class RSS
             $atts['postId'] = $post->ID;
         }
 
-        $feed = fetch_feed($atts['feedURL']);
+        $feed = Utils::fetchFeed($atts['feedURL']);
 
         if (is_wp_error($feed)) {
             return '<div class="components-placeholder"><div class="notice notice-error"><strong>' . __('RSS Error:', 'rrze-newsletter') . '</strong> ' . $feed->get_error_message() . '</div></div>';
@@ -137,23 +138,22 @@ class RSS
      */
     public static function renderMJML(array $atts): string
     {
-        add_filter('wp_feed_cache_transient_lifetime', function ($lifetime) {
-            return 0;
-        });
+        $feedItems = '';
 
         $atts = self::parseAtts($atts);
 
-        $feed = fetch_feed($atts['feedURL']);
+        $feed = Utils::fetchFeed($atts['feedURL']);
 
-        if (is_wp_error($feed)) {
-            return '';
+        if (!is_wp_error($feed) && $feed->get_item_quantity()) {
+            $feedItems = self::render($atts, $feed, true);
         }
 
-        if (!$feed->get_item_quantity()) {
-            return '';
+        if (!$feedItems) {
+            $feedItems = sprintf('<p>%s</p>', __('There are no items available.', 'rrze-newsletter'));
+            update_post_meta($atts['postId'], 'rrze_newsletter_rss_block_empty', 1);
         }
 
-        return self::render($atts, $feed, true);
+        return $feedItems;
     }
 
     /**
@@ -198,7 +198,7 @@ class RSS
             } elseif ($link) {
                 $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
-            $title = '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
+            $title = '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
 
             $date = '';
             if ($atts['displayDate']) {
