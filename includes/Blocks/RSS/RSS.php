@@ -151,8 +151,6 @@ class RSS
         if (!$feedItems) {
             $feedItems = sprintf('<p>%s</p>', __('There are no items available.', 'rrze-newsletter'));
             update_post_meta($atts['postId'], 'rrze_newsletter_rss_block_empty', 1);
-        } else {
-            delete_post_meta($atts['postId'], 'rrze_newsletter_rss_block_empty');
         }
 
         return $feedItems;
