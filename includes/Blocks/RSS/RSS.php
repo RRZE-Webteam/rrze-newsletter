@@ -94,9 +94,7 @@ class RSS
      */
     public static function renderHTML(array $atts): string
     {
-        add_filter('wp_feed_cache_transient_lifetime', function ($lifetime) {
-            return 0;
-        });
+        $feedItems = '';
 
         $atts = self::parseAtts($atts);
 
@@ -106,6 +104,8 @@ class RSS
             && Newsletter::POST_TYPE == get_post_type($post->ID)
         ) {
             $atts['postId'] = $post->ID;
+        } else {
+            return '';
         }
 
         $feed = Utils::fetchFeed($atts['feedURL']);
@@ -114,18 +114,17 @@ class RSS
             return '<div class="components-placeholder"><div class="notice notice-error"><strong>' . __('RSS Error:', 'rrze-newsletter') . '</strong> ' . $feed->get_error_message() . '</div></div>';
         }
 
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-
-        if (!$feed->get_item_quantity()) {
-            return sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
+        if ($feed->get_item_quantity()) {
+            $feedItems = self::render($atts, $feed, true);
         }
 
-        $feedItems = self::render($atts, $feed);
         if (!$feedItems) {
-            return sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
+            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+            $feedItems = sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
         }
+
         return $feedItems;
     }
 
@@ -149,7 +148,10 @@ class RSS
         }
 
         if (!$feedItems) {
-            $feedItems = sprintf('<p>%s</p>', __('There are no items available.', 'rrze-newsletter'));
+            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+            $feedItems = sprintf('<p%1$s>%2$s</p>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
             update_post_meta($atts['postId'], 'rrze_newsletter_rss_block_empty', 1);
         }
 
