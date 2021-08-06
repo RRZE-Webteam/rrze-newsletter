@@ -95,15 +95,16 @@ class ICS
             return '<div class="components-placeholder"><div class="notice notice-error"><strong>' . __('ICS Error:', 'rrze-newsletter') . '</strong> ' . $feedItems->get_error_message() . '</div></div>';
         }
 
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-
         if (!$feedItems) {
-            return sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
+            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+            $feedItems = sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
+        } else {
+            $feedItems = self::render($atts, $feedItems, true);
         }
 
-        return self::render($atts, $feedItems, true);
+        return $feedItems;
     }
 
     /**
@@ -126,7 +127,10 @@ class ICS
         }
 
         if (!$feedItems) {
-            $feedItems = sprintf('<p>%s</p>', __('There are no events available.', 'rrze-newsletter'));
+            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
+            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
+            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+            $feedItems = sprintf('<p%1$s>%2$s</p>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
             update_post_meta($atts['postId'], 'rrze_newsletter_ics_block_empty', 1);
         }
 
