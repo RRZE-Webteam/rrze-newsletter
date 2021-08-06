@@ -209,6 +209,9 @@ final class Render
             } elseif (strpos($url, '{{=PERMALINK}}') !== false) {
                 $url = '{{=PERMALINK}}';
                 $skipUrlWithParams = true;
+            } elseif (strpos($url, '{{=ARCHIVE}}') !== false) {
+                $url = '{{=ARCHIVE}}';
+                $skipUrlWithParams = true;
             }
             if (!$skipUrlWithParams) {
                 $url = add_query_arg(
@@ -313,59 +316,61 @@ final class Render
             case 'core/image':
                 // Parse block content.
                 $dom = new \DomDocument();
-                @$dom->loadHtml(mb_convert_encoding($innerHtml, 'HTML-ENTITIES', "UTF-8"));
-                $xpath = new \DOMXpath($dom);
-                $img = $xpath->query('//img')[0];
-                $imgSrc = $img->getAttribute('src');
+                @$dom->loadHTML($innerHtml); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+                $xpath      = new \DOMXpath($dom);
+                $img        = $xpath->query('//img')[0];
+                $imgSrc    = $img->getAttribute('src');
                 $figcaption = $xpath->query('//figcaption/text()')[0];
 
-                $imgAtts = [
-                    'align' => isset($atts['align']) ? $atts['align'] : 'left',
-                    'src' => $imgSrc,
-                ];
+                $imgAttrs = array(
+                    'padding' => '0',
+                    'align'   => isset($attrs['align']) ? $attrs['align'] : 'left',
+                    'src'     => $imgSrc,
+                );
 
-                if (isset($atts['sizeSlug'])) {
-                    if ('medium' == $atts['sizeSlug']) {
-                        $imgAtts['width'] = '300px';
+                if (isset($attrs['sizeSlug'])) {
+                    if ('medium' == $attrs['sizeSlug']) {
+                        $imgAttrs['width'] = '300px';
                     }
-                    if ('thumbnail' == $atts['sizeSlug']) {
-                        $imgAtts['width'] = '150px';
+                    if ('thumbnail' == $attrs['sizeSlug']) {
+                        $imgAttrs['width'] = '150px';
                     }
-                } elseif (isset($atts['className'])) {
-                    if ('size-medium' == $atts['className']) {
-                        $imgAtts['width'] = '300px';
+                } elseif (isset($attrs['className'])) {
+                    if ('size-medium' == $attrs['className']) {
+                        $imgAttrs['width'] = '300px';
                     }
-                    if ('size-thumbnail' == $atts['className']) {
-                        $imgAtts['width'] = '150px';
+                    if ('size-thumbnail' == $attrs['className']) {
+                        $imgAttrs['width'] = '150px';
                     }
                 }
-                if (isset($atts['width'])) {
-                    $imgAtts['width'] = $atts['width'] . 'px';
+                if (isset($attrs['width'])) {
+                    $imgAttrs['width'] = $attrs['width'] . 'px';
                 }
-                if (isset($atts['height'])) {
-                    $imgAtts['height'] = $atts['height'] . 'px';
+                if (isset($attrs['height'])) {
+                    $imgAttrs['height'] = $attrs['height'] . 'px';
                 }
-                if (isset($atts['linkDestination'])) {
-                    $imgAtts['href'] = $atts['linkDestination'];
+                if (isset($attrs['href'])) {
+                    $imgAttrs['href'] = $attrs['href'];
                 } else {
-                    $maybeLink = $img->parentNode;
-                    if ($maybeLink && 'a' === $maybeLink->nodeName && $maybeLink->getAttribute('href')) {
-                        $imgAtts['href'] = trim($maybeLink->getAttribute('href'));
+                    $maybeLink = $img->parentNode; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+                    if ($maybeLink && 'a' === $maybeLink->nodeName && $maybeLink->getAttribute('href')) { // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+                        $imgAttrs['href'] = trim($maybeLink->getAttribute('href'));
                     }
                 }
-                if (isset($atts['className']) && strpos($atts['className'], 'is-style-rounded') !== false) {
-                    $imgAtts['border-radius'] = '999px';
+                if (isset($attrs['className']) && strpos($attrs['className'], 'is-style-rounded') !== false) {
+                    $imgAttrs['border-radius'] = '999px';
                 }
-                $markup = '<mj-image ' . self::arrayToAttributes($imgAtts) . ' />';
+                $markup = '<mj-image ' . self::arrayToAttributes($imgAttrs) . ' />';
 
                 if ($figcaption) {
-                    $captionAtts = [
-                        'align' => 'center',
-                        'color' => '#555d66',
-                        'font-size' => '13px',
+                    $caption_attrs = array(
+                        'align'       => 'center',
+                        'color'       => '#555d66',
+                        'font-size'   => '13px',
                         'font-family' => $fontFamily,
-                    ];
-                    $markup .= '<mj-text ' . self::arrayToAttributes($captionAtts) . '>' . $figcaption->wholeText . '</mj-text>';
+                    );
+                    // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+                    $markup .= '<mj-text ' . self::arrayToAttributes($caption_attrs) . '>' . $figcaption->wholeText . '</mj-text>';
                 }
 
                 $blockMjmlMarkup = $markup;
