@@ -50,7 +50,8 @@ class Tags
 
         $unsubUrl = '';
         $updateUrl = '';
-        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', false);
+        $subscriptionDisabled = $options->subscription_disabled == 'on' ? true : false;
+        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', $subscriptionDisabled);
         if (!$isSubscriptionDisabled) {
             $subscriptionPageSlug = get_post_field('post_name', absint($options->subscription_page_id));
             $subscriptionPage = get_page_by_path($subscriptionPageSlug);
