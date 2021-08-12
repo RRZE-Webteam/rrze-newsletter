@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
 "POT-Creation-Date: 2021-07-27T07:53:30+00:00\n"
-"PO-Revision-Date: 2021-07-27 09:55+0200\n"
+"PO-Revision-Date: 2021-08-12 17:05+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -38,7 +38,7 @@ msgid "Newsletters"
 msgstr "Newsletters"
 
 #. translators: Notify users to set up the newsletter settings.
-#: config/settings.php:27 includes/Notices.php:31 includes/Notices.php:47
+#: config/settings.php:27 includes/Notices.php:31 includes/Notices.php:48
 msgid "Newsletter Settings"
 msgstr "Newsletter Einstellungen"
 
@@ -94,104 +94,112 @@ msgstr "Servername"
 msgid "Host ip address."
 msgstr "Server IP Adresse."
 
-#: config/settings.php:96
+#: config/settings.php:97
 msgid "Port"
 msgstr "Port"
 
-#: config/settings.php:97
+#: config/settings.php:98
 msgid "Host port."
 msgstr "Server Port."
 
-#: config/settings.php:105
+#: config/settings.php:107
 msgid "Sender Addresse"
 msgstr "Sender-Adresse"
 
-#: config/settings.php:114
+#: config/settings.php:117
 msgid "Authentication"
 msgstr "Authentifizierung"
 
-#: config/settings.php:115
+#: config/settings.php:118
 msgid "Authentication is required to access the SMTP server"
 msgstr ""
 "Für den Zugriff auf den SMTP-Server ist eine Authentifizierung erforderlich"
 
-#: config/settings.php:120
+#: config/settings.php:123
 msgid "Username"
 msgstr "Benutzername"
 
-#: config/settings.php:129
+#: config/settings.php:132
 msgid "Password"
 msgstr "Passwort"
 
-#: config/settings.php:139
+#: config/settings.php:142
 msgid "Send Limit"
 msgstr "Sende-Limit"
 
-#: config/settings.php:140
+#: config/settings.php:143
 msgid "Maximum number of emails that can be sent per minute."
 msgstr "Maximale Anzahl von E-Mails, die pro Minute gesendet werden können."
 
-#: config/settings.php:153
+#: config/settings.php:156
 msgid "Max. Retries"
 msgstr "Max. Wiederholungen"
 
-#: config/settings.php:154
+#: config/settings.php:157
 msgid "Maximum number of retries until an email is sent successfully."
 msgstr ""
 "Maximale Anzahl von Wiederholungsversuchen, bis eine E-Mail erfolgreich "
 "gesendet wurde."
 
-#: config/settings.php:169
+#: config/settings.php:172
+msgid "Disable subscription"
+msgstr "Abonnement deaktivieren"
+
+#: config/settings.php:173
+msgid "Disables the subscription"
+msgstr "Deaktiviert das Abonnement"
+
+#: config/settings.php:178
 msgid "Subscription Page"
 msgstr "Abonnementseite"
 
-#: config/settings.php:170
+#: config/settings.php:179
 msgid "Select a current page for the newsletter subscription page."
 msgstr "Wählen Sie eine aktuelle Seite für die Newsletter-Abonnementseite ab."
 
-#: config/settings.php:178
+#: config/settings.php:187
 msgid "Subject of the email confirmation"
 msgstr "Betreff der E-Mail-Bestätigung"
 
-#: config/settings.php:179
+#: config/settings.php:188
 msgid "The subject of the email to confirm the newsletter subscription."
 msgstr "Der Betreff der E-Mail zur Bestätigung des Newsletter-Abonnements."
 
-#: config/settings.php:190
+#: config/settings.php:200
 msgid "Message of the email confirmation"
 msgstr "Nachricht der E-Mail-Bestätigung"
 
-#: config/settings.php:191
+#: config/settings.php:201
 msgid "The message of the email to confirm the newsletter subscription."
 msgstr "Die Nachricht der E-Mail zur Bestätigung des Newsletter-Abonnements."
 
-#: config/settings.php:202
+#: config/settings.php:213
 msgid "Subject of the email to change or cancel"
 msgstr "E-Mail-Betreff zum Abbestellen oder Ändern"
 
-#: config/settings.php:203
+#: config/settings.php:214
 msgid ""
 "The subject of the email to change or cancel the newsletter subscription."
 msgstr ""
 "Der Betreff der E-Mail zum zum Abbestellen oder Ändern des Newsletter-"
 "Abonnements."
 
-#: config/settings.php:214
+#: config/settings.php:226
 msgid "Message of the email to change or cancel"
 msgstr "E-Mail-Nachricht zum Abbestellen oder Ändern"
 
-#: config/settings.php:215
+#: config/settings.php:227
 msgid ""
 "The message of the email to change or cancel the newsletter subscription."
 msgstr ""
 "Die Nachricht der E-Mail zum Abbestellen oder Ändern des Newsletter-"
 "Abonnements."
 
-#: config/settings.php:228 includes/CPT/Newsletter.php:503
+#: config/settings.php:241 includes/CPT/Newsletter.php:503
 msgid "Unsubscribed E-mail Addresses"
 msgstr "Abgemeldete E-Mail-Adressen"
 
-#: config/settings.php:229
+#: config/settings.php:242
 msgid ""
 "List of email addresses that do not subscribe to any mailing list. Enter one "
 "email address per line."
@@ -199,27 +207,27 @@ msgstr ""
 "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine "
 "E-Mail-Adresse pro Zeile ein."
 
-#: config/settings.php:239
+#: config/settings.php:252
 msgid "API Endpoint"
 msgstr "API-Endpoint"
 
-#: config/settings.php:240
+#: config/settings.php:253
 msgid "URL of the MJML API Service."
 msgstr "URL des MJML-API-Dienstes."
 
-#: config/settings.php:248
+#: config/settings.php:262
 msgid "Application ID"
 msgstr "Anwendungs-ID"
 
-#: config/settings.php:249
+#: config/settings.php:263
 msgid "The Application ID acts as a username."
 msgstr "Die Anwendungs-ID fungiert als Benutzername."
 
-#: config/settings.php:257
+#: config/settings.php:271
 msgid "Secret Key"
 msgstr "Secret-Key"
 
-#: config/settings.php:258
+#: config/settings.php:272
 msgid "The API Key act as a password."
 msgstr "Der API-Key fungiert als Kennwort."
 
@@ -227,63 +235,64 @@ msgstr "Der API-Key fungiert als Kennwort."
 msgid "ICS Error:"
 msgstr "ICS-Fehler:"
 
-#: includes/Blocks/ICS/ICS.php:103 includes/Blocks/ICS/ICS.php:312
+#: includes/Blocks/ICS/ICS.php:102 includes/Blocks/ICS/ICS.php:133
+#: includes/Blocks/ICS/ICS.php:319
 msgid "There are no events available."
 msgstr "Es sind keine Termine verfügbar."
 
-#: includes/Blocks/ICS/ICS.php:511
+#: includes/Blocks/ICS/ICS.php:518
 msgid "Ends"
 msgstr "Endet"
 
-#: includes/Blocks/ICS/ICS.php:1179
+#: includes/Blocks/ICS/ICS.php:1186
 msgid "Recurring event"
 msgstr "Wiederkehrender Termin"
 
 #. translators: %s: recurring event.
-#: includes/Blocks/ICS/ICS.php:1188
+#: includes/Blocks/ICS/ICS.php:1195
 msgid "Recurs every %s years"
 msgstr "Wiederholt sich alle %s Jahre"
 
-#: includes/Blocks/ICS/ICS.php:1189
+#: includes/Blocks/ICS/ICS.php:1196
 msgid "Recurs yearly"
 msgstr "Wiederholt sich jährlich"
 
 #. translators: %s: recurring event.
-#: includes/Blocks/ICS/ICS.php:1194
+#: includes/Blocks/ICS/ICS.php:1201
 msgid "Recurs every %s months"
 msgstr "Wiederholt sich alle %s Monate"
 
-#: includes/Blocks/ICS/ICS.php:1195
+#: includes/Blocks/ICS/ICS.php:1202
 msgid "Recurs monthly"
 msgstr "Wiederholt sich monatlich"
 
 #. translators: %s: recurring event.
-#: includes/Blocks/ICS/ICS.php:1200
+#: includes/Blocks/ICS/ICS.php:1207
 msgid "Recurs every %s weeks"
 msgstr "Wiederholt sich alle %s Wochen"
 
-#: includes/Blocks/ICS/ICS.php:1201
+#: includes/Blocks/ICS/ICS.php:1208
 msgid "Recurs weekly"
 msgstr "Wiederholt sich wöchentlich"
 
 #. translators: %s: recurring event.
-#: includes/Blocks/ICS/ICS.php:1206
+#: includes/Blocks/ICS/ICS.php:1213
 msgid "Recurs every %s days"
 msgstr "Wiederholt sich alle %s Tage"
 
-#: includes/Blocks/ICS/ICS.php:1207
+#: includes/Blocks/ICS/ICS.php:1214
 msgid "Recurs daily"
 msgstr "Wiederholt sich täglich"
 
-#: includes/Blocks/RSS/RSS.php:113
+#: includes/Blocks/RSS/RSS.php:114
 msgid "RSS Error:"
 msgstr "RSS-Fehler:"
 
-#: includes/Blocks/RSS/RSS.php:121 includes/Blocks/RSS/RSS.php:126
+#: includes/Blocks/RSS/RSS.php:125 includes/Blocks/RSS/RSS.php:154
 msgid "There are no items available."
 msgstr "Es sind keine Artikel verfügbar."
 
-#: includes/Blocks/RSS/RSS.php:191
+#: includes/Blocks/RSS/RSS.php:193
 #: src/editor/blocks/post-inserter/query-controls.js:41
 #: src/editor/blocks/post-inserter/query-controls.js:156
 #: src/editor/blocks/post-inserter/query-controls.js:173
@@ -292,7 +301,8 @@ msgstr "Es sind keine Artikel verfügbar."
 msgid "(no title)"
 msgstr "(kein Titel)"
 
-#: includes/Blocks/RSS/RSS.php:197
+#. translators: %s: article title.
+#: includes/Blocks/RSS/RSS.php:204
 msgid "Continue reading \"%s\"&hellip;"
 msgstr "Artikel „%s“ weiterlesen&hellip;"
 
@@ -535,25 +545,25 @@ msgid "Out"
 msgstr "Out"
 
 #. translators: Default title of the newsletter including the date.
-#: includes/CPT/Newsletter.php:637
+#: includes/CPT/Newsletter.php:641
 msgid "Newsletter of %s"
 msgstr "Newsletter vom %s"
 
 #. translators: Relative time stamp of sent/published date
-#: includes/CPT/Newsletter.php:714
+#: includes/CPT/Newsletter.php:718
 msgid "Sent %1$s ago"
 msgstr "Vor %1$s gesendet"
 
 #. translators:  Absolute time stamp of sent/published date
-#: includes/CPT/Newsletter.php:720
+#: includes/CPT/Newsletter.php:724
 msgid "Sent %1$s"
 msgstr "%1$s gesendet"
 
-#: includes/CPT/Newsletter.php:793
+#: includes/CPT/Newsletter.php:797
 msgid "Page not found"
 msgstr "Seite nicht gefunden"
 
-#: includes/CPT/Newsletter.php:817
+#: includes/CPT/Newsletter.php:821
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -709,7 +719,7 @@ msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
 #. translators: Message after the email was sent successfully.
-#: includes/Mail/Send.php:79 includes/RestApi.php:418
+#: includes/Mail/Send.php:79 includes/RestApi.php:411
 msgid "Email sent successfully to %s."
 msgstr "E-Mail erfolgreich an %s gesendet."
 
@@ -726,7 +736,7 @@ msgstr "Einstellungen"
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:750 includes/MJML/Render.php:758
+#: includes/MJML/Render.php:749 includes/MJML/Render.php:758
 #: includes/MJML/Render.php:770
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
@@ -737,30 +747,30 @@ msgid "Please set up the MJML API Endpoint."
 msgstr "Bitte richten Sie den MJML-API-Endpunkt ein."
 
 #. translators: Notify users to set up the subscription page on the settings page.
-#: includes/Notices.php:49
+#: includes/Notices.php:50
 msgid "Please set up the subscripction page."
 msgstr "Bitte richten Sie die Abonnementseite ein."
 
-#: includes/RestApi.php:259 includes/RestApi.php:273
+#: includes/RestApi.php:258 includes/RestApi.php:272
 msgid "You cannot use this resource."
 msgstr "Sie können diese Ressource nicht verwenden."
 
 #. translators: Message if the email address is not valid.
-#: includes/RestApi.php:301
+#: includes/RestApi.php:300
 msgid "The sender email address is not valid."
 msgstr "Die E-Mail-Adresse des Absenders ist ungültig."
 
 #. translators: Message if the email address is not valid.
-#: includes/RestApi.php:332
+#: includes/RestApi.php:325
 msgid "The recipient email address is not valid."
 msgstr "Die E-Mail-Adresse des Empfängers ist ungültig."
 
 #. translators: Message if the email domain is not allowed.
-#: includes/RestApi.php:338
+#: includes/RestApi.php:331
 msgid "The recipient email domain is not allowed."
 msgstr "Die E-Mail-Domäne des Empfängers ist nicht zulässig."
 
-#: includes/RestApi.php:424
+#: includes/RestApi.php:417
 msgid "There was an error sending the email."
 msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 
@@ -768,31 +778,41 @@ msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 msgid "Newsletter Agent"
 msgstr "Newsletter-Agent"
 
-#: includes/Settings.php:651
+#. translators: %s: label of the field.
+#: includes/Settings.php:216
+msgid "The field %s is required."
+msgstr "Das Feld %s ist erforderlich."
+
+#. translators: %s: label of the field.
+#: includes/Settings.php:226
+msgid "The value of the field %s is not valid."
+msgstr "Der Wert des Felds %s ist ungültig."
+
+#: includes/Settings.php:679
 msgid "&mdash; Select &mdash;"
 msgstr "&mdash; Seite auswählen &mdash;"
 
-#: includes/Subscription.php:104
+#: includes/Subscription.php:105
 msgid "Please select at least one subscription."
 msgstr "Bitte wählen Sie mindestens ein Abonnement aus."
 
-#: includes/Subscription.php:107 includes/Subscription.php:201
+#: includes/Subscription.php:108 includes/Subscription.php:202
 msgid "Please fill in this field."
 msgstr "Bitte füllen Sie dieses Feld aus."
 
-#: includes/Subscription.php:109 includes/Subscription.php:203
+#: includes/Subscription.php:110 includes/Subscription.php:204
 msgid "The email address does not meet the requirements."
 msgstr "Die E-Mail-Adresse entspricht nicht den Anforderungen."
 
-#: includes/Subscription.php:111
+#: includes/Subscription.php:112
 msgid "The email address for the subscription is already registered."
 msgstr "Die Emailadresse für das Abonnement ist bereits registriert."
 
-#: includes/Subscription.php:320 includes/Subscription.php:323
+#: includes/Subscription.php:321 includes/Subscription.php:324
 msgid "Subscribe to Newsletter"
 msgstr "Newsletter abonnieren"
 
-#: includes/Subscription.php:321
+#: includes/Subscription.php:322
 msgid ""
 "To register for the newsletter subscription, please fill out the following "
 "form and click on \"SUBSCRIBE TO NEWSLETTER\". You will then receive an "
@@ -805,25 +825,25 @@ msgstr ""
 "Nachrichten werden Ihnen automatisch per E-Mail im Text- oder HTML-Format "
 "zugesandt."
 
-#: includes/Subscription.php:322 includes/Subscription.php:376
-#: includes/Subscription.php:482
+#: includes/Subscription.php:323 includes/Subscription.php:377
+#: includes/Subscription.php:483
 msgid "At the moment there are no newsletters available to subscribe."
 msgstr ""
 "Im Moment stehen keine Newsletter zur Verfügung, um abonnieren zu können."
 
-#: includes/Subscription.php:325
+#: includes/Subscription.php:326
 msgid "Cancel or change your subscription"
 msgstr "Abonnement abbestellen oder ändern"
 
-#: includes/Subscription.php:327 includes/Subscription.php:349
+#: includes/Subscription.php:328 includes/Subscription.php:350
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: includes/Subscription.php:345 includes/Subscription.php:437
+#: includes/Subscription.php:346 includes/Subscription.php:438
 msgid "Cancel or change your newsletter subscription"
 msgstr "Abonnement abbestellen oder ändern"
 
-#: includes/Subscription.php:346
+#: includes/Subscription.php:347
 msgid ""
 "To unsubscribe from all newsletters or to change your current newsletter "
 "subscription, please complete the form below. You will then receive an email "
@@ -833,28 +853,28 @@ msgstr ""
 "Abonnements füllen Sie bitte das nachfolgende Formular aus. Sie erhalten "
 "daraufhin eine E-Mail zur Bestätigung Ihres Abonnements."
 
-#: includes/Subscription.php:347
+#: includes/Subscription.php:348
 msgid "Change subscription"
 msgstr "Abonnement ändern"
 
-#: includes/Subscription.php:348
+#: includes/Subscription.php:349
 msgid "Unsubscribe from all"
 msgstr "Alle abbestellen"
 
-#: includes/Subscription.php:369 includes/Subscription.php:393
-#: includes/Subscription.php:406 includes/Subscription.php:436
-#: includes/Subscription.php:449 includes/Subscription.php:467
-#: includes/Subscription.php:470 includes/Subscription.php:480
-#: includes/Subscription.php:508
+#: includes/Subscription.php:370 includes/Subscription.php:394
+#: includes/Subscription.php:407 includes/Subscription.php:437
+#: includes/Subscription.php:450 includes/Subscription.php:468
+#: includes/Subscription.php:471 includes/Subscription.php:481
+#: includes/Subscription.php:509
 msgid "Newsletter subscription"
 msgstr "Newsletter-Abonnement"
 
 #. translators: Email address to subscribe to the newsletter
-#: includes/Subscription.php:372
+#: includes/Subscription.php:373
 msgid "Manage newsletter subscription for %s"
 msgstr "Verwalten Sie das Newsletter-Abonnement für %s"
 
-#: includes/Subscription.php:375
+#: includes/Subscription.php:376
 msgid ""
 "Please check the newsletters below that you would like to receive from us to "
 "update your subscription."
@@ -862,20 +882,20 @@ msgstr ""
 "Bitte überprüfen Sie die unten stehenden Newsletter, die Sie von uns "
 "erhalten möchten, um Ihr Abonnement zu aktualisieren."
 
-#: includes/Subscription.php:377
+#: includes/Subscription.php:378
 msgid "Unsubscribe me from all future newsletters"
 msgstr "Kündigen Sie mein Abonnement für alle zukünftigen Newsletter"
 
-#: includes/Subscription.php:378
+#: includes/Subscription.php:379
 msgid "Update subscription"
 msgstr "Abonnement aktualisieren"
 
-#: includes/Subscription.php:394 includes/Subscription.php:407
-#: includes/Subscription.php:424
+#: includes/Subscription.php:395 includes/Subscription.php:408
+#: includes/Subscription.php:425
 msgid "Thank you"
 msgstr "Vielen Dank"
 
-#: includes/Subscription.php:395
+#: includes/Subscription.php:396
 msgid ""
 "You will now receive an email with a link. By using the link you confirm "
 "your subscription."
@@ -883,33 +903,33 @@ msgstr ""
 "Sie bekommen nun eine E-Mail mit einem Link zugesandt. Durch die Nutzung des "
 "Links bestätigen Sie Ihr Abonnement."
 
-#: includes/Subscription.php:396 includes/Subscription.php:439
-#: includes/Subscription.php:452 includes/Subscription.php:483
+#: includes/Subscription.php:397 includes/Subscription.php:440
+#: includes/Subscription.php:453 includes/Subscription.php:484
 msgid "Back to home page"
 msgstr "Zurück zur Startseite"
 
-#: includes/Subscription.php:408
+#: includes/Subscription.php:409
 msgid "You have successfully signed up for the newsletter subscription."
 msgstr "Sie haben sich für das E-Mail-Abonnement erfolgreich angemeldet."
 
-#: includes/Subscription.php:409
+#: includes/Subscription.php:410
 msgid "Manage newsletter subscription"
 msgstr "Newsletter-Abonnement verwalten"
 
 #. translators: Email address to subscribe to the newsletter
-#: includes/Subscription.php:421
+#: includes/Subscription.php:422
 msgid "Newsletter subscription for %s"
 msgstr "Newsletter-Abonnement für %s"
 
-#: includes/Subscription.php:425
+#: includes/Subscription.php:426
 msgid "Your newsletter subscription have been updated."
 msgstr "Ihr Newsletter-Abonnement wurde aktualisiert."
 
-#: includes/Subscription.php:426
+#: includes/Subscription.php:427
 msgid "Back to newsletter subscription management"
 msgstr "Zurück zur Verwaltung des Newsletter-Abonnements"
 
-#: includes/Subscription.php:438
+#: includes/Subscription.php:439
 msgid ""
 "You will now receive an email with a link. By using the link, you confirm "
 "your cancellation / change."
@@ -917,33 +937,33 @@ msgstr ""
 "Sie bekommen nun eine E-Mail mit einem Link zugesandt. Durch die Nutzung des "
 "Links bestätigen Sie Ihre Abbestellung/Änderung."
 
-#: includes/Subscription.php:450
+#: includes/Subscription.php:451
 msgid "Cancellation of the subscription to all newsletters."
 msgstr "Abmeldung des Abonnements an alle Newsletter."
 
-#: includes/Subscription.php:451
+#: includes/Subscription.php:452
 msgid "You have successfully unsubscribed from all newsletters."
 msgstr ""
 "Sie haben Ihre Änderung für das Newsletter-Abonnement erfolgreich "
 "durchgeführt."
 
-#: includes/Subscription.php:468
+#: includes/Subscription.php:469
 msgid "Email address does not exist"
 msgstr "Diese E-Mail Adresse existiert nicht"
 
-#: includes/Subscription.php:469
+#: includes/Subscription.php:470
 msgid "The email address is not registered for a subscription."
 msgstr "Die E-Mail-Adresse ist für kein Abonnement registriert."
 
-#: includes/Subscription.php:481
+#: includes/Subscription.php:482
 msgid "No newsletters available"
 msgstr "Keine Newsletter verfügbar"
 
-#: includes/Subscription.php:492
+#: includes/Subscription.php:493
 msgid "Newsletter subscription confirmation"
 msgstr "Anmeldebestätigung für Ihr Newsletter-Abonnement"
 
-#: includes/Subscription.php:497
+#: includes/Subscription.php:498
 msgid ""
 "Thank you for your interest in subscribing to our newsletter. To confirm "
 "your subscription, please click on this link:"
@@ -951,7 +971,7 @@ msgstr ""
 "Vielen Dank für Ihr Interesse am Newsletter-Abonnement. Zur Bestätigung "
 "Ihres Abonnements klicken Sie bitte auf diesen Link:"
 
-#: includes/Subscription.php:499 includes/Subscription.php:516
+#: includes/Subscription.php:500 includes/Subscription.php:517
 msgid ""
 "If the page does not open, copy the link and paste it into the address bar "
 "of your browser."
@@ -959,20 +979,20 @@ msgstr ""
 "Falls die Seite nicht aufgerufen wird, kopieren Sie bitte den Link und fügen "
 "ihn in die Adresszeile Ihres Browsers ein."
 
-#: includes/Subscription.php:500
+#: includes/Subscription.php:501
 msgid "If you have not subscribed to our newsletter, please ignore this email."
 msgstr ""
 "Wenn Sie den Newsletter nicht abonniert haben, ignorieren Sie diese E-Mail."
 
-#: includes/Subscription.php:501 includes/Subscription.php:517
+#: includes/Subscription.php:502 includes/Subscription.php:518
 msgid "Sincerely"
 msgstr "Mit freundlichen Grüßen"
 
-#: includes/Subscription.php:513
+#: includes/Subscription.php:514
 msgid "Thank you for your request!"
 msgstr "Vielen Dank für Ihre Anfrage!"
 
-#: includes/Subscription.php:514
+#: includes/Subscription.php:515
 msgid ""
 "You would like to change or cancel your newsletter subscription. To make the "
 "change or unsubscribe, please click on the following link:"
@@ -981,37 +1001,37 @@ msgstr ""
 "Änderung/Abmeldung durchzuführen, klicken Sie bitte auf folgenden Link:"
 
 #. translators: %s: the day of the week.
-#: includes/Utils.php:186
+#: includes/Utils.php:216
 msgid "Weekly on %s"
 msgstr "Wöchentlich am %s"
 
-#: includes/Utils.php:208
+#: includes/Utils.php:238
 msgid "first"
 msgstr "ersten"
 
-#: includes/Utils.php:209
+#: includes/Utils.php:239
 msgid "second"
 msgstr "zweiten"
 
-#: includes/Utils.php:210
+#: includes/Utils.php:240
 msgid "third"
 msgstr "dritten"
 
-#: includes/Utils.php:211
+#: includes/Utils.php:241
 msgid "fourth"
 msgstr "vierten"
 
-#: includes/Utils.php:212
+#: includes/Utils.php:242
 msgid "last"
 msgstr "letzten"
 
 #. translators: %s: the number of the day.
-#: includes/Utils.php:228
+#: includes/Utils.php:258
 msgid "Monthly on day %s"
 msgstr "Monatlich am Tag %s"
 
 #. translators: 1: The number of the day, 2: The day of the week.
-#: includes/Utils.php:236
+#: includes/Utils.php:266
 msgid "Monthly on the %1$s %2$s"
 msgstr "Monatlich am %1$s %2$s"
 
@@ -1521,59 +1541,59 @@ msgstr "Vorschau-Text"
 msgid "Update preview text"
 msgstr "Vorschau-Text aktualisieren"
 
-#: src/newsletter-editor/styling/index.js:14
+#: src/newsletter-editor/styling/index.js:13
 msgid "Sans Serif"
 msgstr "Sans Serif"
 
-#: src/newsletter-editor/styling/index.js:18
+#: src/newsletter-editor/styling/index.js:17
 msgid "Arial"
 msgstr "Arial"
 
-#: src/newsletter-editor/styling/index.js:22
+#: src/newsletter-editor/styling/index.js:21
 msgid "Tahoma"
 msgstr "Tahoma"
 
-#: src/newsletter-editor/styling/index.js:26
+#: src/newsletter-editor/styling/index.js:25
 msgid "Trebuchet"
 msgstr "Trebuchet"
 
-#: src/newsletter-editor/styling/index.js:30
+#: src/newsletter-editor/styling/index.js:29
 msgid "Verdana"
 msgstr "Verdana"
 
-#: src/newsletter-editor/styling/index.js:36
+#: src/newsletter-editor/styling/index.js:35
 msgid "Serif"
 msgstr "Serif"
 
-#: src/newsletter-editor/styling/index.js:40
+#: src/newsletter-editor/styling/index.js:39
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/newsletter-editor/styling/index.js:44
+#: src/newsletter-editor/styling/index.js:43
 msgid "Palatino"
 msgstr "Palatino"
 
-#: src/newsletter-editor/styling/index.js:48
+#: src/newsletter-editor/styling/index.js:47
 msgid "Times New Roman"
 msgstr "Times New Roman"
 
-#: src/newsletter-editor/styling/index.js:54
+#: src/newsletter-editor/styling/index.js:53
 msgid "Monospace"
 msgstr "Monospace"
 
-#: src/newsletter-editor/styling/index.js:58
+#: src/newsletter-editor/styling/index.js:57
 msgid "Courier"
 msgstr "Courier"
 
-#: src/newsletter-editor/styling/index.js:129
+#: src/newsletter-editor/styling/index.js:117
 msgid "Headings font"
 msgstr "Überschriften Schriftart"
 
-#: src/newsletter-editor/styling/index.js:137
+#: src/newsletter-editor/styling/index.js:125
 msgid "Body font"
 msgstr "Inhaltsschrift"
 
-#: src/newsletter-editor/styling/index.js:145
+#: src/newsletter-editor/styling/index.js:133
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
