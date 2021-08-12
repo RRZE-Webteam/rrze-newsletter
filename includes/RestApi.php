@@ -316,26 +316,20 @@ class RestApi
         return self::restEnsureResponse($response);
     }
 
-    public function recipient($postId, $toEmail)
+    public function recipient($postId, $email)
     {
-        $toEmail = sanitize_email(trim($toEmail));
-
-        $parts = explode('@', $toEmail);
-        $domain = array_pop($parts);
-        $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
-
         $message = '';
-        if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+        if (!$email = Utils::sanitizeEmail($email)) {
             $message = sprintf(
                 // translators: Message if the email address is not valid.
                 __('The recipient email address is not valid.', 'rrze-newsletter'),
-                $toEmail
+                $email
             );
-        } elseif (!empty($allowedDomains) && !in_array($domain, $allowedDomains)) {
+        } elseif (!$email = Utils::sanitizeRecipientEmail($email)) {
             $message = sprintf(
                 // translators: Message if the email domain is not allowed.
                 __('The recipient email domain is not allowed.', 'rrze-newsletter'),
-                $toEmail
+                $email
             );
         }
 
