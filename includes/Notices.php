@@ -35,7 +35,8 @@ class Notices
             );
         }
 
-        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', false);
+        $subscriptionDisabled = $options->subscription_disabled == 'on' ? true : false;
+        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', $subscriptionDisabled);
         if (!$isSubscriptionDisabled) {
             $subscriptionPageId = absint($options->subscription_page_id);
             if (!$subscriptionPageId) {
