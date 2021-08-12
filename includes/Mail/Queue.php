@@ -163,15 +163,7 @@ class Queue
             }
         } elseif ($isMailingListDisabled) {
             $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
-
-            $parts = explode('@', $email);
-            $domain = array_pop($parts);
-            $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
-
-            if (
-                filter_var($email, FILTER_VALIDATE_EMAIL)
-                && (empty($allowedDomains) || in_array($domain, $allowedDomains))
-            ) {
+            if ($email = Utils::sanitizeRecipientEmail($email)) {
                 $recipient[$email] = [
                     'to_fname' => '',
                     'to_lname' => '',

@@ -197,10 +197,43 @@ class Settings
         }
 
         foreach ($options as $key => $value) {
-            self::$options[$key] = $value;
+            $error = '';
+            $settings = '';
+            $label = '';
+            $required = false;
+            foreach (getFields() as $section => $field) {
+                foreach ($field as $option) {
+                    if ($section . '_' . $option['name'] == $key) {
+                        $settings = $this->settingsPrefix . $section;
+                        $label = $option['label'];
+                        $required = isset($option['required']) ? (bool) $option['required'] : false;
+                    }
+                }
+            }
+            if ($value == '' && $required) {
+                $error = sprintf(
+                    /* translators: %s: label of the field. */
+                    __('The field %s is required.', 'rrze-newsletter'),
+                    $label
+                );
+            }
             $sanitizeCallback = $this->getSanitizeCallback($key);
             if ($sanitizeCallback !== false) {
-                self::$options[$key] = call_user_func($sanitizeCallback, $value);
+                $sanitizedValue = call_user_func($sanitizeCallback, $value);
+                if ($sanitizedValue == '' && $sanitizedValue != $value) {
+                    $error = sprintf(
+                        /* translators: %s: label of the field. */
+                        __('The value of the field %s is not valid.', 'rrze-newsletter'),
+                        $label
+                    );
+                } else {
+                    $value = $sanitizedValue;
+                }
+            }
+            if ($error) {
+                add_settings_error($settings, $key, $error, 'error');
+            } else {
+                self::$options[$key] = $value;
             }
         }
 
@@ -304,16 +337,15 @@ class Settings
      */
     public function adminInit()
     {
-        // Add hidden sections
         foreach ($this->settingsSections as $section) {
+            // Register the settings
+            register_setting($this->settingsPrefix . $section['id'], self::$optionName, [$this, 'sanitizeOptions']);
+            // Add hidden sections
             $hide = (bool) apply_filters('rrze_newsletter_hide_section_' . $section['id'], false);
             if ($hide) {
                 $this->hiddenSections[] = $section['id'];
             }
-        }
-
-        // Add setting sections
-        foreach ($this->settingsSections as $section) {
+            // Add setting sections
             if (!empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
                 $callback = function () use ($section) {
@@ -324,7 +356,6 @@ class Settings
             } else {
                 $callback = null;
             }
-
             add_settings_section($this->settingsPrefix . $section['id'], $section['title'], $callback, $this->settingsPrefix . $section['id']);
         }
 
@@ -363,22 +394,19 @@ class Settings
                     'size' => isset($option['size']) ? $option['size'] : null,
                     'options' => isset($option['options']) ? $option['options'] : '',
                     'default' => isset($option['default']) ? $option['default'] : '',
-                    'sanitize_callback' => isset($option['sanitize_callback']) ? $option['sanitize_callback'] : '',
                     'type' => $type,
                     'placeholder' => isset($option['placeholder']) ? $option['placeholder'] : '',
                     'min' => isset($option['min']) ? $option['min'] : '',
                     'max' => isset($option['max']) ? $option['max'] : '',
                     'step' => isset($option['step']) ? $option['step'] : '',
-                    'disabled' => isset($option['disabled']) ? 'disabled' : ''
+                    'disabled' => isset($option['disabled']) ? 'disabled' : '',
+                    'sanitize_callback' => isset($option['sanitize_callback']) ? $option['sanitize_callback'] : '',
+                    'required' => isset($option['required']) ? (bool) $option['required'] : false,
+                    'errors' => get_settings_errors($this->settingsPrefix . $section)
                 ];
 
                 add_settings_field("{$section}[{$name}]", $label, $callback, $this->settingsPrefix . $section, $this->settingsPrefix . $section, $args);
             }
-        }
-
-        // Registrieren der Einstellungen
-        foreach ($this->settingsSections as $section) {
-            register_setting($this->settingsPrefix . $section['id'], self::$optionName, [$this, 'sanitizeOptions']);
         }
     }
 

@@ -39,7 +39,8 @@ class Subscription
 
     public function init()
     {
-        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', false);
+        $subscriptionDisabled = $this->options->subscription_disabled == 'on' ? true : false;
+        $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', $subscriptionDisabled);
         if ($isSubscriptionDisabled || is_admin() || !is_page()) {
             return;
         }

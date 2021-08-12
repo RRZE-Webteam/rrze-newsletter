@@ -89,7 +89,8 @@ function getFields(): array
                 'placeholder'       => '127.0.0.1',
                 'type'              => 'text',
                 'default'           => '127.0.0.1',
-                'sanitize_callback' => 'sanitize_text_field'
+                'sanitize_callback' => 'sanitize_text_field',
+                'required'          => true
             ],
             [
                 'name'              => 'port',
@@ -98,7 +99,8 @@ function getFields(): array
                 'placeholder'       => '587',
                 'type'              => 'text',
                 'default'           => '587',
-                'sanitize_callback' => 'sanitize_text_field'
+                'sanitize_callback' => 'sanitize_text_field',
+                'required'          => true
             ],
             [
                 'name'              => 'sender',
@@ -107,7 +109,8 @@ function getFields(): array
                 'placeholder'       => get_option('admin_email'),
                 'type'              => 'text',
                 'default'           => get_option('admin_email'),
-                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeEmail']
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeSenderEmail'],
+                'required'          => true
             ],
             [
                 'name'  => 'auth',
@@ -165,6 +168,12 @@ function getFields(): array
         ],
         'subscription' => [
             [
+                'name'  => 'disabled',
+                'label' => __('Disable subscription', 'rrze-newsletter'),
+                'desc'  => __('Disables the subscription', 'rrze-newsletter'),
+                'type'  => 'checkbox'
+            ],
+            [
                 'name'              => 'page_id',
                 'label'             => __('Subscription Page', 'rrze-newsletter'),
                 'desc'              => __('Select a current page for the newsletter subscription page.', 'rrze-newsletter'),
@@ -183,7 +192,8 @@ function getFields(): array
                 'sanitize_callback' => function ($input) {
                     $input = sanitize_text_field($input);
                     return $input ? $input : \RRZE\Newsletter\Subscription::confirmationSubject();
-                }
+                },
+                'required'          => true
             ],
             [
                 'name'              => 'confirmation_message',
@@ -195,7 +205,8 @@ function getFields(): array
                 'sanitize_callback' => function ($input) {
                     $input = sanitize_textarea_field($input);
                     return $input ? $input : \RRZE\Newsletter\Subscription::confirmationMessage();
-                }
+                },
+                'required'          => true
             ],
             [
                 'name'              => 'change_cancel_subject',
@@ -207,7 +218,8 @@ function getFields(): array
                 'sanitize_callback' => function ($input) {
                     $input = sanitize_text_field($input);
                     return $input ? $input : \RRZE\Newsletter\Subscription::changeOrCancelSubject();
-                }
+                },
+                'required'          => true
             ],
             [
                 'name'              => 'change_cancel_message',
@@ -219,7 +231,8 @@ function getFields(): array
                 'sanitize_callback' => function ($input) {
                     $input = sanitize_textarea_field($input);
                     return $input ? $input : \RRZE\Newsletter\Subscription::changeOrCancelMessage();
-                }
+                },
+                'required'          => true
             ]
         ],
         'mailing_list' => [
@@ -241,7 +254,8 @@ function getFields(): array
                 'placeholder'       => '',
                 'type'              => 'text',
                 'default'           => '',
-                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl']
+                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl'],
+                'required'          => true
             ],
             [
                 'name'              => 'key',

@@ -32,6 +32,36 @@ class Utils
         return '';
     }
 
+    public static function sanitizeSenderEmail(string $input): string
+    {
+        $email = self::sanitizeEmail($input);
+        $parts = explode('@', $email);
+        $domain = array_pop($parts);
+        $allowedDomains = (array) apply_filters('rrze_newsletter_sender_allowed_domains', []);
+        if (
+            filter_var($email, FILTER_VALIDATE_EMAIL)
+            && (empty($allowedDomains) || in_array($domain, $allowedDomains))
+        ) {
+            return $email;
+        }
+        return '';
+    }
+
+    public static function sanitizeRecipientEmail(string $input): string
+    {
+        $email = self::sanitizeEmail($input);
+        $parts = explode('@', $email);
+        $domain = array_pop($parts);
+        $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
+        if (
+            filter_var($email, FILTER_VALIDATE_EMAIL)
+            && (empty($allowedDomains) || in_array($domain, $allowedDomains))
+        ) {
+            return $email;
+        }
+        return '';
+    }
+
     public static function sanitizePassword(string $password): string
     {
         return self::setPassword($password);
@@ -67,7 +97,7 @@ class Utils
             $fname = isset($aryRow[1]) ? trim($aryRow[1]) : ''; // First Name
             $lname = isset($aryRow[2]) ? trim($aryRow[2]) : ''; // Last Name
 
-            if (!self::sanitizeEmail($email)) {
+            if (!self::sanitizeRecipientEmail($email)) {
                 continue;
             }
             $mailingList[$email] = trim(implode(',', [$email, $fname, $lname]), ',');
@@ -82,7 +112,7 @@ class Utils
         $emails = explode(PHP_EOL, sanitize_textarea_field($input));
         foreach ($emails as $email) {
             $email = trim($email);
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            if (!self::sanitizeRecipientEmail($email)) {
                 continue;
             }
             $mailingList[$email] = $email;
