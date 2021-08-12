@@ -196,7 +196,15 @@ class RSS
             $link = esc_url($link);
             $readMoreLink = '';
             if ($link && $atts['displayReadMore']) {
-                $readMoreLink = ' ' . sprintf(__('Continue reading "%s"&hellip;', 'rrze-newsletter'), "<a href='{$link}'>{$title}</a>");
+                $readMoreLink = sprintf(
+                    ' <a href="%s">%s</a>',
+                    $link,
+                    sprintf(
+                        /* translators: %s: article title. */
+                        __('Continue reading "%s"&hellip;', 'rrze-newsletter'),
+                        $title
+                    )
+                );
             } elseif ($link) {
                 $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
