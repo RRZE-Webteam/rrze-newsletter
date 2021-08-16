@@ -56,7 +56,8 @@ class Newsletter
         add_action('template_redirect', [__CLASS__, 'maybeDisplayPublicPost']);
         add_filter('post_row_actions', [__CLASS__, 'displayViewOrPreviewLink']);
         add_filter('post_row_actions', [__CLASS__, 'removeQuickEdit'], 10, 2);
-        add_action('save_post_' . self::POST_TYPE, [__CLASS__, 'save'], 10, 3);
+        add_action('save_post_' . self::POST_TYPE, [__CLASS__, 'savePost'], 10, 3);
+        add_action('transition_post_status', [__CLASS__, 'transitionPostStatus'], 10, 3);
         add_action('wp_trash_post', [__CLASS__, 'trash'], 10, 1);
     }
 
@@ -703,43 +704,54 @@ class Newsletter
             return $postStates;
         }
 
-        $post_status = get_post_status_object($post->post_status);
-        $isSent = 'publish' === $post_status->name;
+        $postStatus = get_post_status_object($post->post_status);
+        $isPublish = 'publish' === $postStatus->name;
 
-        if ($isSent) {
+        $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
+
+        $sendStatus = self::getStatus($post->ID);
+
+        $isRecurring = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_recurring', true);
+
+        $output = '';
+
+        if ($sendStatus == 'error') {
+            $flags = ' <span class="dashicons dashicons-dismiss"></span>';
+        } else {
+            $flags = $sendStatus == 'skipped'
+                ? ' <span class="dashicons dashicons-warning"></span>'
+                : '';
+
+            $flags .= $isPublic
+                ? ' <span class="dashicons dashicons-visibility"></span>'
+                : ' <span class="dashicons dashicons-hidden"></span>';
+
+            $flags .= $isRecurring
+                ? ' <span class="dashicons dashicons-image-rotate"></span>'
+                : '';
+        }
+
+        if ($isPublish && $sendStatus == 'sent') {
             $timestamp = current_time('U');
             $sendDate = get_the_time('U', $post);
             $timeDiff = $timestamp - $sendDate;
             $sendDate = human_time_diff($sendDate, $timestamp);
-
             if ($timeDiff < 24 * HOUR_IN_SECONDS) {
-                $postStates[$post_status->name] = sprintf(
+                $output = sprintf(
                     /* translators: Relative time stamp of sent/published date */
                     __('Sent %1$s ago', 'rrze-newsletter'),
                     $sendDate
                 );
             } else {
-                $postStates[$post_status->name] = sprintf(
+                $output = sprintf(
                     /* translators:  Absolute time stamp of sent/published date */
                     __('Sent %1$s', 'rrze-newsletter'),
                     get_the_time(get_option('date_format'), $post)
                 );
             }
-
-            $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
-            $publicHtml = $isPublic
-                ? ' <span class="dashicons dashicons-visibility"></span>'
-                : ' <span class="dashicons dashicons-hidden"></span>';
-
-            $postStates[$post_status->name] .= $publicHtml;
-        } elseif (isset($postStates['scheduled'])) {
-            $isRecurring = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_recurring', true);
-            $recurrenceHtml = $isRecurring
-                ? ' <span class="dashicons dashicons-image-rotate"></span>'
-                : '';
-
-            $postStates['scheduled'] .= $recurrenceHtml;
         }
+
+        $postStates[$postStatus->name] = $output . $flags;
 
         return $postStates;
     }
@@ -833,10 +845,20 @@ class Newsletter
         return $actions;
     }
 
-    public static function save($postId, $post, $update)
+    public static function savePost($postId, $post, $update)
     {
         if (!$update) {
             update_post_meta($postId, 'rrze_newsletter_template_id', -1);
+            self::setStatus($postId, '');
+        }
+    }
+
+    public static function transitionPostStatus($newStatus, $oldStatus, $post)
+    {
+        if (('publish' === $newStatus && 'publish' !== $oldStatus)
+            || ('future' === $newStatus && 'future' !== $oldStatus)
+        ) {
+            self::setStatus($post->ID, 'send');
         }
     }
 

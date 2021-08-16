@@ -71,8 +71,8 @@ class Queue
         $post = get_post($postId);
 
         if (
-            $post->post_status !== 'publish'
-            || !in_array(Newsletter::getStatus($postId), ['send', 'skipped'])
+            $post->post_status != 'publish'
+            || Newsletter::getStatus($postId) != 'send'
         ) {
             return;
         }
@@ -83,37 +83,14 @@ class Queue
             return;
         }
 
-        $condition = false;
-        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
-        if ($hasConditionals) {
-            $rssCondition = false;
-            $icsCondition = false;
-            $operator = get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
-            $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
-            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
-            $isRssBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_rss_block_empty', true);
-            $isIcsBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_ics_block_empty', true);
-            if ($rssBlock && $isRssBlockEmpty) {
-                $rssCondition = true;
-            }
-            if ($icsBlock && $isIcsBlockEmpty) {
-                $icsCondition = true;
-            }
-            if ($operator == 'or') {
-                $condition = $rssCondition || $icsCondition;
-            } else {
-                $condition = $rssCondition && $icsCondition;
-            }
-        }
-        if ($condition) {
+        // Check if it should be skipped.
+        if ($this->maybeSkipped($postId)) {
             // Maybe the newsletter is recurring.
             Newsletter::maybeSetRecurrence($postId);
             // Set the newsletter status to 'skipped'.
             Newsletter::setStatus($postId, 'skipped');
             return;
         }
-
-        Newsletter::setStatus($postId, 'queued');
 
         // Set recipient.
         $recipient = [];
@@ -343,5 +320,41 @@ class Queue
         ];
 
         return get_posts($args);
+    }
+
+    /**
+     * Check if sending the newsletter should be skipped.
+     *
+     * @param integer $postId Id of the post.
+     * @return boolean True if sending should be skipped.
+     */
+    protected function maybeSkipped($postId)
+    {
+        $skipped = false;
+
+        // Check if there are any conditions.
+        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
+        if ($hasConditionals) {
+            $rssCondition = false;
+            $icsCondition = false;
+            $operator = get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
+            $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
+            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
+            $isRssBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_rss_block_empty', true);
+            $isIcsBlockEmpty = (bool) get_post_meta($postId, 'rrze_newsletter_ics_block_empty', true);
+            if ($rssBlock && $isRssBlockEmpty) {
+                $rssCondition = true;
+            }
+            if ($icsBlock && $isIcsBlockEmpty) {
+                $icsCondition = true;
+            }
+            if ($operator == 'or') {
+                $skipped = $rssCondition || $icsCondition;
+            } else {
+                $skipped = $rssCondition && $icsCondition;
+            }
+        }
+
+        return $skipped;
     }
 }

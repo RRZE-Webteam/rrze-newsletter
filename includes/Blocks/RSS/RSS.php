@@ -4,7 +4,6 @@ namespace RRZE\Newsletter\Blocks\RSS;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 
 class RSS
@@ -108,7 +107,7 @@ class RSS
             return '';
         }
 
-        $feed = Utils::fetchFeed($atts['feedURL']);
+        $feed = self::fetchFeed($atts['feedURL']);
 
         if (is_wp_error($feed)) {
             return '<div class="components-placeholder"><div class="notice notice-error"><strong>' . __('RSS Error:', 'rrze-newsletter') . '</strong> ' . $feed->get_error_message() . '</div></div>';
@@ -141,7 +140,7 @@ class RSS
 
         $atts = self::parseAtts($atts);
 
-        $feed = Utils::fetchFeed($atts['feedURL']);
+        $feed = self::fetchFeed($atts['feedURL']);
 
         if (!is_wp_error($feed) && $feed->get_item_quantity()) {
             $feedItems = self::render($atts, $feed, true);
@@ -265,5 +264,45 @@ class RSS
         $atts = array_intersect_key($atts, $default);
 
         return $atts;
+    }
+
+    /**
+     * Fetch Atom & RSS Feeds.
+     *
+     * @param string $url
+     * @return object \WP_Error|\SimplePie
+     */
+    public static function fetchFeed($url)
+    {
+        if (!class_exists('\SimplePie', false)) {
+            require_once ABSPATH . WPINC . '/class-simplepie.php';
+        }
+        if (!class_exists('\WP_SimplePie_Sanitize_KSES', false)) {
+            require_once ABSPATH . WPINC . '/class-wp-simplepie-sanitize-kses.php';
+        }
+        if (!class_exists('\WP_SimplePie_File', false)) {
+            require_once ABSPATH . WPINC . '/class-wp-simplepie-file.php';
+        }
+
+        $feed = new \SimplePie();
+
+        $feed->set_sanitize_class('WP_SimplePie_Sanitize_KSES');
+
+        $feed->sanitize = new \WP_SimplePie_Sanitize_KSES();
+
+        $feed->set_file_class('WP_SimplePie_File');
+
+        $feed->set_feed_url($url);
+
+        $feed->enable_cache(false);
+
+        $feed->init();
+        $feed->set_output_encoding(get_option('blog_charset'));
+
+        if ($feed->error()) {
+            return new \WP_Error('simplepie-error', $feed->error());
+        }
+
+        return $feed;
     }
 }
