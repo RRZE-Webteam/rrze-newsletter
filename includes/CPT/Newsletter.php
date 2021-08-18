@@ -579,10 +579,6 @@ class Newsletter
             return $data;
         }
 
-        // Reset rrze-newsletter/rss and rrze-newsletter/ics empty blocks.
-        delete_post_meta($postId, 'rrze_newsletter_rss_block_empty');
-        delete_post_meta($postId, 'rrze_newsletter_ics_block_empty');
-
         $body = Render::toHtml($post);
         if (is_wp_error($body)) {
             return $body;
@@ -716,10 +712,10 @@ class Newsletter
         $output = '';
 
         if ($sendStatus == 'error') {
-            $flags = ' <span class="dashicons dashicons-dismiss"></span>';
+            $flags = ' <span class="dashicons dashicons-warning"></span>';
         } else {
             $flags = $sendStatus == 'skipped'
-                ? ' <span class="dashicons dashicons-warning"></span>'
+                ? ' <span class="dashicons dashicons-controls-skipforward"></span>'
                 : '';
 
             $flags .= $isPublic

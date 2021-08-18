@@ -131,7 +131,8 @@ class ICS
             $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
             $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
             $feedItems = sprintf('<p%1$s>%2$s</p>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
-            update_post_meta($atts['postId'], 'rrze_newsletter_ics_block_empty', 1);
+        } else {
+            wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $atts['postId']);
         }
 
         return $feedItems;
