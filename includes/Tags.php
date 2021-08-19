@@ -40,7 +40,7 @@ class Tags
         return self::setDefaultValues($postId, $tags);
     }
 
-    protected static function setDefaultValues(int $postId, array $tags): array
+    protected static function setDefaultValues($postId, array $tags): array
     {
         $options = (object) Settings::getOptions();
 
@@ -67,17 +67,12 @@ class Tags
             }
         }
 
-        $archivePageBase = Archive::getPageBase();
-        $archiveQuery = Utils::encryptQueryVar($postId . '|' . $email);
-        $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
-
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
         $tags['UPDATE'] = $updateUrl;
         $tags['PERMALINK'] = get_permalink($postId);
-        $tags['ARCHIVE'] = $archiveUrl;
         $tags['DATE'] = (string) get_the_time(get_option('date_format'), $postId);
-        $tags['CURRENT_YEAR'] = date('Y');
+        $tags['CURRENT_YEAR'] = get_the_time('Y', $postId);
 
         return $tags;
     }

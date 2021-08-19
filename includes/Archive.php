@@ -46,13 +46,14 @@ class Archive
         }
 
         $archive = $this->getArchive($segments[2]);
-        $post = get_post($archive['post']);
+        $post = get_post(absint($archive['postid']));
+        $timestamp = absint($archive['timestamp']);
         $email = $archive['email'];
         if (
             is_a($post, '\WP_Post')
             && $email = Utils::sanitizeEmail($email)
         ) {
-            $this->getContent($post, $email);
+            $this->getContent($post, $timestamp, $email);
         }
 
         if ($this->content) {
@@ -66,19 +67,24 @@ class Archive
         $archive = Utils::decryptQueryVar(trim($string));
         $archive = explode('|', $archive);
         $data = [
-            'post' => $archive[0] ?? '',
-            'email' => $archive[1] ?? ''
+            'postid' => $archive[0] ?? '',
+            'timestamp' => $archive[1] ?? '',
+            'email' => $archive[2] ?? ''
         ];
         return $data;
     }
 
-    protected function getContent(\WP_Post $post, string $email = '')
+    protected function getContent(\WP_Post $post, int $timestamp, string $email = '')
     {
         $postId = $post->ID;
 
         $data = Newsletter::getData($postId);
         if (empty($data)) {
             return '';
+        }
+
+        if ($archiveContent = get_post_meta($postId, 'rrze_newsletter_archive_' . $timestamp, true)) {
+            $data['content'] = $archiveContent;
         }
 
         // Set recipient.
@@ -128,12 +134,17 @@ class Archive
 
         $content = $data['content'];
 
+        $archivePageBase = Archive::getPageBase();
+        $archiveQuery = Utils::encryptQueryVar($postId . '|' . $timestamp . '|' . $email);
+        $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
+
         // Parse tags.
         $data = [
             'FNAME' => $toFname,
             'LNAME' => $toLname,
             'EMAIL' => $toEmail,
-            'EMAIL_ONLY' => ''
+            'EMAIL_ONLY' => '',
+            'ARCHIVE' => $archiveUrl
         ];
         $data = Tags::sanitizeTags($postId, $data);
         $parser = new Parser();
