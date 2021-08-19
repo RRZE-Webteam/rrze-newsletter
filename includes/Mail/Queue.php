@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\Settings;
 use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Tags;
+use RRZE\Newsletter\Archive;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterQueue;
@@ -161,6 +162,9 @@ class Queue
             wp_update_term_count($ttIds, $taxonomy);
         }
 
+        // Save the rendered content to the archive meta post.
+        add_post_meta($postId, 'rrze_newsletter_archive_' . strtotime($data['send_date_gmt']), $data['content'], true);
+
         // Insert post in the mail queue.
         $args = [
             'post_date' => $data['send_date'],
@@ -238,11 +242,17 @@ class Queue
             $body = $post->post_content;
             $altBody = $post->post_excerpt;
 
+            $timestamp = strtotime($post->post_date_gmt);
+            $archivePageBase = Archive::getPageBase();
+            $archiveQuery = Utils::encryptQueryVar($newsletterId . '|' . $timestamp . '|' . $toEmail);
+            $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
+
             // Parse tags.
             $data = [
                 'FNAME' => $toFname,
                 'LNAME' => $toLname,
-                'EMAIL' => $toEmail
+                'EMAIL' => $toEmail,
+                'ARCHIVE' => $archiveUrl
             ];
             $data = Tags::sanitizeTags($newsletterId, $data);
             $parser = new Parser();
