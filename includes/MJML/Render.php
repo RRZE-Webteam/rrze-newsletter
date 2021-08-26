@@ -397,7 +397,7 @@ final class Render
                         'border-radius' => $borderRadius . 'px',
                         'font-size'     => '18px',
                         'font-family'   => $fontFamily,
-                        'font-weight'   => 'bold',
+                        'font-weight'   => 'normal',
                         // Default color - will be replaced by getColors if there are colors set.
                         'color'         => $isOutlined ? '#32373c' : '#fff !important',
                     ];
@@ -420,8 +420,12 @@ final class Render
                     if (isset($attrs['width'])) {
                         $columnAttrs['width'] = $attrs['width'] . '%';
                     }
-
-                    $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAttrs) . '><mj-button ' . self::arrayToAttributes($buttonAttrs) . ">$text</mj-button></mj-column>";
+                    $buttonMarkup = '<mj-button ' . self::arrayToAttributes($buttonAttrs) . ">$text</mj-button>";
+                    if (!$isInColumn) {
+                        $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $buttonMarkup . '</mj-column>';
+                    } else {
+                        $blockMjmlMarkup .= $buttonMarkup;
+                    }
                 }
                 break;
 
