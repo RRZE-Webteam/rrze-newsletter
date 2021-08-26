@@ -19,12 +19,17 @@ Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den N
 -   `{{=NAME}}` Der vollständige Name des Abonnenten (generiert aus FNAME und LNAME)
 -   `{{=EMAIL}}` Die E-Mail-Adresse des Abonnenten
 -   `{{=UNSUB}}` Die URL zum Abbestellen des Newsletters
--   `{{=UPDATE}}` Die URL zum Ändern des Newsletters
--   `{{=PERMALINK}}` Der Permalink des Newsletters-Seite (die Ansicht hängt vom Stil des Themes ab)
--   `{{=ARCHIVE}}` Der Link des Newsletters-Archive (die Ansicht ist identisch mit dem erhaltenen Newsletter)
--   `{{=DATE}}` Das Datum, an dem das Bulletin gesendet wurde
--   `{{=CURRENT_YEAR}}` Das laufende Jahr
--   `{{EMAIL_ONLY}}` Nur in der E-Mail anzeigen.
+-   `{{=UPDATE}}` Die URL zum Ändern des Newsletter-Abonnementes
+-   `{{=PERMALINK}}` Der Permalink der Newsletter-Seite (die Ansicht hängt vom Stil des Themes ab)
+-   `{{=ARCHIVE}}` Der Link des Newsletters-Archive (die Ansicht ist identisch mit dem per E-Mail erhaltenen Newsletter)
+-   `{{=DATE}}` Das Datum, an dem der Newsletter versendet wurde
+-   `{{=CURRENT_YEAR}}` Das laufende Jahr, in dem der Newsletter versendet wurde
+-   `{{EMAIL_ONLY}}` Nur in der E-Mail anzeigen (nur geeignet für If-Konstrukte)
+
+**Syntax**
+
+-   `{{=TAG}}`: Ausgabe des TAG-Wertes (String)
+-   `{{TAG}}`: Prüft, ob ein TAG als belegt gilt. Nur geeignet für If-Konstrukte
 
 **IF-Konstrukte**
 
