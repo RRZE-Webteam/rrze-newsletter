@@ -29,13 +29,13 @@ Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den N
 **Syntax**
 
 -   `{{=TAG}}`: Ausgabe des TAG-Wertes (String)
--   `{{TAG}}`: Prüft, ob ein TAG als belegt gilt. Nur geeignet für If-Konstrukte
+-   `{{TAG}}`: Prüft, ob ein TAG als belegt gilt (Boolean)
 
 **IF-Konstrukte**
 
 -   IF-Konstrukt: `{{TAG}} markup {{/TAG}}`
--   IF-NOT-Konstrukt: `{{!TAG}} markup {{/!TAG}}`
--   IF-ELSE-Konstrukt: `{{TAG}} markup {{:TAG}} alternatives markup {{/TAG}}`
+-   IF-NOT-Konstrukt: `{{!TAG}} <markup> {{/!TAG}}`
+-   IF-ELSE-Konstrukt: `{{TAG}} <markup> {{:TAG}} <alternatives markup> {{/TAG}}`
 
 **Beispiel**
 

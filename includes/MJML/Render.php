@@ -190,10 +190,11 @@ final class Render
     /**
      * Append UTM (Urchin Tracking Module) param to links.
      *
+     * @param object $post Maybe a \WP_Post object.
      * @param string $html input HTML.
      * @return string HTML with processed links.
      */
-    public static function processLinks($html)
+    protected static function processLinks(object $post, string $html)
     {
         preg_match_all('/href="([^"]*)"/', $html, $matches);
         $hrefParams = $matches[0];
@@ -216,6 +217,8 @@ final class Render
             if (!$skipUrlWithParams) {
                 $url = add_query_arg(
                     [
+                        'utm_campaign' => get_post_time('Y-m-d', false, $post),
+                        'utm_source' => sanitize_title($post->post_title),
                         'utm_medium' => 'email',
                     ],
                     $url
@@ -393,11 +396,11 @@ final class Render
                         'padding'       => '0',
                         'inner-padding' => '12px 24px',
                         'line-height'   => '1.8',
-                        'href'          => $anchor ? $anchor->getAttribute('href') : '',
+                        'href'          => $anchor->getAttribute('href') ?: site_url(),
                         'border-radius' => $borderRadius . 'px',
                         'font-size'     => '18px',
                         'font-family'   => $fontFamily,
-                        'font-weight'   => 'bold',
+                        'font-weight'   => '500',
                         // Default color - will be replaced by getColors if there are colors set.
                         'color'         => $isOutlined ? '#32373c' : '#fff !important',
                     ];
@@ -420,8 +423,12 @@ final class Render
                     if (isset($attrs['width'])) {
                         $columnAttrs['width'] = $attrs['width'] . '%';
                     }
-
-                    $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAttrs) . '><mj-button ' . self::arrayToAttributes($buttonAttrs) . ">$text</mj-button></mj-column>";
+                    $buttonMarkup = '<mj-button ' . self::arrayToAttributes($buttonAttrs) . ">$text</mj-button>";
+                    if (!$isInColumn) {
+                        $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $buttonMarkup . '</mj-column>';
+                    } else {
+                        $blockMjmlMarkup .= $buttonMarkup;
+                    }
                 }
                 break;
 
@@ -660,7 +667,7 @@ final class Render
             $body .= $blockContent;
         }
 
-        return $processLinks ? self::processLinks($body) : $body;
+        return $processLinks ? self::processLinks($post, $body) : $body;
     }
 
     /**
