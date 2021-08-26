@@ -33,7 +33,7 @@ Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den N
 
 **IF-Konstrukte**
 
--   IF-Konstrukt: `{{TAG}} markup {{/TAG}}`
+-   IF-Konstrukt: `{{TAG}} <markup> {{/TAG}}`
 -   IF-NOT-Konstrukt: `{{!TAG}} <markup> {{/!TAG}}`
 -   IF-ELSE-Konstrukt: `{{TAG}} <markup> {{:TAG}} <alternatives markup> {{/TAG}}`
 
