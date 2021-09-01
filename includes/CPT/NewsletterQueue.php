@@ -32,8 +32,9 @@ class NewsletterQueue
         add_filter('manage_edit-' . self::POST_TYPE . '_sortable_columns', [__CLASS__, 'sortableColumns']);
         // CPT List Filters.
         add_filter('months_dropdown_results', [__CLASS__, 'removeMonthsDropdown'], 10, 2);
-        add_action('restrict_manage_posts', [__CLASS__, 'applyFilters']);
-        add_filter('parse_query', [__CLASS__, 'filterQuery']);
+        add_action('load-edit.php', function () {
+            add_filter('posts_search', [__CLASS__, 'listSearch'], 10, 2);
+        });
         // List Actions
         add_filter('post_row_actions', [__CLASS__, 'rowActions'], 10, 2);
         add_filter('bulk_actions-edit-' . self::POST_TYPE, [__CLASS__, 'bulkActions']);
@@ -288,13 +289,28 @@ class NewsletterQueue
         return $months;
     }
 
-    public static function applyFilters($postType)
+    public static function listSearch($search, $query)
     {
-        // @todo
-    }
-
-    public static function filterQuery($query)
-    {
-        // @todo
+        if (
+            empty($query->query['s']) ||
+            $query->query['post_type'] != self::POST_TYPE
+        ) {
+            return $search;
+        }
+        global $wpdb;
+        $sql = "
+                OR EXISTS (
+                    SELECT * FROM {$wpdb->postmeta} WHERE post_id={$wpdb->posts}.ID
+                    AND meta_key IN ('rrze_newsletter_queue_from','rrze_newsletter_queue_to')
+                    AND meta_value like %s
+                )
+            ";
+        $like = '%' . $wpdb->esc_like($query->query['s']) . '%';
+        $search = preg_replace(
+            "#\({$wpdb->posts}.post_title LIKE [^)]+\)\K#",
+            $wpdb->prepare($sql, $like),
+            $search
+        );
+        return $search;
     }
 }
