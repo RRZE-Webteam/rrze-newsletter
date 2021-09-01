@@ -125,16 +125,16 @@ class NewsletterLayout
     {
         $layoutsBasePath = plugin()->getPath('includes/layouts/');
         $layouts = [];
-        $layout_id = 1;
+        $layoutId = 1;
         foreach (scandir($layoutsBasePath) as $layout) {
             if (strpos($layout, '.json') !== false) {
-                $decoded_layout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
+                $decodedLayout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
                 $layouts[] = [
-                    'ID'           => $layout_id,
-                    'post_title'   => $decoded_layout->title,
-                    'post_content' => self::layoutTokenReplacement($decoded_layout->content),
+                    'ID'           => $layoutId,
+                    'post_title'   => $decodedLayout->title,
+                    'post_content' => self::layoutTokenReplacement($decodedLayout->content),
                 ];
-                $layout_id++;
+                $layoutId++;
             }
         }
         return $layouts;
