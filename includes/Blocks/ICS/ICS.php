@@ -1220,7 +1220,7 @@ class ICS
             }
         }
 
-        if (!empty($output) && !empty($html)) {
+        if (!empty($output)) {
             $output = $mjml ? '<p>' . $output . '</p>' : '<div class="recurrence">' . $output . '</div>';
         }
         return $output;
