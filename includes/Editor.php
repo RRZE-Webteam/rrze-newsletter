@@ -36,11 +36,16 @@ final class Editor
             return;
         }
 
+        $allowedActions = [
+            __CLASS__ . '::enqueueBlockEditorAssets',
+            'rrze_newsletter_enqueue_scripts',
+            'wp_enqueue_editor_format_library_assets'
+        ];
         $enqueueBlockEditorAssetsFilters = $GLOBALS['wp_filter']['enqueue_block_editor_assets']->callbacks;
         foreach ($enqueueBlockEditorAssetsFilters as $index => $filter) {
             $actionHandlers = array_keys($filter);
             foreach ($actionHandlers as $handler) {
-                if (__CLASS__ . '::enqueueBlockEditorAssets' != $handler) {
+                if (!in_array($handler, $allowedActions, true)) {
                     remove_action('enqueue_block_editor_assets', $handler, $index);
                 }
             }
