@@ -396,7 +396,7 @@ final class Render
                         'padding'       => '0',
                         'inner-padding' => '12px 24px',
                         'line-height'   => '1.8',
-                        'href'          => $anchor->getAttribute('href') ?: site_url(),
+                        'href'          => isset($anchor->getAttribute('href')) ? $anchor->getAttribute('href') : site_url(),
                         'border-radius' => $borderRadius . 'px',
                         'font-size'     => '18px',
                         'font-family'   => $fontFamily,
