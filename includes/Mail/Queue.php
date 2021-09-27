@@ -87,9 +87,10 @@ class Queue
         // Check if it should be skipped.
         if ($this->maybeSkipped($postId)) {
             // Maybe the newsletter is recurring.
-            Newsletter::maybeSetRecurrence($postId);
-            // Set the newsletter status to 'skipped'.
-            Newsletter::setStatus($postId, 'skipped');
+            if (Newsletter::maybeSetRecurrence($postId) === false) {
+                // Set the newsletter status to 'skipped'.
+                Newsletter::setStatus($postId, 'skipped');
+            }
             return;
         }
 
