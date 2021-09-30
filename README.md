@@ -74,7 +74,7 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 **Übersetzung: Erstellen der .pot-Datei (WP-CLI)**
 
 ```shell
- wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,dist
+ wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,vendor,dist
 ```
 
 Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung der jeweiligen Sprachen wird empfohlen.
