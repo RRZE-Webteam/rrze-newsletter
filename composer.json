@@ -1,0 +1,25 @@
+{
+    "name": "rrze/rrze-newsletter",
+    "description": "RRZE WordPress Plugin",
+    "version": "1.7.0",
+    "type": "wordpress-plugin",
+    "license": "GPL",
+    "require": {
+        "php": "^7.4.0",
+        "johngrogg/ics-parser": "^2",
+        "rlanvin/php-rrule": "^2"
+    },
+    "suggest": {
+        "ext-mbstring": "*",
+        "ext-intl": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "ICal": "src/"
+        },
+        "psr-4": {
+            "RRZE\\Newsletter\\": "includes/",
+            "RRule\\": "src/"
+        }
+    }
+}
