@@ -1,5 +1,3 @@
-// Bump any version in any file which supports semver versioning.
-
 let gulp = require("gulp");
 let bump = require("gulp-bump");
 let semver = require("semver");
@@ -10,7 +8,7 @@ let zip = require("gulp-zip");
 // Major: 1.0.0
 gulp.task("major", async () => {
     let v = semver.inc(info.version, "major");
-    gulp.src(["./" + info.main, "./package.json"])
+    gulp.src(["./" + info.main, "./package.json", "./composer.json"])
         .pipe(bump({ version: v }))
         .pipe(gulp.dest("./"))
         .pipe(touch());
@@ -19,7 +17,7 @@ gulp.task("major", async () => {
 // Minor: 0.1.0
 gulp.task("minor", async () => {
     let v = semver.inc(info.version, "minor");
-    gulp.src(["./" + info.main, "./package.json"])
+    gulp.src(["./" + info.main, "./package.json", "./composer.json"])
         .pipe(bump({ version: v }))
         .pipe(gulp.dest("./"))
         .pipe(touch());
@@ -28,7 +26,7 @@ gulp.task("minor", async () => {
 // Patch: 0.0.2
 gulp.task("patch", async () => {
     let v = semver.inc(info.version, "patch");
-    gulp.src(["./" + info.main, "./package.json"])
+    gulp.src(["./" + info.main, "./package.json", "./composer.json"])
         .pipe(bump({ version: v }))
         .pipe(gulp.dest("./"))
         .pipe(touch());
@@ -37,7 +35,7 @@ gulp.task("patch", async () => {
 // Prerelease: 0.0.1-2
 gulp.task("prerelease", async () => {
     let v = semver.inc(info.version, "prerelease");
-    gulp.src(["./" + info.main, "./package.json"])
+    gulp.src(["./" + info.main, "./package.json", "./composer.json"])
         .pipe(bump({ version: v }))
         .pipe(gulp.dest("./"))
         .pipe(touch());
@@ -56,6 +54,8 @@ gulp.task("bundle", async () => {
         "!package.json",
         "!package-lock.json",
         "!webpack.config.js",
+        "!composer.json",
+        "!composer.lock",
         "!.gitignore"
     ])
         .pipe(zip(info.name + ".zip"))

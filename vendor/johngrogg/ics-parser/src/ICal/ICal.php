@@ -11,9 +11,7 @@
  * @version 2.2.2
  */
 
-namespace RRZE\Newsletter\Blocks\ICS;
-
-defined('ABSPATH') || exit;
+namespace ICal;
 
 class ICal
 {
@@ -641,9 +639,9 @@ class ICal
 
                 if (!is_array($values)) {
                     if (!empty($values)) {
-                        $values     = array($values); // Make an array as not one already
+                        $values = array($values); // Make an array as not already
                         $blankArray = array(); // Empty placeholder array
-                        $values[]   = $blankArray;
+                        array_push($values, $blankArray);
                     } else {
                         $values = array(); // Use blank array to ignore this line
                     }
@@ -656,7 +654,7 @@ class ICal
 
                 foreach ($values as $value) {
                     switch ($line) {
-                            // https://www.kanzaki.com/docs/ical/vtodo.html
+                        // https://www.kanzaki.com/docs/ical/vtodo.html
                         case 'BEGIN:VTODO':
                             if (!is_array($value)) {
                                 $this->todoCount++;
@@ -666,7 +664,7 @@ class ICal
 
                             break;
 
-                            // https://www.kanzaki.com/docs/ical/vevent.html
+                        // https://www.kanzaki.com/docs/ical/vevent.html
                         case 'BEGIN:VEVENT':
                             if (!is_array($value)) {
                                 $this->eventCount++;
@@ -676,7 +674,7 @@ class ICal
 
                             break;
 
-                            // https://www.kanzaki.com/docs/ical/vfreebusy.html
+                        // https://www.kanzaki.com/docs/ical/vfreebusy.html
                         case 'BEGIN:VFREEBUSY':
                             if (!is_array($value)) {
                                 $this->freeBusyIndex++;
@@ -888,7 +886,7 @@ class ICal
 
                 if (is_array($value)) {
                     // Add array of properties to the end
-                    $this->cal[$key1][$key2][$key3]["{$keyword}_array"][] = $value;
+                    array_push($this->cal[$key1][$key2][$key3]["{$keyword}_array"], $value);
                 } else {
                     if (!isset($this->cal[$key1][$key2][$key3][$keyword])) {
                         $this->cal[$key1][$key2][$key3][$keyword] = $value;
@@ -910,7 +908,7 @@ class ICal
 
                 if (is_array($value)) {
                     // Add array of properties to the end
-                    $this->cal[$key1][$key2]["{$keyword}_array"][] = $value;
+                    array_push($this->cal[$key1][$key2]["{$keyword}_array"], $value);
                 } else {
                     if (!isset($this->cal[$key1][$key2][$keyword])) {
                         $this->cal[$key1][$key2][$keyword] = $value;
@@ -929,7 +927,7 @@ class ICal
 
                         if ($keyword === 'DURATION') {
                             $duration = new \DateInterval($value);
-                            $this->cal[$key1][$key2]["{$keyword}_array"][] = $duration;
+                            array_push($this->cal[$key1][$key2]["{$keyword}_array"], $duration);
                         }
                     }
 
@@ -1730,10 +1728,10 @@ class ICal
             // (Or last if we have a -ve {ordwk})
             $bydayDateTime->modify(
                 (($ordwk < 0) ? 'Last' : 'First') .
-                    ' ' .
-                    $this->weekdays[substr($weekday, -2)] . // e.g. "Monday"
-                    ' of ' .
-                    $initialDateTime->format('F') // e.g. "June"
+                ' ' .
+                $this->weekdays[substr($weekday, -2)] . // e.g. "Monday"
+                ' of ' .
+                $initialDateTime->format('F') // e.g. "June"
             );
 
             if ($ordwk < 0) { // -ve {ordwk}
@@ -1814,10 +1812,10 @@ class ICal
             // (Or last if we have a -ve {ordwk})
             $bydayDateTime->modify(
                 (($ordwk < 0) ? 'Last' : 'First') .
-                    ' ' .
-                    $this->weekdays[substr($weekday, -2)] . // e.g. "Monday"
-                    ' of ' . (($ordwk < 0) ? 'December' : 'January') .
-                    ' ' . $initialDateTime->format('Y') // e.g. "2018"
+                ' ' .
+                $this->weekdays[substr($weekday, -2)] . // e.g. "Monday"
+                ' of ' . (($ordwk < 0) ? 'December' : 'January') .
+                ' ' . $initialDateTime->format('Y') // e.g. "2018"
             );
 
             if ($ordwk < 0) { // -ve {ordwk}
@@ -2199,7 +2197,8 @@ class ICal
                     && (
                         ($eventEnd > $rangeStart && $eventEnd <= $rangeEnd)     // Event end date contained in the range
                         || ($eventStart < $rangeStart && $eventEnd > $rangeEnd) // Event starts before and finishes after range
-                    ))
+                    )
+                )
             ) {
                 $extendedEvents[] = $anEvent;
             }
@@ -2323,7 +2322,7 @@ class ICal
      * Parses a duration and applies it to a date
      *
      * @param  string $date
-     * @param  object $duration
+     * @param  string $duration
      * @param  string $format
      * @return integer|\DateTime
      */
@@ -2570,31 +2569,27 @@ class ICal
      */
     protected function fileOrUrl($filename)
     {
-        $options                   = array();
-        $options['http']           = array();
-        $options['http']['header'] = array();
-
+        $options = array();
         if (!empty($this->httpBasicAuth) || !empty($this->httpUserAgent) || !empty($this->httpAcceptLanguage)) {
+            $options['http'] = array();
+            $options['http']['header'] = array();
+
             if (!empty($this->httpBasicAuth)) {
                 $username  = $this->httpBasicAuth['username'];
                 $password  = $this->httpBasicAuth['password'];
                 $basicAuth = base64_encode("{$username}:{$password}");
 
-                $options['http']['header'][] = "Authorization: Basic {$basicAuth}";
+                array_push($options['http']['header'], "Authorization: Basic {$basicAuth}");
             }
 
             if (!empty($this->httpUserAgent)) {
-                $options['http']['header'][] = "User-Agent: {$this->httpUserAgent}";
+                array_push($options['http']['header'], "User-Agent: {$this->httpUserAgent}");
             }
 
             if (!empty($this->httpAcceptLanguage)) {
-                $options['http']['header'][] = "Accept-language: {$this->httpAcceptLanguage}";
+                array_push($options['http']['header'], "Accept-language: {$this->httpAcceptLanguage}");
             }
         }
-
-        $options['http']['protocol_version'] = '1.1';
-
-        $options['http']['header'][] = 'Connection: close';
 
         $context = stream_context_create($options);
 

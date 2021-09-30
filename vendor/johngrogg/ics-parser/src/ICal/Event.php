@@ -1,8 +1,6 @@
 <?php
 
-namespace RRZE\Newsletter\Blocks\ICS;
-
-defined('ABSPATH') || exit;
+namespace ICal;
 
 class Event
 {
@@ -44,20 +42,6 @@ class Event
      * @var $dtstamp
      */
     public $dtstamp;
-
-    /**
-     * When the event starts, represented as a timezone-adjusted string
-     *
-     * @var $dtstart_tz
-     */
-    public $dtstart_tz;
-
-    /**
-     * When the event ends, represented as a timezone-adjusted string
-     *
-     * @var $dtend_tz
-     */
-    public $dtend_tz;
 
     /**
      * https://www.kanzaki.com/docs/ical/uid.html
@@ -149,7 +133,7 @@ class Event
      * @param  mixed $value
      * @return mixed
      */
-    protected static function prepareData($value)
+    protected function prepareData($value)
     {
         if (is_string($value)) {
             return stripslashes(trim(str_replace('\n', "\n", $value)));

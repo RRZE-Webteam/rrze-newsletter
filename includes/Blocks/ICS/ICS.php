@@ -4,6 +4,10 @@ namespace RRZE\Newsletter\Blocks\ICS;
 
 defined('ABSPATH') || exit;
 
+use ICal\ICal;
+use RRule\RRule;
+use function RRZE\Newsletter\plugin;
+
 class ICS
 {
     /**
@@ -15,6 +19,10 @@ class ICS
     protected static function attributes()
     {
         return [
+            'postId' => [
+                'type' => 'integer',
+                'default' => 0,
+            ],
             'feedURL' => [
                 'type' => 'string',
                 'default' => '',
@@ -207,23 +215,23 @@ class ICS
                                 }
                                 $listItems .= '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
 
-                                $date = $mdStart . ' &#8211; ' . $mdEnd;
+                                $mdate = $mdStart . ' &#8211; ' . $mdEnd;
 
                                 $listItems .= $mjml ?
                                     sprintf(
                                         '<p class="has-small-padding"%1$s>%2$s</p> ',
                                         $textStyle,
-                                        $date
+                                        $mdate
                                     ) :
                                     sprintf(
                                         '<time datetime="%1$s">%2$s</time> ',
                                         date('Y-m-d H:i:s', strtotime($mdStart)),
-                                        $date
+                                        $mdate
                                     );
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    $listItems .= sprintf('<p>%s</p>', self::recurrenceDescription($event['rrule'], $mjml));
+                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule'], $mjml));
                                 }
 
                                 // Location/Organizer/Description
@@ -268,14 +276,14 @@ class ICS
                                 }
                                 $listItems .= '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
 
-                                $date = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
+                                $mdate = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
 
-                                $time = '';
+                                $mtime = '';
                                 if ($time !== 'all-day') {
                                     if (!empty($event['start'])) {
-                                        $time .= ' ' . $event['start'];
+                                        $mtime = ' ' . $event['start'];
                                         if (!empty($event['end']) && $event['end'] != $event['start']) {
-                                            $time .= ' &#8211; ' . $event['end'];
+                                            $mtime .= ' &#8211; ' . $event['end'];
                                         }
                                     }
                                 }
@@ -284,19 +292,19 @@ class ICS
                                     sprintf(
                                         '<p class="has-small-padding"%1$s>%2$s%3$s</p> ',
                                         $textStyle,
-                                        $date,
-                                        $time
+                                        $mdate,
+                                        $mtime
                                     ) :
                                     sprintf(
                                         '<time datetime="%1$s">%2$s%3$s</time> ',
                                         date('Y-m-d H:i:s', strtotime($month . '/' . $day . '/' . $year)),
-                                        $date,
-                                        $time
+                                        $mdate,
+                                        $mtime
                                     );
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    $listItems .= sprintf('<p>%s</p>', self::recurrenceDescription($event['rrule'], $mjml));
+                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule'], $mjml));
                                 }
 
                                 // Location/Organizer/Description
@@ -582,8 +590,8 @@ class ICS
         }
 
         // Sort events
-        foreach (array_keys((array)$feedItems['events']) as $key_year) {
-            ksort($feedItems['events'][$key_year]);
+        foreach (array_keys((array)$feedItems['events']) as $keyYear) {
+            ksort($feedItems['events'][$keyYear]);
         }
         ksort($feedItems['events']);
 
@@ -1168,62 +1176,31 @@ class ICS
     }
 
     /**
-     * recurrenceDescription
+     * humanReadableRecurrence
      * Convert a recurrence rule into a human-readable expression.
      *
      * @param string $rrule
      * @param boolean $mjml
      * @return string
      */
-    protected static function recurrenceDescription($rrule, $mjml)
+    public static function humanReadableRecurrence($rrule, $mjml)
     {
-        $output = '';
+        $opt = [
+            'use_intl' => true,
+            'locale' => substr(get_locale(), 0, 2),
+            'date_formatter' => function ($date) {
+                return $date->format(__('m-d-Y', 'rrze-calendar'));
+            },
+            'fallback' => 'en',
+            'explicit_infinite' => true,
+            'include_start' => false,
+            'include_until' => true,
+            'custom_path' => plugin()->getPath('config/blocks/ics/rrule'),
+        ];
 
-        if (!empty($rrule)) {
-            // Explode recurrence rules
-            $recur = self::recurrenceExplode($rrule);
-
-            // Default recurrence description
-            $output = __('Recurring event', 'rrze-newsletter');
-
-            // Does RRULE have a FREQUENCY and maybe an INTERVAL as well?
-            if (!empty($recur['FREQ'])) {
-                $interval = $recur['INTERVAL'] ?? 0;
-                switch ($recur['FREQ']) {
-                    case 'YEARLY':
-                        $output = $interval ?
-                            /* translators: %s: recurring event. */
-                            sprintf(__('Recurs every %s years', 'rrze-newsletter'), $interval) :
-                            __('Recurs yearly', 'rrze-newsletter');
-                        break;
-                    case 'MONTHLY':
-                        $output = $interval ?
-                            /* translators: %s: recurring event. */
-                            sprintf(__('Recurs every %s months', 'rrze-newsletter'), $interval) :
-                            __('Recurs monthly', 'rrze-newsletter');
-                        break;
-                    case 'WEEKLY':
-                        $output = $interval ?
-                            /* translators: %s: recurring event. */
-                            sprintf(__('Recurs every %s weeks', 'rrze-newsletter'), $interval) :
-                            __('Recurs weekly', 'rrze-newsletter');
-                        break;
-                    case 'DAILY':
-                        $output = $interval ?
-                            /* translators: %s: recurring event. */
-                            sprintf(__('Recurs every %s days', 'rrze-newsletter'), $interval) :
-                            __('Recurs daily', 'rrze-newsletter');
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        if (!empty($output)) {
-            $output = $mjml ? '<p>' . $output . '</p>' : '<div class="recurrence">' . $output . '</div>';
-        }
-        return $output;
+        $rrule = new RRule($rrule);
+        $output = $rrule->humanReadable($opt);
+        return $mjml ? '<p>' . $output . '</p>' : '<div class="recurrence">' . $output . '</div>';
     }
 
     /**
