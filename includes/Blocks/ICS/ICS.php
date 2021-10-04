@@ -1276,15 +1276,13 @@ class ICS
         }
 
         $content = '';
-        if ($atts['displayDescription']) {
-            if (!empty($event['eventdesc'])) {
-                if ($atts['descriptionLimit']) {
-                    $eventdesc = self::makeClickable(wp_trim_words($event['eventdesc'], intval($atts['descriptionLength'])));
-                } else {
-                    $eventdesc = self::filterTheContent(self::makeClickable($event['eventdesc']));
-                }
-                $content .= $mjml ? '<p class="has-normal-padding">' . $eventdesc . '</p>' : '<div>' . $eventdesc . '</div>';
+        if ($atts['displayDescription'] && !empty($event['eventdesc'])) {
+            if ($atts['descriptionLimit']) {
+                $eventdesc = self::makeClickable(wp_trim_words($event['eventdesc'], absint($atts['descriptionLength']), ' [&hellip;]'));
+            } else {
+                $eventdesc = self::filterTheContent(self::makeClickable($event['eventdesc']));
             }
+            $content .= $mjml ? '<p class="has-normal-padding">' . $eventdesc . '</p>' : '<div>' . $eventdesc . '</div>';
         }
 
         if (!self::emptyContent($content)) {
