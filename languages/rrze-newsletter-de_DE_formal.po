@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2021-09-30T09:14:37+00:00\n"
-"PO-Revision-Date: 2021-09-30 11:15+0200\n"
+"POT-Creation-Date: 2021-10-03T19:49:13+00:00\n"
+"PO-Revision-Date: 2021-10-03 21:52+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -244,15 +244,15 @@ msgstr "Es sind keine Termine verfügbar."
 msgid "Ends"
 msgstr "Endet"
 
-#: includes/Blocks/RSS/RSS.php:113
+#: includes/Blocks/RSS/RSS.php:117
 msgid "RSS Error:"
 msgstr "RSS-Fehler:"
 
-#: includes/Blocks/RSS/RSS.php:124 includes/Blocks/RSS/RSS.php:153
+#: includes/Blocks/RSS/RSS.php:128 includes/Blocks/RSS/RSS.php:157
 msgid "There are no items available."
 msgstr "Es sind keine Artikel verfügbar."
 
-#: includes/Blocks/RSS/RSS.php:193
+#: includes/Blocks/RSS/RSS.php:197
 #: src/editor/blocks/post-inserter/query-controls.js:41
 #: src/editor/blocks/post-inserter/query-controls.js:156
 #: src/editor/blocks/post-inserter/query-controls.js:173
@@ -262,7 +262,7 @@ msgid "(no title)"
 msgstr "(kein Titel)"
 
 #. translators: %s: article title.
-#: includes/Blocks/RSS/RSS.php:204
+#: includes/Blocks/RSS/RSS.php:208
 msgid "Continue reading \"%s\"&hellip;"
 msgstr "Artikel „%s“ weiterlesen&hellip;"
 
@@ -1153,11 +1153,11 @@ msgstr ""
 "Diese Eigenschaften werden in einer E-Mail nicht korrekt angezeigt. Bitte "
 "entfernen Sie sie:"
 
-#: src/editor/blocks/ics/edit.js:79 src/editor/blocks/rss/edit.js:79
+#: src/editor/blocks/ics/edit.js:79 src/editor/blocks/rss/edit.js:80
 msgid "Enter URL here…"
 msgstr "URL hier eingeben…"
 
-#: src/editor/blocks/ics/edit.js:90 src/editor/blocks/rss/edit.js:90
+#: src/editor/blocks/ics/edit.js:90 src/editor/blocks/rss/edit.js:91
 msgid "Use URL"
 msgstr "URL verwenden"
 
@@ -1169,7 +1169,7 @@ msgstr "ICS-URL bearbeiten"
 msgid "ICS settings"
 msgstr "ICS-Einstellungen"
 
-#: src/editor/blocks/ics/edit.js:114 src/editor/blocks/rss/edit.js:114
+#: src/editor/blocks/ics/edit.js:114 src/editor/blocks/rss/edit.js:115
 msgid "Number of items"
 msgstr "Anzahl Elemente"
 
@@ -1189,19 +1189,19 @@ msgstr "Beschreibung anzeigen"
 msgid "Limit length of description"
 msgstr "Länge der Beschreibung begrenzen"
 
-#: src/editor/blocks/ics/edit.js:147
+#: src/editor/blocks/ics/edit.js:150
 msgid "Max number of words in description"
 msgstr "Maximale Anzahl von Wörtern in der Beschreibung"
 
-#: src/editor/blocks/ics/edit.js:161
+#: src/editor/blocks/ics/edit.js:164
 #: src/editor/blocks/post-inserter/index.js:213
-#: src/editor/blocks/rss/edit.js:164
+#: src/editor/blocks/rss/edit.js:178
 msgid "Heading"
 msgstr "Überschrift"
 
-#: src/editor/blocks/ics/edit.js:180
+#: src/editor/blocks/ics/edit.js:183
 #: src/editor/blocks/post-inserter/index.js:232
-#: src/editor/blocks/rss/edit.js:183
+#: src/editor/blocks/rss/edit.js:197
 msgid "Text"
 msgstr "Text"
 
@@ -1234,7 +1234,6 @@ msgid "Post excerpt"
 msgstr "Textauszug"
 
 #: src/editor/blocks/post-inserter/index.js:161
-#: src/editor/blocks/rss/edit.js:143
 msgid "Max number of words in excerpt"
 msgstr "Maximale Anzahl von Wörtern im Textauszug"
 
@@ -1311,27 +1310,35 @@ msgstr "und"
 msgid "By"
 msgstr "Von"
 
-#: src/editor/blocks/rss/edit.js:101
+#: src/editor/blocks/rss/edit.js:102
 msgid "Edit RSS URL"
 msgstr "RSS-URL bearbeiten"
 
-#: src/editor/blocks/rss/edit.js:112
+#: src/editor/blocks/rss/edit.js:113
 msgid "RSS settings"
 msgstr "RSS-Einstellungen"
 
-#: src/editor/blocks/rss/edit.js:124
+#: src/editor/blocks/rss/edit.js:125
 msgid "Display only new items since the last time the newsletter was sent."
 msgstr "Nur neue Artikel seit dem letzten Versand des Newsletters anzeigen."
 
-#: src/editor/blocks/rss/edit.js:132
+#: src/editor/blocks/rss/edit.js:133
 msgid "Display date"
 msgstr "Datum anzeigen"
 
-#: src/editor/blocks/rss/edit.js:137
-msgid "Display excerpt"
-msgstr "Textauszug anzeigen"
+#: src/editor/blocks/rss/edit.js:138
+msgid "Display content"
+msgstr "Inhalt anzeigen"
 
-#: src/editor/blocks/rss/edit.js:158
+#: src/editor/blocks/rss/edit.js:144
+msgid "Limit length of content"
+msgstr "Inhaltslänge begrenzen"
+
+#: src/editor/blocks/rss/edit.js:154
+msgid "Max number of words in content"
+msgstr "Maximale Anzahl von Wörtern im Inhalt"
+
+#: src/editor/blocks/rss/edit.js:169
 msgid "Display \"Continue reading\""
 msgstr "Anzeige „Artikel weiterlesen“"
 
@@ -1580,6 +1587,9 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgid "Display excerpt"
+#~ msgstr "Textauszug anzeigen"
 
 #~ msgid "Recurring event"
 #~ msgstr "Wiederkehrender Termin"

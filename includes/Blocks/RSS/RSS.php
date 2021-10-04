@@ -33,11 +33,15 @@ class RSS
                 'type' => 'boolean',
                 'default' => false,
             ],
-            'displayExcerpt' => [
+            'displayDate' => [
                 'type' => 'boolean',
                 'default' => false,
             ],
-            'displayDate' => [
+            'displayContent' => [
+                'type' => 'boolean',
+                'default' => false,
+            ],
+            'excerptLimit' => [
                 'type' => 'boolean',
                 'default' => false,
             ],
@@ -227,17 +231,23 @@ class RSS
                 }
             }
 
-            $excerpt = '';
-            if ($atts['displayExcerpt'] && !empty($item->get_description())) {
-                $excerpt = html_entity_decode($item->get_description(), ENT_QUOTES, get_option('blog_charset'));
-                $excerpt = esc_attr(wp_trim_words($excerpt, $atts['excerptLength'], '&hellip;'));
-                $excerpt = $mjml ?
-                    '<p class="has-normal-padding">' . esc_html($excerpt) . $readMoreLink . '</p>'
+            $content = '';
+            if ($atts['displayContent'] && !empty($item->get_content())) {
+                $content = html_entity_decode($item->get_content(), ENT_QUOTES, get_option('blog_charset'));
+                if ($atts['excerptLimit']) {
+                    $content = wp_trim_words($content, absint($atts['excerptLength']), ' [&hellip;]');
+                    // Change existing [...] to [&hellip;].
+                    if ('[...]' === substr($content, -5)) {
+                        $content = substr($content, 0, -5) . '[&hellip;]';
+                    }
+                }
+                $content = $mjml ?
+                    '<p class="has-normal-padding">' . $content . $readMoreLink . '</p>'
                     :
-                    '<div>' . esc_html($excerpt) . $readMoreLink . '</div>';
+                    '<div>' . $content . $readMoreLink . '</div>';
             }
 
-            $listItems .= $title . $date . $excerpt;
+            $listItems .= $title . $date . $content;
         }
 
         if ($listItems) {
