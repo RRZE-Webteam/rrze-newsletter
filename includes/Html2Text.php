@@ -427,10 +427,6 @@ class Html2Text
             $url = $link;
         } else {
             $url = $this->baseurl;
-            if (mb_substr($link, 0, 1) != '/') {
-                $url .= '/';
-            }
-            $url .= $link;
         }
 
         if ($linkMethod == 'table') {
