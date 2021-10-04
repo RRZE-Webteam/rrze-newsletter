@@ -1,7 +1,7 @@
 {
     "name": "rrze/rrze-newsletter",
     "description": "RRZE WordPress Plugin",
-    "version": "1.7.0",
+    "version": "1.7.1",
     "type": "wordpress-plugin",
     "license": "GPL",
     "require": {
