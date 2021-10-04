@@ -32,16 +32,20 @@ export default () => {
             sinceLastSend: {
                 type: "boolean",
                 default: false
-            },             
+            },
             itemsToShow: {
                 type: "number",
                 default: 5
             },
-            displayExcerpt: {
+            displayDate: {
                 type: "boolean",
                 default: false
             },
-            displayDate: {
+            displayContent: {
+                type: "boolean",
+                default: false
+            },
+            excerptLimit: {
                 type: "boolean",
                 default: false
             },
