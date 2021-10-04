@@ -33,7 +33,7 @@ export default function ICSEdit({ attributes, setAttributes }) {
 
     const {
         feedURL,
-        itemsToShow,        
+        itemsToShow,
         displayLocation,
         displayOrganizer,
         displayDescription,
@@ -137,7 +137,10 @@ export default function ICSEdit({ attributes, setAttributes }) {
                     />
                     {displayDescription && (
                         <ToggleControl
-                            label={__("Limit length of description", "rrze-newsletter")}
+                            label={__(
+                                "Limit length of description",
+                                "rrze-newsletter"
+                            )}
                             checked={descriptionLimit}
                             onChange={toggleAttribute("descriptionLimit")}
                         />
