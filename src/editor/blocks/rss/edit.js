@@ -36,7 +36,8 @@ export default function RSSEdit({ attributes, setAttributes }) {
         sinceLastSend,
         itemsToShow,
         displayDate,
-        displayExcerpt,
+        displayContent,
+        excerptLimit,
         excerptLength,
         displayReadMore,
         headingFontSize,
@@ -134,14 +135,24 @@ export default function RSSEdit({ attributes, setAttributes }) {
                         onChange={toggleAttribute("displayDate")}
                     />
                     <ToggleControl
-                        label={__("Display excerpt", "rrze-newsletter")}
-                        checked={displayExcerpt}
-                        onChange={toggleAttribute("displayExcerpt")}
+                        label={__("Display content", "rrze-newsletter")}
+                        checked={displayContent}
+                        onChange={toggleAttribute("displayContent")}
                     />
-                    {displayExcerpt && (
+                    {displayContent && (
+                        <ToggleControl
+                            label={__(
+                                "Limit length of content",
+                                "rrze-newsletter"
+                            )}
+                            checked={excerptLimit}
+                            onChange={toggleAttribute("excerptLimit")}
+                        />
+                    )}
+                    {excerptLimit && (
                         <RangeControl
                             label={__(
-                                "Max number of words in excerpt",
+                                "Max number of words in content",
                                 "rrze-newsletter"
                             )}
                             value={excerptLength}
@@ -153,9 +164,12 @@ export default function RSSEdit({ attributes, setAttributes }) {
                             required
                         />
                     )}
-                    {displayExcerpt && (
+                    {displayContent && (
                         <ToggleControl
-                            label={__('Display "Continue reading"', "rrze-newsletter")}
+                            label={__(
+                                'Display "Continue reading"',
+                                "rrze-newsletter"
+                            )}
                             checked={displayReadMore}
                             onChange={toggleAttribute("displayReadMore")}
                         />
