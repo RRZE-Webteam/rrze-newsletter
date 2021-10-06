@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\Mail\Send;
 use RRZE\Newsletter\MJML\Render;
+use Html2Text\Html2Text;
 
 class Subscription
 {
