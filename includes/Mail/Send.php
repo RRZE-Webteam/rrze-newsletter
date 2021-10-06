@@ -58,7 +58,6 @@ class Send
 
         $headers = [
             'Content-Type: text/html; charset=UTF-8',
-            'Content-Transfer-Encoding: 8bit',
             'X-Mailtool: RRZE Newsletter ' . plugin()->getVersion() . ' (https://github.com/RRZE-Webteam/rrze-newsletter)',
             'Reply-To: ' . $replyTo
         ];

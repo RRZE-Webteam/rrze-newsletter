@@ -12,6 +12,10 @@ class ComposerStaticInit185c936252b12398c113014d70cefb07
             'RRule\\' => 6,
             'RRZE\\Newsletter\\' => 16,
         ),
+        'H' => 
+        array (
+            'Html2Text\\' => 10,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -23,6 +27,11 @@ class ComposerStaticInit185c936252b12398c113014d70cefb07
         'RRZE\\Newsletter\\' => 
         array (
             0 => __DIR__ . '/../..' . '/includes',
+        ),
+        'Html2Text\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/html2text/html2text/src',
+            1 => __DIR__ . '/..' . '/html2text/html2text/test',
         ),
     );
 

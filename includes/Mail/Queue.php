@@ -11,6 +11,7 @@ use RRZE\Newsletter\Archive;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterQueue;
+use Html2Text\Html2Text;
 
 use function RRZE\Newsletter\plugin;
 
@@ -166,21 +167,40 @@ class Queue
         // Save the rendered content to the archive meta post.
         add_post_meta($postId, 'rrze_newsletter_archive_' . strtotime($data['send_date_gmt']), $data['content'], true);
 
-        // Insert post in the mail queue.
-        $args = [
-            'post_date' => $data['send_date'],
-            'post_date_gmt' => $data['send_date_gmt'],
-            'post_title' => $data['title'],
-            'post_content' => $data['content'],
-            'post_excerpt' => $data['excerpt'],
-            'post_type' => NewsletterQueue::POST_TYPE,
-            'post_status' => 'mail-queued',
-            'post_author' => 1
-        ];
-
         foreach ($recipient as $mail) {
             remove_filter('content_save_pre', 'wp_filter_post_kses');
             remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
+
+            $timestamp = strtotime($post->post_date_gmt);
+            $archivePageBase = Archive::getPageBase();
+            $archiveQuery = Utils::encryptQueryVar($postId . '|' . $timestamp . '|' . $mail['to_email']);
+            $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
+
+            // Parse tags.
+            $tags = [
+                'FNAME' => $mail['to_fname'],
+                'LNAME' => $mail['to_lname'],
+                'EMAIL' => $mail['to_email'],
+                'ARCHIVE' => $archiveUrl
+            ];
+            $tags = Tags::sanitizeTags($postId, $tags);
+            $parser = new Parser();
+            $body = $parser->parse($data['content'], $tags);
+            $html2text = new Html2Text($body);
+            $altBody = $html2text->getText();
+            // End Parse tags.            
+
+            // Insert post in the mail queue.
+            $args = [
+                'post_date' => $data['send_date'],
+                'post_date_gmt' => $data['send_date_gmt'],
+                'post_title' => $data['title'],
+                'post_content' => $body,
+                'post_excerpt' => $altBody,
+                'post_type' => NewsletterQueue::POST_TYPE,
+                'post_status' => 'mail-queued',
+                'post_author' => 1
+            ];
 
             $qId = wp_insert_post($args);
 
@@ -193,9 +213,6 @@ class Queue
                 add_post_meta($qId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_from', $data['from'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_to_fname', $mail['to_fname'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_to_lname', $mail['to_lname'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_to_email', $mail['to_email'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_to', $mail['to'], true);
                 add_post_meta($qId, 'rrze_newsletter_queue_retries', 0, true);
             }
@@ -234,39 +251,17 @@ class Queue
 
             $replyTo = get_post_meta($post->ID, 'rrze_newsletter_queue_replyto', true);
 
-            $toFname  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_fname', true);
-            $toLname  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_lname', true);
-            $toEmail  = get_post_meta($post->ID, 'rrze_newsletter_queue_to_email', true);
             $to  = get_post_meta($post->ID, 'rrze_newsletter_queue_to', true);
 
             $subject = $post->post_title;
             $body = $post->post_content;
             $altBody = $post->post_excerpt;
 
-            $timestamp = strtotime($post->post_date_gmt);
-            $archivePageBase = Archive::getPageBase();
-            $archiveQuery = Utils::encryptQueryVar($newsletterId . '|' . $timestamp . '|' . $toEmail);
-            $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
-
-            // Parse tags.
-            $data = [
-                'FNAME' => $toFname,
-                'LNAME' => $toLname,
-                'EMAIL' => $toEmail,
-                'ARCHIVE' => $archiveUrl
-            ];
-            $data = Tags::sanitizeTags($newsletterId, $data);
-            $parser = new Parser();
-            $body = $parser->parse($body, $data);
-            $altBody = $parser->parse($altBody, $data);
-            // End Parse tags.
-
             $blogName = get_bloginfo('name');
             $website = $blogName ? $blogName : parse_url(site_url(), PHP_URL_HOST);
 
             $headers = [
                 'Content-Type: text/html; charset=UTF-8',
-                'Content-Transfer-Encoding: 8bit',
                 'X-Mailtool: RRZE-Newsletter Plugin V' . plugin()->getVersion() . ' on ' . $website,
                 'Reply-To: ' . $replyTo
             ];

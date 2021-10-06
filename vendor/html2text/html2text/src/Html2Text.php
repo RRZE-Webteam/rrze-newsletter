@@ -17,9 +17,7 @@
  * GNU General Public License for more details.
  */
 
-namespace RRZE\Newsletter;
-
-defined('ABSPATH') || exit;
+namespace Html2Text;
 
 class Html2Text
 {
@@ -427,6 +425,10 @@ class Html2Text
             $url = $link;
         } else {
             $url = $this->baseurl;
+            if (mb_substr($link, 0, 1) != '/') {
+                $url .= '/';
+            }
+            $url .= $link;
         }
 
         if ($linkMethod == 'table') {

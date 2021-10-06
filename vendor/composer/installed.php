@@ -10,6 +10,15 @@
         'dev' => true,
     ),
     'versions' => array(
+        'html2text/html2text' => array(
+            'pretty_version' => '4.3.1',
+            'version' => '4.3.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../html2text/html2text',
+            'aliases' => array(),
+            'reference' => '61ad68e934066a6f8df29a3d23a6460536d0855c',
+            'dev_requirement' => false,
+        ),
         'johngrogg/ics-parser' => array(
             'pretty_version' => 'v2.2.2',
             'version' => '2.2.2.0',
