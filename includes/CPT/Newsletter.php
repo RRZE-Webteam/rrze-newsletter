@@ -8,7 +8,6 @@ namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Html2Text;
 use RRZE\Newsletter\MJML\Render;
 use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Parser;
@@ -584,9 +583,6 @@ class Newsletter
             return $body;
         }
 
-        $html2text = new Html2Text($body);
-        $altBody = $html2text->getText();
-
         $data['id'] = $postId;
 
         $data['post_date_gmt'] = $post->post_date_gmt;
@@ -603,7 +599,7 @@ class Newsletter
 
         $data['title'] = $post->post_title;
         $data['content'] = $body;
-        $data['excerpt'] = $altBody;
+        $data['excerpt'] = '';
 
         $data['mailing_list_terms'] = self::getTermsList($postId, self::MAILING_LIST);
 
