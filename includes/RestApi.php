@@ -8,6 +8,7 @@ use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\Mail\Send;
 use RRZE\Newsletter\MJML\Render;
+use Html2Text\Html2Text;
 
 class RestApi
 {
@@ -365,9 +366,6 @@ class RestApi
         $fromName = get_post_meta($postId, 'rrze_newsletter_from_name', true);
         $replyTo = get_post_meta($postId, 'rrze_newsletter_replyto', true);
 
-        $html2text = new Html2Text($body);
-        $altBody = $html2text->getText();
-
         $emailsList = [];
         foreach ($emails as $email) {
             if (!Utils::sanitizeEmail(trim($email))) {
@@ -385,7 +383,8 @@ class RestApi
             $data = Tags::sanitizeTags($postId, $data);
             $parser = new Parser();
             $tBody = $parser->parse($body, $data);
-            $tAltBody = $parser->parse($altBody, $data);
+            $html2text = new Html2Text($tBody);
+            $tAltBody = $html2text->getText();
             // End Parse tags.
 
             $args = [
