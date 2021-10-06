@@ -70,7 +70,8 @@ class Tags
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
         $tags['UPDATE'] = $updateUrl;
-        $tags['PERMALINK'] = get_permalink($postId);
+        $tags['PERMALINK'] = untrailingslashit(get_permalink($postId));
+        $tags['ARCHIVE'] = untrailingslashit($tags['ARCHIVE']);
         $tags['DATE'] = (string) get_the_time(get_option('date_format'), $postId);
         $tags['CURRENT_YEAR'] = get_the_time('Y', $postId);
 
