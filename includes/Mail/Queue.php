@@ -63,7 +63,7 @@ class Queue
      */
     public function set($postId)
     {
-        if (Newsletter::POST_TYPE == get_post_type($postId)) {
+        if (Newsletter::POST_TYPE === get_post_type($postId)) {
             $this->add($postId);
         }
     }
