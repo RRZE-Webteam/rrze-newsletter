@@ -104,7 +104,7 @@ class RSS
         global $post;
         if (
             is_a($post, '\WP_Post')
-            && Newsletter::POST_TYPE == get_post_type($post->ID)
+            && Newsletter::POST_TYPE === get_post_type($post->ID)
         ) {
             $atts['postId'] = $post->ID;
         } else {
