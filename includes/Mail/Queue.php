@@ -149,7 +149,7 @@ class Queue
                     ];
                 }
             }
-        } elseif ($isMailingListDisabled) {
+        } else {
             $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
             if ($email = Utils::sanitizeRecipientEmail($email)) {
                 $recipient[$email] = [
