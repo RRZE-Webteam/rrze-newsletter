@@ -54,9 +54,7 @@ class Main
         Cron::init();
 
         // Queue task
-        add_action('init', function () {
-            add_action('rrze_newsletter_queue_task', [$this, 'setQueue']);
-        });
+        add_action('rrze_newsletter_queue_task', [$this, 'setQueue']);
     }
 
     public function settingsLink($links)

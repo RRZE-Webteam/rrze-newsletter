@@ -59,6 +59,26 @@ class Utils
         ) {
             return $email;
         }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            do_action(
+                'rrze.log.error',
+                [
+                    'plugin' => plugin()->getBaseName(),
+                    'method' => __METHOD__,
+                    'message' => sprintf('Error: Invalid Email Address. The recipient email address %s is not valid.', $email)
+                ]
+            );
+        }
+        if (!empty($allowedDomains) && !in_array($domain, $allowedDomains)) {
+            do_action(
+                'rrze.log.error',
+                [
+                    'plugin' => plugin()->getBaseName(),
+                    'method' => __METHOD__,
+                    'message' => sprintf('Error: Email Address Not Allowed. The recipient email address %s is not allowed.', $email)
+                ]
+            );
+        }
         return '';
     }
 

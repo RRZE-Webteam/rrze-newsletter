@@ -82,6 +82,14 @@ class Queue
         $data = Newsletter::getData($postId);
         if (empty($data) || is_wp_error($data)) {
             Newsletter::setStatus($postId, 'error');
+            do_action(
+                'rrze.log.error',
+                [
+                    'plugin' => plugin()->getBaseName(),
+                    'method' => __METHOD__,
+                    'message' => sprintf('Error: Newsletter %d. The newsletter data is empty or wrong.', absint($postId))
+                ]
+            );
             return;
         }
 
@@ -141,7 +149,7 @@ class Queue
                     ];
                 }
             }
-        } elseif ($isMailingListDisabled) {
+        } else {
             $email = (string) get_post_meta($postId, 'rrze_newsletter_to_email', true);
             if ($email = Utils::sanitizeRecipientEmail($email)) {
                 $recipient[$email] = [
@@ -155,6 +163,14 @@ class Queue
 
         if (empty($recipient)) {
             Newsletter::setStatus($postId, 'error');
+            do_action(
+                'rrze.log.error',
+                [
+                    'plugin' => plugin()->getBaseName(),
+                    'method' => __METHOD__,
+                    'message' => sprintf('Error: Newsletter %d. The recipient\'s email address array is empty.', absint($postId))
+                ]
+            );
             return;
         }
 
