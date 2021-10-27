@@ -82,6 +82,14 @@ class Queue
         $data = Newsletter::getData($postId);
         if (empty($data) || is_wp_error($data)) {
             Newsletter::setStatus($postId, 'error');
+            do_action(
+                'rrze.log.error',
+                [
+                    'plugin' => plugin()->getBaseName(),
+                    'method' => __METHOD__,
+                    'message' => sprintf('Error retrieving newsletter %s data.', absint($postId))
+                ]
+            );
             return;
         }
 
@@ -155,6 +163,14 @@ class Queue
 
         if (empty($recipient)) {
             Newsletter::setStatus($postId, 'error');
+            do_action(
+                'rrze.log.error',
+                [
+                    'plugin' => plugin()->getBaseName(),
+                    'method' => __METHOD__,
+                    'message' => sprintf('Error retrieving newsletter %s recipient.', absint($postId))
+                ]
+            );
             return;
         }
 
