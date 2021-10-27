@@ -56,7 +56,6 @@ class Newsletter
         add_filter('post_row_actions', [__CLASS__, 'displayViewOrPreviewLink']);
         add_filter('post_row_actions', [__CLASS__, 'removeQuickEdit'], 10, 2);
         add_action('save_post_' . self::POST_TYPE, [__CLASS__, 'savePost'], 10, 3);
-        add_action('transition_post_status', [__CLASS__, 'transitionPostStatus'], 10, 3);
         add_action('wp_trash_post', [__CLASS__, 'trash'], 10, 1);
     }
 
@@ -842,15 +841,6 @@ class Newsletter
         if (!$update) {
             update_post_meta($postId, 'rrze_newsletter_template_id', -1);
             self::setStatus($postId, '');
-        }
-    }
-
-    public static function transitionPostStatus($newStatus, $oldStatus, $post)
-    {
-        if (('publish' === $newStatus && 'publish' !== $oldStatus)
-            || ('future' === $newStatus && 'future' !== $oldStatus)
-        ) {
-            self::setStatus($post->ID, 'send');
         }
     }
 
