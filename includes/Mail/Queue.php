@@ -87,7 +87,7 @@ class Queue
                 [
                     'plugin' => plugin()->getBaseName(),
                     'method' => __METHOD__,
-                    'message' => sprintf('Error retrieving newsletter %s data.', absint($postId))
+                    'message' => sprintf('Error: Newsletter %d. The newsletter data is empty or wrong.', absint($postId))
                 ]
             );
             return;
@@ -168,7 +168,7 @@ class Queue
                 [
                     'plugin' => plugin()->getBaseName(),
                     'method' => __METHOD__,
-                    'message' => sprintf('Error retrieving newsletter %s recipient.', absint($postId))
+                    'message' => sprintf('Error: Newsletter %d. The recipient\'s email address array is empty.', absint($postId))
                 ]
             );
             return;
