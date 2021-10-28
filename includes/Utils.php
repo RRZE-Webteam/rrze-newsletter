@@ -68,8 +68,7 @@ class Utils
                     'message' => sprintf('Error: Invalid Email Address. The recipient email address %s is not valid.', $email)
                 ]
             );
-        }
-        if (!empty($allowedDomains) && !in_array($domain, $allowedDomains)) {
+        } elseif (!empty($allowedDomains) && !in_array($domain, $allowedDomains)) {
             do_action(
                 'rrze.log.error',
                 [
