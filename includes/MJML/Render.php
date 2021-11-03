@@ -213,6 +213,8 @@ final class Render
             } elseif (strpos($url, '{{=ARCHIVE}}') !== false) {
                 $url = '{{=ARCHIVE}}';
                 $skipUrlWithParams = true;
+            } elseif (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                $skipUrlWithParams = true;
             }
             if (!$skipUrlWithParams) {
                 $url = add_query_arg(
@@ -397,6 +399,7 @@ final class Render
                         'inner-padding' => '12px 24px',
                         'line-height'   => '1.8',
                         'href'          => $anchor ? $anchor->getAttribute('href') : '',
+                        'target'        => $anchor && $anchor->getAttribute('target') ? $anchor->getAttribute('target') : '_self',
                         'border-radius' => $borderRadius . 'px',
                         'font-size'     => '18px',
                         'font-family'   => $fontFamily,
