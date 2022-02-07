@@ -1,7 +1,7 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.7.1',
-        'version' => '1.7.1.0',
+        'pretty_version' => '1.7.7',
+        'version' => '1.7.7.0',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -29,17 +29,17 @@
             'dev_requirement' => false,
         ),
         'rlanvin/php-rrule' => array(
-            'pretty_version' => 'v2.2.2',
-            'version' => '2.2.2.0',
+            'pretty_version' => 'v2.3.0',
+            'version' => '2.3.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../rlanvin/php-rrule',
             'aliases' => array(),
-            'reference' => '4e979ff9b1122e7b5f4b4faf87a000396af12d16',
+            'reference' => 'a7d7f993e6a5b0940d861d9e3d9f52cec709345e',
             'dev_requirement' => false,
         ),
         'rrze/rrze-newsletter' => array(
-            'pretty_version' => '1.7.1',
-            'version' => '1.7.1.0',
+            'pretty_version' => '1.7.7',
+            'version' => '1.7.7.0',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
