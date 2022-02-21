@@ -42,11 +42,12 @@ class Subscription
     {
         $subscriptionDisabled = $this->options->subscription_disabled == 'on' ? true : false;
         $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', $subscriptionDisabled);
-        if ($isSubscriptionDisabled || is_admin() || !is_page()) {
+        $subscriptionPageId = absint($this->options->subscription_page_id);
+        if ($isSubscriptionDisabled || is_admin() || !is_page() || !$subscriptionPageId) {
             return;
         }
 
-        $slug = get_post_field('post_name', absint($this->options->subscription_page_id));
+        $slug = get_post_field('post_name', $subscriptionPageId);
 
         $post = get_post();
         if ($slug != $post->post_name) {
