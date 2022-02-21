@@ -96,9 +96,9 @@ function getFields(): array
                 'name'              => 'port',
                 'label'             => __('Port', 'rrze-newsletter'),
                 'desc'              => __('Host port.', 'rrze-newsletter'),
-                'placeholder'       => '587',
+                'placeholder'       => '25',
                 'type'              => 'text',
-                'default'           => '587',
+                'default'           => '25',
                 'sanitize_callback' => 'sanitize_text_field',
                 'required'          => true
             ],
