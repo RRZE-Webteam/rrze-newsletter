@@ -270,7 +270,7 @@ final class Render
         // Default attributes for the column which will envelop the component.
         $columnAttrs = array_merge(
             [
-                'padding' => '6px, 12px',
+                'padding' => '12px',
             ]
         );
 
