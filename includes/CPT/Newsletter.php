@@ -76,21 +76,22 @@ class Newsletter
             'parent_item_colon'  => __('Parent Newsletters:', 'rrze-newsletter'),
             'not_found'          => __('No newsletters found.', 'rrze-newsletter'),
             'not_found_in_trash' => __('No newsletters found in Trash.', 'rrze-newsletter'),
-            'capability_type'     => Capabilities::getCptCapabilityType(self::POST_TYPE),
-            'capabilities'        => (array) Capabilities::getCptCaps(self::POST_TYPE),
-            'map_meta_cap'        => Capabilities::getCptMapMetaCap(self::POST_TYPE),
+            'capability_type'    => Capabilities::getCptCapabilityType(self::POST_TYPE),
+            'capabilities'       => (array) Capabilities::getCptCaps(self::POST_TYPE),
+            'map_meta_cap'       => Capabilities::getCptMapMetaCap(self::POST_TYPE),
         ];
 
         $args = [
-            'labels'           => $labels,
-            'public'           => true,
-            'has_archive'      => true,
-            'public_queryable' => true,
-            'query_var'        => true,
-            'show_ui'          => true,
-            'show_in_rest'     => true,
-            'supports'         => ['author', 'editor', 'title', 'custom-fields', 'revisions', 'thumbnail'],
-            'menu_icon'        => 'dashicons-email-alt',
+            'labels'            => $labels,
+            'public'            => true,
+            'has_archive'       => true,
+            'public_queryable'  => true,
+            'query_var'         => true,
+            'show_ui'           => true,
+            'show_in_nav_menus' => false,
+            'show_in_rest'      => true,
+            'supports'          => ['author', 'editor', 'title', 'custom-fields', 'revisions', 'thumbnail'],
+            'menu_icon'         => 'dashicons-email-alt',
         ];
 
         register_post_type(self::POST_TYPE, $args);
@@ -423,6 +424,7 @@ class Newsletter
             'public'            => true,
             'hierarchical'      => true,
             'show_admin_column' => true,
+            'show_in_nav_menus' => false,
             'show_in_rest'      => true,
             'rewrite'           => ['slug' => 'newsletters', 'with_front' => false]
         ];
