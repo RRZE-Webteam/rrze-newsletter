@@ -45,18 +45,18 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
-**Empfohlene Node-Version:** `node@16`
+**Empfohlene Node-Version:** `node@14`
 
 **Installation der Node-Module**
 
 ```shell
- npm install --legacy-peer-deps
+ npm install
 ```
 
 **Update der Node-Module**
 
 ```shell
- npm update --legacy-peer-deps
+ npm update
 ```
 
 **Dev-Modus**
