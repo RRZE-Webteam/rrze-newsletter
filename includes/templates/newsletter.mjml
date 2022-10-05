@@ -10,7 +10,7 @@
 
             /* Link */
             a {
-                color: inherit !important;
+                color: inherit;
                 text-decoration: underline;
             }
             a:active, a:focus, a:hover {
@@ -22,7 +22,7 @@
 
             /* Button */
             .is-style-outline a {
-                background: #fff !important;
+                background: #fff;
                 border: 2px solid !important;
                 display: block !important;
             }
