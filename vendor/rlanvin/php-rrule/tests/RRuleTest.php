@@ -2520,6 +2520,13 @@ class RRuleTest extends TestCase
 		$this->assertInstanceOf('\RRule\RSet', $object);
 	}
 
+	public function testCreateFromRfcStringDoesntChangeCase()
+	{
+		$str = "DTSTART;TZID=Europe/Paris:20200929T000000\nRRULE:FREQ=DAILY;BYSECOND=0;BYMINUTE=0;BYHOUR=9";
+		$rule = RRule::createFromRfcString($str);
+		$this->assertEquals($str, $rule->rfcString());
+	}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Timezone
 
@@ -2825,6 +2832,24 @@ class RRuleTest extends TestCase
 			new DateTime('Wednesday, January 27, 2021 08:00'),
 			new DateTime('Friday, January 29, 2021 08:00')
 		], $occurrences, 'DateTimeImmutable produces valid results');
+	}
+
+	/**
+	 * Test bug #104
+	 * @see https://github.com/rlanvin/php-rrule/issues/104
+	 */
+	public function testMicrosecondsAreRemovedFromInput()
+	{
+		$dtstart = '2022-04-22 12:00:00.5';
+		$rule = new RRule([
+			'dtstart' => $dtstart,
+			'freq' => 'daily',
+			'interval' => 1,
+			'count' => 1
+		]);
+		$this->assertTrue($rule->occursAt('2022-04-22 12:00:00'));
+		$this->assertTrue($rule->occursAt('2022-04-22 12:00:00.5'));
+		$this->assertEquals(date_create('2022-04-22 12:00:00'), $rule[0]);
 	}
 
 ///////////////////////////////////////////////////////////////////////////////
