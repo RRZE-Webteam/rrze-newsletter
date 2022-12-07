@@ -10,89 +10,101 @@
 
             /* Link */
             a {
-                color: inherit;
+                color: inherit !important;
                 text-decoration: underline;
             }
-            a:active, a:focus, a:hover {
+
+            a:active,
+            a:focus,
+            a:hover {
                 text-decoration: none;
             }
+
             a:focus {
                 outline: thin dotted #000;
             }
 
             /* Button */
             .is-style-outline a {
-                background: #fff;
+                background: #fff !important;
                 border: 2px solid !important;
                 display: block !important;
             }
 
             /* Heading */
-            h1 { font-size: 2.44em; line-height: 1.4; }
-            h2 { font-size: 1.95em; line-height: 1.4; }
-            h3 { font-size: 1.56em; line-height: 1.4; }
-            h4 { font-size: 1.25em; line-height: 1.5; }
-            h5 { font-size: 1em; line-height: 1.8; }
-            h6 { font-size: 0.8em; line-height: 1.8; }
-            h1, h2, h3, h4, h5, h6 { margin-top: 0; margin-bottom: 0; }
-
-            /* Fonts Sizes */
-            .has-small-font-size {
-                font-size: 13px;
-            }
-            .has-normal-font-size {
-                font-size: 16px;
-            }
-            .has-medium-font-size {
-                font-size: 20px;
-            }
-            .has-large-font-size {
-                font-size: 36px;
-            }
-            .has-huge-font-size {
-                font-size: 42px;
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                margin-top: 0;
+                margin-bottom: 0;
             }
 
-            /* Padding */
-            .has-small-padding {
-                padding-bottom: 5px;
+            h1 {
+                font-size: 2.44em;
+                line-height: 1.24;
             }
-            .has-normal-padding {
-                padding-bottom: 10px;
+
+            h2 {
+                font-size: 1.95em;
+                line-height: 1.36;
             }
-            .has-medium-padding {
-                padding-bottom: 15px;
+
+            h3 {
+                font-size: 1.56em;
+                line-height: 1.44;
             }
-            .has-large-padding {
-                padding-bottom: 25px;
+
+            h4 {
+                font-size: 1.25em;
+                line-height: 1.6;
             }
-            .has-huge-padding {
-                padding-bottom: 35px;
+
+            h5 {
+                font-size: 1em;
+                line-height: 1.5em;
+            }
+
+            h6 {
+                font-size: 0.8em;
+                line-height: 1.56;
             }
 
             /* List */
-            ul, ol {
+            ul,
+            ol {
                 margin-bottom: 0;
                 margin-top: 0;
                 padding-left: 1.3em;
             }
 
             /* Quote */
+            blockquote,
             .wp-block-quote {
-                border-left: 4px solid #000;
+                background: transparent;
+                border-left: 0.25em solid;
                 margin: 0;
-                padding-left: 20px;
+                padding-left: 24px;
             }
+
+            blockquote cite,
             .wp-block-quote cite {
                 color: #767676;
             }
+
+            blockquote p,
             .wp-block-quote p {
                 padding-bottom: 12px;
             }
+
+            .wp-block-quote.is-style-plain,
             .wp-block-quote.is-style-large {
                 border-left: 0;
                 padding-left: 0;
             }
+
             .wp-block-quote.is-style-large p {
                 font-size: 24px;
                 font-style: italic;
@@ -118,7 +130,7 @@
             }
         </mj-style>
         {{preview_text}}
-            <mj-preview>{{=preview_text}}</mj-preview>
+        <mj-preview>{{=preview_text}}</mj-preview>
         {{/preview_text}}
     </mj-head>
     <mj-body background-color="{{=background_color}}">
