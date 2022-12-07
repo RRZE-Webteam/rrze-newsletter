@@ -77,14 +77,14 @@ function systemRequirements(): string
     if (!is_php_version_compatible(RRZE_PHP_VERSION)) {
         $error = sprintf(
             /* translators: 1: Server PHP version number, 2: Required PHP version number. */
-            __('The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.', 'rrze-calendar'),
+            __('The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.', 'rrze-newsletter'),
             $phpVersion,
             RRZE_PHP_VERSION
         );
     } elseif (!is_wp_version_compatible(RRZE_WP_VERSION)) {
         $error = sprintf(
             /* translators: 1: Server WordPress version number, 2: Required WordPress version number. */
-            __('The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.', 'rrze-calendar'),
+            __('The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.', 'rrze-newsletter'),
             $wpVersion,
             RRZE_WP_VERSION
         );
@@ -103,7 +103,7 @@ function activation()
         wp_die(
             sprintf(
                 /* translators: 1: The plugin name, 2: The error string. */
-                __('Plugins: %1$s: %2$s', 'rrze-calendar'),
+                __('Plugins: %1$s: %2$s', 'rrze-newsletter'),
                 plugin_basename(__FILE__),
                 $error
             )
@@ -169,7 +169,7 @@ function loaded()
                     printf(
                         '<div class="notice notice-error"><p>' .
                             /* translators: 1: The plugin name, 2: The error string. */
-                            __('Plugins: %1$s: %2$s', 'rrze-calendar') .
+                            __('Plugins: %1$s: %2$s', 'rrze-newsletter') .
                             '</p></div>',
                         esc_html($pluginName),
                         esc_html($error)
