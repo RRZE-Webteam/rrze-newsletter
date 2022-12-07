@@ -369,28 +369,29 @@ class Utils
         return $r->occurrences;
     }
 
-    public static function validateDate($date, $format = 'Y-m-d H:i:s')
+    /**
+     * Validate a datetime string.
+     *
+     * @param string $date
+     * @param string $format
+     * @return boolean
+     */
+    public static function validateDate(string $date, string $format = 'Y-m-d H:i:s'): bool
     {
         $dt = \DateTime::createFromFormat($format, $date);
         return $dt && $dt->format($format) === $date;
     }
 
-    public static function arrayValuesRecursive(array $array): array
+    /**
+     * Search for a key in an array, recursively.
+     *
+     * @param array $haystack
+     * @param string $needle
+     * @return object
+     */
+    public static function recursiveSearchArrayKey(array $haystack, string $needle): object
     {
-        $flat = [];
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $flat = array_merge($flat, self::arrayValuesRecursive($value));
-            } else {
-                $flat[$key] = $value;
-            }
-        }
-        return $flat;
-    }
-
-    public static function recursiveFindKey(array $haystack, string $needle)
-    {
-        $iterator  = new \RecursiveArrayIterator($haystack);
+        $iterator = new \RecursiveArrayIterator($haystack);
         $recursive = new \RecursiveIteratorIterator(
             $iterator,
             \RecursiveIteratorIterator::SELF_FIRST
