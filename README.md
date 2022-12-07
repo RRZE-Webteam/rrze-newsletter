@@ -45,7 +45,7 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
-**Empfohlene Node-Version:** `node@14`
+**Empfohlene Node-Version:** `node@19`
 
 **Installation der Node-Module**
 
