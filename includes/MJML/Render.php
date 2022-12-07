@@ -448,11 +448,15 @@ final class Render
 
                 // Render core/list-item.
                 if ($blockName == 'core/list') {
-                    $list = Utils::recursiveFindKey($innerBlocks, 'innerHTML');
                     $tag = (strpos($innerHtml, '<ul>') !== false) ? '<ul>' : '<ol>';
                     $innerHtml = $tag;
+                    try {
+                        $list = Utils::recursiveSearchArrayKey($innerBlocks, 'innerHTML');
+                    } catch (\Exception $e) {
+                        $list = [];
+                    }
                     foreach ($list as $value) {
-                        $innerHtml .= $value;
+                        $innerHtml .= (string) $value;
                     }
                     $innerHtml .= ($tag == '<ul>') ? '</ul>' : '</ol>';
                 }
