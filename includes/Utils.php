@@ -374,4 +374,80 @@ class Utils
         $dt = \DateTime::createFromFormat($format, $date);
         return $dt && $dt->format($format) === $date;
     }
+
+    public static function arrayValuesRecursive(array $array): array
+    {
+        $flat = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $flat = array_merge($flat, self::arrayValuesRecursive($value));
+            } else {
+                $flat[$key] = $value;
+            }
+        }
+        return $flat;
+    }
+
+    public static function recursiveFindKey(array $haystack, string $needle)
+    {
+        $iterator  = new \RecursiveArrayIterator($haystack);
+        $recursive = new \RecursiveIteratorIterator(
+            $iterator,
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        foreach ($recursive as $key => $value) {
+            if ($key === $needle) {
+                yield $value;
+            }
+        }
+    }
+
+    /**
+     * Debug
+     *
+     * @param $input
+     * @param string $level
+     * @return void
+     */
+    public static function debug($input, string $level = 'i')
+    {
+        if (!WP_DEBUG) {
+            return;
+        }
+        if (in_array(strtolower((string) WP_DEBUG_LOG), ['true', '1'], true)) {
+            $logPath = WP_CONTENT_DIR . '/debug.log';
+        } elseif (is_string(WP_DEBUG_LOG)) {
+            $logPath = WP_DEBUG_LOG;
+        } else {
+            return;
+        }
+        if (is_array($input) || is_object($input)) {
+            $input = print_r($input, true);
+        }
+        switch (strtolower($level)) {
+            case 'e':
+            case 'error':
+                $level = 'Error';
+                break;
+            case 'i':
+            case 'info':
+                $level = 'Info';
+                break;
+            case 'd':
+            case 'debug':
+                $level = 'Debug';
+                break;
+            default:
+                $level = 'Info';
+        }
+        error_log(
+            date("[d-M-Y H:i:s \U\T\C]")
+                . " WP $level: "
+                . basename(__FILE__) . ' '
+                . $input
+                . PHP_EOL,
+            3,
+            $logPath
+        );
+    }
 }
