@@ -4,10 +4,10 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Templates;
+use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
-use RRZE\Newsletter\Templates;
-use function RRZE\Newsletter\plugin;
 
 final class Render
 {
@@ -48,6 +48,31 @@ final class Render
         'Courier, monospace',
     ];
 
+    public static $allowedInlineTags = [
+        's'      => true,
+        'b'      => true,
+        'strong' => true,
+        'i'      => true,
+        'em'     => true,
+        'span'   => true,
+        'u'      => true,
+        'small'  => true,
+        'sub'    => true,
+        'sup'    => true,
+        'a'      => [
+            'href'   => true,
+            'target' => true,
+            'rel'    => true,
+        ],
+    ];
+
+    /**
+     * The post permalink, if the post is public.
+     *
+     * @var String
+     */
+    protected static $postPermalink = null;
+
     /**
      * Convert a list to HTML attributes.
      *
@@ -61,7 +86,10 @@ final class Render
             ' ',
             array_map(
                 function ($key) use ($attributes) {
-                    if (isset($attributes[$key]) && !is_array($attributes[$key])) {
+                    if (
+                        isset($attributes[$key]) &&
+                        (is_string($attributes[$key]) || is_numeric($attributes[$key]))
+                    ) {
                         return $key . '="' . $attributes[$key] . '"';
                     } else {
                         return '';
@@ -84,17 +112,62 @@ final class Render
             return $blockAttrs['customFontSize'] . 'px';
         }
         if (isset($blockAttrs['fontSize'])) {
-            // Gutenberg's default font size presets.
-            // https://github.com/WordPress/gutenberg/blob/359858da0675943d8a759a0a7c03e7b3846536f5/packages/block-editor/src/store/defaults.js#L87-L113 .
             $sizes = [
-                'small'  => '13px',
-                'normal' => '16px',
-                'medium' => '20px',
-                'large'  => '36px',
-                'huge'   => '48px',
+                'small'   => '12px',
+                'normal'  => '16px',
+                'medium'  => '16px',
+                'large'   => '24px',
+                'huge'    => '36px',
+                'x-large' => '36px',
             ];
             return $sizes[$blockAttrs['fontSize']];
         }
+    }
+
+    /**
+     * Get the social icon and color based on the block attributes.
+     *
+     * @param string $serviceName The service name.
+     * @param array  $blockAttrs  Block attributes.
+     *
+     * @return array[
+     *   'icon'  => string,
+     *   'color' => string,
+     * ] The icon and color or empty array if service not found.
+     */
+    private static function getSocialIcon($serviceName, $blockAttrs)
+    {
+        $servicesColors = [
+            'facebook'  => '#1977f2',
+            'instagram' => '#f00075',
+            'linkedin'  => '#0577b5',
+            'tiktok'    => '#000000',
+            'tumblr'    => '#011835',
+            'twitter'   => '#21a1f3',
+            'wordpress' => '#3499cd',
+            'youtube'   => '#ff0100',
+        ];
+        if (!isset($servicesColors[$serviceName])) {
+            return [];
+        }
+        $icon  = 'white';
+        $color = $servicesColors[$serviceName];
+        if (isset($blockAttrs['className'])) {
+            if ('is-style-filled-black' === $blockAttrs['className'] || 'is-style-circle-white' === $blockAttrs['className']) {
+                $icon = 'black';
+            }
+            if ('is-style-filled-black' === $blockAttrs['className'] || 'is-style-filled-white' === $blockAttrs['className']) {
+                $color = 'transparent';
+            } elseif ('is-style-circle-black' === $blockAttrs['className']) {
+                $color = '#000';
+            } elseif ('is-style-circle-white' === $blockAttrs['className']) {
+                $color = '#fff';
+            }
+        }
+        return [
+            'icon'  => sprintf('%s-%s.png', $icon, $serviceName),
+            'color' => $color,
+        ];
     }
 
     /**
@@ -108,15 +181,15 @@ final class Render
         $colors = [];
 
         // For text.
-        if (isset($blockAttrs['textColor'])) {
-            $colors['color'] = $blockAttrs['textColor'];
+        if (isset($blockAttrs['textColor'], self::$colorPalette[$blockAttrs['textColor']])) {
+            $colors['color'] = self::$colorPalette[$blockAttrs['textColor']];
         }
         // customTextColor is set inline, but it's passed here for consistency.
         if (isset($blockAttrs['customTextColor'])) {
             $colors['color'] = $blockAttrs['customTextColor'];
         }
-        if (isset($blockAttrs['backgroundColor'])) {
-            $colors['background-color'] = $blockAttrs['backgroundColor'];
+        if (isset($blockAttrs['backgroundColor'], self::$colorPalette[$blockAttrs['backgroundColor']])) {
+            $colors['background-color'] = self::$colorPalette[$blockAttrs['backgroundColor']];
         }
         // customBackgroundColor is set inline, but not on mjml wrapper element.
         if (isset($blockAttrs['customBackgroundColor'])) {
@@ -124,8 +197,8 @@ final class Render
         }
 
         // For separators.
-        if (isset($blockAttrs['color'])) {
-            $colors['border-color'] = $blockAttrs['color'];
+        if (isset($blockAttrs['color'], self::$colorPalette[$blockAttrs['color']])) {
+            $colors['border-color'] = self::$colorPalette[$blockAttrs['color']];
         }
         if (isset($blockAttrs['customColor'])) {
             $colors['border-color'] = $blockAttrs['customColor'];
@@ -139,6 +212,14 @@ final class Render
             if (isset($blockAttrs['style']['color']['text'])) {
                 $colors['color'] = $blockAttrs['style']['color']['text'];
             }
+        }
+
+        // Add !important to all colors.
+        if (isset($colors['color'])) {
+            $colors['color'] .= ' !important';
+        }
+        if (isset($colors['background-color'])) {
+            $colors['background-color'] .= ' !important';
         }
 
         return $colors;
@@ -161,6 +242,11 @@ final class Render
             $attrs['font-size'] = $fontSize;
         }
 
+        if (isset($attrs['style']['spacing']['padding'])) {
+            $padding          = $attrs['style']['spacing']['padding'];
+            $attrs['padding'] = sprintf('%s %s %s %s', $padding['top'], $padding['right'], $padding['bottom'], $padding['left']);
+        }
+
         // Remove block-only attributes.
         array_map(
             function ($key) use (&$attrs) {
@@ -171,8 +257,13 @@ final class Render
             ['customBackgroundColor', 'customTextColor', 'customFontSize', 'fontSize', 'backgroundColor', 'style']
         );
 
-        if (isset($attrs['background-color'])) {
+        if (!isset($attrs['padding']) && isset($attrs['background-color'])) {
             $attrs['padding'] = '0';
+        }
+
+        if (isset($attrs['textAlign']) && !isset($attrs['align'])) {
+            $attrs['align'] = $attrs['textAlign'];
+            unset($attrs['textAlign']);
         }
 
         if (isset($attrs['align']) && 'full' == $attrs['align']) {
@@ -180,7 +271,7 @@ final class Render
             unset($attrs['align']);
         }
 
-        if (isset($attrs['full-width']) && 'full-width' == $attrs['full-width'] && isset($attrs['background-color'])) {
+        if (!isset($attrs['padding']) && isset($attrs['full-width']) && 'full-width' == $attrs['full-width'] && isset($attrs['background-color'])) {
             $attrs['padding'] = '12px 0';
         }
 
@@ -232,6 +323,27 @@ final class Render
     }
 
     /**
+     * Whether the block is empty.
+     *
+     * @param WP_Block $block The block.
+     *
+     * @return bool Whether the block is empty.
+     */
+    public static function isEmptyBlock($block)
+    {
+        $blocksWithoutInnerHtml = [
+            'core/site-logo',
+            'core/site-title',
+            'core/site-tagline',
+        ];
+
+        $emptyBlockName = empty($block['blockName']);
+        $emptyHtml = !in_array($block['blockName'], $blocksWithoutInnerHtml, true) && empty($block['innerHTML']);
+
+        return $emptyBlockName || $emptyHtml;
+    }
+
+    /**
      * Convert a Gutenberg block to an MJML component.
      * MJML component will be put in an mj-column in an mj-section for consistent layout,
      * unless it's a group or a columns block.
@@ -250,7 +362,12 @@ final class Render
         $innerBlocks = $block['innerBlocks'];
         $innerHtml = $block['innerHTML'];
 
-        if (empty($blockName)) {
+        if (!isset($attrs['innerBlocksToInsert']) && self::isEmptyBlock($block)) {
+            return '';
+        }
+
+        // Verify if block is configured to be web-only.
+        if (isset($attrs['newsletterVisibility']) && 'web' === $attrs['newsletterVisibility']) {
             return '';
         }
 
@@ -276,22 +393,52 @@ final class Render
 
         $fontFamily = 'core/heading' === $blockName ? self::$fontHeader : self::$fontBody;
 
+        if (!empty($innerHtml)) {
+            // Replace <mark /> with <span />.
+            $innerHtml = preg_replace('/<mark\s(.+?)>(.+?)<\/mark>/is', '<span $1>$2</span>', $innerHtml);
+        }
+
         switch ($blockName) {
-                // Paragraph, List, Heading blocks.
+                // Text-based blocks.
             case 'core/paragraph':
             case 'core/list':
             case 'core/heading':
             case 'core/quote':
+            case 'core/site-title':
+            case 'core/site-tagline':
             case 'rrze-newsletter/rss':
             case 'rrze-newsletter/ics':
                 $textAttrs = array_merge(
                     [
-                        'line-height' => '1.8',
+                        'padding'     => '0',
+                        'line-height' => '1.5',
                         'font-size' => '16px',
                         'font-family' => $fontFamily,
                     ],
                     $attrs
                 );
+
+                if ('core/site-tagline' === $blockName) {
+                    $innerHtml = get_bloginfo('description');
+                }
+
+                if ('core/site-title' === $blockName) {
+                    $innerHtml = get_bloginfo('name');
+                    $tagName   = 'h1';
+                    if (isset($attrs['level'])) {
+                        $tagName = 0 === $attrs['level'] ? 'p' : 'h' . (int) $attrs['level'];
+                    }
+                    if (!(isset($attrs['isLink']) && !$attrs['isLink'])) {
+                        $linkAttrs = array(
+                            'href="' . esc_url(get_bloginfo('url')) . '"',
+                        );
+                        if (isset($attrs['linkTarget']) && '_blank' === $attrs['linkTarget']) {
+                            $linkAttrs[] = 'target="_blank"';
+                        }
+                        $innerHtml = sprintf('<a %1$s>%2$s</a>', implode(' ', $linkAttrs), esc_html($innerHtml));
+                    }
+                    $innerHtml = sprintf('<%1$s>%2$s</%1$s>', $tagName, $innerHtml);
+                }
 
                 // Only mj-text has to use container-background-color attr for background color.
                 if (isset($textAttrs['background-color'])) {
@@ -299,10 +446,15 @@ final class Render
                     unset($textAttrs['background-color']);
                 }
 
-                // core/heading attributes normalization
-                if (isset($textAttrs['textAlign'])) {
-                    $textAttrs['align'] = $textAttrs['textAlign'];
-                    unset($textAttrs['textAlign']);
+                // Render core/list-item.
+                if ($blockName == 'core/list') {
+                    $list = Utils::recursiveFindKey($innerBlocks, 'innerHTML');
+                    $tag = (strpos($innerHtml, '<ul>') !== false) ? '<ul>' : '<ol>';
+                    $innerHtml = $tag;
+                    foreach ($list as $value) {
+                        $innerHtml .= $value;
+                    }
+                    $innerHtml .= ($tag == '<ul>') ? '</ul>' : '</ol>';
                 }
 
                 // Render rrze-newsletter/rss block.
@@ -316,18 +468,36 @@ final class Render
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
+                break;
 
+                // Site logo block.
+            case 'core/site-logo':
+                $custom_logo_id = get_theme_mod('custom_logo');
+                $image = wp_get_attachment_image_src($custom_logo_id, 'full');
+                $markup = '';
+                if (!empty($image)) {
+                    $imgAttrs = [
+                        'padding' => '0',
+                        'width'   => sprintf('%spx', isset($attrs['width']) ? $attrs['width'] : '125'),
+                        'align'   => isset($attrs['align']) ? $attrs['align'] : 'left',
+                        'src'     => $image[0],
+                        'href'    => isset($attrs['isLink']) && !$attrs['isLink'] ? '' : esc_url(home_url('/')),
+                        'target'  => isset($attrs['linkTarget']) && '_blank' === $attrs['linkTarget'] ? '_blank' : '',
+                    ];
+                    $markup .= '<mj-image ' . self::arrayToAttributes($imgAttrs) . ' />';
+                }
+                $blockMjmlMarkup = $markup;
                 break;
 
                 // Image block.
             case 'core/image':
                 // Parse block content.
                 $dom = new \DomDocument();
-                @$dom->loadHtml(mb_convert_encoding($innerHtml, 'HTML-ENTITIES', "UTF-8"));
-                $xpath = new \DOMXpath($dom);
-                $img = $xpath->query('//img')[0];
-                $imgSrc = $img ? $img->getAttribute('src') : '';
-                $figcaption = $xpath->query('//figcaption/text()')[0];
+                libxml_use_internal_errors(true);
+                $dom->loadHTML(mb_convert_encoding($innerHtml, 'HTML-ENTITIES', get_bloginfo('charset')), LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                $img = $dom->getElementsByTagName('img')->item(0);
+                $imgSrc = $img->getAttribute('src');
+                $figcaption = $dom->getElementsByTagName('figcaption')->item(0);
 
                 $imgAttrs = array(
                     'padding' => '0',
@@ -370,13 +540,24 @@ final class Render
                 $markup = '<mj-image ' . self::arrayToAttributes($imgAttrs) . ' />';
 
                 if ($figcaption) {
-                    $caption_attrs = array(
-                        'align' => 'center',
-                        'color' => '#555d66',
-                        'font-size' => '13px',
+                    $captionHtml  = '';
+                    // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+                    $captionNodes = $figcaption->childNodes;
+                    foreach ($captionNodes as $caption_node) {
+                        $captionHtml .= $dom->saveHTML($caption_node);
+                    }
+                    $captionAttrs = [
+                        'css-class'   => 'image-caption',
+                        'align'       => 'center',
+                        'color'       => '#555d66',
+                        'line-height' => '1.56',
+                        'font-size'   => '13px',
                         'font-family' => $fontFamily,
-                    );
-                    $markup .= '<mj-text ' . self::arrayToAttributes($caption_attrs) . '>' . $figcaption->wholeText . '</mj-text>';
+                    ];
+                    $markup .= '<mj-text ' . self::arrayToAttributes($captionAttrs) . '>' . wp_kses(
+                        $captionHtml,
+                        self::$allowedInlineTags
+                    ) . '</mj-text>';
                 }
 
                 $blockMjmlMarkup = $markup;
@@ -385,69 +566,72 @@ final class Render
                 // Buttons block.
             case 'core/buttons':
                 foreach ($innerBlocks as $buttonBlock) {
+                    if (empty($buttonBlock['innerHTML'])) {
+                        break;
+                    }
+
                     // Parse block content.
                     $dom = new \DomDocument();
-                    @$dom->loadHtml(mb_convert_encoding($buttonBlock['innerHTML'], 'HTML-ENTITIES', "UTF-8"));
+                    libxml_use_internal_errors(true);
+                    $dom->loadHTML(mb_convert_encoding($buttonBlock['innerHTML'], 'HTML-ENTITIES', get_bloginfo('charset')));
                     $xpath = new \DOMXpath($dom);
                     $anchor = $xpath->query('//a')[0];
                     $attrs = $buttonBlock['attrs'];
-                    $text = $anchor ? $anchor->textContent : '';
-                    $borderRadius = isset($attrs['borderRadius']) ? $attrs['borderRadius'] : 5;
+                    // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+                    $text = $anchor->textContent;
+                    $borderRadius = isset($attrs['borderRadius']) ? $attrs['borderRadius'] : 999;
                     $isOutlined = isset($attrs['className']) && 'is-style-outline' == $attrs['className'];
-                    $defaultButtonAttrs = [
+
+                    if (!$anchor) {
+                        break;
+                    }
+
+                    $defaultButtonAttrs = array(
                         'padding'       => '0',
                         'inner-padding' => '12px 24px',
-                        'line-height'   => '1.8',
-                        'href'          => $anchor ? $anchor->getAttribute('href') : '',
-                        'target'        => $anchor && $anchor->getAttribute('target') ? $anchor->getAttribute('target') : '_self',
+                        'line-height'   => '1.5',
+                        'href'          => $anchor->getAttribute('href'),
                         'border-radius' => $borderRadius . 'px',
-                        'font-size'     => '18px',
+                        'font-size'     => '16px',
                         'font-family'   => $fontFamily,
-                        'font-weight'   => '500',
-                        // Default color - will be replaced by getColors if there are colors set.
+                        'font-weight'   => 'bold',
+                        // Default color - will be replaced by get_colors if there are colors set.
                         'color'         => $isOutlined ? '#32373c' : '#fff !important',
-                    ];
+                    );
                     if ($isOutlined) {
                         $defaultButtonAttrs['background-color'] = 'transparent';
                     } else {
                         $defaultButtonAttrs['background-color'] = '#32373c';
                     }
-                    $colors = self::getColors($attrs);
-                    if (isset($colors['color'])) {
-                        $colors['color'] = $colors['color'] . ' !important';
-                    }
                     $buttonAttrs = array_merge(
                         $defaultButtonAttrs,
-                        $colors
+                        self::getColors($attrs)
                     );
+
                     if ($isOutlined) {
                         $buttonAttrs['css-class'] = $attrs['className'];
                     }
-                    if (isset($attrs['width'])) {
-                        $columnAttrs['width'] = $attrs['width'] . '%';
-                    }
-                    $buttonMarkup = '<mj-button ' . self::arrayToAttributes($buttonAttrs) . ">$text</mj-button>";
-                    if (!$isInColumn) {
-                        $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $buttonMarkup . '</mj-column>';
-                    } else {
-                        $blockMjmlMarkup .= $buttonMarkup;
-                    }
+
+                    $blockMjmlMarkup .= '<mj-column ' . self::arrayToAttributes($columnAttrs) . '><mj-button ' . self::arrayToAttributes($buttonAttrs) . ">$text</mj-button></mj-column>";
                 }
                 break;
 
                 // Separator block.
             case 'core/separator':
-                $isStyleDefault = isset($attrs['className']) ? 'is-style-default' == $attrs['className'] : true;
-                $dividerAttrs = array_merge(
-                    [
-                        'padding' => '0',
-                        'border-width' => $isStyleDefault ? '2px' : '1px',
-                        'width' => $isStyleDefault ? '100px' : '100%',
-                        // Default color - will be replaced by getColors if there are colors set.
-                        'border-color' => '#8f98a1',
-                    ],
-                    self::getColors($attrs)
-                );
+                $isWide = isset($block['attrs']['className']) && 'is-style-wide' === $block['attrs']['className'];
+                $dividerAttrs = [
+                    'padding'      => '0',
+                    'border-width' => '1px',
+                    'width'        => $isWide ? '100%' : '128px',
+                ];
+                // Remove colors from section attrs.
+                unset($sectionAttrs['background-color']);
+                if ($block['attrs']['backgroundColor'] && isset(self::$colorPalette[$block['attrs']['backgroundColor']])) {
+                    $dividerAttrs['border-color'] = self::$colorPalette[$block['attrs']['backgroundColor']];
+                }
+                if (isset($block['attrs']['style']['color']['background'])) {
+                    $dividerAttrs['border-color'] = $block['attrs']['style']['color']['background'];
+                }
                 $blockMjmlMarkup .= '<mj-divider ' . self::arrayToAttributes($dividerAttrs) . '/>';
                 break;
 
@@ -459,39 +643,12 @@ final class Render
 
                 // Social links block.
             case 'core/social-links':
-                $socialIcons = [
-                    'wordpress' => [
-                        'color' => '#3499cd',
-                        'icon'  => 'wordpress.png',
-                    ],
-                    'facebook'  => [
-                        'color' => '#1977f2',
-                        'icon'  => 'facebook.png',
-                    ],
-                    'twitter'   => [
-                        'color' => '#21a1f3',
-                        'icon'  => 'twitter.png',
-                    ],
-                    'instagram' => [
-                        'color' => '#f00075',
-                        'icon'  => 'instagram.png',
-                    ],
-                    'linkedin'  => [
-                        'color' => '#0577b5',
-                        'icon'  => 'linkedin.png',
-                    ],
-                    'youtube'   => [
-                        'color' => '#ff0100',
-                        'icon'  => 'youtube.png',
-                    ],
-                ];
-
                 $socialWrapperAttrs = [
-                    'icon-size'     => '22px',
+                    'icon-size'     => '24px',
                     'mode'          => 'horizontal',
                     'padding'       => '0',
                     'border-radius' => '999px',
-                    'icon-padding'  => '8px',
+                    'icon-padding'  => '7px',
                 ];
                 if (isset($attrs['align'])) {
                     $socialWrapperAttrs['align'] = $attrs['align'];
@@ -502,15 +659,16 @@ final class Render
                 foreach ($innerBlocks as $linkBlock) {
                     if (isset($linkBlock['attrs']['url'])) {
                         $url = $linkBlock['attrs']['url'];
-                        // Handle older version of the block, where innner blocks are named `core/social-link-<service>`.
+                        // Handle older version of the block, where innner blocks was named `core/social-link-<service>`.
                         $serviceName = isset($linkBlock['attrs']['service']) ? $linkBlock['attrs']['service'] : str_replace('core/social-link-', '', $linkBlock['blockName']);
+                        $socialIcon  = self::getSocialIcon($serviceName, $attrs);
 
-                        if (isset($socialIcons[$serviceName])) {
+                        if (!empty($socialIcon)) {
                             $imgAttrs = [
-                                'href' => $url,
-                                'src' => plugins_url('assets/icons/' . $socialIcons[$serviceName]['icon'], plugin()->getBasename()),
-                                'background-color' => $socialIcons[$serviceName]['color'],
-                                'css-class' => 'social-element',
+                                'href'             => $url,
+                                'src'              => plugins_url('assets/' . $socialIcon['icon'], dirname(__FILE__)),
+                                'background-color' => $socialIcon['color'],
+                                'css-class'        => 'social-element',
                             ];
 
                             $markup .= '<mj-social-element ' . self::arrayToAttributes($imgAttrs) . '/>';
@@ -592,6 +750,7 @@ final class Render
             'core/columns' != $blockName &&
             'core/column' != $blockName &&
             'core/buttons' != $blockName &&
+            'core/separator' != $blockName &&
             !$isPostInserterBlock
         ) {
             $columnAttrs['width'] = '100%';
@@ -616,7 +775,9 @@ final class Render
         return array_reduce(
             $blocks,
             function ($length, $block) {
-                if (isset($block['innerBlocks']) && count($block['innerBlocks'])) {
+                if ('rrze-newsletter/post-inserter' === $block['blockName']) {
+                    $length += self::getTotalCharacterLength($block['attrs']['innerBlocksToInsert']);
+                } elseif (isset($block['innerBlocks']) && count($block['innerBlocks'])) {
                     $length += self::getTotalCharacterLength($block['innerBlocks']);
                 } else {
                     $length += strlen(wp_strip_all_tags($block['innerHTML']));
@@ -624,6 +785,21 @@ final class Render
                 return $length;
             },
             0
+        );
+    }
+
+    /** Convert a WP post to an array of non-empty blocks.
+     *
+     * @param WP_Post $post The post.
+     * @return array[] Blocks.
+     */
+    private static function getValidPostPlocks($post)
+    {
+        return array_filter(
+            parse_blocks($post->post_content),
+            function ($block) {
+                return null !== $block['blockName'];
+            }
         );
     }
 
@@ -638,19 +814,26 @@ final class Render
     private static function postToMjmlComponents(object $post, string $content, bool $processLinks)
     {
         $postId = is_a($post, '\WP_Post') ? $post->ID : 0;
-
         $body = '';
-        $validBlocks = array_filter(
-            parse_blocks($content),
-            function ($block) {
-                return null !== $block['blockName'];
-            }
-        );
+        $validBlocks  = self::getValidPostPlocks($post);
 
         // Build MJML body.
         foreach ($validBlocks as $block) {
             $blockContent = '';
 
+            // Convert reusable block to group block.
+            // Reusable blocks are CPTs, where the block's ref attribute is the post ID.
+            if ('core/block' === $block['blockName'] && isset($block['attrs']['ref'])) {
+                $reusableBlockPost = get_post($block['attrs']['ref']);
+                if (!empty($reusableBlockPost)) {
+                    $block['blockName'] = 'core/group';
+                    $block['innerBlocks'] = self::getValidPostPlocks($reusableBlockPost);
+                    $block['innerHTML'] = $reusableBlockPost->post_content;
+                    $block['innerContent'] = $reusableBlockPost->post_content;
+                }
+            }
+
+            // Insert ads between top-level group blocks' inner blocks.
             if ('core/group' === $block['blockName']) {
                 $defaultAttrs = [];
                 $attrs = self::processAttributes($block['attrs']);
@@ -684,6 +867,11 @@ final class Render
         self::$colorPalette = json_decode(get_option('rrze_newsletter_color_palette', false), true);
         self::$fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
         self::$fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
+        $isPublic = get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
+
+        if ($isPublic) {
+            self::$postPermalink = get_permalink($post->ID);
+        }
         if (!in_array(self::$fontHeader, self::$supportedFonts)) {
             self::$fontHeader = 'Arial';
         }
@@ -691,11 +879,15 @@ final class Render
             self::$fontBody = 'Georgia';
         }
 
+        $title = $post->post_title;
         $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true);
         $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
+        if (!$backgroundColor) {
+            $backgroundColor = '#ffffff';
+        }
 
         $data = [
-            'title' => $post->post_title,
+            'title' => $title,
             'preview_text' => $previewText ? $previewText : '',
             'background_color' => $backgroundColor ? $backgroundColor : '#ffffff',
             'body' => self::postToMjmlComponents($post, $post->post_content, true)
