@@ -74,9 +74,10 @@ final class Editor
             'core/image',
             'core/separator',
             'core/list',
+            'core/list-item',
             'core/quote',
-            'core/social-link',
             'core/social-links',
+            'core/social-link',
             'rrze-newsletter/post-inserter',
             'rrze-newsletter/rss',
             'rrze-newsletter/ics'

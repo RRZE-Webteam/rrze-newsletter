@@ -213,7 +213,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
+                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
 
                                 $mdate = $mdStart . ' &#8211; ' . $mdEnd;
 
@@ -274,7 +274,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
+                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
 
                                 $mdate = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
 
@@ -1282,11 +1282,11 @@ class ICS
             } else {
                 $eventdesc = self::filterTheContent(self::makeClickable($event['eventdesc']));
             }
-            $content .= $mjml ? '<p class="has-normal-padding">' . $eventdesc . '</p>' : '<div>' . $eventdesc . '</div>';
+            $content .= $mjml ? $eventdesc : $eventdesc;
         }
 
         if (!self::emptyContent($content)) {
-            $output .= $mjml ? $content : '<div class="eventdesc">' . $content . '</div>';
+            $output .= $mjml ? $content . '<p class="has-small-padding">&nbsp;</p>' : '<div class="eventdesc">' . $content . '</div>';
         }
 
         return !self::emptyContent($output) ? $output : null;

@@ -1,9 +1,14 @@
 {
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "fa51ffa296b9f3304ae92f9a6d37212b",
     "packages": [
         {
             "name": "html2text/html2text",
             "version": "4.3.1",
-            "version_normalized": "4.3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mtibben/html2text.git",
@@ -22,9 +27,7 @@
                 "ext-mbstring": "For best performance",
                 "symfony/polyfill-mbstring": "If you can't install ext-mbstring"
             },
-            "time": "2020-04-16T23:44:31+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Html2Text\\": [
@@ -42,12 +45,11 @@
                 "issues": "https://github.com/mtibben/html2text/issues",
                 "source": "https://github.com/mtibben/html2text/tree/4.3.1"
             },
-            "install-path": "../html2text/html2text"
+            "time": "2020-04-16T23:44:31+00:00"
         },
         {
             "name": "johngrogg/ics-parser",
             "version": "v2.2.2",
-            "version_normalized": "2.2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/u01jmg3/ics-parser.git",
@@ -67,9 +69,7 @@
                 "phpunit/phpunit": "^4",
                 "squizlabs/php_codesniffer": "~2.9.1"
             },
-            "time": "2020-11-02T10:28:33+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "ICal": "src/"
@@ -110,12 +110,11 @@
                     "type": "github"
                 }
             ],
-            "install-path": "../johngrogg/ics-parser"
+            "time": "2020-11-02T10:28:33+00:00"
         },
         {
             "name": "rlanvin/php-rrule",
             "version": "v2.3.2",
-            "version_normalized": "2.3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rlanvin/php-rrule.git",
@@ -137,9 +136,7 @@
             "suggest": {
                 "ext-intl": "Intl extension is needed for humanReadable()"
             },
-            "time": "2022-05-03T13:11:22+00:00",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "RRule\\": "src/"
@@ -162,9 +159,18 @@
                 "issues": "https://github.com/rlanvin/php-rrule/issues",
                 "source": "https://github.com/rlanvin/php-rrule/tree/v2.3.2"
             },
-            "install-path": "../rlanvin/php-rrule"
+            "time": "2022-05-03T13:11:22+00:00"
         }
     ],
-    "dev": true,
-    "dev-package-names": []
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^8.0"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

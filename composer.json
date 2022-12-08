@@ -1,9 +1,9 @@
 {
     "require": {
-        "php": "^7.4.0",
+        "php": "^8.0",
         "johngrogg/ics-parser": "^2",
         "rlanvin/php-rrule": "^2",
-        "html2text/html2text": "^4.3"
+        "html2text/html2text": "^4"
     },
     "suggest": {
         "ext-mbstring": "*",

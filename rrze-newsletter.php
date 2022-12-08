@@ -4,11 +4,11 @@
 Plugin Name:      RRZE Newsletter
 Plugin URI:       https://github.com/RRZE-Webteam/rrze-newsletter
 Description:      Plugin for creating and sending HTML Newsletters.
-Version:          1.8.1
+Version:          1.9.0
 Author:           RRZE-Webteam
 Author URI:       https://blogs.fau.de/webworking/
-License:          GNU General Public License v2
-License URI:      http://www.gnu.org/licenses/gpl-2.0.html
+License:          GNU General Public License v3.0
+License URI:      https://www.gnu.org/licenses/gpl-3.0.en.html
 Domain Path:      /languages
 Text Domain:      rrze-newsletter
 */
@@ -21,8 +21,8 @@ use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
 
-const RRZE_PHP_VERSION = '7.4';
-const RRZE_WP_VERSION = '6.0';
+const RRZE_PHP_VERSION = '8.0';
+const RRZE_WP_VERSION = '6.1';
 
 // Load the settings config file.
 require_once 'config/settings.php';
@@ -64,26 +64,28 @@ function loadTextdomain()
 }
 
 /**
- * systemRequirements
+ * System requirements verification.
  * @return string Return an error message.
  */
 function systemRequirements(): string
 {
-    loadTextdomain();
-
+    global $wp_version;
+    // Strip off any -alpha, -RC, -beta, -src suffixes.
+    list($wpVersion) = explode('-', $wp_version);
+    $phpVersion = phpversion();
     $error = '';
-    if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
+    if (!is_php_version_compatible(RRZE_PHP_VERSION)) {
         $error = sprintf(
             /* translators: 1: Server PHP version number, 2: Required PHP version number. */
             __('The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.', 'rrze-newsletter'),
-            PHP_VERSION,
+            $phpVersion,
             RRZE_PHP_VERSION
         );
-    } elseif (version_compare($GLOBALS['wp_version'], RRZE_WP_VERSION, '<')) {
+    } elseif (!is_wp_version_compatible(RRZE_WP_VERSION)) {
         $error = sprintf(
             /* translators: 1: Server WordPress version number, 2: Required WordPress version number. */
             __('The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.', 'rrze-newsletter'),
-            $GLOBALS['wp_version'],
+            $wpVersion,
             RRZE_WP_VERSION
         );
     }
@@ -91,10 +93,11 @@ function systemRequirements(): string
 }
 
 /**
- * activation
+ * Activation callback function.
  */
 function activation()
 {
+    loadTextdomain();
     if ($error = systemRequirements()) {
         deactivate_plugins(plugin_basename(__FILE__));
         wp_die(
@@ -123,7 +126,7 @@ function activation()
 }
 
 /**
- * deactivation
+ * Deactivation callback function.
  */
 function deactivation()
 {
@@ -132,14 +135,14 @@ function deactivation()
 
     Cron::clearSchedule();
 
-    flush_rewrite_rules();
+    flush_rewrite_rules(false);
 }
 
 /**
- * plugin
- * @return object
+ * Instantiate Plugin class.
+ * @return object Plugin
  */
-function plugin(): object
+function plugin()
 {
     static $instance;
     if (null === $instance) {
@@ -149,14 +152,13 @@ function plugin(): object
 }
 
 /**
- * loaded
+ * Execute on 'plugins_loaded' API/action.
  * @return void
  */
 function loaded()
 {
-    add_action('init', __NAMESPACE__ . '\loadTextdomain');
-    plugin()->onLoaded();
-
+    loadTextdomain();
+    plugin()->loaded();
     if ($error = systemRequirements()) {
         add_action('admin_init', function () use ($error) {
             if (current_user_can('activate_plugins')) {
@@ -177,6 +179,5 @@ function loaded()
         });
         return;
     }
-
     new Main;
 }

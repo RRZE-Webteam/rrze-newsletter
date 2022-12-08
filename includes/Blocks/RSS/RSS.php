@@ -201,7 +201,7 @@ class RSS
             $readMoreLink = '';
             if ($link && $atts['displayReadMore']) {
                 $readMoreLink = sprintf(
-                    ' <a href="%s">%s</a>',
+                    '<p class="has-large-padding"><a href="%s">%s</a></p>',
                     $link,
                     sprintf(
                         /* translators: %s: article title. */
@@ -212,7 +212,7 @@ class RSS
             } elseif ($link) {
                 $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
             }
-            $title = '<h3 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h3>';
+            $title = '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
 
             $date = '';
             if ($atts['displayDate']) {

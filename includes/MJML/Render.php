@@ -4,9 +4,11 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Templates;
+use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
-use RRZE\Newsletter\Templates;
+
 use function RRZE\Newsletter\plugin;
 
 final class Render
@@ -49,6 +51,26 @@ final class Render
     ];
 
     /**
+     * Whether the block is empty.
+     *
+     * @param WP_Block $block The block.
+     *
+     * @return bool Whether the block is empty.
+     */
+    public static function isEmptyBlock($block)
+    {
+        $blocksWithoutInnerHtml = [
+            'rrze-newsletter/rss',
+            'rrze-newsletter/ics',            
+        ];
+
+        $emptyBlockName = empty($block['blockName']);
+        $emptyHtml = !in_array($block['blockName'], $blocksWithoutInnerHtml, true) && empty($block['innerHTML']);
+
+        return $emptyBlockName || $emptyHtml;
+    }
+    
+    /**
      * Convert a list to HTML attributes.
      *
      * @param array $attributes Array of attributes.
@@ -61,7 +83,10 @@ final class Render
             ' ',
             array_map(
                 function ($key) use ($attributes) {
-                    if (isset($attributes[$key]) && !is_array($attributes[$key])) {
+                    if (
+                        isset($attributes[$key]) &&
+                        (is_string($attributes[$key]) || is_numeric($attributes[$key]))
+                    ) {
                         return $key . '="' . $attributes[$key] . '"';
                     } else {
                         return '';
@@ -250,7 +275,7 @@ final class Render
         $innerBlocks = $block['innerBlocks'];
         $innerHtml = $block['innerHTML'];
 
-        if (empty($blockName)) {
+        if (!isset($attrs['innerBlocksToInsert']) && self::isEmptyBlock($block)) {
             return '';
         }
 
@@ -282,6 +307,8 @@ final class Render
             case 'core/list':
             case 'core/heading':
             case 'core/quote':
+            case 'core/site-title':
+            case 'core/site-tagline':
             case 'rrze-newsletter/rss':
             case 'rrze-newsletter/ics':
                 $textAttrs = array_merge(
@@ -303,6 +330,21 @@ final class Render
                 if (isset($textAttrs['textAlign'])) {
                     $textAttrs['align'] = $textAttrs['textAlign'];
                     unset($textAttrs['textAlign']);
+                }
+
+                // Render core/list-item.
+                if ($blockName == 'core/list') {
+                    $tag = (strpos($innerHtml, '<ul>') !== false) ? '<ul>' : '<ol>';
+                    $innerHtml = $tag;
+                    try {
+                        $list = Utils::recursiveSearchArrayKey($innerBlocks, 'innerHTML');
+                    } catch (\Exception $e) {
+                        $list = [];
+                    }
+                    foreach ($list as $value) {
+                        $innerHtml .= (string) $value;
+                    }
+                    $innerHtml .= ($tag == '<ul>') ? '</ul>' : '</ol>';
                 }
 
                 // Render rrze-newsletter/rss block.
