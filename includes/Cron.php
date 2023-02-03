@@ -35,7 +35,7 @@ class Cron
     public static function activateScheduledEvents()
     {
         if (false === wp_next_scheduled('rrze_newsl_every5mins_event')) {
-            $scheduleEvent = wp_schedule_event(
+            wp_schedule_event(
                 time(),
                 'rrze_newsl_every5mins',
                 'rrze_newsl_every5mins_event',

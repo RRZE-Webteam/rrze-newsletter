@@ -4,7 +4,7 @@
 Plugin Name:      RRZE Newsletter
 Plugin URI:       https://github.com/RRZE-Webteam/rrze-newsletter
 Description:      Plugin for creating and sending HTML Newsletters.
-Version:          1.9.0
+Version:          1.9.1
 Author:           RRZE-Webteam
 Author URI:       https://blogs.fau.de/webworking/
 License:          GNU General Public License v3.0
@@ -135,7 +135,7 @@ function deactivation()
 
     Cron::clearSchedule();
 
-    flush_rewrite_rules(false);
+    flush_rewrite_rules();
 }
 
 /**
