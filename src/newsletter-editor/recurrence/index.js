@@ -5,7 +5,7 @@ import { __ } from "@wordpress/i18n";
 import {
     ToggleControl,
     SelectControl,
-    __experimentalText as Text
+    __experimentalText as Text,
 } from "@wordpress/components";
 import { compose } from "@wordpress/compose";
 import { withDispatch, withSelect } from "@wordpress/data";
@@ -20,35 +20,39 @@ import "./style.scss";
 
 const units = [
     {
+        label: __("ASAP", "rrze-newsletter"),
+        value: "ASAP",
+    },
+    {
         label: __("Hourly", "rrze-newsletter"),
-        value: "HOURLY"
+        value: "HOURLY",
     },
     {
         label: __("Daily", "rrze-newsletter"),
-        value: "DAILY"
+        value: "DAILY",
     },
     {
         label: __("Weekly", "rrze-newsletter"),
-        value: "WEEKLY"
+        value: "WEEKLY",
     },
     {
         label: __("Monthly", "rrze-newsletter"),
-        value: "MONTHLY"
-    }
+        value: "MONTHLY",
+    },
 ];
 
-const RecurrenceSettingsComponent = props => {
+const RecurrenceSettingsComponent = (props) => {
     const {
         meta,
         updateIsRecurring,
         updateRecurrenceRepeat,
-        updateRecurrenceMonthly
+        updateRecurrenceMonthly,
     } = props;
 
     const {
         rrze_newsletter_is_recurring,
         rrze_newsletter_recurrence_repeat,
-        rrze_newsletter_recurrence_monthly
+        rrze_newsletter_recurrence_monthly,
     } = meta;
 
     return (
@@ -61,7 +65,7 @@ const RecurrenceSettingsComponent = props => {
                     "rrze-newsletter"
                 )}
                 checked={rrze_newsletter_is_recurring}
-                onChange={value => updateIsRecurring(value)}
+                onChange={(value) => updateIsRecurring(value)}
             />
             {rrze_newsletter_is_recurring && (
                 <Fragment>
@@ -69,7 +73,7 @@ const RecurrenceSettingsComponent = props => {
                     <SelectControl
                         value={rrze_newsletter_recurrence_repeat}
                         options={units}
-                        onChange={value => updateRecurrenceRepeat(value)}
+                        onChange={(value) => updateRecurrenceRepeat(value)}
                     />
                     {rrze_newsletter_recurrence_repeat == "WEEKLY" && (
                         <RepeatWeekly />
@@ -88,34 +92,34 @@ const RecurrenceSettingsComponent = props => {
     );
 };
 
-const mapStateToProps = select => {
+const mapStateToProps = (select) => {
     const { getEditedPostAttribute } = select("core/editor");
     return {
-        meta: getEditedPostAttribute("meta")
+        meta: getEditedPostAttribute("meta"),
     };
 };
 
-const mapDispatchToIsRecurring = dispatch => {
+const mapDispatchToIsRecurring = (dispatch) => {
     const { editPost } = dispatch("core/editor");
     return {
-        updateIsRecurring: value =>
-            editPost({ meta: { rrze_newsletter_is_recurring: value } })
+        updateIsRecurring: (value) =>
+            editPost({ meta: { rrze_newsletter_is_recurring: value } }),
     };
 };
 
-const mapDispatchToRepeat = dispatch => {
+const mapDispatchToRepeat = (dispatch) => {
     const { editPost } = dispatch("core/editor");
     return {
-        updateRecurrenceRepeat: value =>
-            editPost({ meta: { rrze_newsletter_recurrence_repeat: value } })
+        updateRecurrenceRepeat: (value) =>
+            editPost({ meta: { rrze_newsletter_recurrence_repeat: value } }),
     };
 };
 
-const mapDispatchToMonthly = dispatch => {
+const mapDispatchToMonthly = (dispatch) => {
     const { editPost } = dispatch("core/editor");
     return {
-        updateRecurrenceMonthly: value =>
-            editPost({ meta: { rrze_newsletter_recurrence_monthly: value } })
+        updateRecurrenceMonthly: (value) =>
+            editPost({ meta: { rrze_newsletter_recurrence_monthly: value } }),
     };
 };
 
@@ -123,5 +127,5 @@ export const RecurrenceSettings = compose([
     withSelect(mapStateToProps),
     withDispatch(mapDispatchToIsRecurring),
     withDispatch(mapDispatchToRepeat),
-    withDispatch(mapDispatchToMonthly)
+    withDispatch(mapDispatchToMonthly),
 ])(RecurrenceSettingsComponent);
