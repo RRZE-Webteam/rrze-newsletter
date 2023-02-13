@@ -867,6 +867,10 @@ class Newsletter
 
         $repeat = get_post_meta($postId, 'rrze_newsletter_recurrence_repeat', true);
         switch ($repeat) {
+            case 'ASAP':
+                $postDate = get_post_time('Y-m-d H:i:s', false, $postId);
+                $rrule = 'ASAP';
+                break;
             case 'HOURLY':
                 $postDate = get_post_time('Y-m-d H:i:s', false, $postId);
                 $rrule = 'FREQ=HOURLY;INTERVAL=1';
@@ -894,13 +898,19 @@ class Newsletter
             return false;
         }
 
-        $nextOcurrence = Utils::nextOcurrences($postDate, $rrule);
-        $date = $nextOcurrence[0] ?? '';
-        if (!$date) {
-            return false;
+        if ($rrule == 'ASAP') {
+            $interval = 'PT5M';
+            $dt = new \DateTime($postDate, Utils::currentTimeZone());
+            $dt->add(new \DateInterval($interval));
+        } else {
+            $nextOcurrence = Utils::nextOcurrences($postDate, $rrule);
+            $dt = $nextOcurrence[0] ?? '';
+            if (!$dt) {
+                return false;
+            }
         }
 
-        $newDate = $date->format('Y-m-d H:i:s');
+        $newDate = $dt->format('Y-m-d H:i:s');
         $newGmtDate = get_gmt_from_date($newDate);
 
         return wp_update_post([
