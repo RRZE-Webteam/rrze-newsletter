@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2022-12-07T13:21:10+00:00\n"
-"PO-Revision-Date: 2022-12-07 14:22+0100\n"
+"POT-Creation-Date: 2023-02-13T16:19:27+00:00\n"
+"PO-Revision-Date: 2023-02-13 17:23+0100\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -692,12 +692,14 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Api.php:23
+#: includes/MJML/Api.php:23 _tmp/07-12-2022/includes/MJML/Api.php:23
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:955 includes/MJML/Render.php:964
-#: includes/MJML/Render.php:976
+#: includes/MJML/Render.php:801 includes/MJML/Render.php:810
+#: includes/MJML/Render.php:822 _tmp/07-12-2022/includes/MJML/Render.php:955
+#: _tmp/07-12-2022/includes/MJML/Render.php:964
+#: _tmp/07-12-2022/includes/MJML/Render.php:976
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -1453,30 +1455,34 @@ msgid "Make this newsletter viewable as a public page once it’s been sent."
 msgstr "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
 
 #: src/newsletter-editor/recurrence/index.js:23
+msgid "ASAP"
+msgstr "Schnellstmöglich"
+
+#: src/newsletter-editor/recurrence/index.js:27
 msgid "Hourly"
 msgstr "Stündlich"
 
-#: src/newsletter-editor/recurrence/index.js:27
+#: src/newsletter-editor/recurrence/index.js:31
 msgid "Daily"
 msgstr "Täglich"
 
-#: src/newsletter-editor/recurrence/index.js:31
+#: src/newsletter-editor/recurrence/index.js:35
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: src/newsletter-editor/recurrence/index.js:35
+#: src/newsletter-editor/recurrence/index.js:39
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: src/newsletter-editor/recurrence/index.js:58
+#: src/newsletter-editor/recurrence/index.js:62
 msgid "Recurrence"
 msgstr "Wiederholung"
 
-#: src/newsletter-editor/recurrence/index.js:59
+#: src/newsletter-editor/recurrence/index.js:63
 msgid "Apply recurrence rules to the newsletter."
 msgstr "Wiederholungsregeln auf den Newsletter anwenden."
 
-#: src/newsletter-editor/recurrence/index.js:68
+#: src/newsletter-editor/recurrence/index.js:72
 msgid "Repeat"
 msgstr "Wiederholen"
 
