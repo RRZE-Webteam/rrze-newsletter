@@ -860,8 +860,9 @@ class Newsletter
 
     public static function maybeSetRecurrence(int $postId)
     {
+        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
         $isRecurring = (bool) get_post_meta($postId, 'rrze_newsletter_is_recurring', true);
-        if (!$isRecurring) {
+        if (!$hasConditionals || !$isRecurring) {
             return false;
         }
 
