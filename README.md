@@ -50,31 +50,31 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 **Installation der Node-Module**
 
 ```shell
- npm install
+npm install
 ```
 
 **Update der Node-Module**
 
 ```shell
- npm update
+npm update
 ```
 
 **Dev-Modus**
 
 ```shell
- npm start
+npm start
 ```
 
 **Build-Modus**
 
 ```shell
- npm run build
+npm run build
 ```
 
 **Übersetzung: Erstellen der .pot-Datei (WP-CLI)**
 
 ```shell
- wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,vendor,dist
+wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,vendor,dist
 ```
 
 Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung der jeweiligen Sprachen wird empfohlen.
@@ -82,6 +82,6 @@ Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung d
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
 ```shell
- npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
- npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
+npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
+npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
 ```
