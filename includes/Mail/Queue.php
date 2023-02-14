@@ -93,13 +93,13 @@ class Queue
             return;
         }
 
+        // Maybe the newsletter is recurring.
+        Newsletter::maybeSetRecurrence($postId);
+
         // Check if it should be skipped.
         if ($this->maybeSkipped($postId)) {
-            // Maybe the newsletter is recurring.
-            if (Newsletter::maybeSetRecurrence($postId) === false) {
-                // Set the newsletter status to 'skipped'.
-                Newsletter::setStatus($postId, 'skipped');
-            }
+            // Set the newsletter status to 'skipped'.
+            Newsletter::setStatus($postId, 'skipped');
             return;
         }
 
@@ -236,9 +236,6 @@ class Queue
 
         update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $data['send_date_gmt']);
 
-        // Maybe the newsletter is recurring.
-        Newsletter::maybeSetRecurrence($postId);
-
         // Set the status of the newsletter to "sent".
         Newsletter::setStatus($postId, 'sent');
     }
@@ -354,7 +351,7 @@ class Queue
     {
         $skipped = false;
 
-        // Check if there are any conditions.
+        // Check if there are any conditionals.
         $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
         if ($hasConditionals) {
             $rssCondition = false;

@@ -17,8 +17,7 @@ import Sidebar from "./sidebar/";
 import Testing from "./testing/";
 import { Styling, ApplyStyling } from "./styling/";
 import { PublicSettings } from "./public";
-import { ConditionalsSettings } from "./conditionals";
-import { RecurrenceSettings } from "./recurrence";
+import { AdvancedSettings } from "./advanced";
 import registerEditorPlugin from "./editor/";
 
 registerEditorPlugin();
@@ -45,8 +44,7 @@ const NewsletterEdit = ({ layoutId }) => {
             >
                 <Sidebar />
                 <PublicSettings />
-                <ConditionalsSettings />
-                <RecurrenceSettings />
+                <AdvancedSettings />
             </PluginDocumentSettingPanel>
             <PluginDocumentSettingPanel
                 name="newsletters-styling-panel"
@@ -73,14 +71,14 @@ const NewsletterEdit = ({ layoutId }) => {
 };
 
 const NewsletterEditWithSelect = compose([
-    withSelect(select => {
+    withSelect((select) => {
         const { getEditedPostAttribute } = select("core/editor");
         const meta = getEditedPostAttribute("meta");
         return { layoutId: meta.rrze_newsletter_template_id };
-    })
+    }),
 ])(NewsletterEdit);
 
 registerPlugin("rrze-newsletter-sidebar", {
     render: NewsletterEditWithSelect,
-    icon: null
+    icon: null,
 });

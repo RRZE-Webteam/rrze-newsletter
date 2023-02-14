@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2022-12-07T13:21:10+00:00\n"
-"PO-Revision-Date: 2022-12-07 14:22+0100\n"
+"POT-Creation-Date: 2023-02-14T11:06:51+00:00\n"
+"PO-Revision-Date: 2023-02-14 12:39+0100\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -488,7 +488,7 @@ msgstr ""
 "Liste der E-Mail-Adressen, die von dieser Mailingliste abgemeldet wurden. "
 "Geben Sie eine E-Mail-Adresse pro Zeile ein."
 
-#: includes/CPT/Newsletter.php:542 src/newsletter-editor/index.js:44
+#: includes/CPT/Newsletter.php:542 src/newsletter-editor/index.js:43
 msgid "Newsletter"
 msgstr "Newsletter"
 
@@ -512,12 +512,12 @@ msgstr "Newsletter vom %s"
 #. translators: Relative time stamp of sent/published date
 #: includes/CPT/Newsletter.php:735
 msgid "Sent %1$s ago"
-msgstr "Vor %1$s gesendet"
+msgstr "Vor %1$s versendet"
 
 #. translators:  Absolute time stamp of sent/published date
 #: includes/CPT/Newsletter.php:741
 msgid "Sent %1$s"
-msgstr "%1$s gesendet"
+msgstr "%1$s versendet"
 
 #: includes/CPT/Newsletter.php:802
 msgid "Page not found"
@@ -619,14 +619,14 @@ msgstr[1] "In Queue <span class=\"count\">(%s)</span>"
 #: includes/CPT/NewsletterQueue.php:118
 msgctxt "Mail Queue Status"
 msgid "Sent"
-msgstr "Gesendet"
+msgstr "Versendet"
 
 #. translators: %s: Number of sent newsletter mails.
 #: includes/CPT/NewsletterQueue.php:125
 msgid "Sent <span class=\"count\">(%s)</span>"
 msgid_plural "Sent <span class=\"count\">(%s)</span>"
-msgstr[0] "<span class=\"count\">(%s)</span> gesendet"
-msgstr[1] "<span class=\"count\">(%s)</span> gesendet"
+msgstr[0] "<span class=\"count\">(%s)</span> versendet"
+msgstr[1] "<span class=\"count\">(%s)</span> versendet"
 
 #: includes/CPT/NewsletterQueue.php:133
 msgctxt "Mail Queue Status"
@@ -692,12 +692,14 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Api.php:23
+#: includes/MJML/Api.php:23 _tmp/07-12-2022/includes/MJML/Api.php:23
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:955 includes/MJML/Render.php:964
-#: includes/MJML/Render.php:976
+#: includes/MJML/Render.php:801 includes/MJML/Render.php:810
+#: includes/MJML/Render.php:822 _tmp/07-12-2022/includes/MJML/Render.php:955
+#: _tmp/07-12-2022/includes/MJML/Render.php:964
+#: _tmp/07-12-2022/includes/MJML/Render.php:976
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -1064,11 +1066,11 @@ msgstr "Senden"
 
 #: src/components/send-button/index.js:79
 msgid "Sent and Published"
-msgstr "Gesendet und veröffentlicht"
+msgstr "Versendet und veröffentlicht"
 
 #: src/components/send-button/index.js:80
 msgid "Sent"
-msgstr "Gesendet"
+msgstr "Versendet"
 
 #: src/components/send-button/index.js:84
 msgid "Scheduled"
@@ -1350,53 +1352,106 @@ msgstr "RSS"
 msgid "Display entries from any RSS or Atom feed."
 msgstr "Einträge von jedem RSS- oder Atom-Feed anzeigen."
 
-#: src/newsletter-editor/conditionals/index.js:34
-msgid "Conditionals"
-msgstr "Bedingungen"
+#: src/newsletter-editor/advanced/index.js:23
+msgid "ASAP"
+msgstr "Schnellstmöglich"
 
-#: src/newsletter-editor/conditionals/index.js:35
-msgid "Apply conditionals for sending the newsletter."
-msgstr "Bedingungen für den Versand des Newsletters anwenden."
+#: src/newsletter-editor/advanced/index.js:27
+msgid "Hourly"
+msgstr "Stündlich"
 
-#: src/newsletter-editor/conditionals/index.js:45
+#: src/newsletter-editor/advanced/index.js:31
+msgid "Daily"
+msgstr "Täglich"
+
+#: src/newsletter-editor/advanced/index.js:35
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: src/newsletter-editor/advanced/index.js:39
+msgid "Monthly"
+msgstr "Monatlich"
+
+#: src/newsletter-editor/advanced/index.js:69
+msgid "Advanced"
+msgstr "Erweiterte Einstellungen"
+
+#: src/newsletter-editor/advanced/index.js:70
+msgid ""
+"Apply advanced settings for sending the newsletter, especially if it "
+"contains blocks of dynamic content."
+msgstr ""
+"Erweiterte Einstellungen für den Versand des Newsletters anwenden, "
+"insbesondere wenn dieser Blöcke mit dynamischen Inhalten enthält."
+
+#: src/newsletter-editor/advanced/index.js:81
+msgid "RSS Block"
+msgstr "RSS-Block"
+
+#: src/newsletter-editor/advanced/index.js:82
+msgid ""
+"Apply a condition to the sending of the newsletter: If no feed items are "
+"available, the newsletter will not be sent."
+msgstr ""
+"Bedingung für den Versand des Newsletters anwenden: Wenn keine Feed-Elemente "
+"verfügbar sind, wird der Newsletter nicht versendet."
+
+#: src/newsletter-editor/advanced/index.js:91
+msgid "ICS Block"
+msgstr "ICS-Block"
+
+#: src/newsletter-editor/advanced/index.js:92
+msgid ""
+"Apply a condition to the sending of the newsletter: If no events are "
+"available, the newsletter will not be sent."
+msgstr ""
+"Bedingung für den Versand des Newsletters anwenden: Wenn keine "
+"Veranstaltungen verfügbar sind, wird der Newsletter nicht versendet."
+
+#: src/newsletter-editor/advanced/index.js:100
 msgid "Logical Operator"
 msgstr "Logischer Operator"
 
-#: src/newsletter-editor/conditionals/index.js:49
+#: src/newsletter-editor/advanced/index.js:101
+msgid ""
+"Use if there is more than one condition applied for sending the newsletter."
+msgstr ""
+"Zu verwenden, wenn mehr als eine Bedingung für den Versand des Newsletters "
+"gilt."
+
+#: src/newsletter-editor/advanced/index.js:108
 msgid "OR"
 msgstr "OR"
 
-#: src/newsletter-editor/conditionals/index.js:53
+#: src/newsletter-editor/advanced/index.js:112
 msgid "AND"
 msgstr "AND"
 
-#: src/newsletter-editor/conditionals/index.js:61
-msgid "RSS Block Condition"
-msgstr "RSS-Block- Bedingung"
+#: src/newsletter-editor/advanced/index.js:120
+msgid "Recurrence"
+msgstr "Wiederholung"
 
-#: src/newsletter-editor/conditionals/index.js:62
-msgid "If no feed items are available, the newsletter will not be sent."
+#: src/newsletter-editor/advanced/index.js:121
+msgid ""
+"Apply recurrence rules: The newsletter will be sent recurringly depending on "
+"the conditions applied to the sending."
 msgstr ""
-"Wenn keine Feed-Elemente verfügbar sind, wird der Newsletter nicht versendet."
+"Wiederholungsregeln anwenden: Der Newsletter wird je nach Versandbedingungen "
+"wiederkehrend versendet."
 
-#: src/newsletter-editor/conditionals/index.js:71
-msgid "ICS Block Condition"
-msgstr "ICS-Block- Bedingung"
+#: src/newsletter-editor/advanced/index.js:130
+msgid "Repeat"
+msgstr "Wiederholen"
 
-#: src/newsletter-editor/conditionals/index.js:72
-msgid "If no events are available, the newsletter will not be sent."
-msgstr ""
-"Wenn keine Termine verfügbar sind, wird der Newsletter nicht versendet."
-
-#: src/newsletter-editor/index.js:53
+#: src/newsletter-editor/index.js:51
 msgid "Styling"
 msgstr "Styling"
 
-#: src/newsletter-editor/index.js:59
+#: src/newsletter-editor/index.js:57
 msgid "Testing"
 msgstr "Testen"
 
-#: src/newsletter-editor/index.js:65
+#: src/newsletter-editor/index.js:63
 msgid "Layout"
 msgstr "Vorlage"
 
@@ -1451,34 +1506,6 @@ msgstr "Öffentliche Seite"
 #: src/newsletter-editor/public/index.js:24
 msgid "Make this newsletter viewable as a public page once it’s been sent."
 msgstr "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
-
-#: src/newsletter-editor/recurrence/index.js:23
-msgid "Hourly"
-msgstr "Stündlich"
-
-#: src/newsletter-editor/recurrence/index.js:27
-msgid "Daily"
-msgstr "Täglich"
-
-#: src/newsletter-editor/recurrence/index.js:31
-msgid "Weekly"
-msgstr "Wöchentlich"
-
-#: src/newsletter-editor/recurrence/index.js:35
-msgid "Monthly"
-msgstr "Monatlich"
-
-#: src/newsletter-editor/recurrence/index.js:58
-msgid "Recurrence"
-msgstr "Wiederholung"
-
-#: src/newsletter-editor/recurrence/index.js:59
-msgid "Apply recurrence rules to the newsletter."
-msgstr "Wiederholungsregeln auf den Newsletter anwenden."
-
-#: src/newsletter-editor/recurrence/index.js:68
-msgid "Repeat"
-msgstr "Wiederholen"
 
 #: src/newsletter-editor/sidebar/index.js:68
 msgid "Recipient (Email Distribution List)"
@@ -1587,33 +1614,3 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
-
-#~ msgid "Display excerpt"
-#~ msgstr "Textauszug anzeigen"
-
-#~ msgid "Recurring event"
-#~ msgstr "Wiederkehrender Termin"
-
-#~ msgid "Recurs every %s years"
-#~ msgstr "Wiederholt sich alle %s Jahre"
-
-#~ msgid "Recurs yearly"
-#~ msgstr "Wiederholt sich jährlich"
-
-#~ msgid "Recurs every %s months"
-#~ msgstr "Wiederholt sich alle %s Monate"
-
-#~ msgid "Recurs monthly"
-#~ msgstr "Wiederholt sich monatlich"
-
-#~ msgid "Recurs every %s weeks"
-#~ msgstr "Wiederholt sich alle %s Wochen"
-
-#~ msgid "Recurs weekly"
-#~ msgstr "Wiederholt sich wöchentlich"
-
-#~ msgid "Recurs every %s days"
-#~ msgstr "Wiederholt sich alle %s Tage"
-
-#~ msgid "Recurs daily"
-#~ msgstr "Wiederholt sich täglich"
