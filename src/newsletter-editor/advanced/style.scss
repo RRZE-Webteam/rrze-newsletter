@@ -1,0 +1,38 @@
+@import "~@wordpress/base-styles/colors.native";
+@import "~@wordpress/base-styles/colors";
+
+.rrze-newsletter {
+    &__recurrence-toggle-control {
+        margin-top: 1rem;
+        &--separated {
+            margin-top: 14px;
+            padding-top: 8px;
+            border-top: 1px solid $light-gray-500;
+        }
+    }
+
+    &__recurrence-interval__controls {
+        max-width: 248px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    &__conditionals-toggle-control {
+        margin-top: 1rem;
+        &--separated {
+            margin-top: 14px;
+            padding-top: 8px;
+            border-top: 1px solid $light-gray-500;
+        }
+    }
+
+    &__conditionals-interval__controls {
+        max-width: 248px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+}
