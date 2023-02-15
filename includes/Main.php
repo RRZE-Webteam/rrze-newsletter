@@ -54,7 +54,7 @@ class Main
         Cron::init();
 
         // Queue task
-        add_action('rrze_newsletter_queue_task', [$this, 'setQueue']);
+        add_action('transition_post_status', [$this, 'maybeSetQueue'], 10, 3);
     }
 
     public function settingsLink($links)
@@ -68,9 +68,16 @@ class Main
         return $links;
     }
 
-    public function setQueue($postId)
+    public function maybeSetQueue($newStatus, $oldStatus, $post)
     {
+        if (
+            'publish' !== $newStatus || 'publish' === $oldStatus
+            || Newsletter::POST_TYPE !== get_post_type($post->ID)
+        ) {
+            return;
+        }
+        update_post_meta($post->ID, 'rrze_newsletter_status', 'send');
         $queue = new Queue;
-        $queue->set($postId);
+        $queue->set($post->ID);
     }
 }
