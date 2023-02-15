@@ -4,7 +4,7 @@
 Plugin Name:      RRZE Newsletter
 Plugin URI:       https://github.com/RRZE-Webteam/rrze-newsletter
 Description:      Plugin for creating and sending HTML Newsletters.
-Version:          1.10.0
+Version:          1.10.1
 Author:           RRZE-Webteam
 Author URI:       https://blogs.fau.de/webworking/
 License:          GNU General Public License v3.0
@@ -34,22 +34,6 @@ register_activation_hook(__FILE__, __NAMESPACE__ . '\activation');
 register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
 
 add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
-
-add_action(
-    'transition_post_status',
-    function ($newStatus, $oldStatus, $post) {
-        if ($post->post_type !== Newsletter::POST_TYPE) {
-            return;
-        }
-        if ('publish' === $newStatus && 'publish' !== $oldStatus) {
-            update_post_meta($post->ID, 'rrze_newsletter_status', 'send');
-            wp_clear_scheduled_hook('rrze_newsletter_queue_task', [$post->ID]);
-            wp_schedule_single_event(time(), 'rrze_newsletter_queue_task', [$post->ID]);
-        }
-    },
-    10,
-    3
-);
 
 /**
  * loadTextdomain

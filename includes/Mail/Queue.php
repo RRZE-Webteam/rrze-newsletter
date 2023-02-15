@@ -94,7 +94,7 @@ class Queue
         }
 
         // Maybe the newsletter is recurring.
-        Newsletter::maybeSetRecurrence($postId);
+        $this->maybeSetRecurrence($postId);
 
         // Check if it should be skipped.
         if ($this->maybeSkipped($postId)) {
@@ -339,6 +339,76 @@ class Queue
         ];
 
         return get_posts($args);
+    }
+
+    /**
+     * Set the next occurrence date if the bulletin has recurrence rules.
+     *
+     * @param integer $postId
+     * @return void
+     */
+    protected function maybeSetRecurrence(int $postId)
+    {
+        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
+        $isRecurring = (bool) get_post_meta($postId, 'rrze_newsletter_is_recurring', true);
+        if (!$hasConditionals || !$isRecurring) {
+            return false;
+        }
+
+        $repeat = get_post_meta($postId, 'rrze_newsletter_recurrence_repeat', true);
+        switch ($repeat) {
+            case 'ASAP':
+                $currentTime = current_time('mysql');
+                $rrule = 'ASAP';
+                break;
+            case 'HOURLY':
+                $currentTime = current_time('mysql');
+                $rrule = 'FREQ=HOURLY;INTERVAL=1';
+                break;
+            case 'DAILY':
+                $currentTime = current_time('mysql');
+                $rrule = 'FREQ=DAILY;INTERVAL=1';
+                break;
+            case 'WEEKLY':
+                $currentTime = current_time('Y-m-d');
+                $data = Utils::getWeeklyRecurrence($currentTime);
+                $rrule = $data[$currentTime] ?? '';
+                break;
+            case 'MONTHLY':
+                $currentTime = current_time('Y-m-d');
+                $recurrenceMonthly = get_post_meta($postId, 'rrze_newsletter_recurrence_monthly', true);
+                $data = Utils::getMonthlyRecurrence($currentTime);
+                $rrule = $data[$currentTime][$recurrenceMonthly] ?? '';
+                break;
+            default:
+                $rrule = '';
+                break;
+        }
+        if (!$rrule) {
+            return false;
+        }
+
+        if ($rrule == 'ASAP') {
+            $interval = 'PT5M';
+            $dt = new \DateTime($currentTime, Utils::currentTimeZone());
+            $dt->add(new \DateInterval($interval));
+        } else {
+            $nextOcurrence = Utils::nextOcurrences($currentTime, $rrule);
+            $dt = $nextOcurrence[0] ?? '';
+            if (!$dt) {
+                return false;
+            }
+        }
+
+        $newDate = $dt->format('Y-m-d H:i:s');
+        $newGmtDate = get_gmt_from_date($newDate);
+
+        return wp_update_post([
+            'ID'            => $postId,
+            'post_status'   => 'future',
+            'post_date'     => $newDate,
+            'post_date_gmt' => $newGmtDate,
+        ]);
     }
 
     /**
