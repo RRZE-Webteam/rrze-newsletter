@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2023-02-22T09:58:02+00:00\n"
-"PO-Revision-Date: 2023-02-22 10:58+0100\n"
+"POT-Creation-Date: 2023-02-22T16:00:06+00:00\n"
+"PO-Revision-Date: 2023-02-22 17:04+0100\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -488,7 +488,7 @@ msgstr ""
 "Liste der E-Mail-Adressen, die von dieser Mailingliste abgemeldet wurden. "
 "Geben Sie eine E-Mail-Adresse pro Zeile ein."
 
-#: includes/CPT/Newsletter.php:542 src/newsletter-editor/index.js:43
+#: includes/CPT/Newsletter.php:542 src/newsletter-editor/index.js:58
 msgid "Newsletter"
 msgstr "Newsletter"
 
@@ -679,7 +679,7 @@ msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
 #. translators: Message after the email was sent successfully.
-#: includes/Mail/Send.php:78 includes/RestApi.php:410
+#: includes/Mail/Send.php:78 includes/RestApi.php:428
 msgid "Email sent successfully to %s."
 msgstr "E-Mail erfolgreich an %s gesendet."
 
@@ -696,8 +696,8 @@ msgstr "Einstellungen"
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:797 includes/MJML/Render.php:809
-#: includes/MJML/Render.php:817 _tmp/07-12-2022/includes/MJML/Render.php:955
+#: includes/MJML/Render.php:828 includes/MJML/Render.php:840
+#: includes/MJML/Render.php:848 _tmp/07-12-2022/includes/MJML/Render.php:955
 #: _tmp/07-12-2022/includes/MJML/Render.php:964
 #: _tmp/07-12-2022/includes/MJML/Render.php:976
 msgid "MJML rendering error."
@@ -713,26 +713,26 @@ msgstr "Bitte richten Sie den MJML-API-Endpunkt ein."
 msgid "Please set up the subscripction page."
 msgstr "Bitte richten Sie die Abonnementseite ein."
 
-#: includes/RestApi.php:259 includes/RestApi.php:273
+#: includes/RestApi.php:277 includes/RestApi.php:291
 msgid "You cannot use this resource."
 msgstr "Sie können diese Ressource nicht verwenden."
 
 #. translators: Message if the email address is not valid.
-#: includes/RestApi.php:301
+#: includes/RestApi.php:319
 msgid "The sender email address is not valid."
 msgstr "Die E-Mail-Adresse des Absenders ist ungültig."
 
 #. translators: Message if the email address is not valid.
-#: includes/RestApi.php:326
+#: includes/RestApi.php:344
 msgid "The recipient email address is not valid."
 msgstr "Die E-Mail-Adresse des Empfängers ist ungültig."
 
 #. translators: Message if the email domain is not allowed.
-#: includes/RestApi.php:332
+#: includes/RestApi.php:350
 msgid "The recipient email domain is not allowed."
 msgstr "Die E-Mail-Domäne des Empfängers ist nicht zulässig."
 
-#: includes/RestApi.php:416
+#: includes/RestApi.php:434
 msgid "There was an error sending the email."
 msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 
@@ -1352,6 +1352,22 @@ msgstr "RSS"
 msgid "Display entries from any RSS or Atom feed."
 msgstr "Einträge von jedem RSS- oder Atom-Feed anzeigen."
 
+#: src/editor/index.js:66
+msgid "Circle Black"
+msgstr "Kreis Schwarz"
+
+#: src/editor/index.js:71
+msgid "Circle White"
+msgstr "Kreis weiß"
+
+#: src/editor/index.js:76
+msgid "Black"
+msgstr "Schwarz"
+
+#: src/editor/index.js:81
+msgid "White"
+msgstr "Weiß"
+
 #: src/newsletter-editor/advanced/index.js:23
 msgid "ASAP"
 msgstr "Schnellstmöglich"
@@ -1443,15 +1459,19 @@ msgstr ""
 msgid "Repeat"
 msgstr "Wiederholen"
 
-#: src/newsletter-editor/index.js:51
+#: src/newsletter-editor/index.js:40
+msgid "Newsletter Styles"
+msgstr "Newsletter-Stile"
+
+#: src/newsletter-editor/index.js:66
 msgid "Styling"
 msgstr "Styling"
 
-#: src/newsletter-editor/index.js:57
+#: src/newsletter-editor/index.js:72
 msgid "Testing"
 msgstr "Testen"
 
-#: src/newsletter-editor/index.js:63
+#: src/newsletter-editor/index.js:78
 msgid "Layout"
 msgstr "Vorlage"
 
@@ -1535,59 +1555,67 @@ msgstr "Vorschau-Text"
 msgid "Update preview text"
 msgstr "Vorschau-Text aktualisieren"
 
-#: src/newsletter-editor/styling/index.js:13
+#: src/newsletter-editor/styling/index.js:24
 msgid "Sans Serif"
 msgstr "Sans Serif"
 
-#: src/newsletter-editor/styling/index.js:17
+#: src/newsletter-editor/styling/index.js:28
 msgid "Arial"
 msgstr "Arial"
 
-#: src/newsletter-editor/styling/index.js:21
+#: src/newsletter-editor/styling/index.js:32
 msgid "Tahoma"
 msgstr "Tahoma"
 
-#: src/newsletter-editor/styling/index.js:25
+#: src/newsletter-editor/styling/index.js:36
 msgid "Trebuchet"
 msgstr "Trebuchet"
 
-#: src/newsletter-editor/styling/index.js:29
+#: src/newsletter-editor/styling/index.js:40
 msgid "Verdana"
 msgstr "Verdana"
 
-#: src/newsletter-editor/styling/index.js:35
+#: src/newsletter-editor/styling/index.js:46
 msgid "Serif"
 msgstr "Serif"
 
-#: src/newsletter-editor/styling/index.js:39
+#: src/newsletter-editor/styling/index.js:50
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/newsletter-editor/styling/index.js:43
+#: src/newsletter-editor/styling/index.js:54
 msgid "Palatino"
 msgstr "Palatino"
 
-#: src/newsletter-editor/styling/index.js:47
+#: src/newsletter-editor/styling/index.js:58
 msgid "Times New Roman"
 msgstr "Times New Roman"
 
-#: src/newsletter-editor/styling/index.js:53
+#: src/newsletter-editor/styling/index.js:64
 msgid "Monospace"
 msgstr "Monospace"
 
-#: src/newsletter-editor/styling/index.js:57
+#: src/newsletter-editor/styling/index.js:68
 msgid "Courier"
 msgstr "Courier"
 
-#: src/newsletter-editor/styling/index.js:117
+#: src/newsletter-editor/styling/index.js:232
+msgid "Typography"
+msgstr "Typografie"
+
+#: src/newsletter-editor/styling/index.js:236
 msgid "Headings font"
 msgstr "Überschriften Schriftart"
 
-#: src/newsletter-editor/styling/index.js:125
+#: src/newsletter-editor/styling/index.js:246
 msgid "Body font"
 msgstr "Inhaltsschrift"
 
-#: src/newsletter-editor/styling/index.js:133
+#: src/newsletter-editor/styling/index.js:257
+msgid "Color"
+msgstr "Farbe"
+
+#: src/newsletter-editor/styling/index.js:261
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
