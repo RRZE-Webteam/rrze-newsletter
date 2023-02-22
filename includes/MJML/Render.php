@@ -76,9 +76,8 @@ final class Render
      * @param array $attributes Array of attributes.
      * @return string HTML attributes as a string.
      */
-    private static function arrayToAttributes($attributes)
+    private static function arrayToAttributes(array $attributes): string
     {
-        if (!is_array($attributes)) return $attributes;
         return implode(
             ' ',
             array_map(
@@ -123,6 +122,52 @@ final class Render
     }
 
     /**
+     * Get the social icon and color based on the block attributes.
+     *
+     * @param string $serviceName The service name.
+     * @param array  $blockAttrs  Block attributes.
+     *
+     * @return array[
+     *   'icon'  => string,
+     *   'color' => string,
+     * ] The icon and color or empty array if service not found.
+     */
+    private static function getSocialIcon($serviceName, $blockAttrs)
+    {
+        $servicesColors = [
+            'facebook'  => '#1977f2',
+            'instagram' => '#f00075',
+            'linkedin'  => '#0577b5',
+            'tiktok'    => '#000000',
+            'tumblr'    => '#011835',
+            'twitter'   => '#21a1f3',
+            'wordpress' => '#3499cd',
+            'youtube'   => '#ff0100',
+        ];
+        if (!isset($servicesColors[$serviceName])) {
+            return [];
+        }
+        $icon  = 'white';
+        $color = $servicesColors[$serviceName];
+        if (isset($blockAttrs['className'])) {
+            if ('is-style-filled-black' === $blockAttrs['className'] || 'is-style-circle-white' === $blockAttrs['className']) {
+                $icon = 'black';
+            }
+            if ('is-style-filled-black' === $blockAttrs['className'] || 'is-style-filled-white' === $blockAttrs['className']) {
+                $color = 'transparent';
+            } elseif ('is-style-circle-black' === $blockAttrs['className']) {
+                $color = '#000';
+            } elseif ('is-style-circle-white' === $blockAttrs['className']) {
+                $color = '#fff';
+            }
+        }
+        return [
+            'icon'  => sprintf('%s-%s.png', $icon, $serviceName),
+            'color' => $color,
+        ];
+    }
+
+    /**
      * Get colors based on block attributes.
      *
      * @param array $blockAttrs Block attributes.
@@ -149,7 +194,7 @@ final class Render
         }
 
         // For separators.
-        if (isset($blockAttrs['color'])) {
+        if (isset($blockAttrs['color'], self::$colorPalette[$blockAttrs['color']])) {
             $colors['border-color'] = $blockAttrs['color'];
         }
         if (isset($blockAttrs['customColor'])) {
@@ -170,7 +215,7 @@ final class Render
     }
 
     /**
-     * Add color attributes and a padding, if component has a background color.
+     * Add color attributes and a padding,if component has a background color.
      *
      * @param array $attrs Block attributes.
      * @return array MJML component attributes.
@@ -285,16 +330,15 @@ final class Render
         $attrs = self::processAttributes(array_merge($defaultAttrs, $attrs));
 
         // Default attributes for the section which will envelop the mj-column.
-        $sectionAttrs = [
-            'padding' => '0',
-        ];
-
-        // Default attributes for the column which will envelop the component.
-        $columnAttrs = array_merge(
+        $sectionAttrs = array_merge(
+            $attrs,
             [
-                'padding' => '12px',
+                'padding' => '0',
             ]
         );
+
+        // Default attributes for the column which will envelop the component.
+        $columnAttrs = ['padding' => '12px'];
 
         $fontFamily = 'core/heading' === $blockName ? self::$fontHeader : self::$fontBody;
 
@@ -308,11 +352,14 @@ final class Render
             case 'core/site-tagline':
             case 'rrze-newsletter/rss':
             case 'rrze-newsletter/ics':
-                $textAttrs = [
-                    'line-height' => '1.8',
-                    'font-size' => '16px',
-                    'font-family' => $fontFamily,
-                ];
+                $textAttrs = array_merge(
+                    [
+                        'line-height' => '1.8',
+                        'font-size' => '16px',
+                        'font-family' => $fontFamily,
+                    ],
+                    $attrs
+                );
 
                 // Only mj-text has to use container-background-color attr for background color.
                 if (isset($textAttrs['background-color'])) {
@@ -474,16 +521,24 @@ final class Render
                 // Separator block.
             case 'core/separator':
                 $isStyleDefault = isset($attrs['className']) ? 'is-style-default' == $attrs['className'] : true;
-                $dividerAttrs = array_merge(
-                    [
-                        'padding' => '0',
-                        'border-width' => $isStyleDefault ? '2px' : '1px',
-                        'width' => $isStyleDefault ? '100px' : '100%',
-                        // Default color - will be replaced by getColors if there are colors set.
-                        'border-color' => '#8f98a1',
-                    ],
-                    self::getColors($attrs)
-                );
+                $dividerAttrs = [
+                    'padding' => '0',
+                    'border-width' => '1px',
+                    'width' => $isStyleDefault ? '128px' : '100%'
+                ];
+                // Remove colors from section attrs.
+                Utils::debug($block['attrs']);
+                Utils::debug($sectionAttrs);
+                Utils::debug(self::$colorPalette);
+                unset($sectionAttrs['background-color']);
+                if ($block['attrs']['backgroundColor'] && isset(self::$colorPalette[$block['attrs']['backgroundColor']])) {
+                    $dividerAttrs['border-color'] = self::$colorPalette[$block['attrs']['backgroundColor']];
+                }
+                if (isset($block['attrs']['style']['color']['background'])) {
+                    $dividerAttrs['border-color'] = $block['attrs']['style']['color']['background'];
+                }
+                Utils::debug($dividerAttrs);
+                Utils::debug(self::arrayToAttributes($dividerAttrs));
                 $blockMjmlMarkup .= '<mj-divider ' . self::arrayToAttributes($dividerAttrs) . '/>';
                 break;
 
@@ -495,59 +550,34 @@ final class Render
 
                 // Social links block.
             case 'core/social-links':
-                $socialIcons = [
-                    'wordpress' => [
-                        'color' => '#3499cd',
-                        'icon'  => 'wordpress.png',
-                    ],
-                    'facebook'  => [
-                        'color' => '#1977f2',
-                        'icon'  => 'facebook.png',
-                    ],
-                    'twitter'   => [
-                        'color' => '#21a1f3',
-                        'icon'  => 'twitter.png',
-                    ],
-                    'instagram' => [
-                        'color' => '#f00075',
-                        'icon'  => 'instagram.png',
-                    ],
-                    'linkedin'  => [
-                        'color' => '#0577b5',
-                        'icon'  => 'linkedin.png',
-                    ],
-                    'youtube'   => [
-                        'color' => '#ff0100',
-                        'icon'  => 'youtube.png',
-                    ],
-                ];
-
-                $socialWrapperAttrs = [
-                    'icon-size'     => '22px',
+                $wrapperAttrs = array(
+                    'icon-size'     => '24px',
                     'mode'          => 'horizontal',
                     'padding'       => '0',
                     'border-radius' => '999px',
-                    'icon-padding'  => '8px',
-                ];
+                    'icon-padding'  => '7px',
+                );
                 if (isset($attrs['align'])) {
-                    $socialWrapperAttrs['align'] = $attrs['align'];
+                    $wrapperAttrs['align'] = $attrs['align'];
                 } else {
-                    $socialWrapperAttrs['align'] = 'left';
+                    $wrapperAttrs['align'] = 'left';
                 }
-                $markup = '<mj-social ' . self::arrayToAttributes($socialWrapperAttrs) . '>';
-                foreach ($innerBlocks as $linkBlock) {
-                    if (isset($linkBlock['attrs']['url'])) {
-                        $url = $linkBlock['attrs']['url'];
-                        // Handle older version of the block, where innner blocks are named `core/social-link-<service>`.
-                        $serviceName = isset($linkBlock['attrs']['service']) ? $linkBlock['attrs']['service'] : str_replace('core/social-link-', '', $linkBlock['blockName']);
+                $markup = '<mj-social ' . self::arrayToAttributes($wrapperAttrs) . '>';
+                foreach ($innerBlocks as $LinkBlock) {
+                    if (isset($LinkBlock['attrs']['url'])) {
+                        $url = $LinkBlock['attrs']['url'];
+                        // Handle older version of the block, where innner blocks we named `core/social-link-<service>`.
+                        $serviceName = isset($LinkBlock['attrs']['service']) ? $LinkBlock['attrs']['service'] : str_replace('core/social-link-', '', $LinkBlock['blockName']);
+                        $socialIcon = self::getSocialIcon($serviceName, $attrs);
 
-                        if (isset($socialIcons[$serviceName])) {
-                            $imgAttrs = [
+                        if (!empty($socialIcon)) {
+                            $imgAttrs = array(
                                 'href' => $url,
-                                'src' => plugins_url('assets/icons/' . $socialIcons[$serviceName]['icon'], plugin()->getBasename()),
-                                'background-color' => $socialIcons[$serviceName]['color'],
+                                'src' => plugins_url('assets/' . $socialIcon['icon'], dirname(__FILE__)),
+                                'src' => plugins_url('assets/icons/' . $socialIcon['icon'], plugin()->getBasename()),
+                                'background-color' => $socialIcon['color'],
                                 'css-class' => 'social-element',
-                            ];
+                            );
 
                             $markup .= '<mj-social-element ' . self::arrayToAttributes($imgAttrs) . '/>';
                         }
@@ -628,6 +658,7 @@ final class Render
             'core/columns' != $blockName &&
             'core/column' != $blockName &&
             'core/buttons' != $blockName &&
+            'core/separator' != $blockName &&
             !$isPostInserterBlock
         ) {
             $columnAttrs['width'] = '100%';
@@ -715,7 +746,7 @@ final class Render
      * @param \WP_Post $post The post.
      * @return string MJML markup.
      */
-    private static function fromPost($post)
+    public static function fromPost($post)
     {
         self::$colorPalette = json_decode(get_option('rrze_newsletter_color_palette', false), true);
         self::$fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
@@ -747,7 +778,7 @@ final class Render
      * @param array $args The arguments.
      * @return string MJML markup.
      */
-    private static function fromAry(array $args)
+    public static function fromAry(array $args)
     {
         $default = [
             'title' => '',
@@ -797,7 +828,7 @@ final class Render
                 __('MJML rendering error.', 'rrze-newsletter')
             );
         }
-        Utils::debug($markup);
+        //Utils::debug($markup);
         $respond = Api::request($markup);
         if (is_wp_error($respond)) {
             return $respond;

@@ -1,11 +1,12 @@
 /**
  * External dependencies
  */
-import { isEmpty } from "lodash";
+import { get, isEmpty } from "lodash";
 
 /**
  * WordPress dependencies
  */
+import { __ } from "@wordpress/i18n";
 import { compose } from "@wordpress/compose";
 import { withDispatch, withSelect } from "@wordpress/data";
 import { createPortal, useEffect, useState } from "@wordpress/element";
@@ -14,25 +15,36 @@ import { registerPlugin } from "@wordpress/plugins";
 /**
  * Plugin dependencies
  */
+import { getEditPostPayload } from "../utils";
+import { getServiceProvider } from "../../service-providers";
 import withApiHandler from "../../components/with-api-handler";
 import SendButton from "../../components/send-button";
 import "./style.scss";
 
 const Editor = compose([
     withApiHandler(),
-    withSelect(select => {
+    withSelect((select) => {
         const {
             getCurrentPostId,
             getCurrentPostAttribute,
             getEditedPostAttribute,
             isPublishingPost,
             isSavingPost,
-            isCleanNewPost
+            isCleanNewPost,
         } = select("core/editor");
         const { getActiveGeneralSidebarName } = select("core/edit-post");
+        const { getSettings } = select("core/block-editor");
         const meta = getEditedPostAttribute("meta");
         const status = getCurrentPostAttribute("status");
         const sentDate = getCurrentPostAttribute("date");
+        const settings = getSettings();
+        const experimentalSettingsColors = get(settings, [
+            "__experimentalFeatures",
+            "global",
+            "color",
+            "palette",
+        ]);
+        const colors = settings.colors || experimentalSettingsColors || [];
 
         return {
             isCleanNewPost: isCleanNewPost(),
@@ -42,17 +54,21 @@ const Editor = compose([
                 : false,
             activeSidebarName: getActiveGeneralSidebarName(),
             isPublishingOrSavingPost: isSavingPost() || isPublishingPost(),
+            colorPalette: colors.reduce(
+                (_colors, { slug, color }) => ({ ..._colors, [slug]: color }),
+                {}
+            ),
             status,
             sentDate,
-            isPublic: meta.rrze_newsletter_is_public
+            isPublic: meta.rrze_newsletter_is_public,
         };
     }),
-    withDispatch(dispatch => {
+    withDispatch((dispatch) => {
         const {
             lockPostAutosaving,
             lockPostSaving,
             unlockPostSaving,
-            editPost
+            editPost,
         } = dispatch("core/editor");
         const { createNotice } = dispatch("core/notices");
         return {
@@ -60,10 +76,10 @@ const Editor = compose([
             lockPostSaving,
             unlockPostSaving,
             editPost,
-            createNotice
+            createNotice,
         };
-    })
-])(props => {
+    }),
+])((props) => {
     const [publishEl] = useState(document.createElement("div"));
     // Create alternate publish button
     useEffect(() => {
@@ -81,7 +97,7 @@ const Editor = compose([
         props.apiFetchWithErrorHandling({
             path: `/rrze-newsletter/v1/color-palette`,
             data: props.colorPalette,
-            method: "POST"
+            method: "POST",
         });
     }, [JSON.stringify(props.colorPalette)]);
 
@@ -105,7 +121,7 @@ const Editor = compose([
 
             // Show an editor notice if the newsletter has been sent.
             props.createNotice("success", props.successNote + dateTime, {
-                isDismissible: false
+                isDismissible: false,
             });
         }
     }, [props.status]);
@@ -125,6 +141,6 @@ const Editor = compose([
 
 export default () => {
     registerPlugin("rrze-newsletter-edit", {
-        render: Editor
+        render: Editor,
     });
 };

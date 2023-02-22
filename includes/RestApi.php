@@ -134,6 +134,24 @@ class RestApi
                 'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
             ]
         );
+        register_rest_route(
+            'newspack-newsletters/v1',
+            'post-mjml',
+            [
+                'methods'             => \WP_REST_Server::EDITABLE,
+                'callback'            => [$this, 'apiGetMjml'],
+                'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
+                'args'                => [
+                    'post_id' => [
+                        'required'          => true,
+                        'sanitize_callback' => 'absint',
+                    ],
+                    'content' => [
+                        'required' => true,
+                    ],
+                ],
+            ]
+        );
         register_rest_field(
             'post',
             'newsletter_author_info',
@@ -447,7 +465,33 @@ class RestApi
 
     public function apiSetColorPalette($request)
     {
-        update_option('rrze_newsletter_color_palette', $request->get_body());
+        Utils::debug($request);
+        update_option(
+            'rrze_newsletter_color_palette',
+            wp_json_encode(
+                array_merge(
+                    json_decode((string) get_option('rrze_newsletter_color_palette', '{}'), true) ?? [],
+                    json_decode($request->get_body(), true)
+                )
+            )
+        );
         return rest_ensure_response([]);
+    }
+
+    /**
+     * Get MJML markup for a post.
+     * Content is sent straight from the editor, because all this happens
+     * before post is saved in the database.
+     *
+     * @param WP_REST_Request $request API request object.
+     */
+    public function apiGetMjml($request)
+    {
+        $post = get_post($request['post_id']);
+        if (!empty($request['title'])) {
+            $post->post_title = $request['title'];
+        }
+        $post->post_content = $request['content'];
+        return rest_ensure_response(['mjml' => Render::fromPost($post)]);
     }
 }

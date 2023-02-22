@@ -2,11 +2,16 @@
  * WordPress dependencies
  */
 import { __ } from "@wordpress/i18n";
-import { withSelect } from "@wordpress/data";
+import { withSelect, withDispatch } from "@wordpress/data";
 import { compose } from "@wordpress/compose";
-import { Fragment, useState } from "@wordpress/element";
-import { PluginDocumentSettingPanel } from "@wordpress/edit-post";
+import { Fragment, useEffect, useState } from "@wordpress/element";
+import {
+    PluginDocumentSettingPanel,
+    PluginSidebar,
+    PluginSidebarMoreMenuItem,
+} from "@wordpress/edit-post";
 import { registerPlugin } from "@wordpress/plugins";
+import { styles } from "@wordpress/icons";
 
 /**
  * Plugin dependencies
@@ -22,7 +27,7 @@ import registerEditorPlugin from "./editor/";
 
 registerEditorPlugin();
 
-const NewsletterEdit = ({ layoutId }) => {
+const NewsletterEdit = ({ savePost, layoutId }) => {
     const [shouldDisplaySettings, setShouldDisplaySettings] = useState(
         window &&
             window.rrze_newsletter_data &&
@@ -31,6 +36,9 @@ const NewsletterEdit = ({ layoutId }) => {
 
     const isDisplayingInitModal = shouldDisplaySettings || -1 === layoutId;
 
+    const stylingId = "rrze-newsletter-styling";
+    const stylingTitle = __("Newsletter Styles", "rrze-newsletter");
+
     return isDisplayingInitModal ? (
         <InitModal
             shouldDisplaySettings={shouldDisplaySettings}
@@ -38,6 +46,13 @@ const NewsletterEdit = ({ layoutId }) => {
         />
     ) : (
         <Fragment>
+            <PluginSidebar name={stylingId} icon={styles} title={stylingTitle}>
+                <Styling />
+            </PluginSidebar>
+            <PluginSidebarMoreMenuItem target={stylingId} icon={styles}>
+                {stylingTitle}
+            </PluginSidebarMoreMenuItem>
+
             <PluginDocumentSettingPanel
                 name="newsletters-settings-panel"
                 title={__("Newsletter", "rrze-newsletter")}
@@ -75,6 +90,12 @@ const NewsletterEditWithSelect = compose([
         const { getEditedPostAttribute } = select("core/editor");
         const meta = getEditedPostAttribute("meta");
         return { layoutId: meta.rrze_newsletter_template_id };
+    }),
+    withDispatch((dispatch) => {
+        const { savePost } = dispatch("core/editor");
+        return {
+            savePost,
+        };
     }),
 ])(NewsletterEdit);
 

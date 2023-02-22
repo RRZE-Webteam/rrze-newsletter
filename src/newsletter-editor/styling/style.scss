@@ -1,0 +1,40 @@
+@use "~@wordpress/base-styles/colors" as wp-colors;
+
+.rrze-newsletter {
+    &__color-panel {
+        > .components-base-control {
+            max-width: 100%;
+            min-width: 100%;
+        }
+
+        .components-color-picker__inputs-wrapper {
+            min-width: 100%;
+        }
+
+        .components-color-picker__body {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        label {
+            margin-right: 0;
+            max-width: 100%;
+        }
+    }
+
+    &__css-panel {
+        .CodeMirror {
+            border: 1px solid wp-colors.$gray-700;
+        }
+    }
+}
+
+.interface-complementary-area {
+    & > &-header {
+        border-top: 0;
+    }
+
+    &__pin-unpin-item {
+        display: none !important;
+    }
+}
