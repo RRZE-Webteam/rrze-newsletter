@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2023-02-15T08:52:04+00:00\n"
-"PO-Revision-Date: 2023-02-15 09:52+0100\n"
+"POT-Creation-Date: 2023-02-22T09:58:02+00:00\n"
+"PO-Revision-Date: 2023-02-22 10:58+0100\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -240,7 +240,7 @@ msgstr "ICS-Fehler:"
 msgid "There are no events available."
 msgstr "Es sind keine Termine verfügbar."
 
-#: includes/Blocks/ICS/ICS.php:527
+#: includes/Blocks/ICS/ICS.php:524
 msgid "Ends"
 msgstr "Endet"
 
@@ -696,8 +696,8 @@ msgstr "Einstellungen"
 msgid "MJML API Endpoint not available."
 msgstr "MJML-API-Endpoint nicht verfügbar."
 
-#: includes/MJML/Render.php:801 includes/MJML/Render.php:810
-#: includes/MJML/Render.php:822 _tmp/07-12-2022/includes/MJML/Render.php:955
+#: includes/MJML/Render.php:797 includes/MJML/Render.php:809
+#: includes/MJML/Render.php:817 _tmp/07-12-2022/includes/MJML/Render.php:955
 #: _tmp/07-12-2022/includes/MJML/Render.php:964
 #: _tmp/07-12-2022/includes/MJML/Render.php:976
 msgid "MJML rendering error."
