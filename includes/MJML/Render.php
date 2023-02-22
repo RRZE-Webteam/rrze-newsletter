@@ -61,7 +61,7 @@ final class Render
     {
         $blocksWithoutInnerHtml = [
             'rrze-newsletter/rss',
-            'rrze-newsletter/ics',            
+            'rrze-newsletter/ics',
         ];
 
         $emptyBlockName = empty($block['blockName']);
@@ -69,7 +69,7 @@ final class Render
 
         return $emptyBlockName || $emptyHtml;
     }
-    
+
     /**
      * Convert a list to HTML attributes.
      *
@@ -285,12 +285,9 @@ final class Render
         $attrs = self::processAttributes(array_merge($defaultAttrs, $attrs));
 
         // Default attributes for the section which will envelop the mj-column.
-        $sectionAttrs = array_merge(
-            $attrs,
-            [
-                'padding' => '0',
-            ]
-        );
+        $sectionAttrs = [
+            'padding' => '0',
+        ];
 
         // Default attributes for the column which will envelop the component.
         $columnAttrs = array_merge(
@@ -311,14 +308,11 @@ final class Render
             case 'core/site-tagline':
             case 'rrze-newsletter/rss':
             case 'rrze-newsletter/ics':
-                $textAttrs = array_merge(
-                    [
-                        'line-height' => '1.8',
-                        'font-size' => '16px',
-                        'font-family' => $fontFamily,
-                    ],
-                    $attrs
-                );
+                $textAttrs = [
+                    'line-height' => '1.8',
+                    'font-size' => '16px',
+                    'font-family' => $fontFamily,
+                ];
 
                 // Only mj-text has to use container-background-color attr for background color.
                 if (isset($textAttrs['background-color'])) {
@@ -743,7 +737,8 @@ final class Render
             'body' => self::postToMjmlComponents($post, $post->post_content, true)
         ];
 
-        return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
+        $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
+        return str_replace(PHP_EOL, '', $tpl);
     }
 
     /**
@@ -775,7 +770,8 @@ final class Render
             'body' => self::postToMjmlComponents(new \stdClass, $content, false)
         ];
 
-        return str_replace(PHP_EOL, '', Templates::getContent('newsletter.mjml', $data));
+        $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
+        return str_replace(PHP_EOL, '', $tpl);
     }
 
     /**
@@ -801,18 +797,17 @@ final class Render
                 __('MJML rendering error.', 'rrze-newsletter')
             );
         }
-
+        Utils::debug($markup);
         $respond = Api::request($markup);
+        if (is_wp_error($respond)) {
+            return $respond;
+        }
 
         if (intval($respond['response']['code']) != 200) {
             return new \WP_Error(
                 'rrze_newsletter_mjml_render_error',
                 __('MJML rendering error.', 'rrze-newsletter')
             );
-        }
-
-        if (is_wp_error($respond)) {
-            return $respond;
         }
 
         $body = json_decode($respond['body'], true);

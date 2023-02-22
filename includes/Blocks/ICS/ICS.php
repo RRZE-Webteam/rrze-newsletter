@@ -367,9 +367,6 @@ class ICS
         $feedItems['urls'] = self::spacePipeExplode($url);
         $feedItems['tz'] = !empty($tz) ? self::spacePipeExplode($tz) : get_option('timezone_string');
 
-        // Set general calendar information.
-        $feedItems['guid'] = self::createGUID();
-
         // Add a month to $rangeStart to accommodate multi-day events that may begin out of range.
         $rangeStart = self::dateFormat('Y/m/d', null, null, '-' . intval(wp_date('j') + 30) . ' days');
         // Extend by one week past current date.
@@ -617,26 +614,6 @@ class ICS
             return $str;
         }
         return $exploded;
-    }
-
-    /**
-     * createGUID
-     * Create a custom GUID.
-     *
-     * @param boolean $lowercase
-     * @param boolean $prefix
-     * @return void
-     */
-    protected static function createGUID($lowercase = true, $prefix = true)
-    {
-        $guid = sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
-        if (!empty($lowercase)) {
-            $guid = strtolower($guid);
-        }
-        if (!empty($prefix)) {
-            $guid = 'r' . $guid;
-        }
-        return $guid;
     }
 
     /**
@@ -1063,75 +1040,6 @@ class ICS
     }
 
     /**
-     * isHtml
-     * Check if the string has any HTML.
-     *
-     * @param string $str
-     * @return boolean
-     */
-    protected static function isHtml($str)
-    {
-        return preg_match('/\/[a-z]*>/i', $str) != 0;
-    }
-
-    /**
-     * makeClickable
-     * Apply make_clickable() function 
-     * and also deal with common quirks of iCalendar description data.
-     *
-     * @param string $str
-     * @return string
-     */
-    protected static function makeClickable($str)
-    {
-        // Check if the string has any HTML
-        $hasHtml = self::isHtml($str);
-
-        // Convert HTML entities
-        $str = html_entity_decode($str);
-
-        // Microsoft Teams / Office 365
-        // Get rid of the long line of underscores
-        $str = trim(str_replace('________________________________________________________________________________', '', $str));
-
-        // Assign URLs inside angle brackets to the text that immediately precedes them
-        if (strpos($str, '<http') !== false) {
-            $str = preg_replace('/(([\s]*)([^<\v\|]+?)<([^>]+?)>)/', '\2<a href="\4" target="_blank" rel="noopener noreferrer nofollow">\3</a>', $str);
-        }
-
-        // Handle URLs
-        if (strpos($str, '[http') !== false) {
-            $str = preg_replace('/\[(http[^\]]+?)\]/', '<a href="\1" target="_blank" rel="noopener noreferrer nofollow">\1</a>', $str);
-        }
-
-        // Add <br /> tags if appropriate
-        if (!$hasHtml) {
-            $str = nl2br($str);
-        }
-
-        // Run standard WP make_clickable() function
-        return make_clickable($str);
-    }
-
-    /**
-     * numWords
-     *
-     * @param string $text
-     * @return integer
-     */
-    protected static function numWords($text)
-    {
-        $text = wp_strip_all_tags($text);
-        if (strpos(_x('words', 'Word count type. Do not translate!'), 'characters') === 0 && preg_match('/^utf\-?8$/i', get_option('blog_charset'))) {
-            $text = trim(preg_replace("/[\n\r\t ]+/", ' ', $text), ' ');
-            preg_match_all('/./u', $text, $wordsAry);
-        } else {
-            $wordsAry = preg_split("/[\n\r\t ]+/", $text, -1, PREG_SPLIT_NO_EMPTY);
-        }
-        return count($wordsAry);
-    }
-
-    /**
      * filterTheContent
      * Skips some of the functions WP normally runs on 'the_content'.
      *
@@ -1253,7 +1161,7 @@ class ICS
      */
     protected static function eventLocationHtml($location, $mjml)
     {
-        $content = self::makeClickable($location);
+        $content = make_clickable($location);
         return $mjml ? '<p class="has-normal-padding">' . $content . '</p>' : '<div class="location">' . $content . '</div>';
     }
 
@@ -1278,9 +1186,9 @@ class ICS
         $content = '';
         if ($atts['displayDescription'] && !empty($event['eventdesc'])) {
             if ($atts['descriptionLimit']) {
-                $eventdesc = self::makeClickable(wp_trim_words($event['eventdesc'], absint($atts['descriptionLength']), ' [&hellip;]'));
+                $eventdesc = make_clickable(wp_trim_words($event['eventdesc'], absint($atts['descriptionLength']), ' [&hellip;]'));
             } else {
-                $eventdesc = self::filterTheContent(self::makeClickable($event['eventdesc']));
+                $eventdesc = self::filterTheContent(make_clickable($event['eventdesc']));
             }
             $content .= $mjml ? $eventdesc : $eventdesc;
         }

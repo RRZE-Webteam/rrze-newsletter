@@ -202,6 +202,9 @@ class NewsletterQueue
     public static function customColumn($column, $postId)
     {
         $data = self::getData($postId);
+        if (empty($data) || is_wp_error($data)) {
+            echo '&mdash;';
+        }
         $status = $data['status'];
         $stati = get_post_stati(['show_in_admin_status_list' => true], 'objects');
         $statusLabel = $stati[$status]->label;

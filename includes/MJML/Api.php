@@ -49,6 +49,9 @@ class Api
     public static function request(string $markup)
     {
         $endPoint = self::apiEndpoint();
+        if (is_wp_error($endPoint)) {
+            return $endPoint;
+        }
         $credentials = self::credentials();
         $response = wp_remote_post(
             $endPoint,

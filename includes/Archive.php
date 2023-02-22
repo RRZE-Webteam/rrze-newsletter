@@ -79,7 +79,7 @@ class Archive
         $postId = $post->ID;
 
         $data = Newsletter::getData($postId);
-        if (empty($data)) {
+        if (empty($data) || is_wp_error($data)) {
             return '';
         }
 
