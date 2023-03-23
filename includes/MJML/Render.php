@@ -527,9 +527,6 @@ final class Render
                     'width' => $isStyleDefault ? '128px' : '100%'
                 ];
                 // Remove colors from section attrs.
-                Utils::debug($block['attrs']);
-                Utils::debug($sectionAttrs);
-                Utils::debug(self::$colorPalette);
                 unset($sectionAttrs['background-color']);
                 if ($block['attrs']['backgroundColor'] && isset(self::$colorPalette[$block['attrs']['backgroundColor']])) {
                     $dividerAttrs['border-color'] = self::$colorPalette[$block['attrs']['backgroundColor']];
@@ -537,8 +534,6 @@ final class Render
                 if (isset($block['attrs']['style']['color']['background'])) {
                     $dividerAttrs['border-color'] = $block['attrs']['style']['color']['background'];
                 }
-                Utils::debug($dividerAttrs);
-                Utils::debug(self::arrayToAttributes($dividerAttrs));
                 $blockMjmlMarkup .= '<mj-divider ' . self::arrayToAttributes($dividerAttrs) . '/>';
                 break;
 
@@ -828,7 +823,7 @@ final class Render
                 __('MJML rendering error.', 'rrze-newsletter')
             );
         }
-        //Utils::debug($markup);
+
         $respond = Api::request($markup);
         if (is_wp_error($respond)) {
             return $respond;
