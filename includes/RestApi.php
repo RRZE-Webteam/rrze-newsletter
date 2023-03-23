@@ -465,7 +465,6 @@ class RestApi
 
     public function apiSetColorPalette($request)
     {
-        Utils::debug($request);
         update_option(
             'rrze_newsletter_color_palette',
             wp_json_encode(
