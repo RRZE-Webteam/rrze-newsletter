@@ -520,19 +520,19 @@ final class Render
 
                 // Separator block.
             case 'core/separator':
-                $isStyleDefault = isset($attrs['className']) ? 'is-style-default' == $attrs['className'] : true;
+                $isWide = isset($attrs['className']) && 'is-style-wide' === $attrs['className'];
                 $dividerAttrs = [
                     'padding' => '0',
                     'border-width' => '1px',
-                    'width' => $isStyleDefault ? '128px' : '100%'
+                    'width' => $isWide ? '100%' : '128px'
                 ];
                 // Remove colors from section attrs.
                 unset($sectionAttrs['background-color']);
-                if ($block['attrs']['backgroundColor'] && isset(self::$colorPalette[$block['attrs']['backgroundColor']])) {
+                if ($attrs['backgroundColor'] && isset(self::$colorPalette[$attrs['backgroundColor']])) {
                     $dividerAttrs['border-color'] = self::$colorPalette[$block['attrs']['backgroundColor']];
                 }
-                if (isset($block['attrs']['style']['color']['background'])) {
-                    $dividerAttrs['border-color'] = $block['attrs']['style']['color']['background'];
+                if (isset($attrs['style']['color']['background'])) {
+                    $dividerAttrs['border-color'] = $attrs['style']['color']['background'];
                 }
                 $blockMjmlMarkup .= '<mj-divider ' . self::arrayToAttributes($dividerAttrs) . '/>';
                 break;
