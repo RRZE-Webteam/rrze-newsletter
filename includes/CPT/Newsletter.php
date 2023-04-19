@@ -102,7 +102,7 @@ class Newsletter
         // Used only for the block editor.
         register_meta(
             'post',
-            'newsletterData',
+            'rrze_newsletter_data',
             [
                 'object_subtype' => self::POST_TYPE,
                 'show_in_rest'   => [
@@ -122,7 +122,7 @@ class Newsletter
         // Used only for the block editor.
         register_meta(
             'post',
-            'newsletterValidationErrors',
+            'rrze_newsletter_validation_errors',
             [
                 'object_subtype' => self::POST_TYPE,
                 'show_in_rest'   => [
