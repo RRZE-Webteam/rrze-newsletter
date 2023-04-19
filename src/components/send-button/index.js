@@ -62,7 +62,7 @@ export default compose([
     }) => {
         const {
             newsletterValidationErrors = [],
-            rrze_newsletter_is_public
+            isPublic
         } = meta;
 
         const isButtonEnabled =
@@ -75,7 +75,7 @@ export default compose([
         if (isPublished) {
             if (isSaving) label = __("Sending", "rrze-newsletter");
             else {
-                label = rrze_newsletter_is_public
+                label = isPublic
                     ? __("Sent and Published", "rrze-newsletter")
                     : __("Sent", "rrze-newsletter");
             }
@@ -85,7 +85,7 @@ export default compose([
         } else if (isEditedPostBeingScheduled) {
             label = __("Schedule sending", "rrze-newsletter");
         } else {
-            label = rrze_newsletter_is_public
+            label = isPublic
                 ? __("Send and Publish", "rrze-newsletter")
                 : __("Send", "rrze-newsletter");
         }
