@@ -41,6 +41,7 @@ const Sidebar = ({
             value={title}
             disabled={inFlight}
             onChange={value => editPost({ title: value })}
+            hideLabelFromVision
         />
     );
 
@@ -188,7 +189,7 @@ export default compose([
             recipientEmail: meta.rrze_newsletter_to_email || "",
             replytoEmail: meta.rrze_newsletter_replyto || "",
             previewText: meta.rrze_newsletter_preview_text || "",
-            newsletterData: meta.newsletterData || {}
+            newsletterData: meta.rrze_newsletter_data || {}
         };
     }),
     withDispatch(dispatch => {
