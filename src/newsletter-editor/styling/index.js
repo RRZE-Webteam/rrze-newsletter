@@ -75,10 +75,12 @@ const customStylesSelector = (select) => {
     const { getEditedPostAttribute } = select("core/editor");
     const meta = getEditedPostAttribute("meta");
     return {
-        fontBody: meta.font_body || fontOptgroups[1].options[0].value,
-        fontHeader: meta.font_header || fontOptgroups[0].options[0].value,
-        backgroundColor: meta.background_color || "#ffffff",
-        customCss: meta.custom_css || "",
+        fontBody:
+            meta.rrze_newsletter_font_body || fontOptgroups[1].options[0].value,
+        fontHeader:
+            meta.rrze_newsletter_font_header ||
+            fontOptgroups[0].options[0].value,
+        backgroundColor: meta.rrze_newsletter_background_color || "#ffffff",
     };
 };
 
@@ -159,7 +161,7 @@ export const useCustomFontsInIframe = () => {
 };
 
 export const ApplyStyling = withSelect(customStylesSelector)(
-    ({ fontBody, fontHeader, backgroundColor, customCss }) => {
+    ({ fontBody, fontHeader, backgroundColor }) => {
         useEffect(() => {
             document.documentElement.style.setProperty(
                 "--rrze-newsletter-body-font",
@@ -180,32 +182,6 @@ export const ApplyStyling = withSelect(customStylesSelector)(
                 editorElement.style.backgroundColor = backgroundColor;
             }
         }, [backgroundColor]);
-        useEffect(() => {
-            const editorElement = document.querySelector(
-                ".edit-post-visual-editor"
-            );
-            if (editorElement) {
-                let styleEl = document.getElementById(
-                    "rrze-newsletter__custom-styles"
-                );
-                if (!styleEl) {
-                    styleEl = document.createElement("style");
-                    styleEl.setAttribute("type", "text/css");
-                    styleEl.setAttribute(
-                        "id",
-                        "rrze-newsletter__custom-styles"
-                    );
-                    document.head.appendChild(styleEl);
-                }
-
-                const scopedCss = getScopedCss(
-                    ".edit-post-visual-editor",
-                    customCss
-                );
-
-                styleEl.textContent = scopedCss;
-            }
-        }, [customCss]);
 
         return null;
     }
@@ -217,7 +193,7 @@ export const Styling = compose([
         return { editPost };
     }),
     withSelect(customStylesSelector),
-])(({ editPost, fontBody, fontHeader, customCss, backgroundColor }) => {
+])(({ editPost, fontBody, fontHeader, backgroundColor }) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
     };
@@ -237,7 +213,10 @@ export const Styling = compose([
                         value={fontHeader}
                         optgroups={fontOptgroups}
                         onChange={(value) =>
-                            updateStyleValue("font_header", value)
+                            updateStyleValue(
+                                "rrze_newsletter_font_header",
+                                value
+                            )
                         }
                     />
                 </PanelRow>
@@ -247,7 +226,7 @@ export const Styling = compose([
                         value={fontBody}
                         optgroups={fontOptgroups}
                         onChange={(value) =>
-                            updateStyleValue("font_body", value)
+                            updateStyleValue("rrze_newsletter_font_body", value)
                         }
                     />
                 </PanelRow>
@@ -265,7 +244,10 @@ export const Styling = compose([
                             id={id}
                             color={backgroundColor}
                             onChangeComplete={(value) =>
-                                updateStyleValue("background_color", value.hex)
+                                updateStyleValue(
+                                    "rrze_newsletter_background_color",
+                                    value.hex
+                                )
                             }
                             disableAlpha
                         />
