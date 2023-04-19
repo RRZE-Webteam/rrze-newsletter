@@ -49,8 +49,8 @@ const Editor = compose([
         return {
             isCleanNewPost: isCleanNewPost(),
             postId: getCurrentPostId(),
-            isReady: meta.newsletterValidationErrors
-                ? meta.newsletterValidationErrors.length === 0
+            isReady: meta.rrze_newsletter_validation_errors
+                ? meta.rrze_newsletter_validation_errors.length === 0
                 : false,
             activeSidebarName: getActiveGeneralSidebarName(),
             isPublishingOrSavingPost: isSavingPost() || isPublishingPost(),

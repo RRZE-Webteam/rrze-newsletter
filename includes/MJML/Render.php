@@ -528,8 +528,8 @@ final class Render
                 ];
                 // Remove colors from section attrs.
                 unset($sectionAttrs['background-color']);
-                if ($attrs['backgroundColor'] && isset(self::$colorPalette[$attrs['backgroundColor']])) {
-                    $dividerAttrs['border-color'] = self::$colorPalette[$block['attrs']['backgroundColor']];
+                if (isset($attrs['backgroundColor']) && isset(self::$colorPalette[$attrs['backgroundColor']])) {
+                    $dividerAttrs['border-color'] = self::$colorPalette[$attrs['backgroundColor']];
                 }
                 if (isset($attrs['style']['color']['background'])) {
                     $dividerAttrs['border-color'] = $attrs['style']['color']['background'];

@@ -154,7 +154,9 @@ final class Editor
             'rrze_newsletter_data',
             [
                 'is_service_provider_configured' => true,
-                'service_provider'               => 'provider',
+                'service_provider' => 'provider',
+                'email_html_meta' => 'rrze_newsletter_email_html',
+                'mjml_handling_post_types' => [Newsletter::POST_TYPE],
             ]
         );
 

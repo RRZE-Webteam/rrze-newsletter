@@ -135,7 +135,7 @@ class RestApi
             ]
         );
         register_rest_route(
-            'newspack-newsletters/v1',
+            'rrze-newsletter/v1',
             'post-mjml',
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
