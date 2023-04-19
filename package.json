@@ -1,6 +1,7 @@
 {
     "name": "rrze-newsletter",
-    "main": "webpack.config.js",
+    "version": "1.10.6",
+    "description": "Plugin for creating and sending HTML Newsletters.",
     "scripts": {
         "start": "webpack --mode=development --watch",
         "build": "webpack --mode=production",
@@ -36,6 +37,7 @@
         "@wordpress/keycodes": "*",
         "@wordpress/plugins": "*",
         "@wordpress/server-side-render": "*",
+        "mjml-browser": "*",
         "jquery": "*",
         "react": "*",
         "react-dom": "*"
