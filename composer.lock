@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa51ffa296b9f3304ae92f9a6d37212b",
+    "content-hash": "b660541f3106ab0304cf604f7d652a3b",
     "packages": [
         {
             "name": "html2text/html2text",
@@ -172,5 +172,5 @@
         "php": "^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }
