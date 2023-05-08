@@ -801,6 +801,24 @@ final class Render
     }
 
     /**
+     * Retrieve email-compliant HTML for a newsletter CPT.
+     *
+     * @param \WP_Post $post The post.
+     * @return object|string \WP_Error or email-compliant HTML.
+     */
+    public static function retrieveEmailHtml($post)
+    {
+        $emailHtml = get_post_meta($post->ID, 'rrze_newsletter_email_html', true);
+        if (empty($emailHtml)) {
+            return new \WP_Error(
+                'rrze_newsletter_mjml_render_error',
+                __('MJML rendering error.', 'rrze-newsletter')
+            );
+        }
+        return $emailHtml;
+    }
+
+    /**
      * Convert an array of arguments or an \WP_Post object to email-compliant HTML.
      *
      * @param array|\WP_Post $input An array of arguments or an \WP_Post object.
