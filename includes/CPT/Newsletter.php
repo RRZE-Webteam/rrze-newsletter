@@ -141,6 +141,21 @@ class Newsletter
         );
         register_meta(
             'post',
+            'rrze_newsletter_email_html',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest'   => [
+                    'schema' => [
+                        'context' => ['edit'],
+                    ],
+                ],
+                'type'           => 'string',
+                'single'         => true,
+                'auth_callback'  => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
             'rrze_newsletter_from_name',
             [
                 'object_subtype' => self::POST_TYPE,
