@@ -161,7 +161,6 @@ class Settings
 
         $options['mail_queue_send_limit'] = apply_filters('rrze_newsletter_mail_queue_send_limit', $options['mail_queue_send_limit']);
         $options['mail_queue_max_retries'] = apply_filters('rrze_newsletter_mail_queue_max_retries', $options['mail_queue_max_retries']);
-        $options['mjml_api_endpoint'] = apply_filters('rrze_newsletter_mjml_api_endpoint', $options['mjml_api_endpoint']);
 
         return $options;
     }
