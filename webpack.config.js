@@ -86,7 +86,6 @@ module.exports = (env, argv) => {
             ],
         },
         externals: {
-            jquery: "jQuery",
             lodash: "lodash",
             react: "React",
             "react-dom": "ReactDOM",
