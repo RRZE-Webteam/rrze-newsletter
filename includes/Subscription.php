@@ -98,7 +98,6 @@ class Subscription
                     && !empty($mailingLists)
                     && !$this->emailExists($email)
                 ) {
-                    //$this->sendConfirmation($this->sanitizeData($data));
                     $transient = bin2hex(random_bytes(4));
                     set_transient($transient, $data, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('added|' . $transient), $this->pageLink);
@@ -198,7 +197,6 @@ class Subscription
                     'email' => $email
                 ];
                 if ($submitted && $email) {
-                    //$this->sendConfirmation($this->sanitizeData($data));
                     $transient = bin2hex(random_bytes(4));
                     set_transient($transient, $data, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('cancel_change|' . $transient), $this->pageLink);
@@ -592,11 +590,6 @@ class Subscription
             'subject' => $title,
             'mjml' => Render::fromAry($mjmlData)
         ];
-
-        //$body = Render::toHtml($mjmlData);
-        //if (is_wp_error($body)) {
-        //    return $body;
-        //}
 
         add_action(
             'wp_enqueue_scripts',
