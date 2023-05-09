@@ -594,7 +594,7 @@ class Newsletter
             return $data;
         }
 
-        $body = Render::toHtml($post);
+        $body = Render::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }
