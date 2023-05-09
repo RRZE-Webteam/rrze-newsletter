@@ -21,20 +21,6 @@ class Notices
     {
         $options = (object) Settings::getOptions();
 
-        $apiEndpoint = Api::apiEndpoint();
-        if (!$apiEndpoint || is_wp_error($apiEndpoint)) {
-            $this->notices[] = wp_kses_post(
-                sprintf(
-                    '<span class="dashicons dashicons-info"></span> <a href="%1$s">%2$s &mdash; %3$s</a>',
-                    admin_url('options-general.php?page=rrze-newsletter&current-tab=rrze-newsletter-mjml_api'),
-                    // translators: Notify users to set up the newsletter settings.
-                    __('Newsletter Settings', 'rrze-newsletter'),
-                    // translators: Notify users to set up the API Endpoint on the settings page.
-                    __('Please set up the MJML API Endpoint.', 'rrze-newsletter')
-                )
-            );
-        }
-
         $subscriptionDisabled = $options->subscription_disabled == 'on' ? true : false;
         $isSubscriptionDisabled = apply_filters('rrze_newsletter_disable_subscription', $subscriptionDisabled);
         if (!$isSubscriptionDisabled) {
