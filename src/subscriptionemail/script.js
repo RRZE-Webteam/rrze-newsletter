@@ -3,7 +3,7 @@
  */
 import mjml2html from "mjml-browser";
 
-jQuery(document).ready(function ($) {
+jQuery(document).ready(($) => {
     "use strict";
     $.ajax({
         type: "post",
@@ -16,7 +16,7 @@ jQuery(document).ready(function ($) {
             to: subscriptionEmail.to,
             subject: subscriptionEmail.subject,
             body: mjml2html(subscriptionEmail.mjml, {
-                keepComments: false
+                keepComments: false,
             }),
         },
     });
