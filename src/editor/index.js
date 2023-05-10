@@ -20,7 +20,7 @@ import registerICSBlock from "./blocks/ics";
 import registerRSSBlock from "./blocks/rss";
 import { addBlocksValidationFilter } from "./blocks-validation/blocks-filters";
 import { NestedColumnsDetection } from "./blocks-validation/nesting-detection";
-//import "./api";
+import "./api";
 import "../newsletter-editor";
 
 addBlocksValidationFilter();

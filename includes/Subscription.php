@@ -36,6 +36,8 @@ class Subscription
         $this->options = (object) Settings::getOptions();
 
         add_action('wp', [$this, 'init']);
+        add_action('wp_ajax_mjml2html', [$this, 'sendEmailConfirmation']);
+        add_action('wp_ajax_nopriv_mjml2html', [$this, 'sendEmailConfirmation']);
     }
 
     public function init()
@@ -96,9 +98,8 @@ class Subscription
                     && !empty($mailingLists)
                     && !$this->emailExists($email)
                 ) {
-                    $this->sendConfirmation($this->sanitizeData($data));
                     $transient = bin2hex(random_bytes(4));
-                    set_transient($transient, $email, MINUTE_IN_SECONDS);
+                    set_transient($transient, $data, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('added|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
                     exit();
@@ -132,7 +133,10 @@ class Subscription
                 }
                 break;
             case 'added':
-                if ($email = $this->getEmailFromTransient($hash)) {
+                $data = $this->getDataFromTransient($hash);
+                $email = Utils::sanitizeEmail($data['email']);
+                if ($email) {
+                    $this->sendConfirmation($this->sanitizeData($data));
                     $this->addedNotice($email);
                 }
                 break;
@@ -193,9 +197,8 @@ class Subscription
                     'email' => $email
                 ];
                 if ($submitted && $email) {
-                    $this->sendConfirmation($this->sanitizeData($data));
                     $transient = bin2hex(random_bytes(4));
-                    set_transient($transient, $email, MINUTE_IN_SECONDS);
+                    set_transient($transient, $data, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('cancel_change|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
                     exit();
@@ -219,8 +222,11 @@ class Subscription
                 $this->cancelChangeSubscription();
                 break;
             case 'cancel_change':
-                if ($email = $this->getEmailFromTransient($hash)) {
+                $data = $this->getDataFromTransient($hash);
+                $email = Utils::sanitizeEmail($data['email']);
+                if ($email) {
                     if ($this->emailExists($email)) {
+                        $this->sendConfirmation($this->sanitizeData($data));
                         $this->cancelChangeNotice();
                     } else {
                         $this->emailDoesNotExistNotice();
@@ -279,12 +285,8 @@ class Subscription
         }
 
         if ($this->content == '') {
-            global $wp_query;
-            $wp_query->set_404();
-            status_header(404);
-            nocache_headers();
-            get_template_part(404);
-            return;
+            wp_redirect(site_url());
+            exit();
         }
 
         nocache_headers();
@@ -552,7 +554,15 @@ class Subscription
             $message = $options->subscription_change_cancel_message;
         }
 
-        $confirmationLink = add_query_arg('a', Utils::encryptQueryVar('confirm|' . $transient), $this->pageLink);
+        $confirmationLink = add_query_arg(
+            'a',
+            Utils::encryptQueryVar('confirm|' . $transient),
+            $this->pageLink
+        );
+        $confirmationLink = sprintf(
+            '<a href="%1$s">%1$s</a>',
+            $confirmationLink
+        );
 
         $content = $message;
         $content = strip_tags($content);
@@ -571,27 +581,59 @@ class Subscription
             'background_color' => '#ffffff',
             'content' => $content
         ];
-
-        $body = Render::toHtml($mjmlData);
-        if (is_wp_error($body)) {
-            return $body;
-        }
-
-        $html2text = new Html2Text($body);
-        $altBody = $html2text->getText();
-
-        $args = [
+        $data = [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
             'from' => $from,
             'fromName' => $fromName,
             'replyTo' => $replyTo,
             'to' => $email,
             'subject' => $title,
-            'body' => $body,
+            'mjml' => Render::fromAry($mjmlData)
+        ];
+
+        add_action(
+            'wp_enqueue_scripts',
+            function ($hook) use ($data) {
+                wp_enqueue_script(
+                    'rrze-newsletter-subscriptionemail',
+                    plugins_url('dist/subscriptionemail.js', plugin()->getBasename()),
+                    ['jquery'],
+                    plugin()->getVersion(),
+                    true
+                );
+                wp_localize_script(
+                    'rrze-newsletter-subscriptionemail',
+                    'subscriptionEmail',
+                    $data
+                );
+            }
+        );
+    }
+
+    public function sendEmailConfirmation()
+    {
+        $from = $_POST['from'] ?? '';
+        $fromName = $_POST['fromName'] ?? '';
+        $replyTo = $_POST['replyTo'] ?? '';
+        $to = $_POST['to'] ?? '';
+        $subject = $_POST['subject'] ?? '';
+        $body = $_POST['body']['html'] ?? '';
+
+        $html2text = new Html2Text($body);
+        $altBody = $html2text->getText();
+
+        $data = [
+            'from' => $from,
+            'fromName' => $fromName,
+            'replyTo' => $replyTo,
+            'to' => $to,
+            'subject' => $subject,
+            'body' => stripslashes($body),
             'altBody' => $altBody
         ];
 
         $send = new Send;
-        return $send->email($args);
+        $send->email($data);
     }
 
     public function getMailingLists(string $email)

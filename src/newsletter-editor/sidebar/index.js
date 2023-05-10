@@ -30,7 +30,6 @@ const Sidebar = ({
     recipientEmail,
     replytoEmail,
     previewText,
-    newsletterData,
     apiFetchWithErrorHandling,
     postId
 }) => {
@@ -164,7 +163,6 @@ const Sidebar = ({
         <Fragment>
             <ProviderSidebar
                 postId={postId}
-                newsletterData={newsletterData}
                 inFlight={inFlight}
                 renderSubject={renderSubject}
                 renderTo={renderTo}
@@ -188,8 +186,7 @@ export default compose([
             senderEmail: meta.rrze_newsletter_from_email || "",
             recipientEmail: meta.rrze_newsletter_to_email || "",
             replytoEmail: meta.rrze_newsletter_replyto || "",
-            previewText: meta.rrze_newsletter_preview_text || "",
-            newsletterData: meta.rrze_newsletter_data || {}
+            previewText: meta.rrze_newsletter_preview_text || ""
         };
     }),
     withDispatch(dispatch => {

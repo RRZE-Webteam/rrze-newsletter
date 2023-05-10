@@ -53,11 +53,6 @@ function getSections(): array
             'id'    => 'mailing_list',
             'title' => __('Mailing List', 'rrze-newsletter'),
             'desc' => ''
-        ],
-        [
-            'id'    => 'mjml_api',
-            'title' => __('MJML API Service', 'rrze-newsletter'),
-            'desc' => __('Please note that some MJML API Services require HTTP Basic Authentication.', 'rrze-newsletter')
         ]
     ];
 }
@@ -245,36 +240,6 @@ function getFields(): array
                 'default'           => '',
                 'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeMailingList']
             ],
-        ],
-        'mjml_api' => [
-            [
-                'name'              => 'endpoint',
-                'label'             => __('API Endpoint', 'rrze-newsletter'),
-                'desc'              => __('URL of the MJML API Service.', 'rrze-newsletter'),
-                'placeholder'       => '',
-                'type'              => 'text',
-                'default'           => '',
-                'sanitize_callback' => ['\RRZE\Newsletter\Utils', 'sanitizeUrl'],
-                'required'          => true
-            ],
-            [
-                'name'              => 'key',
-                'label'             => __('Application ID', 'rrze-newsletter'),
-                'desc'              => __('The Application ID acts as a username.', 'rrze-newsletter'),
-                'placeholder'       => '',
-                'type'              => 'text',
-                'default'           => '',
-                'sanitize_callback' => 'sanitize_text_field'
-            ],
-            [
-                'name'              => 'secret',
-                'label'             => __('Secret Key', 'rrze-newsletter'),
-                'desc'              => __('The API Key act as a password.', 'rrze-newsletter'),
-                'placeholder'       => '',
-                'type'              => 'text',
-                'default'           => '',
-                'sanitize_callback' => 'sanitize_text_field'
-            ]
         ]
     ];
 }

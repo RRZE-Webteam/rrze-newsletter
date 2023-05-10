@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'rrze/rrze-newsletter',
-        'pretty_version' => '1.10.6',
-        'version' => '1.10.6.0',
+        'pretty_version' => '2.0.0',
+        'version' => '2.0.0.0',
         'reference' => NULL,
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
@@ -20,9 +20,9 @@
             'dev_requirement' => false,
         ),
         'johngrogg/ics-parser' => array(
-            'pretty_version' => 'v2.2.2',
-            'version' => '2.2.2.0',
-            'reference' => '69c80471a0a99142ebc72b21c2bc084e81a7c4f4',
+            'pretty_version' => 'v3.2.1',
+            'version' => '3.2.1.0',
+            'reference' => 'a3a291c51c378cc4a7f3aec6cd2478bdbd110575',
             'type' => 'library',
             'install_path' => __DIR__ . '/../johngrogg/ics-parser',
             'aliases' => array(),
@@ -38,8 +38,8 @@
             'dev_requirement' => false,
         ),
         'rrze/rrze-newsletter' => array(
-            'pretty_version' => '1.10.6',
-            'version' => '1.10.6.0',
+            'pretty_version' => '2.0.0',
+            'version' => '2.0.0.0',
             'reference' => NULL,
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',

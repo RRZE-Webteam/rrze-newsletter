@@ -7,6 +7,7 @@ const path = require("path");
 const admin = path.join(__dirname, "src", "admin");
 const editor = path.join(__dirname, "src", "editor");
 const subscription = path.join(__dirname, "src", "subscription");
+const subscriptionemail = path.join(__dirname, "src", "subscriptionemail");
 
 module.exports = (env, argv) => {
     function isDevelopment() {
@@ -16,25 +17,27 @@ module.exports = (env, argv) => {
         entry: {
             admin,
             editor,
-            subscription
+            subscription,
+            subscriptionemail,
         },
         output: {
+            path: path.resolve(__dirname, "dist"),
             filename: "[name].js",
-            clean: true
+            clean: true,
         },
         optimization: {
             minimizer: [
                 new CSSMinimizerPlugin(),
-                new TerserPlugin({ terserOptions: { sourceMap: true } })
-            ]
+                new TerserPlugin({ terserOptions: { sourceMap: true } }),
+            ],
         },
         plugins: [
             new MiniCSSExtractPlugin({
                 chunkFilename: "[id].css",
-                filename: chunkData => {
+                filename: (chunkData) => {
                     return "[name].css";
-                }
-            })
+                },
+            }),
         ],
         devtool: isDevelopment() ? "cheap-module-source-map" : "source-map",
         module: {
@@ -47,7 +50,7 @@ module.exports = (env, argv) => {
                             loader: "babel-loader",
                             options: {
                                 plugins: [
-                                    "@babel/plugin-proposal-class-properties"
+                                    "@babel/plugin-proposal-class-properties",
                                 ],
                                 presets: [
                                     "@babel/preset-env",
@@ -56,13 +59,13 @@ module.exports = (env, argv) => {
                                         {
                                             pragma: "wp.element.createElement",
                                             pragmaFrag: "wp.element.Fragment",
-                                            development: isDevelopment()
-                                        }
-                                    ]
-                                ]
-                            }
-                        }
-                    ]
+                                            development: isDevelopment(),
+                                        },
+                                    ],
+                                ],
+                            },
+                        },
+                    ],
                 },
                 {
                     test: /\.(sa|sc|c)ss$/,
@@ -73,17 +76,16 @@ module.exports = (env, argv) => {
                             loader: "postcss-loader",
                             options: {
                                 postcssOptions: {
-                                    plugins: [autoprefixer()]
-                                }
-                            }
+                                    plugins: [autoprefixer()],
+                                },
+                            },
                         },
-                        "sass-loader"
-                    ]
-                }
-            ]
+                        "sass-loader",
+                    ],
+                },
+            ],
         },
         externals: {
-            jquery: "jQuery",
             lodash: "lodash",
             react: "React",
             "react-dom": "ReactDOM",
@@ -104,7 +106,7 @@ module.exports = (env, argv) => {
             "@wordpress/edit-post": ["wp", "editPost"],
             "@wordpress/block-editor": ["wp", "blockEditor"],
             "@wordpress/server-side-render": ["wp", "serverSideRender"],
-        }
+        },
     };
     return config;
 };

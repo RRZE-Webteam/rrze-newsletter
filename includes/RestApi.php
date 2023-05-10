@@ -375,7 +375,7 @@ class RestApi
         $post = get_post($postId);
         $subject = $post->post_title;
 
-        $body = Render::toHtml($post);
+        $body = Render::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }

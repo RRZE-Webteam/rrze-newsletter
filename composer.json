@@ -1,14 +1,14 @@
 {
     "name": "rrze/rrze-newsletter",
-    "version": "1.10.6",
+    "version": "2.0.0",
     "description": "Plugin for creating and sending HTML Newsletters.",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later",    
     "require": {
         "php": "^8.0",
-        "johngrogg/ics-parser": "^2",
-        "rlanvin/php-rrule": "^2",
-        "html2text/html2text": "^4"
+        "johngrogg/ics-parser": "^3.2",
+        "rlanvin/php-rrule": "^2.4",
+        "html2text/html2text": "^4.3"
     },
     "suggest": {
         "ext-mbstring": "*",
