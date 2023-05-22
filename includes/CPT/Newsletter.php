@@ -585,7 +585,7 @@ class Newsletter
         return $content;
     }
 
-    public static function getData(int $postId): array
+    public static function getData(int $postId)
     {
         $data = [];
 
