@@ -1,6 +1,6 @@
 {
     "name": "rrze-newsletter",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Plugin for creating and sending HTML Newsletters.",
     "scripts": {
         "start": "webpack --mode=development --watch",
