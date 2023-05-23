@@ -60,7 +60,6 @@ const Editor = compose([
             ),
             status,
             sentDate,
-            isPublic: meta.rrze_newsletter_is_public,
         };
     }),
     withDispatch((dispatch) => {
@@ -125,16 +124,6 @@ const Editor = compose([
             });
         }
     }, [props.status]);
-
-    useEffect(() => {
-        // Hide post title if the newsletter is a not a public post.
-        const editorTitleEl = document.querySelector(".editor-post-title");
-        if (editorTitleEl) {
-            editorTitleEl.classList[props.isPublic ? "remove" : "add"](
-                "rrze-newsletter-post-title-hidden"
-            );
-        }
-    }, [props.isPublic]);
 
     return createPortal(<SendButton />, publishEl);
 });
