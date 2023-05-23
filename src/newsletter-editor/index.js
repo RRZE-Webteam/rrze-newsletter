@@ -21,7 +21,6 @@ import Layout from "./layout/";
 import Sidebar from "./sidebar/";
 import Testing from "./testing/";
 import { Styling, ApplyStyling } from "./styling/";
-import { PublicSettings } from "./public";
 import { AdvancedSettings } from "./advanced";
 import registerEditorPlugin from "./editor/";
 
@@ -58,7 +57,6 @@ const NewsletterEdit = ({ savePost, layoutId }) => {
                 title={__("Newsletter", "rrze-newsletter")}
             >
                 <Sidebar />
-                <PublicSettings />
                 <AdvancedSettings />
             </PluginDocumentSettingPanel>
             <PluginDocumentSettingPanel
