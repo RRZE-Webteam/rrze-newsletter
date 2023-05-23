@@ -277,9 +277,6 @@ final class Render
             } elseif (strpos($url, '{{=UPDATE}}') !== false) {
                 $url = '{{=UPDATE}}';
                 $skipUrlWithParams = true;
-            } elseif (strpos($url, '{{=PERMALINK}}') !== false) {
-                $url = '{{=PERMALINK}}';
-                $skipUrlWithParams = true;
             } elseif (strpos($url, '{{=ARCHIVE}}') !== false) {
                 $url = '{{=ARCHIVE}}';
                 $skipUrlWithParams = true;
