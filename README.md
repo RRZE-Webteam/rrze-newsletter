@@ -20,7 +20,6 @@ Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den N
 -   `{{=EMAIL}}` Die E-Mail-Adresse des Abonnenten
 -   `{{=UNSUB}}` Die URL zum Abbestellen des Newsletters
 -   `{{=UPDATE}}` Die URL zum Ändern des Newsletter-Abonnementes
--   `{{=PERMALINK}}` Der Permalink der Newsletter-Seite (die Ansicht hängt vom Stil des Themes ab)
 -   `{{=ARCHIVE}}` Der Link des Newsletters-Archive (die Ansicht ist identisch mit dem per E-Mail erhaltenen Newsletter)
 -   `{{=DATE}}` Das Datum, an dem der Newsletter versendet wurde
 -   `{{=CURRENT_YEAR}}` Das laufende Jahr, in dem der Newsletter versendet wurde
