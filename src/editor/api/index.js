@@ -11,7 +11,6 @@ import apiFetch from "@wordpress/api-fetch";
 import { select as globalSelect } from "@wordpress/data";
 
 const POST_META_WHITELIST = [
-    "rrze_newsletter_is_public",
     "rrze_newsletter_preview_text",
     "rrze_newsletter_font_body",
     "rrze_newsletter_font_header",
