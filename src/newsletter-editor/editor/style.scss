@@ -1,10 +1,11 @@
 .post-type-newsletter {
     .editor-post-title {
-        &.rrze-newsletter-post-title-hidden {
-            height: 0;
-            opacity: 0;
-            pointer-events: none;
-        }
+        font-size: 1em;
+        height: 0;
+        margin: -4rem 0 calc(-1 * var(--wp--style--block-gap));
+        opacity: 0;
+        padding: 0;
+        pointer-events: none;
     }
 
     .components-button.editor-post-publish-button__button.is-primary {
@@ -13,5 +14,11 @@
 
     .editor-post-switch-to-draft {
         display: none;
+    }
+
+    .rrze-newsletter-buttons-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
     }
 }

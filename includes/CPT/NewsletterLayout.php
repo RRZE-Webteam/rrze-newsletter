@@ -131,7 +131,7 @@ class NewsletterLayout
                 $decodedLayout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
                 $layouts[] = [
                     'ID'           => $layoutId,
-                    'post_title'   => $decodedLayout->title,
+                    'post_title'   => '',
                     'post_content' => self::layoutTokenReplacement($decodedLayout->content),
                 ];
                 $layoutId++;
