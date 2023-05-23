@@ -21,8 +21,6 @@ class Tags
         'UNSUB'         => '',
         // The URL to change the newsletter subscription.
         'UPDATE'        => '',
-        // The permalink of the newsletter page.
-        'PERMALINK'     => '',
         // The link of the newsletter archive.
         'ARCHIVE'       => '',
         // The date the newsletter was sent.
@@ -70,7 +68,6 @@ class Tags
         $tags['NAME'] = $name;
         $tags['UNSUB'] = $unsubUrl;
         $tags['UPDATE'] = $updateUrl;
-        $tags['PERMALINK'] = untrailingslashit(get_permalink($postId));
         $tags['ARCHIVE'] = untrailingslashit($tags['ARCHIVE']);
         $tags['DATE'] = (string) get_the_time(get_option('date_format'), $postId);
         $tags['CURRENT_YEAR'] = get_the_time('Y', $postId);
