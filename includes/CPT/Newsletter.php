@@ -51,9 +51,6 @@ class Newsletter
         add_filter('the_content', [__CLASS__, 'theContent']);
         add_action('wp_head', [__CLASS__, 'publicCustomStyle'], 10, 2);
         add_filter('display_post_states', [__CLASS__, 'displayPostStates'], 10, 2);
-        add_action('pre_get_posts', [__CLASS__, 'maybeDisplayPublicArchivePosts']);
-        add_action('template_redirect', [__CLASS__, 'maybeDisplayPublicPost']);
-        add_filter('post_row_actions', [__CLASS__, 'displayViewOrPreviewLink']);
         add_filter('post_row_actions', [__CLASS__, 'removeQuickEdit'], 10, 2);
         add_action('save_post_' . self::POST_TYPE, [__CLASS__, 'savePost'], 10, 3);
         add_action('wp_trash_post', [__CLASS__, 'trash'], 10, 1);
@@ -83,10 +80,8 @@ class Newsletter
 
         $args = [
             'labels'            => $labels,
-            'public'            => true,
-            'has_archive'       => true,
-            'public_queryable'  => true,
-            'query_var'         => true,
+            'public'            => false,
+            'query_var'         => false,
             'show_ui'           => true,
             'show_in_nav_menus' => false,
             'show_in_rest'      => true,
@@ -227,21 +222,6 @@ class Newsletter
                     ],
                 ],
                 'type'           => 'string',
-                'single'         => true,
-                'auth_callback'  => '__return_true',
-            ]
-        );
-        register_meta(
-            'post',
-            'rrze_newsletter_is_public',
-            [
-                'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => [
-                    'schema' => [
-                        'context' => ['edit'],
-                    ],
-                ],
-                'type'           => 'boolean',
                 'single'         => true,
                 'auth_callback'  => '__return_true',
             ]
@@ -715,8 +695,6 @@ class Newsletter
         $postStatus = get_post_status_object($post->post_status);
         $isPublish = 'publish' === $postStatus->name;
 
-        $isPublic = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_public', true);
-
         $sendStatus = self::getStatus($post->ID);
 
         $isRecurring = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_recurring', true);
@@ -729,10 +707,6 @@ class Newsletter
             $flags = $sendStatus == 'skipped'
                 ? ' <span class="dashicons dashicons-controls-skipforward"></span>'
                 : '';
-
-            $flags .= $isPublic
-                ? ' <span class="dashicons dashicons-visibility"></span>'
-                : ' <span class="dashicons dashicons-hidden"></span>';
 
             $flags .= $isRecurring
                 ? ' <span class="dashicons dashicons-image-rotate"></span>'
@@ -762,87 +736,6 @@ class Newsletter
         $postStates[$postStatus->name] = $output . $flags;
 
         return $postStates;
-    }
-
-    public static function maybeDisplayPublicArchivePosts($query)
-    {
-        if (
-            is_admin() ||
-            !$query->is_main_query() ||
-            (!is_tax(self::CATEGORY) &&
-                !is_post_type_archive(self::POST_TYPE))
-        ) {
-            return;
-        }
-
-        if (is_tax(self::CATEGORY) || empty($query->get('post_type'))) {
-            $query->set('post_type', ['post', self::POST_TYPE]);
-        }
-
-        $metaQuery = $query->get('meta_query', []);
-        $metaQueryParams = [
-            [
-                'key'     => 'rrze_newsletter_is_public',
-                'value'   => true,
-                'compare' => '=',
-            ],
-        ];
-
-        if (is_tax(self::CATEGORY)) {
-            $metaQueryParams['relation'] = 'OR';
-            $metaQueryParams[] = [
-                'key'     => 'rrze_newsletter_is_public',
-                'compare' => 'NOT EXISTS',
-            ];
-        }
-
-        $metaQuery[] = $metaQueryParams;
-        $query->set('meta_query', $metaQuery);
-    }
-
-    public static function maybeDisplayPublicPost()
-    {
-        if (
-            current_user_can('edit_others_posts') ||
-            !is_singular(self::POST_TYPE)
-        ) {
-            return;
-        }
-
-        $isPublic = get_post_meta(get_the_ID(), 'rrze_newsletter_is_public', true);
-        if (empty($isPublic)) {
-            add_filter(
-                'wpseo_title',
-                function ($title) {
-                    return str_replace(get_the_title(), __('Page not found', 'rrze-newsletter'), $title);
-                }
-            );
-
-            status_header(404);
-            nocache_headers();
-            include get_query_template('404');
-            die();
-        }
-    }
-
-    public static function displayViewOrPreviewLink($actions)
-    {
-        if ('publish' !== get_post_status() || self::POST_TYPE !== get_post_type()) {
-            return $actions;
-        }
-
-        $isPublic = get_post_meta(get_the_ID(), 'rrze_newsletter_is_public', true);
-
-        if (empty($isPublic) && isset($actions['view'])) {
-            $actions['view'] = sprintf(
-                '<a href="%1$s" rel="bookmark" aria-label="%2$s">%3$s</a>',
-                esc_url(get_the_permalink()),
-                esc_attr(get_the_title()),
-                __('Preview', 'rrze-newsletter')
-            );
-        }
-
-        return $actions;
     }
 
     public static function removeQuickEdit($actions)
