@@ -426,15 +426,20 @@ class Queue
         if ($hasConditionals) {
             $rssCondition = false;
             $icsCondition = false;
-            $operator = get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
+
+            $operator = (string) get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
+            $operator = in_array($operator, ['or', 'and']) ? $operator : 'or';
+
             $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
-            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
             $isRssBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_rss_block_not_empty', $postId);
+
+            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
             $isIcsBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_ics_block_not_empty', $postId);
-            if ($rssBlock && !$isRssBlockNotEmpty) {
+
+            if ($rssBlock && $isRssBlockNotEmpty) {
                 $rssCondition = true;
             }
-            if ($icsBlock && !$isIcsBlockNotEmpty) {
+            if ($icsBlock && $isIcsBlockNotEmpty) {
                 $icsCondition = true;
             }
             if ($operator == 'or') {
