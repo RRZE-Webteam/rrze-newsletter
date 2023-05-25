@@ -109,7 +109,7 @@ class RestApi
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
                 'callback'            => [$this, 'apiSetPostMeta'],
-                'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
                 'args'                => [
                     'id'    => [
                         'validate_callback' => [$this, 'validateNewsletterId'],
@@ -131,7 +131,7 @@ class RestApi
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
                 'callback'            => [$this, 'apiSetColorPalette'],
-                'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
             ]
         );
         register_rest_route(
@@ -140,7 +140,7 @@ class RestApi
             [
                 'methods'             => \WP_REST_Server::EDITABLE,
                 'callback'            => [$this, 'apiGetMjml'],
-                'permission_callback' => [$this, 'apiAdministrationPermissionsCheck'],
+                'permission_callback' => [$this, 'apiAuthoringPermissionsCheck'],
                 'args'                => [
                     'post_id' => [
                         'required'          => true,
@@ -271,7 +271,7 @@ class RestApi
 
     public function apiAuthoringPermissionsCheck($request)
     {
-        if (!current_user_can('edit_others_posts')) {
+        if (!current_user_can('edit_others_newsletters')) {
             return new \WP_Error(
                 'rrze_newsletter_rest_forbidden',
                 esc_html__('You cannot use this resource.', 'rrze-newsletter'),

@@ -73,22 +73,21 @@ class Newsletter
             'parent_item_colon'  => __('Parent Newsletters:', 'rrze-newsletter'),
             'not_found'          => __('No newsletters found.', 'rrze-newsletter'),
             'not_found_in_trash' => __('No newsletters found in Trash.', 'rrze-newsletter'),
-            'capability_type'    => Capabilities::getCptCapabilityType(self::POST_TYPE),
-            'capabilities'       => (array) Capabilities::getCptCaps(self::POST_TYPE),
-            'map_meta_cap'       => Capabilities::getCptMapMetaCap(self::POST_TYPE),
         ];
-
         $args = [
             'labels'            => $labels,
             'public'            => false,
-            'query_var'         => false,
+            'query_var'         => true,
             'show_ui'           => true,
             'show_in_nav_menus' => false,
             'show_in_rest'      => true,
             'supports'          => ['author', 'editor', 'title', 'custom-fields', 'revisions', 'thumbnail'],
+            'taxonomies'        => [self::CATEGORY, self::MAILING_LIST],
             'menu_icon'         => 'dashicons-email-alt',
+            'capability_type'   => Capabilities::getCptCapabilityType(self::POST_TYPE),
+            'capabilities'      => (array) Capabilities::getCptCaps(self::POST_TYPE),
+            'map_meta_cap'      => Capabilities::getCptMapMetaCap(self::POST_TYPE),
         ];
-
         register_post_type(self::POST_TYPE, $args);
     }
 
@@ -421,7 +420,13 @@ class Newsletter
             'show_admin_column' => true,
             'show_in_nav_menus' => false,
             'show_in_rest'      => true,
-            'rewrite'           => ['slug' => 'newsletters', 'with_front' => false]
+            'rewrite'           => ['slug' => 'newsletters', 'with_front' => false],
+            'capabilities'      => [
+                'manage_terms' => 'edit_others_newsletters',
+                'edit_terms'   => 'edit_others_newsletters',
+                'delete_terms' => 'edit_others_newsletters',
+                'assign_terms' => 'edit_others_newsletters',
+            ],
         ];
         register_taxonomy(self::CATEGORY, self::POST_TYPE, $args);
     }
@@ -449,7 +454,13 @@ class Newsletter
             'hierarchical' => true,
             'show_ui' => true,
             'show_admin_column' => true,
-            'show_in_rest' => true
+            'show_in_rest' => true,
+            'capabilities'      => [
+                'manage_terms' => 'edit_others_newsletters',
+                'edit_terms'   => 'edit_others_newsletters',
+                'delete_terms' => 'edit_others_newsletters',
+                'assign_terms' => 'edit_others_newsletters',
+            ],
         ];
         if (!apply_filters('rrze_newsletter_disable_mailing_list', false)) {
             register_taxonomy(self::MAILING_LIST, self::POST_TYPE, $args);
