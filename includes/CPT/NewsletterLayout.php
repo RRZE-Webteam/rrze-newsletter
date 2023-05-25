@@ -8,6 +8,7 @@ namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Capabilities;
 use function RRZE\Newsletter\plugin;
 
 class NewsletterLayout
@@ -23,10 +24,12 @@ class NewsletterLayout
     public static function registerPostType()
     {
         $args = [
-            'public'       => false,
-            'show_in_rest' => true,
-            'supports'     => ['editor', 'title', 'custom-fields'],
-            'taxonomies'   => [],
+            'public'              => false,
+            'show_in_rest'        => true,
+            'supports'            => ['editor', 'title', 'custom-fields'],
+            'capability_type'     => Capabilities::getCptCapabilityType(self::POST_TYPE),
+            'capabilities'        => (array) Capabilities::getCptCaps(self::POST_TYPE),
+            'map_meta_cap'        => Capabilities::getCptMapMetaCap(self::POST_TYPE),
         ];
         register_post_type(self::POST_TYPE, $args);
     }
