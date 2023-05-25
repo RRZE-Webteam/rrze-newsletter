@@ -90,7 +90,7 @@ class NewsletterQueue
             'edit.php?post_type=' . Newsletter::POST_TYPE,
             __('Mail Queue', 'rrze-newsletter'),
             __('Mail Queue', 'rrze-newsletter'),
-            'manage_options',
+            'edit_others_newsletters',
             '/edit.php?post_type=' . self::POST_TYPE,
             null,
             2
