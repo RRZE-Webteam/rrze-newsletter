@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2023-05-26T07:35:49+00:00\n"
-"PO-Revision-Date: 2023-05-26 09:37+0200\n"
+"POT-Creation-Date: 2023-05-26T15:19:00+00:00\n"
+"PO-Revision-Date: 2023-05-26 17:21+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -184,7 +184,7 @@ msgstr ""
 "Die Nachricht der E-Mail zum Abbestellen oder Ändern des Newsletter-"
 "Abonnements."
 
-#: config/settings.php:236 includes/CPT/Newsletter.php:510
+#: config/settings.php:236 includes/CPT/Newsletter.php:494
 msgid "Unsubscribed E-mail Addresses"
 msgstr "Abgemeldete E-Mail-Adressen"
 
@@ -292,119 +292,119 @@ msgstr "Keine Newsletter gefunden."
 msgid "No newsletters found in Trash."
 msgstr "Keine Newsletter im Papierkorb gefunden."
 
-#: includes/CPT/Newsletter.php:402
+#: includes/CPT/Newsletter.php:386
 msgctxt "Taxonomy general name"
 msgid "Categories"
 msgstr "Kategorien"
 
-#: includes/CPT/Newsletter.php:403
+#: includes/CPT/Newsletter.php:387
 msgctxt "Taxonomy singular name"
 msgid "Category"
 msgstr "Kategorie"
 
-#: includes/CPT/Newsletter.php:404
+#: includes/CPT/Newsletter.php:388
 msgid "All Categories"
 msgstr "Alle Kategorien"
 
-#: includes/CPT/Newsletter.php:405
+#: includes/CPT/Newsletter.php:389
 msgid "Edit Category"
 msgstr "Kategorie bearbeiten"
 
-#: includes/CPT/Newsletter.php:406
+#: includes/CPT/Newsletter.php:390
 msgid "View Category"
 msgstr "Kategorie anschauen"
 
-#: includes/CPT/Newsletter.php:407
+#: includes/CPT/Newsletter.php:391
 msgid "Update Category"
 msgstr "Kategorie aktualisieren"
 
-#: includes/CPT/Newsletter.php:408
+#: includes/CPT/Newsletter.php:392
 msgid "Add New Category"
 msgstr "Neue Kategorie erstellen"
 
-#: includes/CPT/Newsletter.php:409
+#: includes/CPT/Newsletter.php:393
 msgid "New Category Name"
 msgstr "Neuer Kategoriename"
 
-#: includes/CPT/Newsletter.php:410
+#: includes/CPT/Newsletter.php:394
 msgid "Main Category"
 msgstr "Hauptkategorie"
 
-#: includes/CPT/Newsletter.php:411
+#: includes/CPT/Newsletter.php:395
 msgid "Main Category:"
 msgstr "Hauptkategorie:"
 
-#: includes/CPT/Newsletter.php:412
+#: includes/CPT/Newsletter.php:396
 msgid "Search Categories"
 msgstr "Kategorien suchen"
 
-#: includes/CPT/Newsletter.php:413
+#: includes/CPT/Newsletter.php:397
 msgid "No categories found"
 msgstr "Keine Kategorien gefunden"
 
-#: includes/CPT/Newsletter.php:414
+#: includes/CPT/Newsletter.php:398
 msgid "Back to categories"
 msgstr "Zurück zu den Kategorien"
 
-#: includes/CPT/Newsletter.php:437
+#: includes/CPT/Newsletter.php:421
 msgctxt "Taxonomy general name"
 msgid "Mailing Lists"
 msgstr "Mailinglisten"
 
-#: includes/CPT/Newsletter.php:438
+#: includes/CPT/Newsletter.php:422
 msgctxt "Taxonomy singular name"
 msgid "Mailing List"
 msgstr "Mailingliste"
 
-#: includes/CPT/Newsletter.php:439
+#: includes/CPT/Newsletter.php:423
 msgid "All Lists"
 msgstr "Alle Listen"
 
-#: includes/CPT/Newsletter.php:440
+#: includes/CPT/Newsletter.php:424
 msgid "Edit List"
 msgstr "Liste bearbeiten"
 
-#: includes/CPT/Newsletter.php:441
+#: includes/CPT/Newsletter.php:425
 msgid "View List"
 msgstr "Liste anzeigen"
 
-#: includes/CPT/Newsletter.php:442
+#: includes/CPT/Newsletter.php:426
 msgid "Update List"
 msgstr "Aktualisierungsliste"
 
-#: includes/CPT/Newsletter.php:443
+#: includes/CPT/Newsletter.php:427
 msgid "Add New List"
 msgstr "Neue Liste hinzufügen"
 
-#: includes/CPT/Newsletter.php:444
+#: includes/CPT/Newsletter.php:428
 msgid "New List Name"
 msgstr "Neuer Listenname"
 
-#: includes/CPT/Newsletter.php:445
+#: includes/CPT/Newsletter.php:429
 msgid "Main List"
 msgstr "Hauptliste"
 
-#: includes/CPT/Newsletter.php:446
+#: includes/CPT/Newsletter.php:430
 msgid "Main List:"
 msgstr "Hauptliste:"
 
-#: includes/CPT/Newsletter.php:447
+#: includes/CPT/Newsletter.php:431
 msgid "Search Lists"
 msgstr "Suchlisten"
 
-#: includes/CPT/Newsletter.php:448
+#: includes/CPT/Newsletter.php:432
 msgid "No lists found"
 msgstr "Keine Listen gefunden"
 
-#: includes/CPT/Newsletter.php:449
+#: includes/CPT/Newsletter.php:433
 msgid "Back to lists"
 msgstr "Zurück zu den Listen"
 
-#: includes/CPT/Newsletter.php:474 includes/CPT/Newsletter.php:490
+#: includes/CPT/Newsletter.php:458 includes/CPT/Newsletter.php:474
 msgid "Public Mailing List"
 msgstr "Öffentliche Mailingliste"
 
-#: includes/CPT/Newsletter.php:475
+#: includes/CPT/Newsletter.php:459
 msgid ""
 "A public mailing list can be listed on the subscription page and viewed by "
 "everyone."
@@ -412,11 +412,11 @@ msgstr ""
 "Eine öffentliche Mailingliste kann auf der Abonnementseite aufgelistet und "
 "von allen angezeigt werden."
 
-#: includes/CPT/Newsletter.php:479 includes/CPT/Newsletter.php:500
+#: includes/CPT/Newsletter.php:463 includes/CPT/Newsletter.php:484
 msgid "Subscribed email addresses"
 msgstr "Abonnierte E-Mail-Adressen"
 
-#: includes/CPT/Newsletter.php:481
+#: includes/CPT/Newsletter.php:465
 msgid ""
 "Enter one email address per line. Note: The recipient's first and last name "
 "separated by a comma are optional and can be added using a comma after the "
@@ -427,12 +427,12 @@ msgstr ""
 "Komma nach der E-Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-"
 "Adresse,Vorname,Nachname"
 
-#: includes/CPT/Newsletter.php:493
+#: includes/CPT/Newsletter.php:477
 msgid "It can be listed on the subscription page and seen by everyone."
 msgstr ""
 "Es kann auf der Abonnementseite aufgelistet und von jedem gesehen werden."
 
-#: includes/CPT/Newsletter.php:503
+#: includes/CPT/Newsletter.php:487
 msgid ""
 "List of email addresses that have been subscribed to this mailing list. "
 "Enter one email address per line. Note: The recipient's first and last name "
@@ -445,7 +445,7 @@ msgstr ""
 "Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-Adresse,Vorname,"
 "Nachname"
 
-#: includes/CPT/Newsletter.php:513
+#: includes/CPT/Newsletter.php:497
 msgid ""
 "List of email addresses that have been unsubscribed from this mailing list. "
 "Enter one email address per line."
@@ -453,34 +453,34 @@ msgstr ""
 "Liste der E-Mail-Adressen, die von dieser Mailingliste abgemeldet wurden. "
 "Geben Sie eine E-Mail-Adresse pro Zeile ein."
 
-#: includes/CPT/Newsletter.php:548 src/newsletter-editor/index.js:57
+#: includes/CPT/Newsletter.php:532 src/newsletter-editor/index.js:57
 msgid "Newsletter"
 msgstr "Newsletter"
 
-#: includes/CPT/Newsletter.php:549
+#: includes/CPT/Newsletter.php:533
 msgid "Public"
 msgstr "Öffentlich"
 
-#: includes/CPT/Newsletter.php:550
+#: includes/CPT/Newsletter.php:534
 msgid "In"
 msgstr "In"
 
-#: includes/CPT/Newsletter.php:551
+#: includes/CPT/Newsletter.php:535
 msgid "Out"
 msgstr "Out"
 
 #. translators: Default title of the newsletter including the date.
-#: includes/CPT/Newsletter.php:641
+#: includes/CPT/Newsletter.php:625
 msgid "Newsletter of %s"
 msgstr "Newsletter vom %s"
 
 #. translators: Relative time stamp of sent/published date
-#: includes/CPT/Newsletter.php:735
+#: includes/CPT/Newsletter.php:720
 msgid "Sent %1$s ago"
 msgstr "Vor %1$s versendet"
 
 #. translators:  Absolute time stamp of sent/published date
-#: includes/CPT/Newsletter.php:741
+#: includes/CPT/Newsletter.php:726
 msgid "Sent %1$s"
 msgstr "%1$s versendet"
 
@@ -1339,11 +1339,11 @@ msgstr "Wöchentlich"
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: src/newsletter-editor/advanced/index.js:69
+#: src/newsletter-editor/advanced/index.js:67
 msgid "Advanced"
 msgstr "Erweiterte Einstellungen"
 
-#: src/newsletter-editor/advanced/index.js:70
+#: src/newsletter-editor/advanced/index.js:68
 msgid ""
 "Apply advanced settings for sending the newsletter, especially if it "
 "contains blocks of dynamic content."
@@ -1351,11 +1351,11 @@ msgstr ""
 "Erweiterte Einstellungen für den Versand des Newsletters anwenden, "
 "insbesondere wenn dieser Blöcke mit dynamischen Inhalten enthält."
 
-#: src/newsletter-editor/advanced/index.js:81
+#: src/newsletter-editor/advanced/index.js:79
 msgid "RSS Block"
 msgstr "RSS-Block"
 
-#: src/newsletter-editor/advanced/index.js:82
+#: src/newsletter-editor/advanced/index.js:80
 msgid ""
 "Apply a condition to the sending of the newsletter: If no feed items are "
 "available, the newsletter will not be sent."
@@ -1363,11 +1363,11 @@ msgstr ""
 "Bedingung für den Versand des Newsletters anwenden: Wenn keine Feed-Elemente "
 "verfügbar sind, wird der Newsletter nicht versendet."
 
-#: src/newsletter-editor/advanced/index.js:91
+#: src/newsletter-editor/advanced/index.js:89
 msgid "ICS Block"
 msgstr "ICS-Block"
 
-#: src/newsletter-editor/advanced/index.js:92
+#: src/newsletter-editor/advanced/index.js:90
 msgid ""
 "Apply a condition to the sending of the newsletter: If no events are "
 "available, the newsletter will not be sent."
@@ -1375,30 +1375,11 @@ msgstr ""
 "Bedingung für den Versand des Newsletters anwenden: Wenn keine "
 "Veranstaltungen verfügbar sind, wird der Newsletter nicht versendet."
 
-#: src/newsletter-editor/advanced/index.js:100
-msgid "Logical Operator"
-msgstr "Logischer Operator"
-
-#: src/newsletter-editor/advanced/index.js:101
-msgid ""
-"Use if there is more than one condition applied for sending the newsletter."
-msgstr ""
-"Zu verwenden, wenn mehr als eine Bedingung für den Versand des Newsletters "
-"gilt."
-
-#: src/newsletter-editor/advanced/index.js:108
-msgid "OR"
-msgstr "OR"
-
-#: src/newsletter-editor/advanced/index.js:112
-msgid "AND"
-msgstr "AND"
-
-#: src/newsletter-editor/advanced/index.js:120
+#: src/newsletter-editor/advanced/index.js:99
 msgid "Recurrence"
 msgstr "Wiederholung"
 
-#: src/newsletter-editor/advanced/index.js:121
+#: src/newsletter-editor/advanced/index.js:100
 msgid ""
 "Apply recurrence rules: The newsletter will be sent recurringly depending on "
 "the conditions applied to the sending."
@@ -1406,7 +1387,7 @@ msgstr ""
 "Wiederholungsregeln anwenden: Der Newsletter wird je nach Versandbedingungen "
 "wiederkehrend versendet."
 
-#: src/newsletter-editor/advanced/index.js:130
+#: src/newsletter-editor/advanced/index.js:109
 msgid "Repeat"
 msgstr "Wiederholen"
 
@@ -1585,6 +1566,22 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgid "Logical Operator"
+#~ msgstr "Logischer Operator"
+
+#~ msgid ""
+#~ "Use if there is more than one condition applied for sending the "
+#~ "newsletter."
+#~ msgstr ""
+#~ "Zu verwenden, wenn mehr als eine Bedingung für den Versand des "
+#~ "Newsletters gilt."
+
+#~ msgid "OR"
+#~ msgstr "OR"
+
+#~ msgid "AND"
+#~ msgstr "AND"
 
 #~ msgid "Newsletter Agent"
 #~ msgstr "Newsletter-Agent"
