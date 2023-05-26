@@ -357,10 +357,6 @@ class Queue
 
         $repeat = get_post_meta($postId, 'rrze_newsletter_recurrence_repeat', true);
         switch ($repeat) {
-            case 'ASAP':
-                $currentTime = current_time('mysql');
-                $rrule = 'ASAP';
-                break;
             case 'HOURLY':
                 $currentTime = current_time('mysql');
                 $rrule = 'FREQ=HOURLY;INTERVAL=1';
@@ -381,11 +377,9 @@ class Queue
                 $rrule = $data[$currentTime][$recurrenceMonthly] ?? '';
                 break;
             default:
-                $rrule = '';
+                $currentTime = current_time('mysql');
+                $rrule = 'ASAP';
                 break;
-        }
-        if (!$rrule) {
-            return false;
         }
 
         if ($rrule == 'ASAP') {
@@ -423,29 +417,16 @@ class Queue
 
         // Check if there are any conditionals.
         $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
-        if ($hasConditionals) {
-            $rssCondition = false;
-            $icsCondition = false;
-
-            $operator = (string) get_post_meta($postId, 'rrze_newsletter_conditionals_operator', true);
-            $operator = in_array($operator, ['or', 'and']) ? $operator : 'or';
-
-            $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
+        $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
+        $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
+        if ($hasConditionals && ($rssBlock || $icsBlock)) {
             $isRssBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_rss_block_not_empty', $postId);
-
-            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
             $isIcsBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_ics_block_not_empty', $postId);
-
-            if ($rssBlock && $isRssBlockNotEmpty) {
-                $rssCondition = true;
+            if ($rssBlock && !$isRssBlockNotEmpty) {
+                $skipped = true;
             }
-            if ($icsBlock && $isIcsBlockNotEmpty) {
-                $icsCondition = true;
-            }
-            if ($operator == 'or') {
-                $skipped = $rssCondition || $icsCondition;
-            } else {
-                $skipped = $rssCondition && $icsCondition;
+            if ($icsBlock && !$isIcsBlockNotEmpty) {
+                $skipped = true;
             }
         }
 
