@@ -45,7 +45,6 @@ const AdvancedSettingsComponent = (props) => {
     const {
         meta,
         updateHasConditionals,
-        updateOperator,
         updateRssNoItems,
         updateIcsNoItems,
         updateIsRecurring,
@@ -54,7 +53,6 @@ const AdvancedSettingsComponent = (props) => {
     } = props;
     const {
         rrze_newsletter_has_conditionals,
-        rrze_newsletter_conditionals_operator,
         rrze_newsletter_conditionals_rss_block,
         rrze_newsletter_conditionals_ics_block,
         rrze_newsletter_is_recurring,
@@ -95,25 +93,6 @@ const AdvancedSettingsComponent = (props) => {
                         )}
                         checked={rrze_newsletter_conditionals_ics_block}
                         onChange={(value) => updateIcsNoItems(value)}
-                    />
-                    <SelectControl
-                        label={__("Logical Operator", "rrze-newsletter")}
-                        help={__(
-                            "Use if there is more than one condition applied for sending the newsletter.",
-                            "rrze-newsletter"
-                        )}
-                        value={rrze_newsletter_conditionals_operator}
-                        options={[
-                            {
-                                label: __("OR", "rrze-newsletter"),
-                                value: "or",
-                            },
-                            {
-                                label: __("AND", "rrze-newsletter"),
-                                value: "and",
-                            },
-                        ]}
-                        onChange={(value) => updateOperator(value)}
                     />
                     <ToggleControl
                         className="rrze-newsletter__recurrence-toggle-control"
@@ -158,7 +137,6 @@ const AdvancedSettingsComponent = (props) => {
 
 const mapStateToProps = (select) => {
     const { getEditedPostAttribute } = select("core/editor");
-
     return {
         meta: getEditedPostAttribute("meta"),
     };
@@ -166,7 +144,6 @@ const mapStateToProps = (select) => {
 
 const mapDispatchToProps = (dispatch) => {
     const { editPost } = dispatch("core/editor");
-
     return {
         updateHasConditionals: (value) =>
             editPost({ meta: { rrze_newsletter_has_conditionals: value } }),
@@ -175,18 +152,6 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapDispatchToProps2 = (dispatch) => {
     const { editPost } = dispatch("core/editor");
-
-    return {
-        updateOperator: (value) =>
-            editPost({
-                meta: { rrze_newsletter_conditionals_operator: value },
-            }),
-    };
-};
-
-const mapDispatchToProps3 = (dispatch) => {
-    const { editPost } = dispatch("core/editor");
-
     return {
         updateRssNoItems: (value) =>
             editPost({
@@ -195,9 +160,8 @@ const mapDispatchToProps3 = (dispatch) => {
     };
 };
 
-const mapDispatchToProps4 = (dispatch) => {
+const mapDispatchToProps3 = (dispatch) => {
     const { editPost } = dispatch("core/editor");
-
     return {
         updateIcsNoItems: (value) =>
             editPost({
@@ -235,7 +199,6 @@ export const AdvancedSettings = compose([
     withDispatch(mapDispatchToProps),
     withDispatch(mapDispatchToProps2),
     withDispatch(mapDispatchToProps3),
-    withDispatch(mapDispatchToProps4),
     withDispatch(mapDispatchToIsRecurring),
     withDispatch(mapDispatchToRepeat),
     withDispatch(mapDispatchToMonthly),
