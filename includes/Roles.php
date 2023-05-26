@@ -8,7 +8,7 @@ use RRZE\Newsletter\Capabilities;
 
 class Roles
 {
-    const NEWSLETTER_ROLE = 'newsletter';
+    const NEWSLETTER_EDITOR_ROLE = 'newsletter_editor';
 
     protected static function getRolesArgs()
     {
@@ -70,22 +70,22 @@ class Roles
 
     public static function createRoles()
     {
-        $roleObj = get_role(static::NEWSLETTER_ROLE);
+        $roleObj = get_role(static::NEWSLETTER_EDITOR_ROLE);
         if (!is_null($roleObj)) {
             return;
         }
         $editorRoleObj = get_role('editor');
-        add_role(static::NEWSLETTER_ROLE, __('Newsletter Agent', 'rrze-newsletter'), $editorRoleObj->capabilities);
+        add_role(static::NEWSLETTER_EDITOR_ROLE, __('Newsletter Editor', 'rrze-newsletter'), $editorRoleObj->capabilities);
 
         $currentCpts = array_keys(Capabilities::getCurrentCptArgs());
 
         foreach ($currentCpts as $cpt) {
-            self::addRoleCptCaps(static::NEWSLETTER_ROLE, $cpt, []);
+            self::addRoleCptCaps(static::NEWSLETTER_EDITOR_ROLE, $cpt, []);
         }
     }
 
     public static function removeRoles()
     {
-        remove_role(static::NEWSLETTER_ROLE);
+        remove_role(static::NEWSLETTER_EDITOR_ROLE);
     }
 }
