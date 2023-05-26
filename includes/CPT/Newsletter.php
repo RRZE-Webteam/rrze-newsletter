@@ -242,22 +242,6 @@ class Newsletter
         );
         register_meta(
             'post',
-            'rrze_newsletter_conditionals_operator',
-            [
-                'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => [
-                    'schema' => [
-                        'context' => ['edit'],
-                    ],
-                ],
-                'type'           => 'string',
-                'default'        => 'or',
-                'single'         => true,
-                'auth_callback'  => '__return_true',
-            ]
-        );
-        register_meta(
-            'post',
             'rrze_newsletter_conditionals_rss_block',
             [
                 'object_subtype' => self::POST_TYPE,
@@ -708,6 +692,7 @@ class Newsletter
 
         $sendStatus = self::getStatus($post->ID);
 
+        $hasConditionals = (bool) get_post_meta($post->ID, 'rrze_newsletter_has_conditionals', true);
         $isRecurring = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_recurring', true);
 
         $output = '';
@@ -715,11 +700,11 @@ class Newsletter
         if ($sendStatus == 'error') {
             $flags = ' <span class="dashicons dashicons-warning"></span>';
         } else {
-            $flags = $sendStatus == 'skipped'
+            $flags = ($hasConditionals && $sendStatus == 'skipped')
                 ? ' <span class="dashicons dashicons-controls-skipforward"></span>'
                 : '';
 
-            $flags .= $isRecurring
+            $flags .= ($hasConditionals && $isRecurring)
                 ? ' <span class="dashicons dashicons-image-rotate"></span>'
                 : '';
         }
