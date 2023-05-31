@@ -8,7 +8,7 @@ namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Capabilities;
+use RRZE\Newsletter\{Archive, Capabilities, Utils};
 
 class NewsletterQueue
 {
@@ -171,7 +171,7 @@ class NewsletterQueue
         $data['from'] = get_post_meta($post->ID, 'rrze_newsletter_queue_from', true);
         $data['to'] = get_post_meta($post->ID, 'rrze_newsletter_queue_to', true);
         $data['sent_date_gmt'] = get_post_meta($post->ID, 'rrze_newsletter_queue_sent_date_gmt', true);
-        $data['sent_date'] = $data['sent_date_gmt'] ? get_date_from_gmt($data['sent_date_gmt']) : '&mdash;';
+        $data['sent_date'] = $data['sent_date_gmt'] ? get_date_from_gmt($data['sent_date_gmt']) : '';
         $data['retries'] = absint(get_post_meta($post->ID, 'rrze_newsletter_queue_retries', true));
         $data['error'] = get_post_meta($post->ID, 'rrze_newsletter_queue_error', true);
 
@@ -205,19 +205,28 @@ class NewsletterQueue
         if (empty($data) || is_wp_error($data)) {
             echo '&mdash;';
         }
+
         $status = $data['status'];
         $stati = get_post_stati(['show_in_admin_status_list' => true], 'objects');
         $statusLabel = $stati[$status]->label;
 
+        $timestamp = strtotime($data['send_date_gmt']);
+        $archivePageBase = Archive::getPageBase();
+        $archiveQuery = Utils::encryptQueryVar($data['newsletter_id'] . '|' . $timestamp . '|' . $data['to']);
+        $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
+
+        $subject = esc_attr($data['subject']);
+        $subject = $data['sent_date'] ? sprintf('<a href="%1$s">%2$s</a>', $archiveUrl, $subject) : $subject;
+
         switch ($column) {
             case 'subject':
-                echo esc_attr($data['subject']);
+                echo $subject;
                 break;
             case 'send_date':
                 echo $data['send_date'];
                 break;
             case 'sent_date':
-                echo $data['sent_date'];
+                echo $data['sent_date'] ?: '&mdash;';
                 break;
             case 'from':
                 echo esc_attr($data['from']);
