@@ -218,19 +218,19 @@ class Queue
                 'post_author' => 1
             ];
 
-            $qId = wp_insert_post($args);
+            $queueId = wp_insert_post($args);
 
             add_filter('content_save_pre', 'wp_filter_post_kses');
             add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
 
-            if ($qId != 0 && !is_wp_error($qId)) {
-                add_post_meta($qId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
-                add_post_meta($qId, 'rrze_newsletter_queue_from_email', $data['from_email'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_from', $data['from'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_to', $mail['to'], true);
-                add_post_meta($qId, 'rrze_newsletter_queue_retries', 0, true);
+            if ($queueId != 0 && !is_wp_error($queueId)) {
+                add_post_meta($queueId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
+                add_post_meta($queueId, 'rrze_newsletter_queue_from_email', $data['from_email'], true);
+                add_post_meta($queueId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
+                add_post_meta($queueId, 'rrze_newsletter_queue_from', $data['from'], true);
+                add_post_meta($queueId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
+                add_post_meta($queueId, 'rrze_newsletter_queue_to', $mail['to'], true);
+                add_post_meta($queueId, 'rrze_newsletter_queue_retries', 0, true);
             }
         }
 
