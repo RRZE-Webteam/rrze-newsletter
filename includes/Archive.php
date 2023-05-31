@@ -134,17 +134,13 @@ class Archive
 
         $content = $data['content'];
 
-        $archivePageBase = Archive::getPageBase();
-        $archiveQuery = Utils::encryptQueryVar($postId . '|' . $timestamp . '|' . $email);
-        $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
-
         // Parse tags.
         $data = [
             'FNAME' => $toFname,
             'LNAME' => $toLname,
             'EMAIL' => $toEmail,
             'EMAIL_ONLY' => '',
-            'ARCHIVE' => $archiveUrl
+            'ARCHIVE' => ''
         ];
         $data = Tags::sanitizeTags($postId, $data);
         $parser = new Parser();
