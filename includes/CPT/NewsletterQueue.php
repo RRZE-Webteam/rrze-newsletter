@@ -210,13 +210,14 @@ class NewsletterQueue
         $stati = get_post_stati(['show_in_admin_status_list' => true], 'objects');
         $statusLabel = $stati[$status]->label;
 
-        $timestamp = strtotime($data['send_date_gmt']);
-        $archivePageBase = Archive::getPageBase();
-        $archiveQuery = Utils::encryptQueryVar($data['newsletter_id'] . '|' . $timestamp . '|' . $data['to']);
-        $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
+        $archiveSlug = Archive::archiveSlug();
+        $archiveQuery = Utils::encryptQueryVar($postId);
+        $archiveUrl = site_url($archiveSlug . '/' . $archiveQuery);
 
         $subject = esc_attr($data['subject']);
-        $subject = $data['sent_date'] ? sprintf('<a href="%1$s">%2$s</a>', $archiveUrl, $subject) : $subject;
+        if (in_array($status, ['mail-queued', 'mail-sent'])) {
+            $subject = sprintf('<a href="%1$s">%2$s</a>', $archiveUrl, $subject);
+        }
 
         switch ($column) {
             case 'subject':
