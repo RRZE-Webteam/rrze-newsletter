@@ -4,13 +4,8 @@ namespace RRZE\Newsletter\Mail;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Settings;
-use RRZE\Newsletter\Parser;
-use RRZE\Newsletter\Tags;
-use RRZE\Newsletter\Archive;
-use RRZE\Newsletter\Utils;
-use RRZE\Newsletter\CPT\Newsletter;
-use RRZE\Newsletter\CPT\NewsletterQueue;
+use RRZE\Newsletter\{Archive, Parser, Settings, Utils, Tags};
+use RRZE\Newsletter\CPT\{Newsletter, NewsletterQueue};
 use Html2Text\Html2Text;
 
 use function RRZE\Newsletter\plugin;
@@ -180,17 +175,27 @@ class Queue
             wp_update_term_count($ttIds, $taxonomy);
         }
 
-        // Save the rendered content to the archive meta post.
-        add_post_meta($postId, 'rrze_newsletter_archive_' . strtotime($data['send_date_gmt']), $data['content'], true);
-
         foreach ($recipient as $mail) {
-            remove_filter('content_save_pre', 'wp_filter_post_kses');
-            remove_filter('content_filtered_save_pre', 'wp_filter_post_kses');
+            // Insert post in the mail queue.
+            $args = [
+                'post_date' => $data['send_date'],
+                'post_date_gmt' => $data['send_date_gmt'],
+                'post_title' => $data['title'],
+                'post_content' => '',
+                'post_excerpt' => '',
+                'post_type' => NewsletterQueue::POST_TYPE,
+                'post_status' => 'mail-queued',
+                'post_author' => 1
+            ];
 
-            $timestamp = strtotime($post->post_date_gmt);
-            $archivePageBase = Archive::getPageBase();
-            $archiveQuery = Utils::encryptQueryVar($postId . '|' . $timestamp . '|' . $mail['to_email']);
-            $archiveUrl = site_url($archivePageBase . '/' . $archiveQuery);
+            $queueId = wp_insert_post($args);
+            if ($queueId == 0 || is_wp_error($queueId)) {
+                continue;
+            }
+
+            $archiveSlug = Archive::archiveSlug();
+            $archiveQuery = Utils::encryptQueryVar($queueId);
+            $archiveUrl = site_url($archiveSlug . '/' . $archiveQuery);
 
             // Parse tags.
             $tags = [
@@ -204,34 +209,26 @@ class Queue
             $body = $parser->parse($data['content'], $tags);
             $html2text = new Html2Text($body);
             $altBody = $html2text->getText();
-            // End Parse tags.            
+            // End Parse tags. 
 
-            // Insert post in the mail queue.
             $args = [
-                'post_date' => $data['send_date'],
-                'post_date_gmt' => $data['send_date_gmt'],
-                'post_title' => $data['title'],
-                'post_content' => $body,
-                'post_excerpt' => $altBody,
-                'post_type' => NewsletterQueue::POST_TYPE,
-                'post_status' => 'mail-queued',
-                'post_author' => 1
+                'ID' => $queueId,
+                'post_content' => base64_encode($body),
+                'post_excerpt' => $altBody
             ];
 
-            $queueId = wp_insert_post($args);
-
-            add_filter('content_save_pre', 'wp_filter_post_kses');
-            add_filter('content_filtered_save_pre', 'wp_filter_post_kses');
-
-            if ($queueId != 0 && !is_wp_error($queueId)) {
-                add_post_meta($queueId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
-                add_post_meta($queueId, 'rrze_newsletter_queue_from_email', $data['from_email'], true);
-                add_post_meta($queueId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
-                add_post_meta($queueId, 'rrze_newsletter_queue_from', $data['from'], true);
-                add_post_meta($queueId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
-                add_post_meta($queueId, 'rrze_newsletter_queue_to', $mail['to'], true);
-                add_post_meta($queueId, 'rrze_newsletter_queue_retries', 0, true);
+            $queueId = wp_update_post($args);
+            if ($queueId == 0 || is_wp_error($queueId)) {
+                continue;
             }
+
+            add_post_meta($queueId, 'rrze_newsletter_queue_newsletter_id', $postId, true);
+            add_post_meta($queueId, 'rrze_newsletter_queue_from_email', $data['from_email'], true);
+            add_post_meta($queueId, 'rrze_newsletter_queue_from_name', $data['from_name'], true);
+            add_post_meta($queueId, 'rrze_newsletter_queue_from', $data['from'], true);
+            add_post_meta($queueId, 'rrze_newsletter_queue_replyto', $data['from_email'], true);
+            add_post_meta($queueId, 'rrze_newsletter_queue_to', $mail['to'], true);
+            add_post_meta($queueId, 'rrze_newsletter_queue_retries', 0, true);
         }
 
         update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $data['send_date_gmt']);
@@ -267,7 +264,8 @@ class Queue
             $to  = get_post_meta($post->ID, 'rrze_newsletter_queue_to', true);
 
             $subject = $post->post_title;
-            $body = $post->post_content;
+            $body = base64_decode($post->post_content, true);
+            $body = $body !== false ? $body : $post->post_content;
             $altBody = $post->post_excerpt;
 
             $blogName = get_bloginfo('name');
