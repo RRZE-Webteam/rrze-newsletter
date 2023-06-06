@@ -24,7 +24,7 @@ class Archive
         add_action('template_redirect', [$this, 'redirectTemplate']);
     }
 
-    public static function getPageBase()
+    public static function archiveSlug()
     {
         return Newsletter::POST_TYPE . '/archive';
     }
@@ -40,20 +40,34 @@ class Archive
             !isset($segments[0])
             || !isset($segments[1])
             || !isset($segments[2])
-            || $segments[0] . '/' . $segments[1] != self::getPageBase()
         ) {
             return;
         }
 
-        $archive = $this->getArchive($segments[2]);
-        $post = get_post(absint($archive['postid']));
-        $timestamp = absint($archive['timestamp']);
-        $email = $archive['email'];
-        if (
-            is_a($post, '\WP_Post')
-            && $email = Utils::sanitizeEmail($email)
-        ) {
-            $this->getContent($post, $timestamp, $email);
+        $archive = Utils::decryptQueryVar(trim($segments[2]));
+        $archive = explode('|', $archive);
+        $slug = $segments[0] . '/' . $segments[1];
+
+        if ($slug == self::archiveSlug()) {
+            $data = [
+                'postid' => $archive[0] ?? '',
+                'timestamp' => $archive[1] ?? '',
+                'email' => $archive[2] ?? ''
+            ];
+        } else {
+            return;
+        }
+
+        $post = get_post(absint($data['postid']));
+        if (!is_a($post, '\WP_Post')) {
+            return;
+        }
+
+        if ($data['timestamp'] && $data['email']) {
+            // Deprecated.
+            $this->deprecatedArchiveContent($post, $data);
+        } else {
+            $this->archiveContent($post);
         }
 
         if ($this->content) {
@@ -62,31 +76,35 @@ class Archive
         }
     }
 
-    protected function getArchive(string $string)
+    protected function archiveContent(object $post)
     {
-        $archive = Utils::decryptQueryVar(trim($string));
-        $archive = explode('|', $archive);
-        $data = [
-            'postid' => $archive[0] ?? '',
-            'timestamp' => $archive[1] ?? '',
-            'email' => $archive[2] ?? ''
-        ];
-        return $data;
+        $archiveUrlPath = '/newsletter/archive/';
+        $content = base64_decode($post->post_content, true);
+        $content = $content !== false ? $content : $post->post_content;
+        $this->content = preg_replace_callback('~<a[^>]+href="([^"]*' . $archiveUrlPath . '[^"]*)"[^>]*>(.*?)<\/a>~i', function ($matches) {
+            return '';
+        }, $content);
     }
 
-    protected function getContent(\WP_Post $post, int $timestamp, string $email = '')
+    protected function deprecatedArchiveContent(object $post, array $data)
     {
         $postId = $post->ID;
+        $timestamp = absint($data['timestamp']);
+        $email = Utils::sanitizeEmail($data['email']);
+        if (!$timestamp || !$email) {
+            return;
+        }
 
         $data = Newsletter::getData($postId);
-        if (empty($data) || is_wp_error($data)) {
-            return '';
+        if ($content = get_post_meta($postId, 'rrze_newsletter_archive_' . $timestamp, true)) {
+            $data['content'] = $content;
         }
 
-        if ($archiveContent = get_post_meta($postId, 'rrze_newsletter_archive_' . $timestamp, true)) {
-            $data['content'] = $archiveContent;
-        }
+        $this->setContent($postId, $data);
+    }
 
+    protected function setContent(int $postId, array $data)
+    {
         // Set recipient.
         $recipient = [];
 
