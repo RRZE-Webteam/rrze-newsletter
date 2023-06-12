@@ -414,12 +414,12 @@ class Queue
         $skipped = false;
 
         // Check if there are any conditionals.
-        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
-        $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
-        $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
-        if ($hasConditionals && ($rssBlock || $icsBlock)) {
+        if ((bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true)) {
+            $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
+            $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
             $isRssBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_rss_block_not_empty', $postId);
             $isIcsBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_ics_block_not_empty', $postId);
+
             if ($rssBlock && !$isRssBlockNotEmpty) {
                 $skipped = true;
             }
