@@ -308,14 +308,16 @@ final class Render
      * @param bool $isInColumn Whether the component is a child of a column component.
      * @param bool $isInGroup Whether the component is a child of a group component.
      * @param array $defaultAttrs Default attributes for the component.
+     * @param bool $isInListOrQuote Whether the component is a child of a list or quote block.
      * @return string MJML component.
      */
-    public static function renderMjmlComponent($postId, $block, $isInColumn = false, $isInGroup = false, $defaultAttrs = [])
+    public static function renderMjmlComponent($postId, $block, $isInColumn = false, $isInGroup = false, $defaultAttrs = [], $isInListOrQuote = false)
     {
         $blockName = $block['blockName'];
         $attrs = $block['attrs'];
         $innerBlocks = $block['innerBlocks'];
         $innerHtml = $block['innerHTML'];
+        $innerContent = isset($block['innerContent']) ? $block['innerContent'] : [$innerHtml];
 
         if (!isset($attrs['innerBlocksToInsert']) && self::isEmptyBlock($block)) {
             return '';
@@ -342,15 +344,12 @@ final class Render
         switch ($blockName) {
                 // Paragraph, List, Heading blocks.
             case 'core/paragraph':
-            case 'core/list':
             case 'core/heading':
-            case 'core/quote':
-            case 'core/site-title':
-            case 'core/site-tagline':
             case 'rrze-newsletter/rss':
             case 'rrze-newsletter/ics':
                 $textAttrs = array_merge(
                     [
+                        'padding'     => '0',
                         'line-height' => '1.8',
                         'font-size' => '16px',
                         'font-family' => $fontFamily,
@@ -396,6 +395,40 @@ final class Render
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
+
+                break;
+
+                // List, list item, and quote blocks.
+                // These blocks may or may not contain innerBlocks with their actual content.
+            case 'core/list':
+            case 'core/list-item':
+            case 'core/quote':
+                $text_attrs = array_merge(
+                    array(
+                        'padding'     => '0',
+                        'line-height' => '1.5',
+                        'font-size'   => '16px',
+                        'font-family' => $fontFamily,
+                    ),
+                    $attrs
+                );
+
+                // If a wrapper block, wrap in mj-text.
+                if (!$isInListOrQuote) {
+                    $blockMjmlMarkup .= '<mj-text ' . self::arrayToAttributes($text_attrs) . '>';
+                }
+
+                $blockMjmlMarkup .= $innerContent[0];
+                if (!empty($inner_blocks) && 1 < count($innerContent)) {
+                    foreach ($inner_blocks as $inner_block) {
+                        $blockMjmlMarkup .= self::renderMjmlComponent($inner_block, false, false, [], true);
+                    }
+                    $blockMjmlMarkup .= $innerContent[count($innerContent) - 1];
+                }
+
+                if (!$isInListOrQuote) {
+                    $blockMjmlMarkup .= '</mj-text>';
+                }
 
                 break;
 
@@ -646,6 +679,7 @@ final class Render
 
         if (
             !$isInColumn &&
+            !$isInListOrQuote &&
             !$isGroupBlock &&
             'core/columns' != $blockName &&
             'core/column' != $blockName &&
@@ -656,7 +690,7 @@ final class Render
             $columnAttrs['width'] = '100%';
             $blockMjmlMarkup = '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $blockMjmlMarkup . '</mj-column>';
         }
-        if ($isInColumn || $isGroupBlock || $isPostInserterBlock) {
+        if ($isInColumn || $isInListOrQuote || $isGroupBlock || $isPostInserterBlock) {
             // Render a nested block without a wrapping section.
             return $blockMjmlMarkup;
         } else {
@@ -686,6 +720,21 @@ final class Render
         );
     }
 
+    /** Convert a WP post to an array of non-empty blocks.
+     *
+     * @param WP_Post $post The post.
+     * @return array Blocks.
+     */
+    private static function getValidPostBlocks($post)
+    {
+        return array_filter(
+            parse_blocks($post->post_content),
+            function ($block) {
+                return null !== $block['blockName'];
+            }
+        );
+    }
+
     /**
      * Convert a string or an \WP_Post object content to MJML components.
      *
@@ -709,6 +758,18 @@ final class Render
         // Build MJML body.
         foreach ($validBlocks as $block) {
             $blockContent = '';
+
+            // Convert reusable block to group block.
+            // Reusable blocks are CPTs, where the block's ref attribute is the post ID.
+            if ('core/block' === $block['blockName'] && isset($block['attrs']['ref'])) {
+                $reusableBlockPost = get_post($block['attrs']['ref']);
+                if (!empty($reusableBlockPost)) {
+                    $block['blockName'] = 'core/group';
+                    $block['innerBlocks'] = self::getValidPostBlocks($reusableBlockPost);
+                    $block['innerHTML'] = $reusableBlockPost->post_content;
+                    $block['innerContent'] = $reusableBlockPost->post_content;
+                }
+            }
 
             if ('core/group' === $block['blockName']) {
                 $defaultAttrs = [];
