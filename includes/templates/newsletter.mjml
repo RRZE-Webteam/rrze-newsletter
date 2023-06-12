@@ -10,7 +10,7 @@
 
             /* Link */
             a {
-                color: inherit;
+                color: inherit !important;
                 text-decoration: underline;
             }
 
@@ -32,6 +32,16 @@
             }
 
             /* Heading */
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
             h1 {
                 font-size: 2.44em;
                 line-height: 1.4;
@@ -60,16 +70,6 @@
             h6 {
                 font-size: 0.8em;
                 line-height: 1.8;
-            }
-
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6 {
-                margin-top: 0;
-                margin-bottom: 0;
             }
 
             /* Fonts Sizes */
