@@ -13,6 +13,8 @@ use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
+use RRZE\Newsletter\Blocks\RSS\RSS;
+use RRZE\Newsletter\Blocks\ICS\ICS;
 
 class Newsletter
 {
@@ -572,6 +574,22 @@ class Newsletter
         $body = Render::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
+        }
+
+        if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
+            foreach ($rssAttrs as $key => $attrs) {
+                if (strpos($body, 'RSS_BLOCK_' . $key) !== false) {
+                    $body = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $body);
+                }
+            }
+        }
+
+        if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
+            foreach ($icsAttrs as $key => $attrs) {
+                if (strpos($body, 'ICS_BLOCK_' . $key) !== false) {
+                    $body = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $body);
+                }
+            }
         }
 
         $data['id'] = $postId;
