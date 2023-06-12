@@ -6,6 +6,8 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
+use RRZE\Newsletter\Blocks\RSS\RSS;
+use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Mail\Send;
 use RRZE\Newsletter\MJML\Render;
 use Html2Text\Html2Text;
@@ -378,6 +380,22 @@ class RestApi
         $body = Render::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
+        }
+
+        if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
+            foreach ($rssAttrs as $key => $attrs) {
+                if (strpos($body, 'RSS_BLOCK_' . $key) !== false) {
+                    $body = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $body);
+                }
+            }
+        }
+
+        if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
+            foreach ($icsAttrs as $key => $attrs) {
+                if (strpos($body, 'ICS_BLOCK_' . $key) !== false) {
+                    $body = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $body);
+                }
+            }
         }
 
         $from = get_post_meta($postId, 'rrze_newsletter_from_email', true);
