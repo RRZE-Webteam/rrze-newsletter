@@ -6,8 +6,6 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Templates;
 use RRZE\Newsletter\Utils;
-use RRZE\Newsletter\Blocks\RSS\RSS;
-use RRZE\Newsletter\Blocks\ICS\ICS;
 
 use function RRZE\Newsletter\plugin;
 
@@ -386,12 +384,26 @@ final class Render
 
                 // Render rrze-newsletter/rss block.
                 if ($blockName == 'rrze-newsletter/rss') {
-                    $innerHtml = RSS::renderMJML($attrs);
+                    //$innerHtml = RSS::renderMJML($attrs);
+                    $key = md5($attrs['feedURL']);
+                    if (!($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true))) {
+                        $rssAttrs = [];
+                    }
+                    $rssAttrs[$key] = $attrs;
+                    update_post_meta($postId, 'rrze_newsletter_rss_attrs', $rssAttrs);
+                    $innerHtml = 'RSS_BLOCK_' . $key;
                 }
 
                 // Render rrze-newsletter/ics block.
                 if ($blockName == 'rrze-newsletter/ics') {
-                    $innerHtml = ICS::renderMJML($attrs);
+                    //$innerHtml = ICS::renderMJML($attrs);
+                    $key = md5($attrs['feedURL']);
+                    if (!($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true))) {
+                        $icsAttrs = [];
+                    }
+                    $icsAttrs[$key] = $attrs;
+                    update_post_meta($postId, 'rrze_newsletter_ics_attrs', $icsAttrs);
+                    $innerHtml = 'ICS_BLOCK_' . $key;
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
