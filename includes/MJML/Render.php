@@ -367,21 +367,6 @@ final class Render
                     unset($textAttrs['textAlign']);
                 }
 
-                // Render core/list-item.
-                if ($blockName == 'core/list') {
-                    $tag = (strpos($innerHtml, '<ul>') !== false) ? '<ul>' : '<ol>';
-                    $innerHtml = $tag;
-                    try {
-                        $list = Utils::recursiveSearchArrayKey($innerBlocks, 'innerHTML');
-                    } catch (\Exception $e) {
-                        $list = [];
-                    }
-                    foreach ($list as $value) {
-                        $innerHtml .= (string) $value;
-                    }
-                    $innerHtml .= ($tag == '<ul>') ? '</ul>' : '</ol>';
-                }
-
                 // Render rrze-newsletter/rss block.
                 if ($blockName == 'rrze-newsletter/rss') {
                     //$innerHtml = RSS::renderMJML($attrs);
@@ -415,7 +400,7 @@ final class Render
             case 'core/list':
             case 'core/list-item':
             case 'core/quote':
-                $text_attrs = array_merge(
+                $textAttrs = array_merge(
                     array(
                         'padding'     => '0',
                         'line-height' => '1.5',
@@ -427,13 +412,13 @@ final class Render
 
                 // If a wrapper block, wrap in mj-text.
                 if (!$isInListOrQuote) {
-                    $blockMjmlMarkup .= '<mj-text ' . self::arrayToAttributes($text_attrs) . '>';
+                    $blockMjmlMarkup .= '<mj-text ' . self::arrayToAttributes($textAttrs) . '>';
                 }
 
                 $blockMjmlMarkup .= $innerContent[0];
-                if (!empty($inner_blocks) && 1 < count($innerContent)) {
-                    foreach ($inner_blocks as $inner_block) {
-                        $blockMjmlMarkup .= self::renderMjmlComponent($inner_block, false, false, [], true);
+                if (!empty($innerBlocks) && 1 < count($innerContent)) {
+                    foreach ($innerBlocks as $innerBlock) {
+                        $blockMjmlMarkup .= self::renderMjmlComponent($postId, $innerBlock, false, false, [], true);
                     }
                     $blockMjmlMarkup .= $innerContent[count($innerContent) - 1];
                 }
@@ -687,7 +672,7 @@ final class Render
         }
 
         $isPostInserterBlock = 'rrze-newsletter/post-inserter' == $blockName;
-        $isGroupBlock = 'core/group' == $blockName;
+        $isGroupBlock = in_array($blockName, ['core/group', 'core/list', 'core/list-item', 'core/quote'], true);
 
         if (
             !$isInColumn &&
@@ -834,6 +819,7 @@ final class Render
         ];
 
         $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
+        \RRZE\Newsletter\Debug::log(str_replace(PHP_EOL, '', $tpl));
         return str_replace(PHP_EOL, '', $tpl);
     }
 
