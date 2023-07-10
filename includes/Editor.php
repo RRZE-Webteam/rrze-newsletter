@@ -23,11 +23,62 @@ final class Editor
 
     public function __construct()
     {
+        add_action('after_setup_theme', [$this, 'afterSetupTheme']);
         add_action('the_post', [__CLASS__, 'stripEditorModifications']);
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
+    }
+
+    public function afterSetupTheme()
+    {
+        if (wp_theme_has_theme_json()) {
+            add_filter('wp_theme_json_data_theme', [$this, 'filterThemeJsonTheme']);
+        }
+    }
+
+    public function filterThemeJsonTheme($themeJson)
+    {
+        $data = [
+            'version'  => 2,
+            'settings' => [
+                'spacing' => [
+                    'customSpacingSize' => false,
+                ],
+                'typography' => [
+                    'fontSizes' => [
+                        [
+                            'name' => 'Small',
+                            'slug' => 'small',
+                            'size' => '13px'
+                        ],
+                        [
+                            'name' => 'Medium',
+                            'slug' => 'medium',
+                            'size' => '20px'
+                        ],
+                        [
+                            'name' => 'Large',
+                            'slug' => 'large',
+                            'size' => '36px'
+                        ],
+                        [
+                            'name' => 'Extra Large',
+                            'slug' => 'x-large',
+                            'size' => '42px'
+                        ],
+                    ],
+                    'fontStyle' => false,
+                    'fontWeight' => false,
+                    'letterSpacing' => false,
+                    'lineHeight' => false,
+                    'textDecoration' => true,
+                    'dropCap' => false,
+                ]
+            ],
+        ];
+        return $themeJson->update_with($data);
     }
 
     public static function stripEditorModifications()
