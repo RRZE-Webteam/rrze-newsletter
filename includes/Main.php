@@ -43,7 +43,6 @@ class Main
 
         // Editor
         Editor::instance();
-        add_filter('wp_theme_json_data_theme', [$this, 'filterThemeJsonTheme']);
 
         // Notices
         new Notices;
@@ -80,48 +79,5 @@ class Main
         update_post_meta($post->ID, 'rrze_newsletter_status', 'send');
         $queue = new Queue;
         $queue->set($post->ID);
-    }
-
-    public function filterThemeJsonTheme($theme_json)
-    {
-        $data = [
-            'version'  => 2,
-            'settings' => [
-                'spacing' => [
-                    'customSpacingSize' => false,
-                ],
-                'typography' => [
-                    'fontSizes' => [
-                        [
-                            'name' => 'Small',
-                            'slug' => 'small',
-                            'size' => '13px'
-                        ],
-                        [
-                            'name' => 'Medium',
-                            'slug' => 'medium',
-                            'size' => '20px'
-                        ],
-                        [
-                            'name' => 'Large',
-                            'slug' => 'large',
-                            'size' => '36px'
-                        ],
-                        [
-                            'name' => 'Extra Large',
-                            'slug' => 'x-large',
-                            'size' => '42px'
-                        ],
-                    ],
-                    'fontStyle' => false,
-                    'fontWeight' => false,
-                    'letterSpacing' => false,
-                    'lineHeight' => false,
-                    'textDecoration' => true,
-                    'dropCap' => false,
-                ]
-            ],
-        ];
-        return $theme_json->update_with($data);
     }
 }
