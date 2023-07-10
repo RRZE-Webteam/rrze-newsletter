@@ -819,7 +819,7 @@ final class Render
         ];
 
         $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
-        \RRZE\Newsletter\Debug::log(str_replace(PHP_EOL, '', $tpl));
+
         return str_replace(PHP_EOL, '', $tpl);
     }
 
