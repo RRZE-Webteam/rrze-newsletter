@@ -96,6 +96,9 @@ class Archive
         }
 
         $data = Newsletter::getData($postId);
+        if (empty($data) || is_wp_error($data)) {
+            return;
+        }
         if ($content = get_post_meta($postId, 'rrze_newsletter_archive_' . $timestamp, true)) {
             $data['content'] = $content;
         }
