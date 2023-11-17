@@ -86,9 +86,6 @@ module.exports = (env, argv) => {
             ],
         },
         externals: {
-            lodash: "lodash",
-            react: "React",
-            "react-dom": "ReactDOM",
             "@wordpress/api-fetch": ["wp", "apiFetch"],
             "@wordpress/data": ["wp", "data"],
             "@wordpress/dom-ready": ["wp", "domReady"],
