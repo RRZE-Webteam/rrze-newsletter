@@ -1,6 +1,6 @@
 {
     "name": "rrze-newsletter",
-    "version": "2.3.6",
+    "version": "2.3.7",
     "description": "Plugin for creating and sending HTML Newsletters.",
     "scripts": {
         "start": "webpack --mode=development --watch",
@@ -38,6 +38,7 @@
         "@wordpress/plugins": "*",
         "@wordpress/server-side-render": "*",
         "mjml-browser": "*",
+        "lodash": "*",
         "react": "*",
         "react-dom": "*"
     },
