@@ -26,6 +26,7 @@ final class Editor
         add_action('after_setup_theme', [$this, 'afterSetupTheme']);
         add_action('the_post', [__CLASS__, 'stripEditorModifications']);
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
+        add_action('enqueue_block_assets', [__CLASS__, 'enqueueBlockAssets']);
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
@@ -179,25 +180,26 @@ final class Editor
 
     public static function enqueueBlockEditorAssets()
     {
-        if (self::isEditingNewsletter()) {
-            wp_register_style(
-                'rrze-newsletter',
-                plugins_url('dist/editor.css', plugin()->getBasename()),
-                [],
-                filemtime(plugin()->getPath('dist') . 'editor.css')
-            );
-            wp_style_add_data('rrze-newsletter', 'rtl', 'replace');
-            wp_enqueue_style('rrze-newsletter');
-        }
-
         if (!self::isEditingNewsletter()) {
             return;
         }
+
+        $assetFile = include plugin()->getPath('build') . 'editor.asset.php';
+
+        wp_register_style(
+            'rrze-newsletter',
+            plugins_url('build/editor.style.css', plugin()->getBasename()),
+            [],
+            $assetFile['version'] ?? plugin()->getVersion(),
+        );
+        wp_style_add_data('rrze-newsletter', 'rtl', 'replace');
+        wp_enqueue_style('rrze-newsletter');
+
         wp_enqueue_script(
             'rrze-newsletter',
-            plugins_url('dist/editor.js', plugin()->getBasename()),
-            [],
-            filemtime(plugin()->getPath('dist') . 'editor.js'),
+            plugins_url('build/editor.js', plugin()->getBasename()),
+            $assetFile['dependencies'] ?? [],
+            $assetFile['version'] ?? plugin()->getVersion(),
             true
         );
         wp_localize_script(
@@ -215,6 +217,30 @@ final class Editor
             'rrze-newsletter',
             'rrze-newsletter',
             plugin()->getPath('languages')
+        );
+    }
+
+    public static function enqueueBlockAssets()
+    {
+        if (!self::isEditingNewsletter()) {
+            return;
+        }
+
+        $assetFile = include plugin()->getPath('build') . 'blocks.asset.php';
+
+        wp_enqueue_style(
+            'rrze-newsletter-blocks',
+            plugins_url('build/blocks.style.css', plugin()->getBasename()),
+            [],
+            $assetFile['version'] ?? plugin()->getVersion(),
+        );
+
+        wp_enqueue_script(
+            'rrze-newsletter-blocks',
+            plugins_url('build/blocks.js', plugin()->getBasename()),
+            $assetFile['dependencies'] ?? [],
+            $assetFile['version'] ?? plugin()->getVersion(),
+            true
         );
     }
 
