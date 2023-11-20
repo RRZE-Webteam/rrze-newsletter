@@ -713,7 +713,7 @@ class Newsletter
         $hasConditionals = (bool) get_post_meta($post->ID, 'rrze_newsletter_has_conditionals', true);
         $isRecurring = (bool) get_post_meta($post->ID, 'rrze_newsletter_is_recurring', true);
 
-        $output = $postStates[$postStatus->name];
+        $output = $postStates[$postStatus->name] ?? '';
         $flags = '';
 
         if ($sendStatus == 'error') {
