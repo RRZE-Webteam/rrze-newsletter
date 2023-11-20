@@ -12,7 +12,7 @@ import { FormTokenField, Spinner } from "@wordpress/components";
 /**
  * Plugin dependencies
  */
-import "./autocomplete-tokenfield.scss";
+import "./style.scss";
 
 /**
  * An multi-selecting, api-driven autocomplete input suitable for use in block attributes.
