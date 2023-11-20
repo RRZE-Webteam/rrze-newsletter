@@ -1,109 +1,55 @@
-const autoprefixer = require("autoprefixer");
-const MiniCSSExtractPlugin = require("mini-css-extract-plugin");
-const CSSMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
+const defaultConfig = require("@wordpress/scripts/config/webpack.config");
+const webpack = require("webpack");
+const fs = require("fs");
+const { basename, dirname, resolve } = require("path");
+const srcDir = "src";
+const isProduction = defaultConfig.isProduction;
 
-const path = require("path");
-const admin = path.join(__dirname, "src", "admin");
-const editor = path.join(__dirname, "src", "editor");
-const subscription = path.join(__dirname, "src", "subscription");
-const subscriptionemail = path.join(__dirname, "src", "subscriptionemail");
+const admin = resolve(process.cwd(), "src", "admin");
+const editor = resolve(process.cwd(), "src", "editor");
+const blocks = resolve(process.cwd(), "src", "blocks");
+const subscription = resolve(process.cwd(), "src/subscription");
+const subscriptionemail = resolve(process.cwd(), "src/subscriptionemail");
 
-module.exports = (env, argv) => {
-    function isDevelopment() {
-        return argv.mode === "development";
-    }
-    var config = {
-        entry: {
-            admin,
-            editor,
-            subscription,
-            subscriptionemail,
-        },
-        output: {
-            path: path.resolve(__dirname, "dist"),
-            filename: "[name].js",
-            clean: true,
-        },
-        optimization: {
-            minimizer: [
-                new CSSMinimizerPlugin(),
-                new TerserPlugin({ terserOptions: { sourceMap: true } }),
-            ],
-        },
-        plugins: [
-            new MiniCSSExtractPlugin({
-                chunkFilename: "[id].css",
-                filename: (chunkData) => {
-                    return "[name].css";
+module.exports = {
+    ...defaultConfig,
+    entry: {
+        admin,
+        editor,
+        blocks,
+        subscription,
+        subscriptionemail,
+    },
+    output: {
+        path: resolve(process.cwd(), "build"),
+        filename: "[name].js",
+        clean: true,
+    },
+    optimization: {
+        ...defaultConfig.optimization,
+        splitChunks: {
+            cacheGroups: {
+                style: {
+                    type: "css/mini-extract",
+                    test: /[\\/]style(\.module)?\.(pc|sc|sa|c)ss$/,
+                    chunks: "all",
+                    enforce: true,
+                    name(_, chunks, cacheGroupKey) {
+                        const chunkName = chunks[0].name;
+                        return `${dirname(chunkName)}/${basename(
+                            chunkName
+                        )}.${cacheGroupKey}`;
+                    },
                 },
-            }),
-        ],
-        devtool: isDevelopment() ? "cheap-module-source-map" : "source-map",
-        module: {
-            rules: [
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules/,
-                    use: [
-                        {
-                            loader: "babel-loader",
-                            options: {
-                                plugins: [
-                                    "@babel/plugin-proposal-class-properties",
-                                ],
-                                presets: [
-                                    "@babel/preset-env",
-                                    [
-                                        "@babel/preset-react",
-                                        {
-                                            pragma: "wp.element.createElement",
-                                            pragmaFrag: "wp.element.Fragment",
-                                            development: isDevelopment(),
-                                        },
-                                    ],
-                                ],
-                            },
-                        },
-                    ],
-                },
-                {
-                    test: /\.(sa|sc|c)ss$/,
-                    use: [
-                        MiniCSSExtractPlugin.loader,
-                        "css-loader",
-                        {
-                            loader: "postcss-loader",
-                            options: {
-                                postcssOptions: {
-                                    plugins: [autoprefixer()],
-                                },
-                            },
-                        },
-                        "sass-loader",
-                    ],
-                },
-            ],
+                default: false,
+            },
         },
-        externals: {
-            "@wordpress/api-fetch": ["wp", "apiFetch"],
-            "@wordpress/data": ["wp", "data"],
-            "@wordpress/dom-ready": ["wp", "domReady"],
-            "@wordpress/hooks": ["wp", "hooks"],
-            "@wordpress/keycodes": ["wp", "keycodes"],
-            "@wordpress/blocks": ["wp", "blocks"],
-            "@wordpress/i18n": ["wp", "i18n"],
-            "@wordpress/editor": ["wp", "editor"],
-            "@wordpress/components": ["wp", "components"],
-            "@wordpress/element": ["wp", "element"],
-            "@wordpress/blob": ["wp", "blob"],
-            "@wordpress/html-entities": ["wp", "htmlEntities"],
-            "@wordpress/compose": ["wp", "compose"],
-            "@wordpress/plugins": ["wp", "plugins"],
-            "@wordpress/edit-post": ["wp", "editPost"],
-            "@wordpress/block-editor": ["wp", "blockEditor"],
-            "@wordpress/server-side-render": ["wp", "serverSideRender"],
-        },
-    };
-    return config;
+    },
+    plugins: [
+        ...defaultConfig.plugins,
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+        }),
+    ],
 };
