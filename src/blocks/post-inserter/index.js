@@ -31,7 +31,7 @@ import { Fragment, useEffect, useMemo, useState } from "@wordpress/element";
 import { Icon, check, pages } from "@wordpress/icons";
 
 /**
- * Internal dependencies
+ * Plugin dependencies
  */
 import "./style.scss";
 import "./deduplication";
