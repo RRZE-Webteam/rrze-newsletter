@@ -1,0 +1,57 @@
+{
+    "name": "rrze-newsletter/rss",
+    "category": "widgets",
+    "supports": [
+        "align"
+    ],
+    "attributes": {
+        "feedURL": {
+            "type": "string",
+            "default": ""
+        },
+        "sinceLastSend": {
+            "type": "boolean",
+            "default": false
+        },
+        "itemsToShow": {
+            "type": "number",
+            "default": 5
+        },
+        "displayDate": {
+            "type": "boolean",
+            "default": false
+        },
+        "displayContent": {
+            "type": "boolean",
+            "default": false
+        },
+        "excerptLimit": {
+            "type": "boolean",
+            "default": false
+        },
+        "excerptLength": {
+            "type": "number",
+            "default": 25
+        },
+        "displayReadMore": {
+            "type": "boolean",
+            "default": false
+        },
+        "textFontSize": {
+            "type": "number",
+            "default": 16
+        },
+        "headingFontSize": {
+            "type": "number",
+            "default": 25
+        },
+        "textColor": {
+            "type": "string",
+            "default": "#000"
+        },
+        "headingColor": {
+            "type": "string",
+            "default": "#000"
+        }
+    }
+}
