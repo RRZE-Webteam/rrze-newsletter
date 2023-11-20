@@ -15,7 +15,7 @@ import { useEffect, useRef } from "@wordpress/element";
 import SelectControlWithOptGroup from "../../components/select-control-with-optgroup/";
 
 /**
- * Internal dependencies
+ * Plugin dependencies
  */
 import "./style.scss";
 
