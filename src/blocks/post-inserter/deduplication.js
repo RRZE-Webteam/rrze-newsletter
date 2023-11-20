@@ -18,7 +18,7 @@ import {
 import { registerStore } from "@wordpress/data";
 
 /**
- * Internal dependencies
+ * Plugin dependencies
  */
 import { POST_INSERTER_BLOCK_NAME, POST_INSERTER_STORE_NAME } from "./consts";
 
