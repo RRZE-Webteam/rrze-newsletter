@@ -2,16 +2,11 @@
     "name": "rrze-newsletter",
     "version": "2.3.7",
     "description": "Plugin for creating and sending HTML Newsletters.",
-    "scripts": {
-        "start": "webpack --mode=development --watch",
-        "build": "webpack --mode=production",
-        "clean": "rm -rf dist/"
-    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/RRZE-Webteam/rrze-newsletter.git"
     },
-    "license": "GPL-3.0-or-later",
+    "license": "GPL-2.0-or-later",
     "bugs": {
         "url": "https://github.com/RRZE-Webteam/rrze-newsletter/issues"
     },
@@ -20,55 +15,24 @@
         "node": ">=20.0.0",
         "npm": ">=9.6.4"
     },
-    "dependencies": {
-        "@wordpress/api-fetch": "*",
-        "@wordpress/blob": "*",
-        "@wordpress/block-editor": "*",
-        "@wordpress/blocks": "*",
-        "@wordpress/components": "*",
-        "@wordpress/compose": "*",
-        "@wordpress/data": "*",
-        "@wordpress/dom-ready": "*",
-        "@wordpress/edit-post": "*",
-        "@wordpress/element": "*",
-        "@wordpress/hooks": "*",
-        "@wordpress/html-entities": "*",
-        "@wordpress/i18n": "*",
-        "@wordpress/keycodes": "*",
-        "@wordpress/plugins": "*",
-        "@wordpress/server-side-render": "*",
-        "mjml-browser": "*",
-        "lodash": "*",
-        "react": "*",
-        "react-dom": "*"
-    },
     "devDependencies": {
-        "@babel/core": "*",
-        "@babel/plugin-proposal-class-properties": "*",
-        "@babel/plugin-syntax-jsx": "*",
-        "@babel/preset-env": "*",
-        "@babel/preset-react": "*",
-        "@shavenzov/po2json": "*",
-        "@wordpress/base-styles": "*",
-        "@wordpress/browserslist-config": "*",
-        "@wordpress/editor": "*",
-        "autoprefixer": "*",
-        "babel-loader": "*",
-        "classnames": "*",
-        "clean-webpack-plugin": "*",
-        "css-loader": "*",
-        "css-minimizer-webpack-plugin": "*",
-        "lodash": "*",
-        "mini-css-extract-plugin": "*",
-        "postcss-loader": "*",
-        "sass": "*",
-        "sass-loader": "*",
-        "style-loader": "*",
-        "terser-webpack-plugin": "*",
-        "webpack": "*",
-        "webpack-cli": "*"
+		"@wordpress/scripts": "latest",
+        "@wordpress/icons": "latest",
+		"ts-loader": "latest",
+		"typescript": "latest",
+        "mjml-browser": "latest",
+        "classnames": "latest"
     },
     "browserslist": [
         "extends @wordpress/browserslist-config"
-    ]
+    ],
+	"scripts": {
+		"start": "wp-scripts start",
+		"build": "wp-scripts build",
+		"format": "wp-scripts format src",
+		"lint:js": "wp-scripts lint-js src",
+		"check-engines": "wp-scripts check-engines",
+		"check-licenses": "wp-scripts check-licenses --prod --gpl2",
+		"packages-update": "wp-scripts packages-update"
+	}    
 }
