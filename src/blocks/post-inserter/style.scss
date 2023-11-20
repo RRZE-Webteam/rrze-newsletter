@@ -1,0 +1,94 @@
+@use "~@wordpress/base-styles/colors" as wp-colors;
+
+:root {
+    --rrze-newsletter-post-inserter-width: 574px;
+}
+
+.rrze-newsletter-posts-inserter {
+    border: 1px solid wp-colors.$gray-900;
+    border-radius: 2px;
+    padding: 0;
+
+    &__header {
+        align-items: center;
+        background: white;
+        border-bottom: 1px solid wp-colors.$gray-900;
+        display: flex;
+        padding: 1em;
+        position: relative;
+        z-index: 1;
+
+        span {
+            font-size: 18pt;
+            margin-left: 1ch;
+        }
+    }
+
+    &__footer {
+        background: white;
+        border-top: 1px solid wp-colors.$gray-900;
+        padding: 1em;
+    }
+
+    &--loading {
+        .rrze-newsletter-posts-inserter__preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    &__preview {
+        min-height: 6rem;
+
+        &:empty {
+            border: 0;
+            min-height: 0;
+        }
+
+        .block-editor-block-preview {
+            &__container {
+                overflow-y: scroll;
+            }
+
+            &__content {
+                position: relative;
+
+                .editor-styles-wrapper.wp-embed-responsive {
+                    background: transparent;
+                }
+            }
+        }
+
+        &.image-left,
+        &.image-right {
+            .block-editor-block-preview__content {
+                @media only screen and (min-width: 624px) {
+                    margin-left: calc(var(--rrze-newsletter-post-inserter-width) / -2);
+                    padding: 14px;
+                    transform: scale(1) !important;
+                    transform-origin: 0 50% 0;
+                }
+            }
+        }
+    }
+}
+
+// FormTokenField
+
+.rrze-newsletter-newsletters-query-controls {
+    .components-form-token-field__help {
+        display: none;
+    }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    &.block-editor-rich-text__editable a {
+        color: inherit;
+    }
+}
