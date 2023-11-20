@@ -15,18 +15,12 @@ import { __ } from "@wordpress/i18n";
  * Plugin dependencies
  */
 import "./style.scss";
-import registerPostInserterBlock from "./blocks/post-inserter";
-import registerICSBlock from "./blocks/ics";
-import registerRSSBlock from "./blocks/rss";
 import { addBlocksValidationFilter } from "./blocks-validation/blocks-filters";
 import { NestedColumnsDetection } from "./blocks-validation/nesting-detection";
 import "./api";
 import "../newsletter-editor";
 
 addBlocksValidationFilter();
-registerPostInserterBlock();
-registerICSBlock();
-registerRSSBlock();
 
 /* Unregister core block styles that are unsupported in emails */
 domReady(() => {
