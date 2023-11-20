@@ -14,7 +14,7 @@ import { createBlock, getBlockContent } from '@wordpress/blocks';
 import { dateI18n, getSettings } from '@wordpress/date';
 
 /**
- * Internal dependencies
+ * Plugin dependencies
  */
 import { POST_INSERTER_BLOCK_NAME } from './consts';
 
