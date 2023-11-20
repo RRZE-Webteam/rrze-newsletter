@@ -672,6 +672,10 @@ class ICS
         global $wp_locale;
         $date = null;
 
+        $dtStr = !empty($dtStr) ? $dtStr : '';
+        $tz = !empty($tz) ? $tz : '';
+        $offset = !empty($offset) ? $offset : '';
+
         // Safely catch Unix timestamps
         if (strlen($dtStr) >= 10 && is_numeric($dtStr)) {
             $dtStr = '@' . $dtStr;
