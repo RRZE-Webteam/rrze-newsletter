@@ -8,12 +8,14 @@ import { __ } from "@wordpress/i18n";
  * Plugin dependencies
  */
 import "./style.scss";
+import blockDefinition from "./block.json";
 import { RSS_BLOCK_NAME } from "./consts";
 import Icon from "./icon";
 import RSSEdit from "./edit";
 
 export default () => {
     registerBlockType(RSS_BLOCK_NAME, {
+        ...blockDefinition,
         title: __("RSS", "rrze-newsletter"),
         category: "widgets",
         icon: Icon,
@@ -23,55 +25,5 @@ export default () => {
         ),
         keywords: ["atom", "feed"],
         edit: RSSEdit,
-        attributes: {
-            feedURL: {
-                type: "string",
-                default: ""
-            },
-            sinceLastSend: {
-                type: "boolean",
-                default: false
-            },
-            itemsToShow: {
-                type: "number",
-                default: 5
-            },
-            displayDate: {
-                type: "boolean",
-                default: false
-            },
-            displayContent: {
-                type: "boolean",
-                default: false
-            },
-            excerptLimit: {
-                type: "boolean",
-                default: false
-            },
-            excerptLength: {
-                type: "number",
-                default: 25
-            },
-            displayReadMore: {
-                type: "boolean",
-                default: false
-            },
-            textFontSize: {
-                type: "number",
-                default: 16
-            },
-            headingFontSize: {
-                type: "number",
-                default: 25
-            },
-            textColor: {
-                type: "string",
-                default: "#000"
-            },
-            headingColor: {
-                type: "string",
-                default: "#000"
-            }
-        }
     });
 };
