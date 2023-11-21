@@ -68,7 +68,7 @@ const PostsPreview = ({ isReady, blocks, className, viewportWidth }, ref) => {
 
     return (
         <div
-            className={classnames("rrze-posts-inserter__preview", className)}
+            className={classnames("rrze-newsletter-post-inserter__preview", className)}
             ref={useMergeRefs([
                 ref,
                 useIframeBorderFix,
