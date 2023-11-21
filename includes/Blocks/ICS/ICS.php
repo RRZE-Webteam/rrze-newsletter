@@ -11,76 +11,14 @@ use function RRZE\Newsletter\plugin;
 class ICS
 {
     /**
-     * attributes
-     * Default block attributes.
-     *
-     * @return array
-     */
-    protected static function attributes()
-    {
-        return [
-            'postId' => [
-                'type' => 'integer',
-                'default' => 0,
-            ],
-            'feedURL' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'itemsToShow' => [
-                'type' => 'number',
-                'default' => 5,
-            ],
-            'displayDescription' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'displayLocation' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'displayOrganizer' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'descriptionLimit' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'descriptionLength' => [
-                'type' => 'number',
-                'default' => 25,
-            ],
-            'textFontSize' => [
-                'type' => 'number',
-                'default' => 16
-            ],
-            'headingFontSize' => [
-                'type' => 'number',
-                'default' => 25
-            ],
-            'textColor' => [
-                'type' => 'string',
-                'default' => '#000'
-            ],
-            'headingColor' => [
-                'type' => 'string',
-                'default' => '#000'
-            ]
-        ];
-    }
-
-    /**
      * register
      * Registers the block on server.
      */
     public static function register()
     {
         register_block_type(
-            'rrze-newsletter/ics',
+            plugin()->getPath('build/blocks/ics') . 'block.json',
             [
-                'api_version' => 2,
-                'attributes' => self::attributes(),
                 'render_callback' => [__CLASS__, 'renderHTML'],
             ]
         );
@@ -95,8 +33,6 @@ class ICS
      */
     public static function renderHTML(array $atts): string
     {
-        $atts = self::parseAtts($atts);
-
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (is_wp_error($feedItems)) {
@@ -124,8 +60,6 @@ class ICS
      */
     public static function renderMJML(array $atts): string
     {
-        $atts = self::parseAtts($atts);
-
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (!is_wp_error($feedItems) && $feedItems) {
@@ -327,27 +261,6 @@ class ICS
 
         $listItems = $listItems ?: '<p>' . __('There are no events available.', 'rrze-newsletter') . '</p>';
         return $mjml ? $listItems : sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
-    }
-
-    /**
-     * parseAtts
-     * Parse block attributes.
-     *
-     * @param array $atts
-     * @return array
-     */
-    protected static function parseAtts(array $atts): array
-    {
-        $default = [];
-        $attributes = self::attributes();
-        foreach ($attributes as $key => $value) {
-            $default[$key] = $value['default'];
-        }
-
-        $atts = wp_parse_args($atts, $default);
-        $atts = array_intersect_key($atts, $default);
-
-        return $atts;
     }
 
     /**
