@@ -293,59 +293,57 @@ const PostInserterBlock = ({
                         <Toolbar controls={blockControlsImages} />
                         {(attributes.featuredImageAlignment === "left" ||
                             attributes.featuredImageAlignment === "right") && (
-                            <Toolbar>
-                                <ToolbarDropdownMenu
-                                    text={__("Image Size", "rrze-newsletter")}
-                                    icon={null}
-                                >
-                                    {({ onClose }) => (
-                                        <MenuGroup>
-                                            {imageSizeOptions.map((entry) => {
-                                                return (
-                                                    <MenuItem
-                                                        icon={
-                                                            (attributes.featuredImageSize ===
-                                                                entry.value ||
-                                                                (!attributes.featuredImageSize &&
-                                                                    entry.value ===
-                                                                        "large")) &&
-                                                            check
-                                                        }
-                                                        isSelected={
-                                                            attributes.featuredImageSize ===
-                                                            entry.value
-                                                        }
-                                                        key={entry.value}
-                                                        onClick={() => {
-                                                            setAttributes({
-                                                                featuredImageSize:
-                                                                    entry.value,
-                                                            });
-                                                        }}
-                                                        onClose={onClose}
-                                                        role="menuitemradio"
-                                                    >
-                                                        {entry.name}
-                                                    </MenuItem>
-                                                );
-                                            })}
-                                        </MenuGroup>
-                                    )}
-                                </ToolbarDropdownMenu>
-                            </Toolbar>
+                            <ToolbarDropdownMenu
+                                text={__("Image Size", "rrze-newsletter")}
+                                icon={null}
+                            >
+                                {({ onClose }) => (
+                                    <MenuGroup>
+                                        {imageSizeOptions.map((entry) => {
+                                            return (
+                                                <MenuItem
+                                                    icon={
+                                                        (attributes.featuredImageSize ===
+                                                            entry.value ||
+                                                            (!attributes.featuredImageSize &&
+                                                                entry.value ===
+                                                                    "large")) &&
+                                                        check
+                                                    }
+                                                    isSelected={
+                                                        attributes.featuredImageSize ===
+                                                        entry.value
+                                                    }
+                                                    key={entry.value}
+                                                    onClick={() => {
+                                                        setAttributes({
+                                                            featuredImageSize:
+                                                                entry.value,
+                                                        });
+                                                    }}
+                                                    onClose={onClose}
+                                                    role="menuitemradio"
+                                                >
+                                                    {entry.name}
+                                                </MenuItem>
+                                            );
+                                        })}
+                                    </MenuGroup>
+                                )}
+                            </ToolbarDropdownMenu>
                         )}
                     </>
                 )}
             </BlockControls>
 
             <div
-                className={`rrze-posts-inserter ${
-                    !isReady ? "rrze-posts-inserter--loading" : ""
+                className={`rrze-newsletter-post-inserter ${
+                    !isReady ? "rrze-newsletter-post-inserter--loading" : ""
                 }`}
             >
-                <div className="rrze-posts-inserter__header">
+                <div className="rrze-newsletter-post-inserter__header">
                     <Icon icon={pages} />
-                    <span>{__("Posts Inserter", "rrze-newsletter")}</span>
+                    <span>{__("Post Inserter", "rrze-newsletter")}</span>
                 </div>
                 <PostsPreview
                     isReady={isReady}
@@ -362,7 +360,7 @@ const PostInserterBlock = ({
                             : null
                     }
                 />
-                <div className="rrze-posts-inserter__footer">
+                <div className="rrze-newsletter-post-inserter__footer">
                     <Button
                         isPrimary
                         onClick={() =>
