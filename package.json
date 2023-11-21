@@ -16,23 +16,23 @@
         "npm": ">=10.2.3"
     },
     "devDependencies": {
-		"@wordpress/scripts": "latest",
-        "@wordpress/icons": "latest",
-		"ts-loader": "latest",
-		"typescript": "latest",
+        "@wordpress/icons": "^9.37.0",
+        "@wordpress/scripts": "^26.17.0",
+        "classnames": "latest",
         "mjml-browser": "latest",
-        "classnames": "latest"
+        "ts-loader": "latest",
+        "typescript": "latest"
     },
     "browserslist": [
         "extends @wordpress/browserslist-config"
     ],
-	"scripts": {
-		"start": "wp-scripts start",
-		"build": "wp-scripts build",
-		"format": "wp-scripts format src",
-		"lint:js": "wp-scripts lint-js src",
-		"check-engines": "wp-scripts check-engines",
-		"check-licenses": "wp-scripts check-licenses --prod --gpl2",
-		"packages-update": "wp-scripts packages-update"
-	}    
+    "scripts": {
+        "start": "wp-scripts start",
+        "build": "wp-scripts build",
+        "format": "wp-scripts format src",
+        "lint:js": "wp-scripts lint-js src",
+        "check-engines": "wp-scripts check-engines",
+        "check-licenses": "wp-scripts check-licenses --prod --gpl2",
+        "packages-update": "wp-scripts packages-update"
+    }
 }
