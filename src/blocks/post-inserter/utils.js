@@ -303,7 +303,7 @@ export const convertBlockSerializationFormat = block => ( {
 	innerBlocks: block.innerBlocks.map( convertBlockSerializationFormat ),
 } );
 
-// In some cases, the Posts Inserter block should not handle deduplication.
+// In some cases, the Post Inserter block should not handle deduplication.
 // Previews might be displayed next to each other or next to a post, which results in multiple block lists.
 // The deduplication store relies on the assumption that a post has a single blocks list, which
 // is not true when there are block previews used.
