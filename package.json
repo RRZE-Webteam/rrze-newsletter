@@ -12,8 +12,8 @@
     },
     "homepage": "https://github.com/RRZE-Webteam/rrze-newsletter#readme",
     "engines": {
-        "node": ">=20.0.0",
-        "npm": ">=9.6.4"
+        "node": ">=21.2.0",
+        "npm": ">=10.2.3"
     },
     "devDependencies": {
 		"@wordpress/scripts": "latest",
