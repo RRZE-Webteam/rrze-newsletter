@@ -1,6 +1,6 @@
 {
     "name": "rrze/rrze-newsletter",
-    "version": "2.3.7",
+    "version": "2.4.0",
     "description": "Plugin for creating and sending HTML Newsletters.",
     "type": "wordpress-plugin",
     "license": "GPL-3.0-or-later",    
