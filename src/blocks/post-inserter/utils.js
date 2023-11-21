@@ -22,7 +22,10 @@ const assignFontSize = ( fontSize, attributes ) => {
 	if ( typeof fontSize === 'number' ) {
 		fontSize = fontSize + 'px';
 	}
-	attributes.style = { ...( attributes.style || {} ), typography: { fontSize } };
+	attributes.style = {
+		...( attributes.style || {} ),
+		typography: { fontSize },
+	};
 	return attributes;
 };
 
@@ -47,7 +50,10 @@ const getDateBlockTemplate = ( post, { textFontSize, textColor } ) => {
 	];
 };
 
-const getSubtitleBlockTemplate = ( post, { subHeadingFontSize, subHeadingColor } ) => {
+const getSubtitleBlockTemplate = (
+	post,
+	{ subHeadingFontSize, subHeadingColor }
+) => {
 	const subtitle = post?.meta?.rrze_post_subtitle || '';
 	const attributes = {
 		level: 4,
@@ -57,7 +63,10 @@ const getSubtitleBlockTemplate = ( post, { subHeadingFontSize, subHeadingColor }
 	return [ 'core/heading', assignFontSize( subHeadingFontSize, attributes ) ];
 };
 
-const getExcerptBlockTemplate = ( post, { excerptLength, textFontSize, textColor } ) => {
+const getExcerptBlockTemplate = (
+	post,
+	{ excerptLength, textFontSize, textColor }
+) => {
 	let excerpt = post.excerpt.rendered;
 	const excerptElement = document.createElement( 'div' );
 	excerptElement.innerHTML = excerpt;
@@ -69,13 +78,22 @@ const getExcerptBlockTemplate = ( post, { excerptLength, textFontSize, textColor
 		? `${ excerpt.split( ' ', excerptLength ).join( ' ' ) } […]`
 		: excerpt;
 
-	const attributes = { content: postExcerpt.trim(), style: { color: { text: textColor } } };
+	const attributes = {
+		content: postExcerpt.trim(),
+		style: { color: { text: textColor } },
+	};
 	return [ 'core/paragraph', assignFontSize( textFontSize, attributes ) ];
 };
 
-const getContinueReadingLinkBlockTemplate = ( post, { textFontSize, textColor } ) => {
+const getContinueReadingLinkBlockTemplate = (
+	post,
+	{ textFontSize, textColor }
+) => {
 	const attributes = {
-		content: `<a href="${ post.link }">${ __( 'Continue reading…', 'rrze' ) }</a>`,
+		content: `<a href="${ post.link }">${ __(
+			'Continue reading…',
+			'rrze'
+		) }</a>`,
 		style: { color: { text: textColor } },
 	};
 	return [ 'core/paragraph', assignFontSize( textFontSize, attributes ) ];
@@ -90,14 +108,22 @@ const getAuthorBlockTemplate = ( post, { textFontSize, textColor } ) => {
 
 			if ( author_link && display_name ) {
 				const comma =
-					rrze_author_info.length > 2 && index < rrze_author_info.length - 1
-						? _x( ',', 'comma separator for multiple authors', 'rrze-newsletter' )
+					rrze_author_info.length > 2 &&
+					index < rrze_author_info.length - 1
+						? _x(
+								',',
+								'comma separator for multiple authors',
+								'rrze-newsletter'
+						  )
 						: '';
 				const and =
-					rrze_author_info.length > 1 && index === rrze_author_info.length - 1
+					rrze_author_info.length > 1 &&
+					index === rrze_author_info.length - 1
 						? __( 'and ', 'rrze-newsletter' )
 						: '';
-				acc.push( `${ and }<a href="${ author_link }">${ display_name }</a>${ comma }` );
+				acc.push(
+					`${ and }<a href="${ author_link }">${ display_name }</a>${ comma }`
+				);
 			}
 
 			return acc;
@@ -106,7 +132,8 @@ const getAuthorBlockTemplate = ( post, { textFontSize, textColor } ) => {
 		return [
 			'core/heading',
 			assignFontSize( textFontSize, {
-				content: __( 'By ', 'rrze-newsletter' ) + authorLinks.join( ' ' ),
+				content:
+					__( 'By ', 'rrze-newsletter' ) + authorLinks.join( ' ' ),
 				fontSize: 'normal',
 				level: 6,
 				style: { color: { text: textColor } },
@@ -129,15 +156,20 @@ const getSponsorFlagBlockTemplate = ( content, { textFontSize } ) => {
 	];
 };
 
-const getSponsorAttributionTemplate = ( sponsors, { textFontSize, textColor } ) => {
-	const sponsorsToShow = sponsors.filter( sponsor => 'native' === sponsor.sponsor_scope );
+const getSponsorAttributionTemplate = (
+	sponsors,
+	{ textFontSize, textColor }
+) => {
+	const sponsorsToShow = sponsors.filter(
+		( sponsor ) => 'native' === sponsor.sponsor_scope
+	);
 	if ( ! sponsorsToShow.length ) {
 		return [];
 	}
 
 	const sponsorNames = [];
 
-	sponsorsToShow.forEach( sponsor => {
+	sponsorsToShow.forEach( ( sponsor ) => {
 		const sponsorName = sponsor.sponsor_url
 			? `<a href="${ sponsor.sponsor_url }">${ sponsor.sponsor_name }</a>`
 			: sponsor.sponsor_name;
@@ -147,7 +179,10 @@ const getSponsorAttributionTemplate = ( sponsors, { textFontSize, textColor } ) 
 	return [
 		'core/heading',
 		assignFontSize( textFontSize, {
-			content: sponsorsToShow[ 0 ].sponsor_byline + ' ' + sponsorNames.join( ', ' ),
+			content:
+				sponsorsToShow[ 0 ].sponsor_byline +
+				' ' +
+				sponsorNames.join( ', ' ),
 			fontSize: 'normal',
 			level: 6,
 			style: { color: { text: textColor } },
@@ -159,7 +194,8 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 	const postContentBlocks = [];
 	let displayAuthor = attributes.displayAuthor;
 
-	const hasSponsors = post.rrze_sponsors_info && 0 < post.rrze_sponsors_info.length;
+	const hasSponsors =
+		post.rrze_sponsors_info && 0 < post.rrze_sponsors_info.length;
 	if ( hasSponsors ) {
 		// If the post is set to show sponsors with native sponsor styling, OR at least one sponsor is a native sponsor, show the "sponsored" flag.
 		const showSponsorFlag =
@@ -173,7 +209,9 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 
 		if ( showSponsorFlag ) {
 			const sponsorFlag = post.rrze_sponsors_info[ 0 ].sponsor_flag;
-			postContentBlocks.push( getSponsorFlagBlockTemplate( sponsorFlag, attributes ) );
+			postContentBlocks.push(
+				getSponsorFlagBlockTemplate( sponsorFlag, attributes )
+			);
 		}
 	}
 
@@ -183,7 +221,10 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 		postContentBlocks.push( getSubtitleBlockTemplate( post, attributes ) );
 	}
 
-	if ( hasSponsors && 'underwritten' !== post.meta.rrze_sponsor_sponsorship_scope ) {
+	if (
+		hasSponsors &&
+		'underwritten' !== post.meta.rrze_sponsor_sponsorship_scope
+	) {
 		// If the post is set to show only sponsor, OR set to inherit and all sponsors are set to show only sponsor, hide the byline.
 		if (
 			'sponsor' === post.meta.rrze_sponsor_native_byline_display ||
@@ -222,10 +263,13 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 		postContentBlocks.push( getExcerptBlockTemplate( post, attributes ) );
 	}
 	if ( attributes.displayContinueReading ) {
-		postContentBlocks.push( getContinueReadingLinkBlockTemplate( post, attributes ) );
+		postContentBlocks.push(
+			getContinueReadingLinkBlockTemplate( post, attributes )
+		);
 	}
 
-	const hasFeaturedImage = post.featuredImageLargeURL || post.featuredImageMediumURL;
+	const hasFeaturedImage =
+		post.featuredImageLargeURL || post.featuredImageMediumURL;
 
 	if ( attributes.displayFeaturedImage && hasFeaturedImage ) {
 		const featuredImageId = post.featured_media;
@@ -233,7 +277,9 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 			'core/image',
 			{
 				id: featuredImageId,
-				url: alignCenter ? post.featuredImageLargeURL : post.featuredImageMediumURL,
+				url: alignCenter
+					? post.featuredImageLargeURL
+					: post.featuredImageMediumURL,
 				href: post.link,
 				...( alignCenter ? { align: 'center' } : {} ),
 			},
@@ -268,9 +314,21 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 
 		switch ( attributes.featuredImageAlignment ) {
 			case 'left':
-				return [ [ 'core/columns', {}, [ imageColumnBlock, postContentColumnBlock ] ] ];
+				return [
+					[
+						'core/columns',
+						{},
+						[ imageColumnBlock, postContentColumnBlock ],
+					],
+				];
 			case 'right':
-				return [ [ 'core/columns', {}, [ postContentColumnBlock, imageColumnBlock ] ] ];
+				return [
+					[
+						'core/columns',
+						{},
+						[ postContentColumnBlock, imageColumnBlock ],
+					],
+				];
 			case 'top':
 				return [ getImageBlock( true ), ...postContentBlocks ];
 		}
@@ -278,16 +336,29 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 	return postContentBlocks;
 };
 
-const createBlockFromTemplate = ( [ name, blockAttributes, innerBlocks = [] ] ) =>
-	createBlock( name, blockAttributes, innerBlocks.map( createBlockFromTemplate ) );
+const createBlockFromTemplate = ( [
+	name,
+	blockAttributes,
+	innerBlocks = [],
+] ) =>
+	createBlock(
+		name,
+		blockAttributes,
+		innerBlocks.map( createBlockFromTemplate )
+	);
 
 const createBlockTemplatesForPosts = ( posts, attributes ) =>
 	posts.reduce( ( blocks, post ) => {
-		return [ ...blocks, ...createBlockTemplatesForSinglePost( post, attributes ) ];
+		return [
+			...blocks,
+			...createBlockTemplatesForSinglePost( post, attributes ),
+		];
 	}, [] );
 
 export const getTemplateBlocks = ( postList, attributes ) =>
-	createBlockTemplatesForPosts( postList, attributes ).map( createBlockFromTemplate );
+	createBlockTemplatesForPosts( postList, attributes ).map(
+		createBlockFromTemplate
+	);
 
 /**
  * Converts a block object to a shape processable by the backend,
@@ -296,7 +367,7 @@ export const getTemplateBlocks = ( postList, attributes ) =>
  * @param {Object} block block, as understood by the block editor
  * @return {Object} block with innerHTML, processable by the backend
  */
-export const convertBlockSerializationFormat = block => ( {
+export const convertBlockSerializationFormat = ( block ) => ( {
 	attrs: omit( block.attributes, 'content' ),
 	blockName: block.name,
 	innerHTML: getBlockContent( block ),
@@ -307,13 +378,15 @@ export const convertBlockSerializationFormat = block => ( {
 // Previews might be displayed next to each other or next to a post, which results in multiple block lists.
 // The deduplication store relies on the assumption that a post has a single blocks list, which
 // is not true when there are block previews used.
-export const setPreventDeduplicationForPostInserter = blocks =>
-	blocks.map( block => {
+export const setPreventDeduplicationForPostInserter = ( blocks ) =>
+	blocks.map( ( block ) => {
 		if ( block.name === POST_INSERTER_BLOCK_NAME ) {
 			block.attributes.preventDeduplication = true;
 		}
 		if ( block.innerBlocks ) {
-			block.innerBlocks = setPreventDeduplicationForPostInserter( block.innerBlocks );
+			block.innerBlocks = setPreventDeduplicationForPostInserter(
+				block.innerBlocks
+			);
 		}
 		return block;
 	} );
