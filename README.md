@@ -44,36 +44,16 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
-**Empfohlene Node-Version:** `node@19`
+**PHP-Version:** `~8.1.0`
 
-**Installation der Node-Module**
+**Composer-Version:** `~2.6.5`
 
-```shell
-npm install
-```
-
-**Update der Node-Module**
-
-```shell
-npm update
-```
-
-**Dev-Modus**
-
-```shell
-npm start
-```
-
-**Build-Modus**
-
-```shell
-npm run build
-```
+**Node-Version:** `~21.2.0`
 
 **Übersetzung: Erstellen der .pot-Datei (WP-CLI)**
 
 ```shell
-wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,vendor,dist
+wp i18n make-pot ./ languages/rrze-newsletter.pot --domain=rrze-newsletter --exclude=node_modules,vendor,build
 ```
 
 Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung der jeweiligen Sprachen wird empfohlen.
@@ -81,6 +61,6 @@ Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung d
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
 ```shell
-npx po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
-npx po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
+npx https://github.com/mikeedwards/po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
+npx https://github.com/mikeedwards/po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
 ```
