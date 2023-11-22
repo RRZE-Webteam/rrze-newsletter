@@ -16,8 +16,8 @@
         "npm": ">=10.2.3"
     },
     "devDependencies": {
-        "@wordpress/icons": "^9.37.0",
-        "@wordpress/scripts": "^26.17.0",
+        "@wordpress/icons": "latest",
+        "@wordpress/scripts": "latest",
         "classnames": "latest",
         "mjml-browser": "latest",
         "ts-loader": "latest",
