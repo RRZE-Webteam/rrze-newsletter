@@ -1,0 +1,26 @@
+.rrze-newsletter-rss li a > div {
+    display: inline;
+}
+
+.rrze-newsletter-rss__placeholder-form {
+    display: flex;
+    align-items: stretch;
+
+    > * {
+        margin-bottom: 8px;
+    }
+}
+
+.rrze-newsletter-rss__placeholder-input {
+    display: flex;
+    align-items: stretch;
+    flex-grow: 1;
+
+    .components-base-control__field {
+        margin: 0;
+        display: flex;
+        align-items: stretch;
+        flex-grow: 1;
+        margin-right: 8px;
+    }
+}
