@@ -36,12 +36,12 @@ apiFetch.use( async ( options, next ) => {
 		return next( options );
 	}
 
-	const mjmlHandlingPostTypes =
+	const mjml_handling_post_types =
 		window.rrze_newsletter_data.mjml_handling_post_types;
 
 	// Only run if the request is for a post type that is handled by MJML.
 	if (
-		! mjmlHandlingPostTypes.some(
+		! mjml_handling_post_types.some(
 			( postType ) => path.indexOf( postType ) !== -1
 		)
 	) {
@@ -52,7 +52,7 @@ apiFetch.use( async ( options, next ) => {
 	const postType = editorSelector.getCurrentPostType();
 
 	// Only run if the current post type is allowed to be handled by MJML.
-	if ( ! includes( mjmlHandlingPostTypes, postType ) ) {
+	if ( ! includes( mjml_handling_post_types, postType ) ) {
 		return next( options );
 	}
 
