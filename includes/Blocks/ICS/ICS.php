@@ -17,11 +17,34 @@ class ICS
     public static function register()
     {
         register_block_type(
-            plugin()->getPath('build/blocks/ics') . 'block.json',
+            plugin()->getPath('build/editor/blocks/ics') . 'block.json',
             [
                 'render_callback' => [__CLASS__, 'renderHTML'],
             ]
         );
+    }
+
+    /**
+     * parseAtts
+     * Parse block attributes.
+     *
+     * @param array $atts
+     * @return array
+     */
+    protected static function parseAtts(array $atts): array
+    {
+        $defaultAtts = [];
+        $metaDataFile = plugin()->getPath('build/editor/blocks/ics') . 'block.json';
+        if (
+            file_exists($metaDataFile)
+            && !is_null($metaData = wp_json_file_decode($metaDataFile, ['associative' => true]))
+        ) {
+            foreach ($metaData['attributes'] as $key => $value) {
+                $defaultAtts[$key] = $value['default'];
+            }
+        }
+        $atts = wp_parse_args($atts, $defaultAtts);
+        return $atts;
     }
 
     /**
@@ -33,6 +56,7 @@ class ICS
      */
     public static function renderHTML(array $atts): string
     {
+        $atts = self::parseAtts($atts);
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (is_wp_error($feedItems)) {
@@ -60,6 +84,7 @@ class ICS
      */
     public static function renderMJML(array $atts): string
     {
+        $atts = self::parseAtts($atts);
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (!is_wp_error($feedItems) && $feedItems) {
