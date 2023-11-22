@@ -63,11 +63,13 @@ class Notices
 
     public function activationNoticeDismissScripts()
     {
+        $assetFile = include plugin()->getPath('build') . 'admin.asset.php';
+
         wp_enqueue_script(
             'rrze_newsletter_activation_notice_dismiss',
-            plugins_url('dist/admin.js', plugin()->getBasename()),
-            ['jquery'],
-            plugin()->getVersion(),
+            plugins_url('build/admin.js', plugin()->getBasename()),
+            $assetFile['dependencies'] ?? [],
+            $assetFile['version'] ?? plugin()->getVersion(),
             false
         );
 

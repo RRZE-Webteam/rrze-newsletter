@@ -5,73 +5,10 @@ namespace RRZE\Newsletter\Blocks\RSS;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
+use function RRZE\Newsletter\plugin;
 
 class RSS
 {
-    /**
-     * attributes
-     * Default block attributes.
-     *
-     * @return array
-     */
-    protected static function attributes()
-    {
-        return [
-            'postId' => [
-                'type' => 'number',
-                'default' => 0,
-            ],
-            'feedURL' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'itemsToShow' => [
-                'type' => 'number',
-                'default' => 5,
-            ],
-            'sinceLastSend' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'displayDate' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'displayContent' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'excerptLimit' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'excerptLength' => [
-                'type' => 'number',
-                'default' => 25,
-            ],
-            'displayReadMore' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'textFontSize' => [
-                'type' => 'number',
-                'default' => 16
-            ],
-            'headingFontSize' => [
-                'type' => 'number',
-                'default' => 25
-            ],
-            'textColor' => [
-                'type' => 'string',
-                'default' => '#000'
-            ],
-            'headingColor' => [
-                'type' => 'string',
-                'default' => '#000'
-            ]
-        ];
-    }
-
     /**
      * register
      * Registers the block on server.
@@ -79,13 +16,34 @@ class RSS
     public static function register()
     {
         register_block_type(
-            'rrze-newsletter/rss',
+            plugin()->getPath('build/editor/blocks/rss') . 'block.json',
             [
-                'api_version' => 2,
-                'attributes' => self::attributes(),
                 'render_callback' => [__CLASS__, 'renderHTML'],
             ]
         );
+    }
+
+    /**
+     * parseAtts
+     * Parse block attributes.
+     *
+     * @param array $atts
+     * @return array
+     */
+    protected static function parseAtts(array $atts): array
+    {
+        $defaultAtts = [];
+        $metaDataFile = plugin()->getPath('build/editor/blocks/rss') . 'block.json';
+        if (
+            file_exists($metaDataFile)
+            && !is_null($metaData = wp_json_file_decode($metaDataFile, ['associative' => true]))
+        ) {
+            foreach ($metaData['attributes'] as $key => $value) {
+                $defaultAtts[$key] = $value['default'];
+            }
+        }
+        $atts = wp_parse_args($atts, $defaultAtts);
+        return $atts;
     }
 
     /**
@@ -98,7 +56,6 @@ class RSS
     public static function renderHTML(array $atts): string
     {
         $feedItems = '';
-
         $atts = self::parseAtts($atts);
 
         global $post;
@@ -141,7 +98,6 @@ class RSS
     public static function renderMJML(array $atts): string
     {
         $feedItems = '';
-
         $atts = self::parseAtts($atts);
 
         $feed = self::fetchFeed($atts['feedURL']);
@@ -254,27 +210,6 @@ class RSS
             return $mjml ? $listItems : sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
         }
         return '';
-    }
-
-    /**
-     * parseAtts
-     * Parse block attributes.
-     *
-     * @param array $atts
-     * @return array
-     */
-    protected static function parseAtts(array $atts): array
-    {
-        $default = [];
-        $attributes = self::attributes();
-        foreach ($attributes as $key => $value) {
-            $default[$key] = $value['default'];
-        }
-
-        $atts = wp_parse_args($atts, $default);
-        $atts = array_intersect_key($atts, $default);
-
-        return $atts;
     }
 
     /**

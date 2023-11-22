@@ -179,25 +179,26 @@ final class Editor
 
     public static function enqueueBlockEditorAssets()
     {
-        if (self::isEditingNewsletter()) {
-            wp_register_style(
-                'rrze-newsletter',
-                plugins_url('dist/editor.css', plugin()->getBasename()),
-                [],
-                filemtime(plugin()->getPath('dist') . 'editor.css')
-            );
-            wp_style_add_data('rrze-newsletter', 'rtl', 'replace');
-            wp_enqueue_style('rrze-newsletter');
-        }
-
         if (!self::isEditingNewsletter()) {
             return;
         }
+
+        $assetFile = include plugin()->getPath('build') . 'editor.asset.php';
+
+        wp_register_style(
+            'rrze-newsletter',
+            plugins_url('build/editor.style.css', plugin()->getBasename()),
+            [],
+            $assetFile['version'] ?? plugin()->getVersion(),
+        );
+        wp_style_add_data('rrze-newsletter', 'rtl', 'replace');
+        wp_enqueue_style('rrze-newsletter');
+
         wp_enqueue_script(
             'rrze-newsletter',
-            plugins_url('dist/editor.js', plugin()->getBasename()),
-            [],
-            filemtime(plugin()->getPath('dist') . 'editor.js'),
+            plugins_url('build/editor.js', plugin()->getBasename()),
+            $assetFile['dependencies'] ?? [],
+            $assetFile['version'] ?? plugin()->getVersion(),
             true
         );
         wp_localize_script(

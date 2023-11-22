@@ -1,4 +1,4 @@
 /**
  * Plugin dependencies
  */
-import "./script.js";
+import './script.js';

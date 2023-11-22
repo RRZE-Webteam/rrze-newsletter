@@ -594,11 +594,12 @@ class Subscription
         add_action(
             'wp_enqueue_scripts',
             function ($hook) use ($data) {
+                $assetFile = include plugin()->getPath('build') . 'subscriptionemail.asset.php';
                 wp_enqueue_script(
                     'rrze-newsletter-subscriptionemail',
-                    plugins_url('dist/subscriptionemail.js', plugin()->getBasename()),
-                    ['jquery'],
-                    plugin()->getVersion(),
+                    plugins_url('build/subscriptionemail.js', plugin()->getBasename()),
+                    $assetFile['dependencies'] ?? [],
+                    $assetFile['version'] ?? plugin()->getVersion(),
                     true
                 );
                 wp_localize_script(
@@ -867,20 +868,22 @@ class Subscription
         return Utils::sanitizeEmail($email);
     }
 
-    public function enqueueScripts($hook)
+    public function enqueueScripts()
     {
+        $assetFile = include plugin()->getPath('build') . 'subscription.asset.php';
+
         wp_enqueue_style(
             'rrze-newsletter-subscription',
-            plugins_url('dist/subscription.css', plugin()->getBasename()),
+            plugins_url('build/subscription.style.css', plugin()->getBasename()),
             ['dashicons'],
-            plugin()->getVersion()
+            $assetFile['version'] ?? plugin()->getVersion(),
         );
 
         wp_enqueue_script(
             'rrze-newsletter-subscription',
-            plugins_url('dist/subscription.js', plugin()->getBasename()),
-            ['jquery'],
-            plugin()->getVersion(),
+            plugins_url('build/subscription.js', plugin()->getBasename()),
+            $assetFile['dependencies'] ?? [],
+            $assetFile['version'] ?? plugin()->getVersion(),
             true
         );
     }
