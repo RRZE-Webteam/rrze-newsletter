@@ -16,11 +16,34 @@ class RSS
     public static function register()
     {
         register_block_type(
-            plugin()->getPath('build/blocks/rss') . 'block.json',
+            plugin()->getPath('build/editor/blocks/rss') . 'block.json',
             [
                 'render_callback' => [__CLASS__, 'renderHTML'],
             ]
         );
+    }
+
+    /**
+     * parseAtts
+     * Parse block attributes.
+     *
+     * @param array $atts
+     * @return array
+     */
+    protected static function parseAtts(array $atts): array
+    {
+        $defaultAtts = [];
+        $metaDataFile = plugin()->getPath('build/editor/blocks/rss') . 'block.json';
+        if (
+            file_exists($metaDataFile)
+            && !is_null($metaData = wp_json_file_decode($metaDataFile, ['associative' => true]))
+        ) {
+            foreach ($metaData['attributes'] as $key => $value) {
+                $defaultAtts[$key] = $value['default'];
+            }
+        }
+        $atts = wp_parse_args($atts, $defaultAtts);
+        return $atts;
     }
 
     /**
@@ -33,6 +56,7 @@ class RSS
     public static function renderHTML(array $atts): string
     {
         $feedItems = '';
+        $atts = self::parseAtts($atts);
 
         global $post;
         if (
@@ -74,6 +98,7 @@ class RSS
     public static function renderMJML(array $atts): string
     {
         $feedItems = '';
+        $atts = self::parseAtts($atts);
 
         $feed = self::fetchFeed($atts['feedURL']);
 
