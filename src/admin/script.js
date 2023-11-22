@@ -1,3 +1,5 @@
+/* globals activationNoticeDismissParams */
+
 jQuery( document ).ready( ( $ ) => {
 	$( document ).on(
 		'click',
@@ -8,7 +10,7 @@ jQuery( document ).ready( ( $ ) => {
 			};
 			const { ajaxurl } =
 				window &&
-				window.rrze_newsletter_activation_notice_dismiss_params;
+				window.activationNoticeDismissParams;
 			$.post( ajaxurl, data, () => null );
 		}
 	);
