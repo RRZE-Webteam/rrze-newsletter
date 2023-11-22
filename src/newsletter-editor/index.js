@@ -1,3 +1,5 @@
+/* globals rrze_newsletter_data */
+
 /**
  * WordPress dependencies
  */
