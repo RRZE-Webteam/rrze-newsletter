@@ -7,7 +7,6 @@ const isProduction = defaultConfig.isProduction;
 
 const admin = resolve(process.cwd(), "src", "admin");
 const editor = resolve(process.cwd(), "src", "editor");
-const blocks = resolve(process.cwd(), "src", "blocks");
 const subscription = resolve(process.cwd(), "src/subscription");
 const subscriptionemail = resolve(process.cwd(), "src/subscriptionemail");
 
@@ -16,7 +15,6 @@ module.exports = {
     entry: {
         admin,
         editor,
-        blocks,
         subscription,
         subscriptionemail,
     },
