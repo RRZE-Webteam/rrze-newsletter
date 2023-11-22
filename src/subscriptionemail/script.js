@@ -1,3 +1,5 @@
+/* globals subscriptionEmail */
+
 /**
  * External dependencies
  */
