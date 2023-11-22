@@ -116,13 +116,13 @@ const ProviderSidebar = ( {
  * A function to render additional info in the pre-send confirmation modal.
  * Can return null if no additional info is to be presented.
  *
- * @param {Object} newsletterData the data returned by getFetchDataConfig handler
+ * @param {Object} rrze_newsletter_data the data returned by getFetchDataConfig handler
  * @return {any} A React component
  */
-const renderPreSendInfo = ( newsletterData = {} ) => (
+const renderPreSendInfo = ( rrze_newsletter_data = {} ) => (
 	<p>
 		{ __( 'Sending newsletter to:', 'rrze-newsletter' ) }{ ' ' }
-		{ newsletterData.listName }
+		{ rrze_newsletter_data.listName }
 	</p>
 );
 
