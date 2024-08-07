@@ -1,27 +1,7 @@
 {
-    "name": "rrze-newsletter",
-    "version": "2.4.0",
-    "description": "Plugin for creating and sending HTML Newsletters.",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/RRZE-Webteam/rrze-newsletter.git"
-    },
-    "license": "GPL-2.0-or-later",
-    "bugs": {
-        "url": "https://github.com/RRZE-Webteam/rrze-newsletter/issues"
-    },
-    "homepage": "https://github.com/RRZE-Webteam/rrze-newsletter#readme",
     "engines": {
-        "node": ">=21.2.0",
-        "npm": ">=10.2.3"
-    },
-    "devDependencies": {
-        "@wordpress/icons": "latest",
-        "@wordpress/scripts": "latest",
-        "classnames": "latest",
-        "mjml-browser": "latest",
-        "ts-loader": "latest",
-        "typescript": "latest"
+        "node": ">=22.4.0",
+        "npm": ">=10.8.1"
     },
     "browserslist": [
         "extends @wordpress/browserslist-config"
@@ -34,5 +14,16 @@
         "check-engines": "wp-scripts check-engines",
         "check-licenses": "wp-scripts check-licenses --prod --gpl2",
         "packages-update": "wp-scripts packages-update"
+    },
+    "dependencies": {
+        "@wordpress/components": "latest",
+        "@wordpress/data": "latest",
+        "@wordpress/edit-post": "latest",
+        "@wordpress/plugins": "latest",
+        "classnames": "latest",
+        "mjml-browser": "latest"
+    },
+    "devDependencies": {
+        "@wordpress/scripts": "^28.3.0"
     }
 }
