@@ -23,6 +23,7 @@ final class Editor
 
     public function __construct()
     {
+        add_action('init', [$this, 'disableFeaturedImageSupport']);
         add_action('after_setup_theme', [$this, 'afterSetupTheme']);
         add_action('the_post', [__CLASS__, 'stripEditorModifications']);
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
@@ -31,54 +32,14 @@ final class Editor
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
     }
 
-    public function afterSetupTheme()
+    public function disableFeaturedImageSupport()
     {
-        if (wp_theme_has_theme_json()) {
-            add_filter('wp_theme_json_data_theme', [$this, 'filterThemeJsonTheme']);
-        }
+        remove_post_type_support(Newsletter::POST_TYPE, 'thumbnail');
     }
 
-    public function filterThemeJsonTheme($themeJson)
+    public function afterSetupTheme()
     {
-        $data = [
-            'version'  => 2,
-            'settings' => [
-                'spacing' => [
-                    'customSpacingSize' => false,
-                ],
-                'typography' => [
-                    'fontSizes' => [
-                        [
-                            'name' => 'Small',
-                            'slug' => 'small',
-                            'size' => '13px'
-                        ],
-                        [
-                            'name' => 'Medium',
-                            'slug' => 'medium',
-                            'size' => '20px'
-                        ],
-                        [
-                            'name' => 'Large',
-                            'slug' => 'large',
-                            'size' => '36px'
-                        ],
-                        [
-                            'name' => 'Extra Large',
-                            'slug' => 'x-large',
-                            'size' => '42px'
-                        ],
-                    ],
-                    'fontStyle' => false,
-                    'fontWeight' => false,
-                    'letterSpacing' => false,
-                    'lineHeight' => false,
-                    'textDecoration' => true,
-                    'dropCap' => false,
-                ]
-            ],
-        ];
-        return $themeJson->update_with($data);
+        add_filter('wp_theme_json_data_theme', [$this, 'filterThemeJsonTheme']);
     }
 
     public static function stripEditorModifications()
@@ -120,13 +81,10 @@ final class Editor
             'core/heading',
             'core/column',
             'core/columns',
-            'core/buttons',
-            'core/button',
             'core/image',
             'core/separator',
             'core/list',
             'core/list-item',
-            'core/quote',
             'core/social-links',
             'core/social-link',
             'rrze-newsletter/post-inserter',
@@ -225,5 +183,76 @@ final class Editor
     public static function isEditingNewsletter()
     {
         return Newsletter::POST_TYPE === get_post_type();
+    }
+
+    public function filterThemeJsonTheme($themeJson)
+    {
+        $data = [
+            'version'  => 2,
+            'settings' => [
+                'color' => [
+                    'custom' => true,
+                    'customDuotone' => false,
+                    'defaultDuotone' => false,
+                    'customGradient' => false,
+                    'defaultGradients' => false,
+                    'defaultPalette' => false,
+                    'background' => true,
+                    'text' => true,
+                    'link' => true
+                ],
+                'spacing' => [
+                    'blockGap' => false,
+                    'customSpacingSize' => true,
+                    'padding' => true,
+                    'spacingScale' => [
+                        'operator' => '+',
+                        'increment' => 20,
+                        'steps' => 7,
+                        'mediumStep' => 80,
+                        'unit' => 'px'
+                    ]
+                ],
+                'layout' => [
+                    'contentSize' => '680px',
+                ],
+                'typography' => [
+                    'fontSizes' => [
+                        [
+                            'name' => 'Small',
+                            'slug' => 'small',
+                            'size' => '14px'
+                        ],
+                        [
+                            'name' => 'Normal',
+                            'slug' => 'normal',
+                            'size' => '16px'
+                        ],
+                        [
+                            'name' => 'Medium',
+                            'slug' => 'medium',
+                            'size' => '22px'
+                        ],
+                        [
+                            'name' => 'Large',
+                            'slug' => 'large',
+                            'size' => '26px'
+                        ],
+                        [
+                            'name' => 'Extra Large',
+                            'slug' => 'x-large',
+                            'size' => '30px'
+                        ],
+                    ],
+                    'fontStyle' => false,
+                    'fontWeight' => false,
+                    'letterSpacing' => false,
+                    'lineHeight' => false,
+                    'textDecoration' => true,
+                    'dropCap' => false,
+                ]
+            ]
+        ];
+        return $themeJson->update_with($data);
     }
 }
