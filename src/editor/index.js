@@ -52,7 +52,6 @@ addFilter(
 		/* Remove left/right alignment options wherever possible */
 		if (
 			'core/paragraph' === name ||
-			'core/buttons' === name ||
 			'core/columns' === name ||
 			'core/separator' === name
 		) {
