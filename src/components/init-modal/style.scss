@@ -53,7 +53,7 @@
             font-size: 0.8rem;
             line-height: 1.25;
 
-            @media only screen and (min-width: 600px) {
+            @media only screen and (min-width: 680px) {
                 display: block;
             }
 
@@ -69,7 +69,7 @@
         height: calc(100% - 36px);
         margin: -24px;
 
-        @media only screen and (min-width: 600px) {
+        @media only screen and (min-width: 680px) {
             display: grid;
             grid-auto-rows: calc(100% - 48px);
             gap: 0;
@@ -112,13 +112,13 @@
         display: flex;
         justify-content: center;
 
-        @media only screen and (min-width: 600px) {
+        @media only screen and (min-width: 680px) {
             display: flex;
         }
 
         &-wrapper {
             flex: 0 0 100%;
-            max-width: 600px;
+            max-width: 680px;
             padding-left: 24px;
             padding-right: 24px;
             position: relative;
@@ -167,7 +167,7 @@
     &__layouts {
         grid-column-start: 1;
         overflow-y: scroll;
-        max-height: 100%;
+        min-height: 1080px;
         padding: 20px;
 
         &--loading {
@@ -184,7 +184,7 @@
             overflow: hidden;
             padding: 0;
 
-            @media only screen and (min-width: 600px) {
+            @media only screen and (min-width: 680px) {
                 grid-template-columns: 1fr;
             }
 
@@ -262,7 +262,7 @@
         overflow-y: scroll;
         position: relative;
 
-        @media only screen and (min-width: 600px) {
+        @media only screen and (min-width: 680px) {
             display: flex;
         }
 
@@ -270,7 +270,6 @@
             &__container {
                 align-self: flex-start;
                 margin: 0 auto;
-                max-width: 600px;
             }
         }
     }
