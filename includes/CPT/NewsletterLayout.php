@@ -129,13 +129,26 @@ class NewsletterLayout
         $layoutsBasePath = plugin()->getPath('includes/layouts/');
         $layouts = [];
         $layoutId = 1;
+        $siteUrl = get_site_url();
+
         foreach (scandir($layoutsBasePath) as $layout) {
             if (strpos($layout, '.json') !== false) {
                 $decodedLayout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
+                $postContent = self::layoutTokenReplacement($decodedLayout->content);
+
+                // Replace relative URLs with absolute URLs
+                $postContent = preg_replace_callback(
+                    '/(href|src)="(\/[^"]*)"/i',
+                    function ($matches) use ($siteUrl) {
+                        return $matches[1] . '="' . $siteUrl . $matches[2] . '"';
+                    },
+                    $postContent
+                );
+
                 $layouts[] = [
                     'ID'           => $layoutId,
                     'post_title'   => '',
-                    'post_content' => self::layoutTokenReplacement($decodedLayout->content),
+                    'post_content' => $postContent,
                 ];
                 $layoutId++;
             }
