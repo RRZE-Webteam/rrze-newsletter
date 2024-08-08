@@ -5,7 +5,6 @@ namespace RRZE\Newsletter;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
-use function RRZE\Newsletter\plugin;
 
 final class Editor
 {
@@ -30,6 +29,7 @@ final class Editor
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
+        add_action('init', ['\RRZE\Newsletter\Patterns\Patterns', 'registerBlockPatterns']);
     }
 
     public function disableFeaturedImageSupport()
