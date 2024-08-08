@@ -640,9 +640,17 @@ final class Render
                 if (isset($attrs['color'])) {
                     $defaultAttrs['color'] = $attrs['color'];
                 }
-                $markup = '';
+                $isStackedOnMobile = !isset($attrs['isStackedOnMobile']) || true === $attrs['isStackedOnMobile'];
+                if (!$isStackedOnMobile) {
+                    $markup = '<mj-group>';
+                } else {
+                    $markup = '';
+                }
                 foreach ($innerBlocks as $block) {
                     $markup .= self::renderMjmlComponent($postId, $block, true, false, $defaultAttrs);
+                }
+                if (!$isStackedOnMobile) {
+                    $markup .= '</mj-group>';
                 }
                 $blockMjmlMarkup = $markup;
                 break;
@@ -676,6 +684,7 @@ final class Render
         ) {
             $blockMjmlMarkup = '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $blockMjmlMarkup . '</mj-column>';
         }
+
         if ($isInColumn || $isInList || $isGroupBlock || $isPostInserterBlock) {
             // Render a nested block without a wrapping section.
             return $blockMjmlMarkup;
@@ -814,6 +823,7 @@ final class Render
 
         $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
 
+        error_log($tpl);
         return str_replace(PHP_EOL, '', $tpl);
     }
 
