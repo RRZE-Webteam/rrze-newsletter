@@ -111,6 +111,9 @@ class Patterns
         $jsonFilePath = plugin()->getPath('includes/Patterns') . 'patterns.json';
 
         $jsonContent = file_get_contents($jsonFilePath);
+        if ($jsonContent === false) {
+            return [];
+        }
 
         $patternsArray = json_decode($jsonContent, true);
         if (json_last_error() === JSON_ERROR_NONE) {
