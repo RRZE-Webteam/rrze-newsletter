@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2023-11-22T08:57:43+00:00\n"
-"PO-Revision-Date: 2023-11-22 09:58+0100\n"
+"POT-Creation-Date: 2024-08-09T09:38:41+00:00\n"
+"PO-Revision-Date: 2024-08-09 11:43+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -11,25 +11,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #. Plugin Name of the plugin
+#: rrze-newsletter.php
 msgid "RRZE Newsletter"
 msgstr "RRZE Newsletter"
 
 #. Plugin URI of the plugin
+#: rrze-newsletter.php
 msgid "https://github.com/RRZE-Webteam/rrze-newsletter"
 msgstr "https://github.com/RRZE-Webteam/rrze-newsletter"
 
 #. Description of the plugin
+#: rrze-newsletter.php
 msgid "Plugin for creating and sending HTML Newsletters."
 msgstr "Plugin zum Erstellen und Senden von Newsletters."
 
 #. Author of the plugin
+#: rrze-newsletter.php
 msgid "RRZE-Webteam"
 msgstr "RRZE-Webteam"
 
 #. Author URI of the plugin
+#: rrze-newsletter.php
 msgid "https://blogs.fau.de/webworking/"
 msgstr "https://blogs.fau.de/webworking/"
 
@@ -196,28 +201,28 @@ msgstr ""
 "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine "
 "E-Mail-Adresse pro Zeile ein."
 
-#: includes/Blocks/ICS/ICS.php:39
+#: includes/Blocks/ICS/ICS.php:63
 msgid "ICS Error:"
 msgstr "ICS-Fehler:"
 
-#: includes/Blocks/ICS/ICS.php:46 includes/Blocks/ICS/ICS.php:75
-#: includes/Blocks/ICS/ICS.php:262
+#: includes/Blocks/ICS/ICS.php:70 includes/Blocks/ICS/ICS.php:100
+#: includes/Blocks/ICS/ICS.php:287
 msgid "There are no events available."
 msgstr "Es sind keine Termine verfügbar."
 
-#: includes/Blocks/ICS/ICS.php:437
+#: includes/Blocks/ICS/ICS.php:462
 msgid "Ends"
 msgstr "Endet"
 
-#: includes/Blocks/RSS/RSS.php:50
+#: includes/Blocks/RSS/RSS.php:74
 msgid "RSS Error:"
 msgstr "RSS-Fehler:"
 
-#: includes/Blocks/RSS/RSS.php:61 includes/Blocks/RSS/RSS.php:88
+#: includes/Blocks/RSS/RSS.php:85 includes/Blocks/RSS/RSS.php:113
 msgid "There are no items available."
 msgstr "Es sind keine Artikel verfügbar."
 
-#: includes/Blocks/RSS/RSS.php:129
+#: includes/Blocks/RSS/RSS.php:153
 #: src/editor/blocks/post-inserter/query-controls.js:41
 #: src/editor/blocks/post-inserter/query-controls.js:159
 #: src/editor/blocks/post-inserter/query-controls.js:176
@@ -227,7 +232,7 @@ msgid "(no title)"
 msgstr "(kein Titel)"
 
 #. translators: %s: article title.
-#: includes/Blocks/RSS/RSS.php:140
+#: includes/Blocks/RSS/RSS.php:164
 msgid "Continue reading \"%s\"&hellip;"
 msgstr "Artikel „%s“ weiterlesen&hellip;"
 
@@ -649,9 +654,7 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Render.php:871 _tmp/07-12-2022/includes/MJML/Render.php:955
-#: _tmp/07-12-2022/includes/MJML/Render.php:964
-#: _tmp/07-12-2022/includes/MJML/Render.php:976
+#: includes/MJML/Render.php:876
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -659,6 +662,81 @@ msgstr "MJML-Rendering-Fehler."
 #: includes/Notices.php:36
 msgid "Please set up the subscripction page."
 msgstr "Bitte richten Sie die Abonnementseite ein."
+
+#: includes/Patterns/Patterns.php:56
+msgctxt "Pattern category label"
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: includes/Patterns/Patterns.php:65
+msgctxt "Pattern title"
+msgid "Header with logo image"
+msgstr "Kopfzeile mit Logobild"
+
+#: includes/Patterns/Patterns.php:68
+msgctxt "Pattern description"
+msgid "Header with a logo image."
+msgstr "Kopfzeile mit einem Logobild."
+
+#: includes/Patterns/Patterns.php:71
+msgctxt "Pattern title"
+msgid "Header with view in browser link"
+msgstr "Kopfzeile mit Link zur Ansicht im Browser"
+
+#: includes/Patterns/Patterns.php:74
+msgctxt "Pattern description"
+msgid "Header with link tag generator for display in the browser."
+msgstr "Kopfzeile mit Link-Tag-Generator zur Anzeige im Browser."
+
+#: includes/Patterns/Patterns.php:77
+msgctxt "Pattern title"
+msgid "Section with image and paragraphs"
+msgstr "Abschnitt mit Bild und Absätzen"
+
+#: includes/Patterns/Patterns.php:80
+msgctxt "Pattern description"
+msgid "A section with an image and paragraphs blocks."
+msgstr "Ein Abschnitt mit einem Bild und Absatzblöcken."
+
+#: includes/Patterns/Patterns.php:83
+msgctxt "Pattern title"
+msgid "Section with heading, image and paragraphs"
+msgstr "Abschnitt mit Überschrift, Bild und Absätzen"
+
+#: includes/Patterns/Patterns.php:86
+msgctxt "Pattern description"
+msgid "A section with heading, image and paragraphs blocks."
+msgstr "Ein Abschnitt mit Überschriften-, Bild- und Absatzblöcken."
+
+#: includes/Patterns/Patterns.php:89
+msgctxt "Pattern title"
+msgid "Section with heading and list"
+msgstr "Abschnitt mit Überschrift und Liste"
+
+#: includes/Patterns/Patterns.php:92
+msgctxt "Pattern description"
+msgid "A section with heading and list blocks."
+msgstr "Ein Abschnitt mit Überschriften- und Listenblöcken."
+
+#: includes/Patterns/Patterns.php:95
+msgctxt "Pattern title"
+msgid "Two columns section with heading"
+msgstr "Zweispaltiger Abschnitt mit Überschrift"
+
+#: includes/Patterns/Patterns.php:98
+msgctxt "Pattern description"
+msgid "Two columns section with heading, images and paragraphs blocks."
+msgstr "Zweispaltiger Abschnitt mit Überschriften-, Bild- und Absatzblöcken."
+
+#: includes/Patterns/Patterns.php:101
+msgctxt "Pattern title"
+msgid "Footer with social icons"
+msgstr "Fußzeile mit Social Icons"
+
+#: includes/Patterns/Patterns.php:104
+msgctxt "Pattern description"
+msgid "Footer with social icons and paragraph blocks."
+msgstr "Fußzeile mit Social Icons und Absatzblöcken."
 
 #: includes/RestApi.php:279 includes/RestApi.php:293
 msgid "You cannot use this resource."
@@ -945,7 +1023,7 @@ msgid "Monthly on the %1$s %2$s"
 msgstr "Monatlich am %1$s %2$s"
 
 #. translators: 1: Server PHP version number, 2: Required PHP version number.
-#: rrze-newsletter.php:64
+#: rrze-newsletter.php:66
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
@@ -954,7 +1032,7 @@ msgstr ""
 "mindestens die PHP-Version %2$s."
 
 #. translators: 1: Server WordPress version number, 2: Required WordPress version number.
-#: rrze-newsletter.php:71
+#: rrze-newsletter.php:73
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
@@ -963,31 +1041,27 @@ msgstr ""
 "benötigt mindestens die WordPress-Version %2$s."
 
 #. translators: 1: The plugin name, 2: The error string.
-#: rrze-newsletter.php:90 rrze-newsletter.php:156
+#: rrze-newsletter.php:92 rrze-newsletter.php:158
 msgid "Plugins: %1$s: %2$s"
 msgstr "Plugins: %1$s: %2$s"
-
-#: _tmp/07-12-2022/includes/MJML/Api.php:23
-msgid "MJML API Endpoint not available."
-msgstr "MJML-API-Endpoint nicht verfügbar."
 
 #: src/components/init-modal/index.js:21
 msgid "Select a layout for the newsletter"
 msgstr "Wählen Sie eine Vorlage für den Newsletter"
 
-#: src/components/init-modal/screens/layout-picker/index.js:28
+#: src/components/init-modal/screens/layout-picker/index.js:32
 msgid "Prebuilt"
 msgstr "Vorgefertigt"
 
-#: src/components/init-modal/screens/layout-picker/index.js:32
+#: src/components/init-modal/screens/layout-picker/index.js:36
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: src/components/init-modal/screens/layout-picker/index.js:86
+#: src/components/init-modal/screens/layout-picker/index.js:101
 msgid "Select a layout to preview."
 msgstr "Wählen Sie eine Vorlage für die Vorschau aus."
 
-#: src/components/init-modal/screens/layout-picker/index.js:152
+#: src/components/init-modal/screens/layout-picker/index.js:167
 msgid ""
 "Turn any newsletter to a layout via the \"Layout\" sidebar menu in the "
 "editor."
@@ -995,19 +1069,19 @@ msgstr ""
 "Verwandeln Sie einen Newsletter über das Seitenleistenmenü “Vorlage” im "
 "Editor in eine Vorlage."
 
-#: src/components/init-modal/screens/layout-picker/index.js:171
+#: src/components/init-modal/screens/layout-picker/index.js:186
 msgid "Start With A Blank Layout"
 msgstr "Neue Vorlage erstellen"
 
-#: src/components/init-modal/screens/layout-picker/index.js:179
+#: src/components/init-modal/screens/layout-picker/index.js:194
 msgid "Use Selected Layout"
 msgstr "Vorlage auswählen"
 
-#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:37
+#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:38
 msgid "Are you sure you want to delete this layout?"
 msgstr "Möchten Sie diese Vorlage wirklich löschen?"
 
-#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:123
+#: src/components/init-modal/screens/layout-picker/SingleLayoutPreview.js:128
 msgid "Delete"
 msgstr "Löschen"
 
@@ -1057,8 +1131,8 @@ msgid "The following errors prevent the newsletter from being sent:"
 msgstr "Die folgenden Fehler verhindern das Versenden des Newsletters:"
 
 #: src/components/send-button/index.js:173
-#: src/newsletter-editor/layout/index.js:246
-#: src/newsletter-editor/layout/index.js:280
+#: src/newsletter-editor/layout/index.js:245
+#: src/newsletter-editor/layout/index.js:279
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -1327,19 +1401,19 @@ msgstr "RSS"
 msgid "Display entries from any RSS or Atom feed."
 msgstr "Einträge von jedem RSS- oder Atom-Feed anzeigen."
 
-#: src/editor/index.js:70
+#: src/editor/index.js:69
 msgid "Circle Black"
 msgstr "Kreis Schwarz"
 
-#: src/editor/index.js:75
+#: src/editor/index.js:74
 msgid "Circle White"
 msgstr "Kreis weiß"
 
-#: src/editor/index.js:80
+#: src/editor/index.js:79
 msgid "Black"
 msgstr "Schwarz"
 
-#: src/editor/index.js:85
+#: src/editor/index.js:84
 msgid "White"
 msgstr "Weiß"
 
@@ -1431,39 +1505,39 @@ msgstr "Testen"
 msgid "Layout"
 msgstr "Vorlage"
 
-#: src/newsletter-editor/layout/index.js:146
+#: src/newsletter-editor/layout/index.js:150
 msgid "Are you sure you want to overwrite this layout?"
 msgstr "Möchten Sie diese Vorlage wirklich überschreiben?"
 
-#: src/newsletter-editor/layout/index.js:193
+#: src/newsletter-editor/layout/index.js:197
 msgid "Save new layout"
 msgstr "Neues speichern"
 
-#: src/newsletter-editor/layout/index.js:202
+#: src/newsletter-editor/layout/index.js:206
 msgid "Update layout"
 msgstr "Aktualisieren"
 
-#: src/newsletter-editor/layout/index.js:215
+#: src/newsletter-editor/layout/index.js:219
 msgid "Reset newsletter layout"
 msgstr "Newsletter-Vorlage zurücksetzen"
 
-#: src/newsletter-editor/layout/index.js:221
+#: src/newsletter-editor/layout/index.js:225
 msgid "Save newsletter as a layout"
 msgstr "Newsletter als Vorlage speichern"
 
-#: src/newsletter-editor/layout/index.js:228
+#: src/newsletter-editor/layout/index.js:229
 msgid "Title"
 msgstr "Titel"
 
-#: src/newsletter-editor/layout/index.js:240
+#: src/newsletter-editor/layout/index.js:239
 msgid "Save"
 msgstr "Speichern"
 
-#: src/newsletter-editor/layout/index.js:254
+#: src/newsletter-editor/layout/index.js:253
 msgid "Overwrite newsletter content?"
 msgstr "Newsletter-Inhalt überschreiben?"
 
-#: src/newsletter-editor/layout/index.js:261
+#: src/newsletter-editor/layout/index.js:260
 msgid ""
 "Changing the newsletter's layout will remove any customizations or edits you "
 "have already made."
@@ -1471,7 +1545,7 @@ msgstr ""
 "Durch das Ändern der Newsletter-Vorlage werden alle Anpassungen für bereits "
 "vorgenommene Änderungen entfernt."
 
-#: src/newsletter-editor/layout/index.js:274
+#: src/newsletter-editor/layout/index.js:273
 msgid "Reset layout"
 msgstr "Vorlage zurücksetzen"
 
@@ -1512,58 +1586,66 @@ msgid "Arial"
 msgstr "Arial"
 
 #: src/newsletter-editor/styling/index.js:32
+msgid "Calibri"
+msgstr "Calibri"
+
+#: src/newsletter-editor/styling/index.js:36
 msgid "Tahoma"
 msgstr "Tahoma"
 
-#: src/newsletter-editor/styling/index.js:36
+#: src/newsletter-editor/styling/index.js:40
 msgid "Trebuchet"
 msgstr "Trebuchet"
 
-#: src/newsletter-editor/styling/index.js:40
+#: src/newsletter-editor/styling/index.js:44
 msgid "Verdana"
 msgstr "Verdana"
 
-#: src/newsletter-editor/styling/index.js:46
+#: src/newsletter-editor/styling/index.js:50
 msgid "Serif"
 msgstr "Serif"
 
-#: src/newsletter-editor/styling/index.js:50
+#: src/newsletter-editor/styling/index.js:54
+msgid "Cambria"
+msgstr "Cambria"
+
+#: src/newsletter-editor/styling/index.js:58
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/newsletter-editor/styling/index.js:54
+#: src/newsletter-editor/styling/index.js:62
 msgid "Palatino"
 msgstr "Palatino"
 
-#: src/newsletter-editor/styling/index.js:58
+#: src/newsletter-editor/styling/index.js:66
 msgid "Times New Roman"
 msgstr "Times New Roman"
 
-#: src/newsletter-editor/styling/index.js:64
+#: src/newsletter-editor/styling/index.js:72
 msgid "Monospace"
 msgstr "Monospace"
 
-#: src/newsletter-editor/styling/index.js:68
+#: src/newsletter-editor/styling/index.js:76
 msgid "Courier"
 msgstr "Courier"
 
-#: src/newsletter-editor/styling/index.js:214
+#: src/newsletter-editor/styling/index.js:216
 msgid "Typography"
 msgstr "Typografie"
 
-#: src/newsletter-editor/styling/index.js:218
+#: src/newsletter-editor/styling/index.js:220
 msgid "Headings font"
 msgstr "Überschriften Schriftart"
 
-#: src/newsletter-editor/styling/index.js:231
+#: src/newsletter-editor/styling/index.js:233
 msgid "Body font"
 msgstr "Inhaltsschrift"
 
-#: src/newsletter-editor/styling/index.js:245
+#: src/newsletter-editor/styling/index.js:244
 msgid "Color"
 msgstr "Farbe"
 
-#: src/newsletter-editor/styling/index.js:249
+#: src/newsletter-editor/styling/index.js:248
 msgid "Background color"
 msgstr "Hintergrundfarbe"
 
@@ -1590,70 +1672,3 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
-
-#~ msgid "Continue reading…"
-#~ msgstr "Weiterlesen…"
-
-#~ msgid "and"
-#~ msgstr "und"
-
-#~ msgid "Logical Operator"
-#~ msgstr "Logischer Operator"
-
-#~ msgid ""
-#~ "Use if there is more than one condition applied for sending the "
-#~ "newsletter."
-#~ msgstr ""
-#~ "Zu verwenden, wenn mehr als eine Bedingung für den Versand des "
-#~ "Newsletters gilt."
-
-#~ msgid "OR"
-#~ msgstr "OR"
-
-#~ msgid "AND"
-#~ msgstr "AND"
-
-#~ msgid "Newsletter Agent"
-#~ msgstr "Newsletter-Agent"
-
-#~ msgid "Page not found"
-#~ msgstr "Seite nicht gefunden"
-
-#~ msgid "Preview"
-#~ msgstr "Vorschau"
-
-#~ msgid "Public Page"
-#~ msgstr "Öffentliche Seite"
-
-#~ msgid "Make this newsletter viewable as a public page once it’s been sent."
-#~ msgstr "Newsletter nach dem Versand als öffentliche Seite sichtbar machen."
-
-#~ msgid "MJML API Service"
-#~ msgstr "MJML-API-Dienst"
-
-#~ msgid ""
-#~ "Please note that some MJML API Services require HTTP Basic Authentication."
-#~ msgstr ""
-#~ "Bitte beachten Sie, dass einige MJML-API-Dienste eine HTTP-"
-#~ "Basisauthentifizierung erfordern."
-
-#~ msgid "API Endpoint"
-#~ msgstr "API-Endpoint"
-
-#~ msgid "URL of the MJML API Service."
-#~ msgstr "URL des MJML-API-Dienstes."
-
-#~ msgid "Application ID"
-#~ msgstr "Anwendungs-ID"
-
-#~ msgid "The Application ID acts as a username."
-#~ msgstr "Die Anwendungs-ID fungiert als Benutzername."
-
-#~ msgid "Secret Key"
-#~ msgstr "Secret-Key"
-
-#~ msgid "The API Key act as a password."
-#~ msgstr "Der API-Key fungiert als Kennwort."
-
-#~ msgid "Please set up the MJML API Endpoint."
-#~ msgstr "Bitte richten Sie den MJML-API-Endpunkt ein."
