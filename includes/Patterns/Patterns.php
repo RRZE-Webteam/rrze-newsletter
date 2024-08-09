@@ -62,40 +62,46 @@ class Patterns
     {
         return [
             'header-with-logo' => [
-                'title' => __('Header with logo', 'rrze-newsletter'),
+                'title' => _x('Header with logo image', 'Pattern title', 'rrze-newsletter'),
                 'categories' => ['rrze-newsletter'],
                 'postTypes' => [Newsletter::POST_TYPE],
-                'description' => __('Header with a logo image.', 'rrze-newsletter'),
+                'description' => _x('Header with a logo image.', 'Pattern description', 'rrze-newsletter'),
             ],
             'header-with-view-in-browser-link' => [
-                'title' => __('Header with view in browser link', 'rrze-newsletter'),
+                'title' => _x('Header with view in browser link', 'Pattern title', 'rrze-newsletter'),
                 'categories' => ['rrze-newsletter'],
                 'postTypes' => [Newsletter::POST_TYPE],
-                'description' => __('Header with link tag generator to view in browser.', 'rrze-newsletter'),
+                'description' => _x('Header with link tag generator for display in the browser.', 'Pattern description', 'rrze-newsletter'),
             ],
-            'section' => [
-                'title' => __('Section', 'rrze-newsletter'),
+            'section-with-image' => [
+                'title' => _x('Section with image and paragraphs', 'Pattern title', 'rrze-newsletter'),
                 'categories' => ['rrze-newsletter'],
                 'postTypes' => [Newsletter::POST_TYPE],
-                'description' => __('A section with an image and paragraphs.', 'rrze-newsletter'),
+                'description' => _x('A section with an image and paragraphs blocks.', 'Pattern description', 'rrze-newsletter'),
             ],
-            'section-with-list' => [
-                'title' => __('Section with list', 'rrze-newsletter'),
+            'section-with-heading' => [
+                'title' => _x('Section with heading, image and paragraphs', 'Pattern title', 'rrze-newsletter'),
                 'categories' => ['rrze-newsletter'],
                 'postTypes' => [Newsletter::POST_TYPE],
-                'description' => __('A section with a list block.', 'rrze-newsletter'),
+                'description' => _x('A section with heading, image and paragraphs blocks.', 'Pattern description', 'rrze-newsletter'),
             ],
-            'two-columns' => [
-                'title' => __('Two columns', 'rrze-newsletter'),
+            'section-with-heading-list' => [
+                'title' => _x('Section with heading and list', 'Pattern title', 'rrze-newsletter'),
                 'categories' => ['rrze-newsletter'],
                 'postTypes' => [Newsletter::POST_TYPE],
-                'description' => __('Two columns with images and text.', 'rrze-newsletter'),
+                'description' => _x('A section with heading and list blocks.', 'Pattern description', 'rrze-newsletter'),
+            ],
+            'two-columns-section-with-heading' => [
+                'title' => _x('Two columns section with heading', 'Pattern title', 'rrze-newsletter'),
+                'categories' => ['rrze-newsletter'],
+                'postTypes' => [Newsletter::POST_TYPE],
+                'description' => _x('Two columns section with heading, images and paragraphs blocks.', 'Pattern description', 'rrze-newsletter'),
             ],
             'footer-with-social-icons' => [
-                'title' => __('Footer with social icons', 'rrze-newsletter'),
+                'title' => _x('Footer with social icons', 'Pattern title', 'rrze-newsletter'),
                 'categories' => ['rrze-newsletter'],
                 'postTypes' => [Newsletter::POST_TYPE],
-                'description' => __('Footer with social icons and paragraphs.', 'rrze-newsletter'),
+                'description' => _x('Footer with social icons and paragraph blocks.', 'Pattern description', 'rrze-newsletter'),
             ],
         ];
     }
