@@ -11,7 +11,7 @@ import {
 	PluginDocumentSettingPanel,
 	PluginSidebar,
 	PluginSidebarMoreMenuItem,
-} from '@wordpress/edit-post';
+} from '@wordpress/editor';
 import { registerPlugin } from '@wordpress/plugins';
 import { styles } from '@wordpress/icons';
 

@@ -11,7 +11,7 @@
             /* Link */
             a {
                 color: inherit !important;
-                text-decoration: underline;
+                text-decoration: none;
             }
 
             a:active,
@@ -43,75 +43,84 @@
             }
 
             h1 {
-                font-size: 2.44em;
-                line-height: 1.4;
+                font-size: 32px;
+                line-height: 1.5;
             }
 
             h2 {
-                font-size: 1.95em;
-                line-height: 1.4;
+                font-size: 28px;
+                line-height: 1.5;
             }
 
             h3 {
-                font-size: 1.56em;
-                line-height: 1.4;
+                font-size: 24px;
+                line-height: 1.5;
             }
 
             h4 {
-                font-size: 1.25em;
+                font-size: 20px;
                 line-height: 1.5;
             }
 
             h5 {
-                font-size: 1em;
-                line-height: 1.8;
+                font-size: 18px;
+                line-height: 1.5;
             }
 
             h6 {
-                font-size: 0.8em;
-                line-height: 1.8;
-            }
+                font-size: 14px;
+                line-height: 1.5;
+            }            
 
             /* Fonts Sizes */
             .has-small-font-size {
-                font-size: 13px;
+                font-size: 14px;
+                line-height: 1.5;
             }
 
             .has-normal-font-size {
                 font-size: 16px;
+                line-height: 1.5;
             }
 
             .has-medium-font-size {
-                font-size: 20px;
+                font-size: 22px;
+                line-height: 1.5;
             }
 
             .has-large-font-size {
-                font-size: 36px;
+                font-size: 26px;
+                line-height: 1.5;
             }
 
-            .has-huge-font-size {
-                font-size: 42px;
+            .has-x-large-font-size {
+                font-size: 30px;
+                line-height: 1.5;
             }
 
             /* Padding */
             .has-small-padding {
-                padding-bottom: 5px;
+                padding-bottom: 8px;
             }
 
             .has-normal-padding {
-                padding-bottom: 10px;
+                padding-bottom: 16px;
             }
 
             .has-medium-padding {
-                padding-bottom: 15px;
+                padding-bottom: 24px;
             }
 
             .has-large-padding {
-                padding-bottom: 25px;
+                padding-bottom: 32px;
             }
 
+            .has-x-large-padding {
+                padding-bottom: 40px;
+            }            
+
             .has-huge-padding {
-                padding-bottom: 35px;
+                padding-bottom: 48px;
             }
 
             /* List */
@@ -120,32 +129,6 @@
                 margin-bottom: 0;
                 margin-top: 0;
                 padding-left: 1.3em;
-            }
-
-            /* Quote */
-            .wp-block-quote {
-                border-left: 4px solid #000;
-                margin: 0;
-                padding-left: 20px;
-            }
-
-            .wp-block-quote cite {
-                color: #767676;
-            }
-
-            .wp-block-quote p {
-                padding-bottom: 12px;
-            }
-
-            .wp-block-quote.is-style-large {
-                border-left: 0;
-                padding-left: 0;
-            }
-
-            .wp-block-quote.is-style-large p {
-                font-size: 24px;
-                font-style: italic;
-                line-height: 1.6;
             }
 
             /* Image */
@@ -171,7 +154,7 @@
         <mj-preview>{{=preview_text}}</mj-preview>
         {{/preview_text}}
     </mj-head>
-    <mj-body background-color="{{=background_color}}">
+    <mj-body background-color="{{=background_color}}" width="680px">
         {{=body}}
     </mj-body>
 </mjml>
