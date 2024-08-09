@@ -2,12 +2,11 @@ const defaultConfig = require("@wordpress/scripts/config/webpack.config");
 const webpack = require("webpack");
 const { basename, dirname, resolve } = require("path");
 const srcDir = "src";
-const isProduction = defaultConfig.isProduction;
 
-const admin = resolve(process.cwd(), "src", "admin");
-const editor = resolve(process.cwd(), "src", "editor");
-const subscription = resolve(process.cwd(), "src/subscription");
-const subscriptionemail = resolve(process.cwd(), "src/subscriptionemail");
+const admin = resolve(process.cwd(), srcDir, "admin");
+const editor = resolve(process.cwd(), srcDir, "editor");
+const subscription = resolve(process.cwd(), srcDir, "subscription");
+const subscriptionemail = resolve(process.cwd(), srcDir, "subscriptionemail");
 
 module.exports = {
     ...defaultConfig,
