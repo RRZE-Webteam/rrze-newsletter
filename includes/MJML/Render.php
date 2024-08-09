@@ -162,9 +162,9 @@ final class Render
             'tiktok'    => '#000000',
             'tumblr'    => '#011835',
             'twitter'   => '#21a1f3',
-            'x'         => '#000000',
             'wordpress' => '#3499cd',
             'youtube'   => '#ff0100',
+            'x'         => '#000000',
         ];
     }
 
@@ -817,7 +817,7 @@ final class Render
         $data = [
             'title' => $post->post_title,
             'preview_text' => $previewText ? $previewText : '',
-            'background_color' => $backgroundColor ? $backgroundColor : '#ffffff',
+            'background_color' => $backgroundColor ? $backgroundColor : '#f0f0f0',
             'body' => self::postToMjmlComponents($post, $post->post_content, true)
         ];
 
