@@ -84,10 +84,10 @@ const customStylesSelector = (select) => {
     const meta = getEditedPostAttribute("meta");
     return {
         fontBody:
-            meta.rrze_newsletter_font_body || fontOptgroups[0].options[1].value,
+            meta.rrze_newsletter_font_body || fontOptgroups[0].options[0].value,
         fontHeader:
             meta.rrze_newsletter_font_header ||
-            fontOptgroups[0].options[1].value,
+            fontOptgroups[0].options[0].value,
         backgroundColor: meta.rrze_newsletter_background_color || "#f0f0f0",
     };
 };
