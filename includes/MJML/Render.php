@@ -50,10 +50,9 @@ final class Render
     ];
 
     /**
-     * Whether the block is empty.
+     * Determines whether the block is empty.
      *
      * @param WP_Block $block The block.
-     *
      * @return bool Whether the block is empty.
      */
     public static function isEmptyBlock($block)
@@ -70,7 +69,7 @@ final class Render
     }
 
     /**
-     * Convert a list to HTML attributes.
+     * Convert an array of attributes to a HTML attributes as a string.
      *
      * @param array $attributes Array of attributes.
      * @return string HTML attributes as a string.
@@ -95,6 +94,12 @@ final class Render
         );
     }
 
+    /**
+     * Extracts padding values from a given set of attributes 
+     * and converts them into a string format suitable for use in MJML
+     *
+     * @return string padding values as a string
+     */
     private static function getPaddingFromAttributes($attributes)
     {
         $paddingStr = '';
@@ -120,12 +125,18 @@ final class Render
         return $paddingStr;
     }
 
+    /**
+     * Check if all values in an array are zero.
+     *
+     * @param array $array Array to check.
+     * @return bool Whether all values are zero.
+     */
     private static function allValuesAreZero(array $array): bool
     {
-        $non_zero_values = array_filter($array, function ($value) {
+        $nonZeroValues = array_filter($array, function ($value) {
             return $value !== 0;
         });
-        return empty($non_zero_values);
+        return empty($nonZeroValues);
     }
 
     /**
@@ -153,6 +164,11 @@ final class Render
         }
     }
 
+    /**
+     * Get social icons colors.
+     *
+     * @return array Array of social icons colors.
+     */
     private static function getSocialIconsColors()
     {
         return [
@@ -168,6 +184,13 @@ final class Render
         ];
     }
 
+    /**
+     * Get social icon.
+     *
+     * @param string $serviceName Service name.
+     * @param array $blockAttrs Block attributes.
+     * @return array Array of social icon attributes.
+     */
     private static function getSocialIcon($serviceName, $blockAttrs)
     {
         $servicesColors = self::getSocialIconsColors();
@@ -332,13 +355,13 @@ final class Render
      *
      * @param integer $postId Maybe a \WP_Post ID.
      * @param array $block The block.
+     * @param array $defaultAttrs Default attributes for the component. 
      * @param bool $isInColumn Whether the component is a child of a column component.
      * @param bool $isInGroup Whether the component is a child of a group component.
-     * @param array $defaultAttrs Default attributes for the component.
      * @param bool $isInList Whether the component is a child of a list.
      * @return string MJML component.
      */
-    public static function renderMjmlComponent($postId, $block, $isInColumn = false, $isInGroup = false, $defaultAttrs = [], $isInList = false)
+    public static function renderMjmlComponent($postId, $block, $defaultAttrs = [], $isInColumn = false, $isInGroup = false, $isInList = false)
     {
         $blockName = $block['blockName'];
         $attrs = $block['attrs'];
@@ -354,6 +377,7 @@ final class Render
 
         $blockMjmlMarkup = '';
         $attrs = self::processAttributes(array_merge($defaultAttrs, $attrs));
+        $padding = self::getPaddingFromAttributes($attrs);
 
         // Default attributes for the section which will envelop the mj-column.
         $sectionAttrs = array_merge(
@@ -364,7 +388,6 @@ final class Render
         );
 
         // Default attributes for the column which will envelop the component.
-        $padding = self::getPaddingFromAttributes($attrs);
         $columnAttrs = [
             'padding' => $padding ?: '0'
         ];
@@ -449,7 +472,7 @@ final class Render
                 $blockMjmlMarkup .= $innerContent[0];
                 if (!empty($innerBlocks) && 1 < count($innerContent)) {
                     foreach ($innerBlocks as $innerBlock) {
-                        $blockMjmlMarkup .= self::renderMjmlComponent($postId, $innerBlock, false, false, [], true);
+                        $blockMjmlMarkup .= self::renderMjmlComponent($postId, $innerBlock, [], false, false, true);
                     }
                     $blockMjmlMarkup .= $innerContent[count($innerContent) - 1];
                 }
@@ -616,7 +639,7 @@ final class Render
 
                 $markup = '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>';
                 foreach ($innerBlocks as $block) {
-                    $markup .= self::renderMjmlComponent($postId, $block, true, false, $defaultAttrs);
+                    $markup .= self::renderMjmlComponent($postId, $block, $defaultAttrs, true, false);
                 }
                 $blockMjmlMarkup = $markup . '</mj-column>';
                 break;
@@ -647,7 +670,7 @@ final class Render
                     $markup = '';
                 }
                 foreach ($innerBlocks as $block) {
-                    $markup .= self::renderMjmlComponent($postId, $block, true, false, $defaultAttrs);
+                    $markup .= self::renderMjmlComponent($postId, $block, $defaultAttrs, true, false);
                 }
                 if (!$isStackedOnMobile) {
                     $markup .= '</mj-group>';
@@ -664,14 +687,14 @@ final class Render
                 }
                 $markup = '<mj-wrapper ' . self::arrayToAttributes($attrs) . '>';
                 foreach ($innerBlocks as $block) {
-                    $markup .= self::renderMjmlComponent($postId, $block, false, true, $defaultAttrs);
+                    $markup .= self::renderMjmlComponent($postId, $block, $defaultAttrs, false, true);
                 }
                 $blockMjmlMarkup = $markup . '</mj-wrapper>';
                 break;
         }
 
         $isPostInserterBlock = 'rrze-newsletter/post-inserter' == $blockName;
-        $isGroupBlock = in_array($blockName, ['core/group', 'core/list', 'core/list-item'], true);
+        $isGroupBlock = in_array($blockName, ['core/group'], true);
 
         if (
             !$isInColumn &&
@@ -682,10 +705,16 @@ final class Render
             'core/separator' != $blockName &&
             !$isPostInserterBlock
         ) {
+            $columnAttrs['width'] = '100%';
             $blockMjmlMarkup = '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $blockMjmlMarkup . '</mj-column>';
         }
 
-        if ($isInColumn || $isInList || $isGroupBlock || $isPostInserterBlock) {
+        if (
+            $isInColumn ||
+            $isInList ||
+            $isGroupBlock ||
+            $isPostInserterBlock
+        ) {
             // Render a nested block without a wrapping section.
             return $blockMjmlMarkup;
         } else {
@@ -779,7 +808,7 @@ final class Render
                 $attrs['padding'] = $padding ?: '0';
                 $mjmlMarkup = '<mj-wrapper ' . self::arrayToAttributes($attrs) . '>';
                 foreach ($block['innerBlocks'] as $block) {
-                    $innerBlockContent = self::renderMjmlComponent($postId, $block, false, true, $defaultAttrs);
+                    $innerBlockContent = self::renderMjmlComponent($postId, $block, $defaultAttrs, false, true);
                     $mjmlMarkup .= $innerBlockContent;
                 }
                 $blockContent = $mjmlMarkup . '</mj-wrapper>';
@@ -823,7 +852,6 @@ final class Render
 
         $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
 
-        error_log($tpl);
         return str_replace(PHP_EOL, '', $tpl);
     }
 
