@@ -1,7 +1,7 @@
 {
     "engines": {
-        "node": ">=22.4.0",
-        "npm": ">=10.8.1"
+        "node": ">=22.6.0",
+        "npm": ">=10.8.2"
     },
     "browserslist": [
         "extends @wordpress/browserslist-config"
@@ -16,6 +16,7 @@
         "packages-update": "wp-scripts packages-update"
     },
     "dependencies": {
+        "@wordpress/blocks": "latest",
         "@wordpress/components": "latest",
         "@wordpress/data": "latest",
         "@wordpress/edit-post": "latest",
@@ -24,6 +25,6 @@
         "mjml-browser": "latest"
     },
     "devDependencies": {
-        "@wordpress/scripts": "^28.3.0"
+        "@wordpress/scripts": "latest"
     }
 }
