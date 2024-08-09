@@ -1,16 +1,18 @@
 <?php
 
 /*
-Plugin Name:      RRZE Newsletter
-Plugin URI:       https://github.com/RRZE-Webteam/rrze-newsletter
-Description:      Plugin for creating and sending HTML Newsletters.
-Version:          2.4.0
-Author:           RRZE-Webteam
-Author URI:       https://blogs.fau.de/webworking/
-License:          GNU General Public License v3.0
-License URI:      https://www.gnu.org/licenses/gpl-3.0.en.html
-Domain Path:      /languages
-Text Domain:      rrze-newsletter
+Plugin Name:       RRZE Newsletter
+Plugin URI:        https://github.com/RRZE-Webteam/rrze-newsletter
+Description:       Plugin for creating and sending HTML Newsletters.
+Version:           3.0.0
+Requires at least: 6.6
+Requires PHP:      8.2
+Author:            RRZE-Webteam
+Author URI:        https://blogs.fau.de/webworking/
+License:           GNU General Public License v3.0
+License URI:       https://www.gnu.org/licenses/gpl-3.0.en.html
+Domain Path:       /languages
+Text Domain:       rrze-newsletter
 */
 
 namespace RRZE\Newsletter;
@@ -21,8 +23,8 @@ use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\CPT\NewsletterQueue;
 
-const RRZE_PHP_VERSION = '8.1';
-const RRZE_WP_VERSION = '6.4';
+const RRZE_PHP_VERSION = '8.2';
+const RRZE_WP_VERSION = '6.6';
 
 // Load the settings config file.
 require_once 'config/settings.php';
