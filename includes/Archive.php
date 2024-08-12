@@ -29,6 +29,11 @@ class Archive
         return Newsletter::POST_TYPE . '/archive';
     }
 
+    public static function testSlug()
+    {
+        return Newsletter::POST_TYPE . '/test';
+    }
+
     public function redirectTemplate()
     {
         if (empty($_SERVER['REQUEST_URI'])) {
@@ -49,14 +54,18 @@ class Archive
         $slug = $segments[0] . '/' . $segments[1];
 
         if ($slug == self::archiveSlug()) {
-            $data = [
-                'postid' => $archive[0] ?? '',
-                'timestamp' => $archive[1] ?? '',
-                'email' => $archive[2] ?? ''
-            ];
+            $status = 'archive';
+        } elseif ($slug == self::testSlug()) {
+            $status = 'test';
         } else {
             return;
         }
+
+        $data = [
+            'postid' => $archive[0] ?? '',
+            'timestamp' => $archive[1] ?? '',
+            'email' => $archive[2] ?? ''
+        ];
 
         $post = get_post(absint($data['postid']));
         if (!is_a($post, '\WP_Post')) {
@@ -66,8 +75,10 @@ class Archive
         if ($data['timestamp'] && $data['email']) {
             // Deprecated.
             $this->deprecatedArchiveContent($post, $data);
-        } else {
+        } elseif ($status == 'archive') {
             $this->archiveContent($post);
+        } elseif ($status == 'test') {
+            $this->testContent($post);
         }
 
         if ($this->content) {
@@ -78,9 +89,33 @@ class Archive
 
     protected function archiveContent(object $post)
     {
-        $archiveUrlPath = '/newsletter/archive/';
+        $archiveUrlPath = '/' . self::archiveSlug() . '/';
         $content = base64_decode($post->post_content, true);
         $content = $content !== false ? $content : $post->post_content;
+        $this->content = preg_replace_callback('~<a[^>]+href="([^"]*' . $archiveUrlPath . '[^"]*)"[^>]*>(.*?)<\/a>~i', function ($matches) {
+            return '';
+        }, $content);
+    }
+
+    protected function testContent(object $post)
+    {
+        $postId = $post->ID;
+        $content = get_post_meta($postId, 'rrze_newsletter_email_html', true) ?: '';
+
+        $archiveUrlPath = '/' . self::testSlug() . '/';
+        $archiveSlug = self::testSlug();
+        $archiveQuery = Utils::encryptQueryVar($postId);
+        $archiveUrl = site_url($archiveSlug . '/' . $archiveQuery);
+
+        // Parse tags.
+        $data = [
+            'ARCHIVE' => $archiveUrl
+        ];
+        $data = Tags::sanitizeTags($postId, $data);
+        $parser = new Parser();
+        $content = $parser->parse($content, $data);
+        // End Parse tags.
+
         $this->content = preg_replace_callback('~<a[^>]+href="([^"]*' . $archiveUrlPath . '[^"]*)"[^>]*>(.*?)<\/a>~i', function ($matches) {
             return '';
         }, $content);
