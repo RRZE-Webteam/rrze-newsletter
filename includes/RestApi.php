@@ -412,9 +412,14 @@ class RestApi
 
         $sentEmails = [];
         foreach ($emailsList as $to) {
+            $archiveSlug = Archive::testSlug();
+            $archiveQuery = Utils::encryptQueryVar($postId);
+            $archiveUrl = site_url($archiveSlug . '/' . $archiveQuery);
+
             // Parse tags.
             $data = [
-                'EMAIL' => $to
+                'EMAIL' => $to,
+                'ARCHIVE' => $archiveUrl
             ];
             $data = Tags::sanitizeTags($postId, $data);
             $parser = new Parser();
