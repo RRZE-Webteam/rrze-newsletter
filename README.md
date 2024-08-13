@@ -44,13 +44,15 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
-**WordPress-Version:** `~6.4.0`
+**WordPress-Version:** `>=6.6.0`
 
-**PHP-Version:** `~8.1.0`
+**PHP-Version:** `>=8.2.0`
 
-**Composer-Version:** `~2.6.5`
+**WP-CLI-Version:** `>=2.11.0`
 
-**Node-Version:** `~21.2.0`
+**Composer-Version:** `>=2.7.7`
+
+**Node-Version:** `>=22.6.0`
 
 **Übersetzung: Erstellen der .pot-Datei (WP-CLI)**
 
@@ -63,6 +65,6 @@ Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung d
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
 ```shell
-npx https://github.com/RRZE-Webteam/po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
-npx https://github.com/RRZE-Webteam/po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
+wp i18n make-json languages/rrze-newsletter-de_DE.po --no-purge
+wp i18n make-json languages/rrze-newsletter-de_DE_formal.po --no-purge
 ```
