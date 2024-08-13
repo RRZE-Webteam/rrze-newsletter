@@ -4,6 +4,7 @@ namespace RRZE\Newsletter\Blocks\RSS;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 use function RRZE\Newsletter\plugin;
 
@@ -75,14 +76,11 @@ class RSS
         }
 
         if ($feed->get_item_quantity()) {
-            $feedItems = self::render($atts, $feed, true);
+            $feedItems = self::render($atts, $feed);
         }
 
         if (!$feedItems) {
-            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-            $feedItems = sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no items available.', 'rrze-newsletter'));
         }
 
         return $feedItems;
@@ -103,14 +101,11 @@ class RSS
         $feed = self::fetchFeed($atts['feedURL']);
 
         if (!is_wp_error($feed) && $feed->get_item_quantity()) {
-            $feedItems = self::render($atts, $feed, true);
+            $feedItems = self::render($atts, $feed);
         }
 
         if (!$feedItems) {
-            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-            $feedItems = sprintf('<p%1$s>%2$s</p>', $textStyle, __('There are no items available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no items available.', 'rrze-newsletter'));
         } else {
             wp_cache_set('rrze_newsletter_rss_block_not_empty', 1, $atts['postId']);
         }
@@ -127,16 +122,8 @@ class RSS
      * @param boolean $mjml
      * @return string
      */
-    protected static function render(array $atts, $feed, $mjml = false)
+    protected static function render(array $atts, $feed)
     {
-        $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
-        $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
-        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
-
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-
         $sinceLastSendGmt = Newsletter::getLastSendDateGmt($atts['postId']);
 
         $feedItems  = $feed->get_items(0, $atts['itemsToShow']);
@@ -157,7 +144,7 @@ class RSS
             $readMoreLink = '';
             if ($link && $atts['displayReadMore']) {
                 $readMoreLink = sprintf(
-                    '<p class="has-large-padding"><a href="%s">%s</a></p>',
+                    '<div class="has-normal-padding"><a href="%s">%s</a></div>',
                     $link,
                     sprintf(
                         /* translators: %s: article title. */
@@ -166,30 +153,23 @@ class RSS
                     )
                 );
             } elseif ($link) {
-                $title = "<a{$headingStyle} href='{$link}'>{$title}</a>";
+                $title = "<a href='{$link}'>{$title}</a>";
             }
-            $title = '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
+            $title = '<h3 class="has-normal-padding">' . $title . '</h3>';
 
             $date = '';
             if ($atts['displayDate']) {
                 if ($timestamp) {
-                    $mjml ?
-                        $date = sprintf(
-                            '<p class="has-small-padding"%1$s>%2$s</p> ',
-                            $textStyle,
-                            date_i18n(get_option('date_format'), $timestamp)
-                        ) :
-                        $date = sprintf(
-                            '<time datetime="%1$s">%2$s</time> ',
-                            date('Y-m-d H:i:s', $timestamp),
-                            date_i18n(get_option('date_format'), $timestamp)
-                        );
+                    $date = sprintf(
+                        '<div class="has-small-padding">%s</div> ',
+                        date_i18n(get_option('date_format'), $timestamp)
+                    );
                 }
             }
 
             $content = '';
             if ($atts['displayContent'] && !empty($item->get_content())) {
-                $content = html_entity_decode($item->get_content(), ENT_QUOTES, get_option('blog_charset'));
+                $content = self::filterTheContent($item->get_content());
                 if ($atts['excerptLimit']) {
                     $content = wp_trim_words($content, absint($atts['excerptLength']), ' [&hellip;]');
                     // Change existing [...] to [&hellip;].
@@ -197,17 +177,17 @@ class RSS
                         $content = substr($content, 0, -5) . '[&hellip;]';
                     }
                 }
-                $content = $mjml ?
-                    '<p class="has-normal-padding">' . $content . $readMoreLink . '</p>'
-                    :
-                    '<div>' . $content . $readMoreLink . '</div>';
+                $content = '<div class="has-normal-padding">' . $content . '</div>';
+                if ($readMoreLink) {
+                    $content .= '<div class="has-normal-padding">' . $readMoreLink . '</div>';
+                }
             }
 
             $listItems .= $title . $date . $content;
         }
 
         if ($listItems) {
-            return $mjml ? $listItems : sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
+            return '<div class="has-normal-padding">' . $listItems . '</div>';
         }
         return '';
     }
@@ -250,5 +230,18 @@ class RSS
         }
 
         return $feed;
+    }
+
+    /**
+     * filterTheContent
+     * Skips some of the functions WP normally runs on 'the_content'.
+     *
+     * @param string $content
+     * @return void
+     */
+    protected static function filterTheContent($content)
+    {
+        $content = html_entity_decode($content, ENT_QUOTES, get_option('blog_charset'));
+        return Utils::wpautop(convert_chars(wptexturize($content)));
     }
 }

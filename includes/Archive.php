@@ -5,6 +5,9 @@ namespace RRZE\Newsletter;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
+use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\Blocks\RSS\RSS;
+use RRZE\Newsletter\Blocks\ICS\ICS;
 
 /**
  * Generates a virtual page showing the output of the newsletter 
@@ -100,7 +103,10 @@ class Archive
     protected function testContent(object $post)
     {
         $postId = $post->ID;
-        $content = get_post_meta($postId, 'rrze_newsletter_email_html', true) ?: '';
+        $content = Render::retrieveEmailHtml($post);
+        if (is_wp_error($content)) {
+            return $content;
+        }
 
         $archiveUrlPath = '/' . self::testSlug() . '/';
         $archiveSlug = self::testSlug();
@@ -115,6 +121,22 @@ class Archive
         $parser = new Parser();
         $content = $parser->parse($content, $data);
         // End Parse tags.
+
+        if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
+            foreach ($rssAttrs as $key => $attrs) {
+                if (strpos($content, 'RSS_BLOCK_' . $key) !== false) {
+                    $content = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $content);
+                }
+            }
+        }
+
+        if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
+            foreach ($icsAttrs as $key => $attrs) {
+                if (strpos($content, 'ICS_BLOCK_' . $key) !== false) {
+                    $content = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $content);
+                }
+            }
+        }
 
         $this->content = preg_replace_callback('~<a[^>]+href="([^"]*' . $archiveUrlPath . '[^"]*)"[^>]*>(.*?)<\/a>~i', function ($matches) {
             return '';

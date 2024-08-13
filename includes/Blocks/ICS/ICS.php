@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use ICal\ICal;
 use RRule\RRule;
+use RRZE\Newsletter\Utils;
 use function RRZE\Newsletter\plugin;
 
 class ICS
@@ -56,6 +57,7 @@ class ICS
      */
     public static function renderHTML(array $atts): string
     {
+        error_log(print_r($atts, true));
         $atts = self::parseAtts($atts);
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
@@ -64,10 +66,7 @@ class ICS
         }
 
         if (!$feedItems) {
-            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-            $feedItems = sprintf('<div%1$s>%2$s</div>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
             $feedItems = self::render($atts, $feedItems, true);
         }
@@ -88,16 +87,13 @@ class ICS
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (!is_wp_error($feedItems) && $feedItems) {
-            $feedItems = self::render($atts, $feedItems, true);
+            $feedItems = self::render($atts, $feedItems);
         } else {
             $feedItems = '';
         }
 
         if (!$feedItems) {
-            $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-            $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-            $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-            $feedItems = sprintf('<p%1$s>%2$s</p>', $textStyle, __('There are no events available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
             wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $atts['postId']);
         }
@@ -111,19 +107,10 @@ class ICS
      *
      * @param array $atts
      * @param array $feedItems
-     * @param boolean $mjml
      * @return string
      */
-    protected static function render(array $atts, $feedItems, $mjml = false)
+    protected static function render(array $atts, $feedItems)
     {
-        $headingStyle = $atts['headingFontSize'] ? 'font-size:' . $atts['headingFontSize'] . 'px;' : '';
-        $headingStyle .= $atts['headingColor'] ? 'color:' . $atts['headingColor'] : '';
-        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
-
-        $textStyle = $atts['textFontSize'] ? 'font-size:' . $atts['textFontSize'] . 'px;' : '';
-        $textStyle .= $atts['textColor'] ? 'color:' . $atts['textColor'] : '';
-        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
-
         $listItems = '';
         $dateFormat = get_option('date_format');
 
@@ -142,9 +129,6 @@ class ICS
                 }
 
                 if (isset($feedItems['events'][$year][$month])) {
-
-                    $listItems .= $mjml ? '' : '<div data-year-month="' . esc_attr($ym) . '">';
-
                     foreach ((array)$feedItems['events'][$year][$month] as $day => $dayEvents) {
 
                         // Pull out multi-day events and display them separately first
@@ -172,31 +156,18 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
+                                $listItems .= '<h3 class="has-normal-padding">' . $title . '</h3>';
 
                                 $mdate = $mdStart . ' &#8211; ' . $mdEnd;
-
-                                $listItems .= $mjml ?
-                                    sprintf(
-                                        '<p class="has-small-padding"%1$s>%2$s</p> ',
-                                        $textStyle,
-                                        $mdate
-                                    ) :
-                                    sprintf(
-                                        '<time datetime="%1$s">%2$s</time> ',
-                                        date('Y-m-d H:i:s', strtotime($mdStart)),
-                                        $mdate
-                                    );
+                                $listItems .= '<div class="has-normal-padding">' . $mdate . '</div>';
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule'], $mjml));
+                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule']));
                                 }
 
                                 // Location/Organizer/Description
-                                $listItems .= $mjml ? '' : '<div class="event">';
-                                $listItems .= self::eventDescriptionHtml($atts, $event, $mjml);
-                                $listItems .= $mjml ? '' : '</div>';
+                                $listItems .= self::eventDescriptionHtml($atts, $event);
 
                                 // We've now used this event
                                 $multidayEventKeysUsed[] = $event['multiday']['event_key'];
@@ -233,7 +204,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h2 class="has-normal-padding"' . $headingStyle . '>' . $title . '</h2>';
+                                $listItems .= '<h3 class="has-normal-padding">' . $title . '</h3>';
 
                                 $mdate = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
 
@@ -247,29 +218,19 @@ class ICS
                                     }
                                 }
 
-                                $listItems .= $mjml ?
-                                    sprintf(
-                                        '<p class="has-small-padding"%1$s>%2$s%3$s</p> ',
-                                        $textStyle,
-                                        $mdate,
-                                        $mtime
-                                    ) :
-                                    sprintf(
-                                        '<time datetime="%1$s">%2$s%3$s</time> ',
-                                        date('Y-m-d H:i:s', strtotime($month . '/' . $day . '/' . $year)),
-                                        $mdate,
-                                        $mtime
-                                    );
+                                $listItems .= $mtime ? sprintf(
+                                    '<div class="has-normal-padding">%1$s%2$s</div>',
+                                    $mdate,
+                                    $mtime
+                                ) : '';
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule'], $mjml));
+                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule']));
                                 }
 
                                 // Location/Organizer/Description
-                                $listItems .= $mjml ? '' : '<div class="event">';
-                                $listItems .= self::eventDescriptionHtml($atts, $event, $mjml);
-                                $listItems .= $mjml ? '' : '</div>';
+                                $listItems .= self::eventDescriptionHtml($atts, $event);
 
                                 $i++;
                                 if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
@@ -278,14 +239,11 @@ class ICS
                             }
                         }
                     }
-
-                    $listItems .= $mjml ? '' : '</div>';
                 }
             }
         }
 
-        $listItems = $listItems ?: '<p>' . __('There are no events available.', 'rrze-newsletter') . '</p>';
-        return $mjml ? $listItems : sprintf('<div%1$s>%2$s</div>', $textStyle, $listItems);
+        return $listItems ? '<div class="has-normal-padding">' . $listItems . '</div>' : '';
     }
 
     /**
@@ -985,24 +943,24 @@ class ICS
      * filterTheContent
      * Skips some of the functions WP normally runs on 'the_content'.
      *
-     * @param [type] $text
+     * @param string $content
      * @return void
      */
-    protected static function filterTheContent($text)
+    protected static function filterTheContent($content)
     {
-        return trim(wpautop(convert_chars(wptexturize($text))));
+        return Utils::wpautop(convert_chars(wptexturize($content)));
     }
 
     /**
      * emptyContent
-     * Check if a string is empty of text content.
+     * Check if the content is empty.
      *
-     * @param string $str
+     * @param string $content
      * @return boolean
      */
-    protected static function emptyContent($str)
+    protected static function emptyContent($content)
     {
-        return empty(trim(str_replace('&nbsp;', '', strip_tags($str, '<img><iframe><audio><video>'))));
+        return empty(trim(str_replace('&nbsp;', '', strip_tags($content, '<img><iframe><audio><video>'))));
     }
 
     /**
@@ -1030,10 +988,9 @@ class ICS
      * Convert a recurrence rule into a human-readable expression.
      *
      * @param string $rrule
-     * @param boolean $mjml
      * @return string
      */
-    public static function humanReadableRecurrence($rrule, $mjml)
+    public static function humanReadableRecurrence($rrule)
     {
         $opt = [
             'use_intl' => true,
@@ -1050,7 +1007,7 @@ class ICS
 
         $rrule = new RRule($rrule);
         $output = $rrule->humanReadable($opt);
-        return $mjml ? '<p>' . $output . '</p>' : '<div class="recurrence">' . $output . '</div>';
+        return '<p>' . $output . '</p>';
     }
 
     /**
@@ -1073,38 +1030,35 @@ class ICS
     }
 
     /**
+     * eventLocationHtml
+     *
+     * @param mixed $location
+     * @return string
+     */
+    protected static function eventLocationHtml($location)
+    {
+        return '<div class="has-normal-padding">' . make_clickable($location) . '</div>';
+    }
+
+    /**
      * eventOrganizerHtml
      *
      * @param mixed $organizer
-     * @param boolean $mjml
      * @return string
      */
-    protected static function eventOrganizerHtml($organizer, $mjml)
+    protected static function eventOrganizerHtml($organizer)
     {
         $content = '';
         if (is_array($organizer)) {
             if (count((array)$organizer) == 2 && isset($organizer[0]['CN'])) {
-                $content .= '<a href="' . esc_url($organizer[1]) . '" rel="noopener noreferrer nofollow">' . rawurldecode($organizer[0]['CN']) . '</a>';
+                $content = '<a href="' . esc_url($organizer[1]) . '" rel="noopener noreferrer nofollow">' . rawurldecode($organizer[0]['CN']) . '</a>';
             } elseif (!empty($organizer[1]) && is_scalar($organizer[1])) {
-                $content .= $organizer[1];
+                $content = $organizer[1];
             }
-        } elseif (!empty($organizer)) {
-            $content .= $organizer;
+        } else {
+            $content = $organizer;
         }
-        return $mjml ? '<p class="has-normal-padding">' . $content . '</p>' : '<div class="organizer">' . $content . '</div>';
-    }
-
-    /**
-     * eventLocationHtml
-     *
-     * @param mixed $location
-     * @param boolean $mjml
-     * @return string
-     */
-    protected static function eventLocationHtml($location, $mjml)
-    {
-        $content = make_clickable($location);
-        return $mjml ? '<p class="has-normal-padding">' . $content . '</p>' : '<div class="location">' . $content . '</div>';
+        return '<div class="has-normal-padding">' . $content . '</div>';
     }
 
     /**
@@ -1112,33 +1066,33 @@ class ICS
      *
      * @param array $atts
      * @param array $event
-     * @param boolean $mjml
-     * @return mixed
+     * @return string
      */
-    protected static function eventDescriptionHtml($atts, $event, $mjml)
+    protected static function eventDescriptionHtml($atts, $event)
     {
         $output = '';
         if ($atts['displayLocation'] && !empty($event['location'])) {
-            $output .= self::eventLocationHtml($event['location'], $mjml);
+            $output .= self::eventLocationHtml($event['location']);
         }
         if ($atts['displayOrganizer'] && !empty($event['organizer'])) {
-            $output .= self::eventOrganizerHtml($event['organizer'], $mjml);
+            $output .= self::eventOrganizerHtml($event['organizer']);
         }
+        $output = $output ? '<div class="has-normal-padding">' . $output . '</div>' : '';
 
-        $content = '';
+        $description = '';
         if ($atts['displayDescription'] && !empty($event['eventdesc'])) {
+            $description = self::filterTheContent($event['eventdesc']);
             if ($atts['descriptionLimit']) {
-                $eventdesc = make_clickable(wp_trim_words($event['eventdesc'], absint($atts['descriptionLength']), ' [&hellip;]'));
+                $description = make_clickable(wp_trim_words($description, absint($atts['descriptionLength']), ' [&hellip;]'));
             } else {
-                $eventdesc = self::filterTheContent(make_clickable($event['eventdesc']));
+                $description = make_clickable($description);
             }
-            $content .= $mjml ? $eventdesc : $eventdesc;
         }
 
-        if (!self::emptyContent($content)) {
-            $output .= $mjml ? $content . '<p class="has-small-padding">&nbsp;</p>' : '<div class="eventdesc">' . $content . '</div>';
+        if (!self::emptyContent($description)) {
+            $output .= '<div class="has-normal-padding">' . $description . '</div>';
         }
 
-        return !self::emptyContent($output) ? $output : null;
+        return $output ? '<div class="has-normal-padding">' . $output . '</div>' : '';
     }
 }

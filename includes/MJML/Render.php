@@ -5,7 +5,6 @@ namespace RRZE\Newsletter\MJML;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Templates;
-
 use function RRZE\Newsletter\plugin;
 
 final class Render
@@ -424,7 +423,6 @@ final class Render
 
                 // Render rrze-newsletter/rss block.
                 if ($blockName == 'rrze-newsletter/rss') {
-                    //$innerHtml = RSS::renderMJML($attrs);
                     $key = md5($attrs['feedURL']);
                     if (!($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true))) {
                         $rssAttrs = [];
@@ -436,7 +434,6 @@ final class Render
 
                 // Render rrze-newsletter/ics block.
                 if ($blockName == 'rrze-newsletter/ics') {
-                    //$innerHtml = ICS::renderMJML($attrs);
                     $key = md5($attrs['feedURL']);
                     if (!($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true))) {
                         $icsAttrs = [];
@@ -837,7 +834,7 @@ final class Render
             self::$fontHeader = 'Arial';
         }
         if (!in_array(self::$fontBody, self::$supportedFonts)) {
-            self::$fontBody = 'Georgia';
+            self::$fontBody = 'Arial';
         }
 
         $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true);
@@ -875,7 +872,7 @@ final class Render
         extract($args);
 
         self::$fontHeader = 'Arial';
-        self::$fontBody = 'Georgia';
+        self::$fontBody = 'Arial';
 
         $data = [
             'title' => $title,
