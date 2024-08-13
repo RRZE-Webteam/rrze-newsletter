@@ -87,7 +87,7 @@ final class Editor
             'core/list-item',
             'core/social-links',
             'core/social-link',
-            // 'rrze-newsletter/post-inserter',
+            'rrze-newsletter/post-inserter',
             'rrze-newsletter/rss',
             'rrze-newsletter/ics'
         ];
