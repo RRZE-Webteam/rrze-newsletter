@@ -388,7 +388,7 @@ final class Render
 
         // Default attributes for the column which will envelop the component.
         $columnAttrs = [
-            'padding' => $padding ?: '0'
+            'padding' => $padding ?: '6px 12px'
         ];
 
         $fontFamily = 'core/heading' === $blockName ? self::$fontHeader : self::$fontBody;

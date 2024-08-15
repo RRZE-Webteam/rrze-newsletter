@@ -1,5 +1,9 @@
 @use "~@wordpress/base-styles/colors" as wp-colors;
 
+:root {
+    --rrze-newsletter-post-inserter-width: 474px;
+}
+
 .rrze-newsletter-post-inserter {
     border: 1px solid wp-colors.$gray-900;
     border-radius: 2px;
@@ -59,7 +63,11 @@
         &.image-left,
         &.image-right {
             .block-editor-block-preview__content {
-                @media only screen and (min-width: 624px) {
+                box-sizing: unset !important;
+                @media only screen and (min-width: 680px) {
+                    margin-left: calc(
+                        var(--rrze-newsletter-post-inserter-width) / -2
+                    );
                     padding: 14px;
                     transform: scale(1) !important;
                     transform-origin: 0 50% 0;
@@ -77,13 +85,6 @@
     }
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    &.block-editor-rich-text__editable a {
-        color: inherit;
-    }
+.wp-block-heading a {
+    color: inherit;
 }

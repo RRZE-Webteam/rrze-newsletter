@@ -57,7 +57,6 @@ class ICS
      */
     public static function renderHTML(array $atts): string
     {
-        error_log(print_r($atts, true));
         $atts = self::parseAtts($atts);
         $feedItems = self::getItems($atts['feedURL'], $atts);
 

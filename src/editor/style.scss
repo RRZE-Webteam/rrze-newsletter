@@ -21,6 +21,13 @@
     }
 
     .block-editor-block-list__layout {
+        --wp--preset--font-size--small: 14px;
+        --wp--preset--font-size--normal: 16px;
+        --wp--preset--font-size--medium: 22px;
+        --wp--preset--font-size--large: 26px;
+        --wp--preset--font-size--x-large: 30px;
+        --wp--preset--font-size--huge: 36px;
+
         &.is-root-container {
             padding-left: 0;
             padding-right: 0;
@@ -38,7 +45,7 @@
         .components-button,
         .block-editor-block-list__block .components-placeholder,
         .block-editor-block-list__block .components-placeholder div {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: var(--rrze-newsletter-body-font);
         }
 
         h1,
@@ -191,7 +198,7 @@
         }
 
         .wp-block-columns {
-            padding: 0;
+            padding: 0 0 20px;
 
             .block-list-appender {
                 margin: 0;
@@ -294,6 +301,30 @@
                     margin-right: 0;
                 }
             }
+        }
+
+        .has-small-font-size {
+            font-size: var(--wp--preset--font-size--small);
+        }
+
+        .has-normal-font-size {
+            font-size: var(--wp--preset--font-size--normal);
+        }
+
+        .has-medium-font-size {
+            font-size: var(--wp--preset--font-size--medium);
+        }
+
+        .has-large-font-size {
+            font-size: var(--wp--preset--font-size--large);
+        }
+
+        .has-x-large-font-size {
+            font-size: var(--wp--preset--font-size--x-large);
+        }
+
+        .has-huge-font-size {
+            font-size: var(--wp--preset--font-size--huge);
         }
     }
 }
