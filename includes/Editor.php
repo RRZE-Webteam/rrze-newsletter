@@ -23,8 +23,8 @@ final class Editor
     public function __construct()
     {
         add_action('init', [$this, 'disableFeaturedImageSupport']);
-        add_action('after_setup_theme', [$this, 'afterSetupTheme']);
-        add_action('the_post', [__CLASS__, 'stripEditorModifications']);
+        add_action('after_setup_theme', [$this, 'afterSetupTheme'], 99);
+        add_action('the_post', [__CLASS__, 'removeEditorModifications']);
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
@@ -42,7 +42,7 @@ final class Editor
         add_filter('wp_theme_json_data_theme', [$this, 'filterThemeJsonTheme']);
     }
 
-    public static function stripEditorModifications()
+    public static function removeEditorModifications()
     {
         if (!self::isEditingNewsletter()) {
             return;
@@ -64,8 +64,10 @@ final class Editor
         }
 
         remove_editor_styles();
-        add_theme_support('editor-gradient-presets', []);
+        add_theme_support('disable-custom-colors');
+        add_theme_support('editor-color-palette', []);
         add_theme_support('disable-custom-gradients');
+        add_theme_support('editor-gradient-presets', []);
     }
 
     public static function newsletterAllowedBlockTypes($allowedBlockTypes)
@@ -187,6 +189,10 @@ final class Editor
 
     public function filterThemeJsonTheme($themeJson)
     {
+        if (!self::isEditingNewsletter()) {
+            return $themeJson;
+        }
+
         $data = [
             'version'  => 2,
             'settings' => [
@@ -199,7 +205,39 @@ final class Editor
                     'defaultPalette' => false,
                     'background' => true,
                     'text' => true,
-                    'link' => true
+                    'link' => true,
+                    'palette' => [
+                        [
+                            'slug' => '#04316a',
+                            'color' => '#04316a',
+                            'name' => 'Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)'
+                        ],
+                        [
+                            'slug' => '#fdb735',
+                            'color' => '#fdb735',
+                            'name' => 'Philosophische Fakultät'
+                        ],
+                        [
+                            'slug' => '#c50f3c',
+                            'color' => '#c50f3c',
+                            'name' => 'Rechts- und Wirtschaftswissenschaftliche Fakultät'
+                        ],
+                        [
+                            'slug' => '#18b4f1',
+                            'color' => '#18b4f1',
+                            'name' => 'Medizinische Fakultät'
+                        ],
+                        [
+                            'slug' => '#7bb725',
+                            'color' => '#7bb725',
+                            'name' => 'Naturwissenschaftliche Fakultät'
+                        ],
+                        [
+                            'slug' => '#8C9FB1',
+                            'color' => '#8C9FB1',
+                            'name' => 'Technische Fakultät'
+                        ]
+                    ]
                 ],
                 'spacing' => [
                     'blockGap' => false,
