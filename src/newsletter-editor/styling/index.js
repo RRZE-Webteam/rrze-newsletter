@@ -160,7 +160,7 @@ export const useCustomFontsInIframe = () => {
         };
         updateIframe();
         const observer = new MutationObserver(updateIframe);
-        observer.observe(node, { childList: true });
+        observer.observe(node, { childList: true, subtree: true });
         return () => {
             observer.disconnect();
         };
