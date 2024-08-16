@@ -68,7 +68,7 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                 per_page: -1,
             }),
         }).then(setCategoriesList);
-        fetchPostTypes().then(setPostTypesList);
+        // fetchPostTypes().then(setPostTypesList);
     }, []);
 
     const categorySuggestions = categoriesList.reduce(
@@ -235,12 +235,6 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
 
     return (
         <div className="rrze-newsletter-query-controls">
-            <SelectControl
-                label={__("Post type", "rrze-newsletter")}
-                options={postTypesList}
-                value={attributes.postType}
-                onChange={(postType) => setAttributes({ postType })}
-            />
             <ToggleControl
                 label={__("Display specific posts", "rrze-newsletter")}
                 checked={attributes.isDisplayingSpecificPosts}
