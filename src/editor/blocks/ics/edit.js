@@ -39,6 +39,10 @@ export default function ICSEdit({ attributes, setAttributes }) {
         displayDescription,
         descriptionLength,
         descriptionLimit,
+        headingFontSize,
+        textFontSize,
+        headingColor,
+        textColor,
     } = attributes;
 
     function toggleAttribute(propName) {
@@ -156,6 +160,38 @@ export default function ICSEdit({ attributes, setAttributes }) {
                             required
                         />
                     )}
+                </PanelBody>
+                <PanelBody title={__("Text style", "rrze-newsletter")}>
+                    <FontSizePicker
+                        fontSizes={blockEditorSettings.fontSizes}
+                        value={attributes.textFontSize}
+                        onChange={(value) => {
+                            return setAttributes({ textFontSize: value });
+                        }}
+                    />
+                    <ColorPicker
+                        color={attributes.textColor || ""}
+                        onChangeComplete={(value) =>
+                            setAttributes({ textColor: value.hex })
+                        }
+                        disableAlpha
+                    />
+                </PanelBody>
+                <PanelBody title={__("Heading style", "rrze-newsletter")}>
+                    <FontSizePicker
+                        fontSizes={blockEditorSettings.fontSizes}
+                        value={attributes.headingFontSize}
+                        onChange={(value) =>
+                            setAttributes({ headingFontSize: value })
+                        }
+                    />
+                    <ColorPicker
+                        color={attributes.headingColor || ""}
+                        onChangeComplete={(value) =>
+                            setAttributes({ headingColor: value.hex })
+                        }
+                        disableAlpha
+                    />
                 </PanelBody>
             </InspectorControls>
             <div {...blockProps}>
