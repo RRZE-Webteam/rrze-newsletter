@@ -65,7 +65,7 @@ class ICS
         }
 
         if (!$feedItems) {
-            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no events available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="rrze-newsletter-ics"><p>%s</p></div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
             $feedItems = self::render($atts, $feedItems, true);
         }
@@ -92,7 +92,7 @@ class ICS
         }
 
         if (!$feedItems) {
-            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no events available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="rrze-newsletter-ics"><p>%s</p></div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
             wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $atts['postId']);
         }
@@ -110,6 +110,14 @@ class ICS
      */
     protected static function render(array $atts, $feedItems)
     {
+        $headingStyle = !empty($atts['headingFontSize']) ? 'font-size:' . $atts['headingFontSize'] . ';' : '';
+        $headingStyle .= !empty($atts['headingColor']) ? 'color:' . $atts['headingColor'] . ';' : '';
+        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
+
+        $textStyle = !empty($atts['textFontSize']) ? 'font-size:' . $atts['textFontSize'] . ';' : '';
+        $textStyle .= !empty($atts['textColor']) ? 'color:' . $atts['textColor'] . ';' : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
         $listItems = '';
         $dateFormat = get_option('date_format');
 
@@ -155,18 +163,18 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h3 class="has-normal-padding">' . $title . '</h3>';
+                                $listItems .= '<h3 ' . $headingStyle . '>' . $title . '</h3>';
 
                                 $mdate = $mdStart . ' &#8211; ' . $mdEnd;
-                                $listItems .= '<div class="has-normal-padding">' . $mdate . '</div>';
+                                $listItems .= '<p ' . $textStyle . '>' . $mdate . '</p>';
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule']));
+                                    // $listItems .= self::humanReadableRecurrence($event['rrule'], $textStyle);
                                 }
 
                                 // Location/Organizer/Description
-                                $listItems .= self::eventDescriptionHtml($atts, $event);
+                                $listItems .= self::eventDescriptionHtml($atts, $event, $textStyle);
 
                                 // We've now used this event
                                 $multidayEventKeysUsed[] = $event['multiday']['event_key'];
@@ -203,7 +211,7 @@ class ICS
                                 if (!empty($event['url'])) {
                                     $title = '<a href="' . esc_url($event['url']) . '"' . (!self::domainMatch($event['url']) ? ' target="_blank" rel="noopener noreferrer nofollow"' : '') . '>' . $title . '</a>';
                                 }
-                                $listItems .= '<h3 class="has-normal-padding">' . $title . '</h3>';
+                                $listItems .= '<h3 ' . $headingStyle . '>' . $title . '</h3>';
 
                                 $mdate = self::dateFormat($dateFormat, $month . '/' . $day . '/' . $year);
 
@@ -218,18 +226,19 @@ class ICS
                                 }
 
                                 $listItems .= $mtime ? sprintf(
-                                    '<div class="has-normal-padding">%1$s%2$s</div>',
+                                    '<p %1$s>%2$s%3$s</p>',
+                                    $textStyle,
                                     $mdate,
                                     $mtime
                                 ) : '';
 
                                 // RRULE/FREQ
                                 if (!empty($event['rrule'])) {
-                                    //$listItems .= sprintf('<p>%s</p>', self::humanReadableRecurrence($event['rrule']));
+                                    // $listItems .= self::humanReadableRecurrence($event['rrule'], $textStyle);
                                 }
 
                                 // Location/Organizer/Description
-                                $listItems .= self::eventDescriptionHtml($atts, $event);
+                                $listItems .= self::eventDescriptionHtml($atts, $event, $textStyle);
 
                                 $i++;
                                 if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
@@ -242,7 +251,7 @@ class ICS
             }
         }
 
-        return $listItems ? '<div class="has-normal-padding">' . $listItems . '</div>' : '';
+        return $listItems ? '<div class="rrze-newsletter-ics" ' . $textStyle . '>' . $listItems . '</div>' : '';
     }
 
     /**
@@ -947,7 +956,7 @@ class ICS
      */
     protected static function filterTheContent($content)
     {
-        return Utils::wpautop(convert_chars(wptexturize($content)));
+        return wpautop(convert_chars(wptexturize($content)));
     }
 
     /**
@@ -987,9 +996,10 @@ class ICS
      * Convert a recurrence rule into a human-readable expression.
      *
      * @param string $rrule
+     * @param string $textStyle
      * @return string
      */
-    public static function humanReadableRecurrence($rrule)
+    public static function humanReadableRecurrence($rrule, $textStyle)
     {
         $opt = [
             'use_intl' => true,
@@ -1006,7 +1016,7 @@ class ICS
 
         $rrule = new RRule($rrule);
         $output = $rrule->humanReadable($opt);
-        return '<p>' . $output . '</p>';
+        return '<p ' . $textStyle . '>' . $output . '</p>';
     }
 
     /**
@@ -1032,20 +1042,22 @@ class ICS
      * eventLocationHtml
      *
      * @param mixed $location
+     * @param string $textStyle
      * @return string
      */
-    protected static function eventLocationHtml($location)
+    protected static function eventLocationHtml($location, $textStyle)
     {
-        return '<div class="has-normal-padding">' . make_clickable($location) . '</div>';
+        return '<p ' . $textStyle . '>' . make_clickable($location) . '</p>';
     }
 
     /**
      * eventOrganizerHtml
      *
      * @param mixed $organizer
+     * @param string $textStyle
      * @return string
      */
-    protected static function eventOrganizerHtml($organizer)
+    protected static function eventOrganizerHtml($organizer, $textStyle)
     {
         $content = '';
         if (is_array($organizer)) {
@@ -1057,7 +1069,7 @@ class ICS
         } else {
             $content = $organizer;
         }
-        return '<div class="has-normal-padding">' . $content . '</div>';
+        return '<p ' . $textStyle . '>' . $content . '</p>';
     }
 
     /**
@@ -1065,18 +1077,19 @@ class ICS
      *
      * @param array $atts
      * @param array $event
+     * @param string $textStyle
      * @return string
      */
-    protected static function eventDescriptionHtml($atts, $event)
+    protected static function eventDescriptionHtml($atts, $event, $textStyle)
     {
         $output = '';
         if ($atts['displayLocation'] && !empty($event['location'])) {
-            $output .= self::eventLocationHtml($event['location']);
+            $output .= self::eventLocationHtml($event['location'], $textStyle);
         }
         if ($atts['displayOrganizer'] && !empty($event['organizer'])) {
-            $output .= self::eventOrganizerHtml($event['organizer']);
+            $output .= self::eventOrganizerHtml($event['organizer'], $textStyle);
         }
-        $output = $output ? '<div class="has-normal-padding">' . $output . '</div>' : '';
+        $output = $output ? '<p ' . $textStyle . '>' . $output . '</p>' : '';
 
         $description = '';
         if ($atts['displayDescription'] && !empty($event['eventdesc'])) {
@@ -1089,9 +1102,9 @@ class ICS
         }
 
         if (!self::emptyContent($description)) {
-            $output .= '<div class="has-normal-padding">' . $description . '</div>';
+            $output .= '<p ' . $textStyle . '>' . $description . '</p>';
         }
 
-        return $output ? '<div class="has-normal-padding">' . $output . '</div>' : '';
+        return $output ? '<p ' . $textStyle . '>' . $output . '</p>' : '';
     }
 }
