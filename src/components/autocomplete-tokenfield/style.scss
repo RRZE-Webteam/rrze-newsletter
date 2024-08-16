@@ -1,18 +1,49 @@
-.autocomplete-tokenfield {
-    position: relative;
+/**
+ * Autocomplete Token Field
+ */
 
-    .components-spinner {
-        position: absolute;
-        top: 2em;
-        right: 0;
-    }
+ @use "~@wordpress/base-styles/colors" as wp-colors;
 
-    /* Workaround for hard-coded help text in FormTokenField. */
-    .components-form-token-field > .components-form-token-field__help {
-        display: none;
-    }
-
-    .autocomplete-tokenfield__help {
-        font-style: italic;
-    }
-}
+ .rrze-newsletter-autocomplete-tokenfield {
+     .components-spinner {
+         margin: 0;
+         position: absolute;
+         right: 8px;
+         top: 8px;
+     }
+ 
+     &__input-container {
+         position: relative;
+ 
+         &.has-label .components-spinner {
+             top: 32px;
+         }
+     }
+ 
+     /* Workaround for hard-coded help text in FormTokenField. */
+     .components-form-token-field {
+         > .components-form-token-field__help {
+             display: none;
+         }
+ 
+         > .components-form-token-field__token-text {
+             align-items: center;
+             display: flex;
+         }
+     }
+ 
+     .rrze-newsletter-autocomplete-tokenfield__help {
+         color: wp-colors.$gray-700;
+         font-size: inherit;
+         margin-top: 0;
+     }
+ 
+     .components-form-token-field__suggestions-list {
+         margin-left: 0;
+         padding-left: 0;
+     }
+ 
+     .components-button:focus:not(:disabled) {
+         box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+     }
+ }
