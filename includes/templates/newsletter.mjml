@@ -98,29 +98,9 @@
                 line-height: 1.5;
             }
 
-            /* Padding */
-            .has-small-padding {
-                padding-bottom: 8px;
-            }
-
-            .has-normal-padding {
-                padding-bottom: 16px;
-            }
-
-            .has-medium-padding {
-                padding-bottom: 24px;
-            }
-
-            .has-large-padding {
-                padding-bottom: 32px;
-            }
-
-            .has-x-large-padding {
-                padding-bottom: 40px;
-            }            
-
-            .has-huge-padding {
-                padding-bottom: 48px;
+            .has-huge-font-size {
+                font-size: 36px;
+                line-height: 1.5;
             }
 
             /* List */
@@ -141,6 +121,20 @@
             /* Social links */
             .social-element img {
                 border-radius: 0 !important;
+            }
+
+            /* ICS */
+            .rrze-newsletter-ics h3,
+            .rrze-newsletter-ics p {
+                padding-bottom: 16px;
+                line-height: 1.5;
+            }
+
+            /* RSS */
+            .rrze-newsletter-rss h3,
+            .rrze-newsletter-rss p {
+                padding-bottom: 16px;
+                line-height: 1.5;
             }
 
             /* Has Background */

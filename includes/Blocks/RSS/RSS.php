@@ -4,7 +4,6 @@ namespace RRZE\Newsletter\Blocks\RSS;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\CPT\Newsletter;
 use function RRZE\Newsletter\plugin;
 
@@ -80,7 +79,7 @@ class RSS
         }
 
         if (!$feedItems) {
-            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no items available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="rrze-newsletter-rss"><p>%s</p></div>', __('There are no items available.', 'rrze-newsletter'));
         }
 
         return $feedItems;
@@ -105,7 +104,7 @@ class RSS
         }
 
         if (!$feedItems) {
-            $feedItems = sprintf('<div class="has-normal-padding">%s</div>', __('There are no items available.', 'rrze-newsletter'));
+            $feedItems = sprintf('<div class="rrze-newsletter-rss"><p>%s</p></div>', __('There are no items available.', 'rrze-newsletter'));
         } else {
             wp_cache_set('rrze_newsletter_rss_block_not_empty', 1, $atts['postId']);
         }
@@ -124,6 +123,14 @@ class RSS
      */
     protected static function render(array $atts, $feed)
     {
+        $headingStyle = !empty($atts['headingFontSize']) ? 'font-size:' . $atts['headingFontSize'] . ';' : '';
+        $headingStyle .= !empty($atts['headingColor']) ? 'color:' . $atts['headingColor'] . ';' : '';
+        $headingStyle = $headingStyle ? ' style="' . $headingStyle . '"' : '';
+
+        $textStyle = !empty($atts['textFontSize']) ? 'font-size:' . $atts['textFontSize'] . ';' : '';
+        $textStyle .= !empty($atts['textColor']) ? 'color:' . $atts['textColor'] . ';' : '';
+        $textStyle = $textStyle ? ' style="' . $textStyle . '"' : '';
+
         $sinceLastSendGmt = Newsletter::getLastSendDateGmt($atts['postId']);
 
         $feedItems  = $feed->get_items(0, $atts['itemsToShow']);
@@ -144,7 +151,7 @@ class RSS
             $readMoreLink = '';
             if ($link && $atts['displayReadMore']) {
                 $readMoreLink = sprintf(
-                    '<div class="has-normal-padding"><a href="%s">%s</a></div>',
+                    '<a href="%1$s">%2$s</a>',
                     $link,
                     sprintf(
                         /* translators: %s: article title. */
@@ -155,13 +162,13 @@ class RSS
             } elseif ($link) {
                 $title = "<a href='{$link}'>{$title}</a>";
             }
-            $title = '<h3 class="has-normal-padding">' . $title . '</h3>';
+            $title = '<h3 ' . $headingStyle . '>' . $title . '</h3>';
 
             $date = '';
             if ($atts['displayDate']) {
                 if ($timestamp) {
                     $date = sprintf(
-                        '<div class="has-small-padding">%s</div> ',
+                        '<p ' . $textStyle . '>%s</p> ',
                         date_i18n(get_option('date_format'), $timestamp)
                     );
                 }
@@ -177,9 +184,9 @@ class RSS
                         $content = substr($content, 0, -5) . '[&hellip;]';
                     }
                 }
-                $content = '<div class="has-normal-padding">' . $content . '</div>';
+                $content = '<p ' . $textStyle . '>' . $content . '</p>';
                 if ($readMoreLink) {
-                    $content .= '<div class="has-normal-padding">' . $readMoreLink . '</div>';
+                    $content .= '<p ' . $textStyle . '>' . $readMoreLink . '</p>';
                 }
             }
 
@@ -187,7 +194,7 @@ class RSS
         }
 
         if ($listItems) {
-            return '<div class="has-normal-padding">' . $listItems . '</div>';
+            return '<div class="rrze-newsletter-rss" ' . $textStyle . '>' . $listItems . '</p>';
         }
         return '';
     }
@@ -242,6 +249,6 @@ class RSS
     protected static function filterTheContent($content)
     {
         $content = html_entity_decode($content, ENT_QUOTES, get_option('blog_charset'));
-        return Utils::wpautop(convert_chars(wptexturize($content)));
+        return wpautop(convert_chars(wptexturize($content)));
     }
 }

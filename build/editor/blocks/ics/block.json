@@ -32,6 +32,22 @@
     "descriptionLength": {
       "type": "number",
       "default": 25
+    },
+    "textFontSize": {
+      "type": "string",
+      "default": "16px"
+    },
+    "headingFontSize": {
+      "type": "string",
+      "default": "24px"
+    },
+    "textColor": {
+      "type": "string",
+      "default": "#000000"
+    },
+    "headingColor": {
+      "type": "string",
+      "default": "#000000"
     }
   }
 }
