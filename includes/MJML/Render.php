@@ -401,7 +401,7 @@ final class Render
             case 'rrze-newsletter/ics':
                 $textAttrs = array_merge(
                     [
-                        'padding'     => '0',
+                        'padding'     => $padding ?: '0',
                         'line-height' => '18px',
                         'font-size'   => '16px',
                         'font-family' => $fontFamily,
