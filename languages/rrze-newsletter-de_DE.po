@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2024-08-09T09:38:41+00:00\n"
-"PO-Revision-Date: 2024-08-09 11:43+0200\n"
+"POT-Creation-Date: 2024-08-16T14:48:44+00:00\n"
+"PO-Revision-Date: 2024-08-16 16:52+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -201,16 +201,15 @@ msgstr ""
 "Liste der E-Mail-Adressen, die keine Mailingliste abonnieren. Geben Sie eine "
 "E-Mail-Adresse pro Zeile ein."
 
-#: includes/Blocks/ICS/ICS.php:63
+#: includes/Blocks/ICS/ICS.php:64
 msgid "ICS Error:"
 msgstr "ICS-Fehler:"
 
-#: includes/Blocks/ICS/ICS.php:70 includes/Blocks/ICS/ICS.php:100
-#: includes/Blocks/ICS/ICS.php:287
+#: includes/Blocks/ICS/ICS.php:68 includes/Blocks/ICS/ICS.php:95
 msgid "There are no events available."
 msgstr "Es sind keine Termine verfügbar."
 
-#: includes/Blocks/ICS/ICS.php:462
+#: includes/Blocks/ICS/ICS.php:428
 msgid "Ends"
 msgstr "Endet"
 
@@ -218,21 +217,22 @@ msgstr "Endet"
 msgid "RSS Error:"
 msgstr "RSS-Fehler:"
 
-#: includes/Blocks/RSS/RSS.php:85 includes/Blocks/RSS/RSS.php:113
+#: includes/Blocks/RSS/RSS.php:82 includes/Blocks/RSS/RSS.php:107
 msgid "There are no items available."
 msgstr "Es sind keine Artikel verfügbar."
 
-#: includes/Blocks/RSS/RSS.php:153
+#: includes/Blocks/RSS/RSS.php:147
 #: src/editor/blocks/post-inserter/query-controls.js:41
-#: src/editor/blocks/post-inserter/query-controls.js:159
-#: src/editor/blocks/post-inserter/query-controls.js:176
+#: src/editor/blocks/post-inserter/query-controls.js:158
+#: src/editor/blocks/post-inserter/query-controls.js:178
 #: src/editor/blocks/post-inserter/query-controls.js:195
-#: src/editor/blocks/post-inserter/query-controls.js:212
+#: src/editor/blocks/post-inserter/query-controls.js:214
+#: src/editor/blocks/post-inserter/query-controls.js:231
 msgid "(no title)"
 msgstr "(kein Titel)"
 
 #. translators: %s: article title.
-#: includes/Blocks/RSS/RSS.php:164
+#: includes/Blocks/RSS/RSS.php:158
 msgid "Continue reading \"%s\"&hellip;"
 msgstr "Artikel „%s“ weiterlesen&hellip;"
 
@@ -641,7 +641,7 @@ msgid "Every 5 minutes"
 msgstr "Alle 5 Minuten"
 
 #. translators: Message after the email was sent successfully.
-#: includes/Mail/Send.php:78 includes/RestApi.php:446
+#: includes/Mail/Send.php:78 includes/RestApi.php:451
 msgid "Email sent successfully to %s."
 msgstr "E-Mail erfolgreich an %s gesendet."
 
@@ -654,7 +654,7 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Render.php:876
+#: includes/MJML/Render.php:903
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -757,7 +757,7 @@ msgstr "Die E-Mail-Adresse des Empfängers ist ungültig."
 msgid "The recipient email domain is not allowed."
 msgstr "Die E-Mail-Domäne des Empfängers ist nicht zulässig."
 
-#: includes/RestApi.php:452
+#: includes/RestApi.php:457
 msgid "There was an error sending the email."
 msgstr "Beim Senden der E-Mail ist ein Fehler aufgetreten."
 
@@ -1220,13 +1220,17 @@ msgstr "Länge der Beschreibung begrenzen"
 msgid "Max number of words in description"
 msgstr "Maximale Anzahl von Wörtern in der Beschreibung"
 
-#: src/editor/blocks/ics/edit.js:164 src/editor/blocks/rss/edit.js:178
-msgid "Heading"
-msgstr "Überschrift"
+#: src/editor/blocks/ics/edit.js:164
+#: src/editor/blocks/post-inserter/index.js:243
+#: src/editor/blocks/rss/edit.js:178
+msgid "Text style"
+msgstr "Textstil"
 
-#: src/editor/blocks/ics/edit.js:183 src/editor/blocks/rss/edit.js:197
-msgid "Text"
-msgstr "Text"
+#: src/editor/blocks/ics/edit.js:180
+#: src/editor/blocks/post-inserter/index.js:259
+#: src/editor/blocks/rss/edit.js:194
+msgid "Heading style"
+msgstr "Überschriftenstil"
 
 #: src/editor/blocks/ics/index.js:19
 msgid "ICS"
@@ -1296,14 +1300,6 @@ msgstr "„Weiterlesen…“-Link"
 msgid "Sorting and filtering"
 msgstr "Sortieren und filtern"
 
-#: src/editor/blocks/post-inserter/index.js:243
-msgid "Text style"
-msgstr "Textstil"
-
-#: src/editor/blocks/post-inserter/index.js:259
-msgid "Heading style"
-msgstr "Überschriftenstil"
-
 #: src/editor/blocks/post-inserter/index.js:275
 msgid "Subtitle style"
 msgstr "Untertitelstil"
@@ -1320,33 +1316,59 @@ msgstr "Beitrag-Inserter"
 msgid "Insert posts"
 msgstr "Beiträge einfügen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:220
+#: src/editor/blocks/post-inserter/query-controls.js:239
+msgid "Post type"
+msgstr "Post-Type"
+
+#: src/editor/blocks/post-inserter/query-controls.js:245
 msgid "Display specific posts"
 msgstr "Spezifische Beiträge anzeigen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:230
+#: src/editor/blocks/post-inserter/query-controls.js:255
 msgid "Add posts"
 msgstr "Beiträge hinzufügen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:264
+#: src/editor/blocks/post-inserter/query-controls.js:289
 msgid "Hide Advanced Filters"
 msgstr "Erweiterte Filter ausblenden"
 
-#: src/editor/blocks/post-inserter/query-controls.js:268
+#: src/editor/blocks/post-inserter/query-controls.js:290
 msgid "Show Advanced Filters"
 msgstr "Erweiterte Filter anzeigen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:282
+#: src/editor/blocks/post-inserter/query-controls.js:304
 msgid "Tags"
 msgstr "Schlagwörter"
 
-#: src/editor/blocks/post-inserter/query-controls.js:290
+#: src/editor/blocks/post-inserter/query-controls.js:312
 msgid "Excluded Categories"
 msgstr "Ausgenommene Kategorien"
 
-#: src/editor/blocks/post-inserter/query-controls.js:301
+#: src/editor/blocks/post-inserter/query-controls.js:323
 msgid "Excluded Tags"
 msgstr "Ausgenommene Schlagwörter"
+
+#: src/editor/blocks/post-inserter/query-controls.js:327
+msgid "Order by"
+msgstr "Reihenfolge von"
+
+#: src/editor/blocks/post-inserter/query-controls.js:331
+msgid "Newest to oldest"
+msgstr "Neu nach Alt"
+
+#: src/editor/blocks/post-inserter/query-controls.js:338
+msgid "Oldest to newest"
+msgstr "Alt nach Neu"
+
+#. translators: label for ordering posts by title in ascending order
+#: src/editor/blocks/post-inserter/query-controls.js:346
+msgid "A → Z"
+msgstr "A bis Z"
+
+#. translators: label for ordering posts by title in descending order
+#: src/editor/blocks/post-inserter/query-controls.js:351
+msgid "Z → A"
+msgstr "Z bis A"
 
 #: src/editor/blocks/post-inserter/utils.js:111
 msgctxt "comma separator for multiple authors"
