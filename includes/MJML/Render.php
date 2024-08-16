@@ -423,6 +423,7 @@ final class Render
 
                 // Render rrze-newsletter/rss block.
                 if ($blockName == 'rrze-newsletter/rss') {
+                    $columnAttrs['padding'] = '0';
                     $key = md5($attrs['feedURL']);
                     if (!($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true))) {
                         $rssAttrs = [];
@@ -434,6 +435,7 @@ final class Render
 
                 // Render rrze-newsletter/ics block.
                 if ($blockName == 'rrze-newsletter/ics') {
+                    $columnAttrs['padding'] = '0';
                     $key = md5($attrs['feedURL']);
                     if (!($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true))) {
                         $icsAttrs = [];
