@@ -65,6 +65,6 @@ Hinweis: Die Verwendung von [Poedit](https://poedit.net) für die Übersetzung d
 **Übersetzung: Erstellen der .json-Datei (de_DE u. de_DE_formal)**
 
 ```shell
-wp i18n make-json languages/rrze-newsletter-de_DE.po --no-purge
-wp i18n make-json languages/rrze-newsletter-de_DE_formal.po --no-purge
+npx https://github.com/mikeedwards/po2json languages/rrze-newsletter-de_DE.po languages/rrze-newsletter-de_DE-rrze-newsletter.json -f jed
+npx https://github.com/mikeedwards/po2json languages/rrze-newsletter-de_DE_formal.po languages/rrze-newsletter-de_DE_formal-rrze-newsletter.json -f jed
 ```
