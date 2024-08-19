@@ -388,7 +388,7 @@ final class Render
 
         // Default attributes for the column which will envelop the component.
         $columnAttrs = [
-            'padding' => $padding ?: '6px 12px'
+            'padding' => $padding ?: '0'
         ];
 
         $fontFamily = 'core/heading' === $blockName ? self::$fontHeader : self::$fontBody;
@@ -623,6 +623,10 @@ final class Render
 
                 // Single Column block.
             case 'core/column':
+                if (!$padding) {
+                    $columnAttrs['padding-right'] = '20px';
+                }
+
                 if (isset($attrs['verticalAlignment'])) {
                     if ('center' === $attrs['verticalAlignment']) {
                         $columnAttrs['vertical-align'] = 'middle';
@@ -662,6 +666,7 @@ final class Render
                 if (isset($attrs['color'])) {
                     $defaultAttrs['color'] = $attrs['color'];
                 }
+
                 $isStackedOnMobile = !isset($attrs['isStackedOnMobile']) || true === $attrs['isStackedOnMobile'];
                 if (!$isStackedOnMobile) {
                     $markup = '<mj-group>';
@@ -717,6 +722,9 @@ final class Render
             // Render a nested block without a wrapping section.
             return $blockMjmlMarkup;
         } else {
+            if ($padding) {
+                $sectionAttrs['padding'] = $padding;
+            }
             return '<mj-section ' . self::arrayToAttributes($sectionAttrs) . '>' . $blockMjmlMarkup . '</mj-section>';
         }
     }
