@@ -218,28 +218,32 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
 			postContentBlocks,
 		];
 
-		switch ( attributes.featuredImageAlignment ) {
-			case 'left':
-				return [
-					[
-						'core/columns',
-						{},
-						[ imageColumnBlock, postContentColumnBlock ],
-					],
-				];
-			case 'right':
-				return [
-					[
-						'core/columns',
-						{},
-						[ postContentColumnBlock, imageColumnBlock ],
-					],
-				];
-			case 'top':
-				return [ getImageBlock( true ), ...postContentBlocks ];
-		}
-	}
-	return postContentBlocks;
+        const columnsBlock = [
+            'core/columns',
+            {
+                style: {
+                    spacing: {
+                        padding: {
+                            bottom: '20px',
+                        },
+                    },
+                },
+            },
+            [],
+        ];
+
+        switch (attributes.featuredImageAlignment) {
+            case 'left':
+                columnsBlock[2] = [imageColumnBlock, postContentColumnBlock];
+                return [columnsBlock];
+            case 'right':
+                columnsBlock[2] = [postContentColumnBlock, imageColumnBlock];
+                return [columnsBlock];
+            case 'top':
+                return [getImageBlock(true), ...postContentBlocks];
+        }
+    }
+    return postContentBlocks;
 };
 
 const createBlockFromTemplate = ( [
