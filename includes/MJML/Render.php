@@ -624,10 +624,6 @@ final class Render
 
                 // Single Column block.
             case 'core/column':
-                if (!$padding) {
-                    $columnAttrs['padding-right'] = '20px';
-                }
-
                 if (isset($attrs['verticalAlignment'])) {
                     if ('center' === $attrs['verticalAlignment']) {
                         $columnAttrs['vertical-align'] = 'middle';
@@ -709,7 +705,7 @@ final class Render
             'core/column' != $blockName &&
             'core/separator' != $blockName &&
             !$isPostInserterBlock
-        ) {
+        ) {          
             $columnAttrs['width'] = '100%';
             $blockMjmlMarkup = '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $blockMjmlMarkup . '</mj-column>';
         }
@@ -723,7 +719,7 @@ final class Render
             // Render a nested block without a wrapping section.
             return $blockMjmlMarkup;
         } else {
-            if ($padding) {
+            if ($padding && in_array($blockName, ['core/columns'], true)) {
                 $sectionAttrs['padding'] = $padding;
             }
             return '<mj-section ' . self::arrayToAttributes($sectionAttrs) . '>' . $blockMjmlMarkup . '</mj-section>';
