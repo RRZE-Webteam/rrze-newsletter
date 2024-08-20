@@ -67,7 +67,7 @@ class ICS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-ics"><p>%s</p></div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
-            $feedItems = self::render($atts, $feedItems, true);
+            $feedItems = self::render($atts, $feedItems);
         }
 
         return $feedItems;
@@ -1082,14 +1082,13 @@ class ICS
      */
     protected static function eventDescriptionHtml($atts, $event, $textStyle)
     {
-        $output = '';
+        $content = '';
         if ($atts['displayLocation'] && !empty($event['location'])) {
-            $output .= self::eventLocationHtml($event['location'], $textStyle);
+            $content .= self::eventLocationHtml($event['location'], $textStyle);
         }
         if ($atts['displayOrganizer'] && !empty($event['organizer'])) {
-            $output .= self::eventOrganizerHtml($event['organizer'], $textStyle);
+            $content .= self::eventOrganizerHtml($event['organizer'], $textStyle);
         }
-        $output = $output ? '<p ' . $textStyle . '>' . $output . '</p>' : '';
 
         $description = '';
         if ($atts['displayDescription'] && !empty($event['eventdesc'])) {
@@ -1102,9 +1101,9 @@ class ICS
         }
 
         if (!self::emptyContent($description)) {
-            $output .= '<p ' . $textStyle . '>' . $description . '</p>';
+            $content .= $description;
         }
 
-        return $output ? '<p ' . $textStyle . '>' . $output . '</p>' : '';
+        return $content;
     }
 }
