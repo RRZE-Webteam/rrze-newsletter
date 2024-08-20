@@ -1,230 +1,226 @@
 /**
  * External dependencies
  */
-import { omit } from 'lodash';
+import { omit } from "lodash";
 
 /**
  * WordPress dependencies
  */
-import { __, _x } from '@wordpress/i18n';
-import { createBlock, getBlockContent } from '@wordpress/blocks';
+import { __, _x } from "@wordpress/i18n";
+import { createBlock, getBlockContent } from "@wordpress/blocks";
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis
-import { dateI18n, getSettings } from '@wordpress/date';
+import { dateI18n, getSettings } from "@wordpress/date";
 
 /**
  * Plugin dependencies
  */
-import { POST_INSERTER_BLOCK_NAME } from './consts';
+import { POST_INSERTER_BLOCK_NAME } from "./consts";
 
-const assignFontSize = ( fontSize, attributes ) => {
-	if ( typeof fontSize === 'number' ) {
-		fontSize = fontSize + 'px';
-	}
-	attributes.style = {
-		...( attributes.style || {} ),
-		typography: { fontSize },
-	};
-	return attributes;
+const assignFontSize = (fontSize, attributes) => {
+    if (typeof fontSize === "number") {
+        fontSize = fontSize + "px";
+    }
+    attributes.style = {
+        ...(attributes.style || {}),
+        typography: { fontSize },
+    };
+    return attributes;
 };
 
-const getHeadingBlockTemplate = ( post, { headingFontSize, headingColor } ) => [
-	'core/heading',
-	assignFontSize( headingFontSize, {
-		style: { color: { text: headingColor } },
-		content: `<a href="${ post.link }">${ post.title.rendered }</a>`,
-		level: 3,
-	} ),
+const getHeadingBlockTemplate = (post, { headingFontSize, headingColor }) => [
+    "core/heading",
+    assignFontSize(headingFontSize, {
+        style: { color: { text: headingColor } },
+        content: `<a href="${post.link}">${post.title.rendered}</a>`,
+        level: 3,
+    }),
 ];
 
-const getDateBlockTemplate = ( post, { textFontSize, textColor } ) => {
-	const dateFormat = getSettings().formats.date;
-	return [
-		'core/paragraph',
-		assignFontSize( textFontSize, {
-			content: dateI18n( dateFormat, post.date_gmt ),
-			fontSize: 'normal',
-			style: { color: { text: textColor } },
-		} ),
-	];
+const getDateBlockTemplate = (post, { textFontSize, textColor }) => {
+    const dateFormat = getSettings().formats.date;
+    return [
+        "core/paragraph",
+        assignFontSize(textFontSize, {
+            content: dateI18n(dateFormat, post.date_gmt),
+            fontSize: "normal",
+            style: { color: { text: textColor } },
+        }),
+    ];
 };
 
 const getSubtitleBlockTemplate = (
-	post,
-	{ subHeadingFontSize, subHeadingColor }
+    post,
+    { subHeadingFontSize, subHeadingColor }
 ) => {
-	const subtitle = post?.meta?.rrze_post_subtitle || '';
-	const attributes = {
-		level: 4,
-		content: subtitle.trim(),
-		style: { color: { text: subHeadingColor } },
-	};
-	return [ 'core/heading', assignFontSize( subHeadingFontSize, attributes ) ];
+    const subtitle = post?.meta?.rrze_post_subtitle || "";
+    const attributes = {
+        level: 4,
+        content: subtitle.trim(),
+        style: { color: { text: subHeadingColor } },
+    };
+    return ["core/heading", assignFontSize(subHeadingFontSize, attributes)];
 };
 
 const getExcerptBlockTemplate = (
-	post,
-	{ excerptLength, textFontSize, textColor }
+    post,
+    { excerptLength, textFontSize, textColor }
 ) => {
-	let excerpt = post.excerpt.rendered;
-	const excerptElement = document.createElement( 'div' );
-	excerptElement.innerHTML = excerpt;
-	excerpt = excerptElement.textContent || excerptElement.innerText || '';
+    let excerpt = post.excerpt.rendered;
+    const excerptElement = document.createElement("div");
+    excerptElement.innerHTML = excerpt;
+    excerpt = excerptElement.textContent || excerptElement.innerText || "";
 
-	const needsEllipsis = excerptLength < excerpt.trim().split( ' ' ).length;
+    const needsEllipsis = excerptLength < excerpt.trim().split(" ").length;
 
-	const postExcerpt = needsEllipsis
-		? `${ excerpt.split( ' ', excerptLength ).join( ' ' ) } […]`
-		: excerpt;
+    const postExcerpt = needsEllipsis
+        ? `${excerpt.split(" ", excerptLength).join(" ")} […]`
+        : excerpt;
 
-	const attributes = {
-		content: postExcerpt.trim(),
-		style: { color: { text: textColor } },
-	};
-	return [ 'core/paragraph', assignFontSize( textFontSize, attributes ) ];
+    const attributes = {
+        content: postExcerpt.trim(),
+        style: { color: { text: textColor } },
+    };
+    return ["core/paragraph", assignFontSize(textFontSize, attributes)];
 };
 
 const getContinueReadingLinkBlockTemplate = (
-	post,
-	{ textFontSize, textColor }
+    post,
+    { textFontSize, textColor }
 ) => {
-	const attributes = {
-		content: `<a href="${ post.link }">${ __(
-			'Continue reading…',
-			'rrze'
-		) }</a>`,
-		style: { color: { text: textColor } },
-	};
-	return [ 'core/paragraph', assignFontSize( textFontSize, attributes ) ];
+    const attributes = {
+        content: `<a href="${post.link}">${__(
+            "Continue reading…",
+            "rrze"
+        )}</a>`,
+        style: { color: { text: textColor } },
+    };
+    return ["core/paragraph", assignFontSize(textFontSize, attributes)];
 };
 
-const getAuthorBlockTemplate = ( post, { textFontSize, textColor } ) => {
-	const { rrze_author_info } = post;
+const getAuthorBlockTemplate = (post, { textFontSize, textColor }) => {
+    const { rrze_author_info } = post;
 
-	if ( Array.isArray( rrze_author_info ) && rrze_author_info.length ) {
-		const authorLinks = rrze_author_info.reduce( ( acc, author, index ) => {
-			const { author_link, display_name } = author;
+    if (Array.isArray(rrze_author_info) && rrze_author_info.length) {
+        const authorLinks = rrze_author_info.reduce((acc, author, index) => {
+            const { author_link, display_name } = author;
 
-			if ( author_link && display_name ) {
-				const comma =
-					rrze_author_info.length > 2 &&
-					index < rrze_author_info.length - 1
-						? _x(
-								',',
-								'comma separator for multiple authors',
-								'rrze-newsletter'
-						  )
-						: '';
-				const and =
-					rrze_author_info.length > 1 &&
-					index === rrze_author_info.length - 1
-						? __( 'and ', 'rrze-newsletter' )
-						: '';
-				acc.push(
-					`${ and }<a href="${ author_link }">${ display_name }</a>${ comma }`
-				);
-			}
+            if (author_link && display_name) {
+                const comma =
+                    rrze_author_info.length > 2 &&
+                    index < rrze_author_info.length - 1
+                        ? _x(
+                              ",",
+                              "comma separator for multiple authors",
+                              "rrze-newsletter"
+                          )
+                        : "";
+                const and =
+                    rrze_author_info.length > 1 &&
+                    index === rrze_author_info.length - 1
+                        ? __("and ", "rrze-newsletter")
+                        : "";
+                acc.push(
+                    `${and}<a href="${author_link}">${display_name}</a>${comma}`
+                );
+            }
 
-			return acc;
-		}, [] );
+            return acc;
+        }, []);
 
-		return [
-			'core/heading',
-			assignFontSize( textFontSize, {
-				content:
-					__( 'By ', 'rrze-newsletter' ) + authorLinks.join( ' ' ),
-				fontSize: 'normal',
-				level: 6,
-				style: { color: { text: textColor } },
-			} ),
-		];
-	}
+        return [
+            "core/heading",
+            assignFontSize(textFontSize, {
+                content: __("By ", "rrze-newsletter") + authorLinks.join(" "),
+                fontSize: "normal",
+                level: 6,
+                style: { color: { text: textColor } },
+            }),
+        ];
+    }
 
-	return null;
+    return null;
 };
 
-const createBlockTemplatesForSinglePost = ( post, attributes ) => {
-	const postContentBlocks = [];
-	let displayAuthor = attributes.displayAuthor;
+const createBlockTemplatesForSinglePost = (post, attributes) => {
+    const postContentBlocks = [];
+    let displayAuthor = attributes.displayAuthor;
 
-	const hasSponsors =
-		post.rrze_sponsors_info && 0 < post.rrze_sponsors_info.length;
+    postContentBlocks.push(getHeadingBlockTemplate(post, attributes));
 
-	postContentBlocks.push( getHeadingBlockTemplate( post, attributes ) );
+    if (attributes.displayPostSubtitle && post.meta?.rrze_post_subtitle) {
+        postContentBlocks.push(getSubtitleBlockTemplate(post, attributes));
+    }
 
-	if ( attributes.displayPostSubtitle && post.meta?.rrze_post_subtitle ) {
-		postContentBlocks.push( getSubtitleBlockTemplate( post, attributes ) );
-	}
+    if (displayAuthor) {
+        const author = getAuthorBlockTemplate(post, attributes);
 
-	if ( displayAuthor ) {
-		const author = getAuthorBlockTemplate( post, attributes );
+        if (author) {
+            postContentBlocks.push(author);
+        }
+    }
+    if (attributes.displayPostDate && post.date_gmt) {
+        postContentBlocks.push(getDateBlockTemplate(post, attributes));
+    }
+    if (attributes.displayPostExcerpt) {
+        postContentBlocks.push(getExcerptBlockTemplate(post, attributes));
+    }
+    if (attributes.displayContinueReading) {
+        postContentBlocks.push(
+            getContinueReadingLinkBlockTemplate(post, attributes)
+        );
+    }
 
-		if ( author ) {
-			postContentBlocks.push( author );
-		}
-	}
-	if ( attributes.displayPostDate && post.date_gmt ) {
-		postContentBlocks.push( getDateBlockTemplate( post, attributes ) );
-	}
-	if ( attributes.displayPostExcerpt ) {
-		postContentBlocks.push( getExcerptBlockTemplate( post, attributes ) );
-	}
-	if ( attributes.displayContinueReading ) {
-		postContentBlocks.push(
-			getContinueReadingLinkBlockTemplate( post, attributes )
-		);
-	}
+    const hasFeaturedImage =
+        post.featuredImageLargeURL || post.featuredImageMediumURL;
 
-	const hasFeaturedImage =
-		post.featuredImageLargeURL || post.featuredImageMediumURL;
+    if (attributes.displayFeaturedImage && hasFeaturedImage) {
+        const featuredImageId = post.featured_media;
+        const getImageBlock = (alignCenter = false) => [
+            "core/image",
+            {
+                id: featuredImageId,
+                url: alignCenter
+                    ? post.featuredImageLargeURL
+                    : post.featuredImageMediumURL,
+                href: post.link,
+                ...(alignCenter ? { align: "center" } : {}),
+            },
+        ];
 
-	if ( attributes.displayFeaturedImage && hasFeaturedImage ) {
-		const featuredImageId = post.featured_media;
-		const getImageBlock = ( alignCenter = false ) => [
-			'core/image',
-			{
-				id: featuredImageId,
-				url: alignCenter
-					? post.featuredImageLargeURL
-					: post.featuredImageMediumURL,
-				href: post.link,
-				...( alignCenter ? { align: 'center' } : {} ),
-			},
-		];
+        let imageColumnBlockSize = "50%";
+        let postContentColumnBlockSize = "50%";
 
-		let imageColumnBlockSize = '50%';
-		let postContentColumnBlockSize = '50%';
+        if (attributes.featuredImageSize) {
+            switch (attributes.featuredImageSize) {
+                case "small":
+                    imageColumnBlockSize = "25%";
+                    postContentColumnBlockSize = "75%";
+                    break;
+                case "medium":
+                    imageColumnBlockSize = "33.33%";
+                    postContentColumnBlockSize = "66.66%";
+                    break;
+            }
+        }
 
-		if ( attributes.featuredImageSize ) {
-			switch ( attributes.featuredImageSize ) {
-				case 'small':
-					imageColumnBlockSize = '25%';
-					postContentColumnBlockSize = '75%';
-					break;
-				case 'medium':
-					imageColumnBlockSize = '33.33%';
-					postContentColumnBlockSize = '66.66%';
-					break;
-			}
-		}
-
-		const imageColumnBlock = [
-			'core/column',
-			{ width: imageColumnBlockSize },
-			[ getImageBlock() ],
-		];
-		const postContentColumnBlock = [
-			'core/column',
-			{ width: postContentColumnBlockSize },
-			postContentBlocks,
-		];
+        const imageColumnBlock = [
+            "core/column",
+            { width: imageColumnBlockSize },
+            [getImageBlock()],
+        ];
+        const postContentColumnBlock = [
+            "core/column",
+            { width: postContentColumnBlockSize },
+            postContentBlocks,
+        ];
 
         const columnsBlock = [
-            'core/columns',
+            "core/columns",
             {
                 style: {
                     spacing: {
                         padding: {
-                            bottom: '20px',
+                            bottom: "20px",
                         },
                     },
                 },
@@ -233,42 +229,51 @@ const createBlockTemplatesForSinglePost = ( post, attributes ) => {
         ];
 
         switch (attributes.featuredImageAlignment) {
-            case 'left':
+            case "left":
                 columnsBlock[2] = [imageColumnBlock, postContentColumnBlock];
-                return [columnsBlock];
-            case 'right':
+                break;
+            case "right":
                 columnsBlock[2] = [postContentColumnBlock, imageColumnBlock];
-                return [columnsBlock];
-            case 'top':
+                break;
+            case "top":
                 return [getImageBlock(true), ...postContentBlocks];
         }
+
+        // Add padding-right to all 'core/column' blocks except the last one
+        columnsBlock[2].forEach((column, index) => {
+            if (index < columnsBlock[2].length - 1) {
+                column[1].style = column[1].style || {};
+                column[1].style.spacing = column[1].style.spacing || {};
+                column[1].style.spacing.padding =
+                    column[1].style.spacing.padding || {};
+                column[1].style.spacing.padding.right = "20px";
+            }
+        });
+
+        return [columnsBlock];
     }
     return postContentBlocks;
 };
 
-const createBlockFromTemplate = ( [
-	name,
-	blockAttributes,
-	innerBlocks = [],
-] ) =>
-	createBlock(
-		name,
-		blockAttributes,
-		innerBlocks.map( createBlockFromTemplate )
-	);
+const createBlockFromTemplate = ([name, blockAttributes, innerBlocks = []]) =>
+    createBlock(
+        name,
+        blockAttributes,
+        innerBlocks.map(createBlockFromTemplate)
+    );
 
-const createBlockTemplatesForPosts = ( posts, attributes ) =>
-	posts.reduce( ( blocks, post ) => {
-		return [
-			...blocks,
-			...createBlockTemplatesForSinglePost( post, attributes ),
-		];
-	}, [] );
+const createBlockTemplatesForPosts = (posts, attributes) =>
+    posts.reduce((blocks, post) => {
+        return [
+            ...blocks,
+            ...createBlockTemplatesForSinglePost(post, attributes),
+        ];
+    }, []);
 
-export const getTemplateBlocks = ( postList, attributes ) =>
-	createBlockTemplatesForPosts( postList, attributes ).map(
-		createBlockFromTemplate
-	);
+export const getTemplateBlocks = (postList, attributes) =>
+    createBlockTemplatesForPosts(postList, attributes).map(
+        createBlockFromTemplate
+    );
 
 /**
  * Converts a block object to a shape processable by the backend,
@@ -277,26 +282,26 @@ export const getTemplateBlocks = ( postList, attributes ) =>
  * @param {Object} block block, as understood by the block editor
  * @return {Object} block with innerHTML, processable by the backend
  */
-export const convertBlockSerializationFormat = ( block ) => ( {
-	attrs: omit( block.attributes, 'content' ),
-	blockName: block.name,
-	innerHTML: getBlockContent( block ),
-	innerBlocks: block.innerBlocks.map( convertBlockSerializationFormat ),
-} );
+export const convertBlockSerializationFormat = (block) => ({
+    attrs: omit(block.attributes, "content"),
+    blockName: block.name,
+    innerHTML: getBlockContent(block),
+    innerBlocks: block.innerBlocks.map(convertBlockSerializationFormat),
+});
 
 // In some cases, the Post Inserter block should not handle deduplication.
 // Previews might be displayed next to each other or next to a post, which results in multiple block lists.
 // The deduplication store relies on the assumption that a post has a single blocks list, which
 // is not true when there are block previews used.
-export const setPreventDeduplicationForPostInserter = ( blocks ) =>
-	blocks.map( ( block ) => {
-		if ( block.name === POST_INSERTER_BLOCK_NAME ) {
-			block.attributes.preventDeduplication = true;
-		}
-		if ( block.innerBlocks ) {
-			block.innerBlocks = setPreventDeduplicationForPostInserter(
-				block.innerBlocks
-			);
-		}
-		return block;
-	} );
+export const setPreventDeduplicationForPostInserter = (blocks) =>
+    blocks.map((block) => {
+        if (block.name === POST_INSERTER_BLOCK_NAME) {
+            block.attributes.preventDeduplication = true;
+        }
+        if (block.innerBlocks) {
+            block.innerBlocks = setPreventDeduplicationForPostInserter(
+                block.innerBlocks
+            );
+        }
+        return block;
+    });

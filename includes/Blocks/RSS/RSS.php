@@ -184,7 +184,6 @@ class RSS
                         $content = substr($content, 0, -5) . '[&hellip;]';
                     }
                 }
-                $content = '<p ' . $textStyle . '>' . $content . '</p>';
                 if ($readMoreLink) {
                     $content .= '<p ' . $textStyle . '>' . $readMoreLink . '</p>';
                 }
@@ -194,7 +193,7 @@ class RSS
         }
 
         if ($listItems) {
-            return '<div class="rrze-newsletter-rss" ' . $textStyle . '>' . $listItems . '</p>';
+            return '<div class="rrze-newsletter-rss" ' . $textStyle . '>' . $listItems . '</div>';
         }
         return '';
     }

@@ -126,14 +126,14 @@
             /* ICS */
             .rrze-newsletter-ics h3,
             .rrze-newsletter-ics p {
-                padding-bottom: 16px;
+                padding-bottom: 20px;
                 line-height: 1.5;
             }
 
             /* RSS */
             .rrze-newsletter-rss h3,
             .rrze-newsletter-rss p {
-                padding-bottom: 16px;
+                padding-bottom: 20px;
                 line-height: 1.5;
             }
 
