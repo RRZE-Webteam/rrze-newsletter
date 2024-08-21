@@ -4,7 +4,7 @@
 Plugin Name:       RRZE Newsletter
 Plugin URI:        https://github.com/RRZE-Webteam/rrze-newsletter
 Description:       Plugin for creating and sending HTML Newsletters.
-Version:           3.2.3
+Version:           3.2.4
 Requires at least: 6.6
 Requires PHP:      8.2
 Author:            RRZE-Webteam
