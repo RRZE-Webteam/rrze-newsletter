@@ -90,7 +90,7 @@ const getContinueReadingLinkBlockTemplate = (
     const attributes = {
         content: `<a href="${post.link}">${__(
             "Continue reading…",
-            "rrze"
+            "rrze-newsletter"
         )}</a>`,
         style: { color: { text: textColor } },
     };

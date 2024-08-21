@@ -171,9 +171,13 @@ final class Render
     private static function getSocialIconsColors()
     {
         return [
+            'bluesky'   => '#0a7aff',
             'facebook'  => '#1977f2',
+            'feed'      => '#f0f0f0',
+            'github'    => '#24292d',
             'instagram' => '#f00075',
             'linkedin'  => '#0577b5',
+            'mastodon'  => '#3288d4',
             'tiktok'    => '#000000',
             'tumblr'    => '#011835',
             'twitter'   => '#21a1f3',
@@ -199,10 +203,18 @@ final class Render
         $icon  = 'white';
         $color = $servicesColors[$serviceName];
         if (isset($blockAttrs['className'])) {
-            if ('is-style-filled-black' === $blockAttrs['className'] || 'is-style-circle-white' === $blockAttrs['className']) {
+            if (
+                'is-style-filled-black' === $blockAttrs['className'] ||
+                'is-style-circle-white' === $blockAttrs['className'] ||
+                ('is-style-default' === $blockAttrs['className'] && 'feed' === $serviceName)
+            ) {
                 $icon = 'black';
             }
-            if ('is-style-filled-black' === $blockAttrs['className'] || 'is-style-filled-white' === $blockAttrs['className'] || 'is-style-filled-primary-text' === $blockAttrs['className']) {
+            if (
+                'is-style-filled-black' === $blockAttrs['className'] ||
+                'is-style-filled-white' === $blockAttrs['className'] ||
+                'is-style-filled-primary-text' === $blockAttrs['className']
+            ) {
                 $color = 'transparent';
             } elseif ('is-style-circle-black' === $blockAttrs['className']) {
                 $color = '#000';
@@ -211,7 +223,7 @@ final class Render
             }
         }
         return [
-            'icon'  => sprintf('%s-%s.png', $icon, $serviceName),
+            'icon'  => sprintf('%1$s-%2$s.png', $icon, $serviceName),
             'color' => $color,
         ];
     }
@@ -385,7 +397,7 @@ final class Render
             ]
         );
 
-        $padding = self::getPaddingFromAttributes($attrs);        
+        $padding = self::getPaddingFromAttributes($attrs);
 
         // Default attributes for the column which will envelop the component.
         $columnAttrs = [
@@ -409,6 +421,11 @@ final class Render
                     ],
                     $attrs
                 );
+
+                // core/paragraph attributes normalization
+                if ($isInColumn) {
+                    $textAttrs['padding'] = $padding ?: '0';
+                }
 
                 // Only mj-text has to use container-background-color attr for background color.
                 if (isset($textAttrs['background-color'])) {
@@ -705,7 +722,7 @@ final class Render
             'core/column' != $blockName &&
             'core/separator' != $blockName &&
             !$isPostInserterBlock
-        ) {          
+        ) {
             $columnAttrs['width'] = '100%';
             $blockMjmlMarkup = '<mj-column ' . self::arrayToAttributes($columnAttrs) . '>' . $blockMjmlMarkup . '</mj-column>';
         }
