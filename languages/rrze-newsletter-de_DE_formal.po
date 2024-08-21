@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2023-11-22T08:57:43+00:00\n"
-"PO-Revision-Date: 2024-08-16 16:52+0200\n"
+"POT-Creation-Date: 2024-08-21T13:21:46+00:00\n"
+"PO-Revision-Date: 2024-08-21 15:24+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -654,7 +654,7 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Render.php:903
+#: includes/MJML/Render.php:925
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -1317,58 +1317,58 @@ msgid "Insert posts"
 msgstr "Beiträge einfügen"
 
 #: src/editor/blocks/post-inserter/query-controls.js:239
-msgid "Post type"
-msgstr "Post-Type"
-
-#: src/editor/blocks/post-inserter/query-controls.js:245
 msgid "Display specific posts"
 msgstr "Spezifische Beiträge anzeigen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:255
+#: src/editor/blocks/post-inserter/query-controls.js:249
 msgid "Add posts"
 msgstr "Beiträge hinzufügen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:289
+#: src/editor/blocks/post-inserter/query-controls.js:283
 msgid "Hide Advanced Filters"
 msgstr "Erweiterte Filter ausblenden"
 
-#: src/editor/blocks/post-inserter/query-controls.js:290
+#: src/editor/blocks/post-inserter/query-controls.js:284
 msgid "Show Advanced Filters"
 msgstr "Erweiterte Filter anzeigen"
 
-#: src/editor/blocks/post-inserter/query-controls.js:304
+#: src/editor/blocks/post-inserter/query-controls.js:298
 msgid "Tags"
 msgstr "Schlagwörter"
 
-#: src/editor/blocks/post-inserter/query-controls.js:312
+#: src/editor/blocks/post-inserter/query-controls.js:306
 msgid "Excluded Categories"
 msgstr "Ausgenommene Kategorien"
 
-#: src/editor/blocks/post-inserter/query-controls.js:323
+#: src/editor/blocks/post-inserter/query-controls.js:317
 msgid "Excluded Tags"
 msgstr "Ausgenommene Schlagwörter"
 
-#: src/editor/blocks/post-inserter/query-controls.js:327
+#: src/editor/blocks/post-inserter/query-controls.js:321
 msgid "Order by"
 msgstr "Reihenfolge von"
 
-#: src/editor/blocks/post-inserter/query-controls.js:331
+#: src/editor/blocks/post-inserter/query-controls.js:325
 msgid "Newest to oldest"
 msgstr "Neu nach Alt"
 
-#: src/editor/blocks/post-inserter/query-controls.js:338
+#: src/editor/blocks/post-inserter/query-controls.js:332
 msgid "Oldest to newest"
 msgstr "Alt nach Neu"
 
 #. translators: label for ordering posts by title in ascending order
-#: src/editor/blocks/post-inserter/query-controls.js:346
+#: src/editor/blocks/post-inserter/query-controls.js:340
 msgid "A → Z"
 msgstr "A bis Z"
 
 #. translators: label for ordering posts by title in descending order
-#: src/editor/blocks/post-inserter/query-controls.js:351
+#: src/editor/blocks/post-inserter/query-controls.js:345
 msgid "Z → A"
 msgstr "Z bis A"
+
+#: src/editor/blocks/post-inserter/utils.js:91
+msgid "Continue reading…"
+msgstr "Weiterlesen…"
 
 #: src/editor/blocks/post-inserter/utils.js:111
 msgctxt "comma separator for multiple authors"
@@ -1379,7 +1379,7 @@ msgstr ","
 msgid "and "
 msgstr "und "
 
-#: src/editor/blocks/post-inserter/utils.js:134
+#: src/editor/blocks/post-inserter/utils.js:133
 msgid "By "
 msgstr "Von "
 
@@ -1694,3 +1694,6 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgid "Post type"
+#~ msgstr "Post-Type"
