@@ -37,6 +37,8 @@ export default compose([
             rrze_newsletter_background_color,
             rrze_newsletter_font_body,
             rrze_newsletter_font_header,
+            rrze_newsletter_link_color,
+            rrze_newsletter_link_text_decoration,
         } = meta;
         return {
             layoutId,
@@ -48,6 +50,8 @@ export default compose([
                 rrze_newsletter_background_color,
                 rrze_newsletter_font_body,
                 rrze_newsletter_font_header,
+                rrze_newsletter_link_color,
+                rrze_newsletter_link_text_decoration,
             },
         };
     }),
