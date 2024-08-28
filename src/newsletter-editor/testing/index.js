@@ -60,7 +60,7 @@ export default compose( [
 			/>
 			<div className="rrze-newsletter__testing-controls">
 				<Button
-					isPrimary
+					variant="secondary"
 					onClick={ sendTestEmail }
 					disabled={ inFlight || ! hasValidEmail( testEmail ) }
 				>
