@@ -31,6 +31,20 @@ final class Render
     protected static $fontBody = null;
 
     /**
+     * The link color.
+     *
+     * @var string
+     */
+    protected static $linkColor = null;
+
+    /**
+     * The link text decoration.
+     *
+     * @var string
+     */
+    protected static $linkTextDecoration = null;
+
+    /**
      * Supported fonts.
      *
      * @var array
@@ -852,22 +866,37 @@ final class Render
     public static function fromPost($post)
     {
         self::$colorPalette = json_decode(get_option('rrze_newsletter_color_palette', false), true);
+
         self::$fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
-        self::$fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
         if (!in_array(self::$fontHeader, self::$supportedFonts)) {
             self::$fontHeader = 'Arial';
         }
+
+        self::$fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
         if (!in_array(self::$fontBody, self::$supportedFonts)) {
             self::$fontBody = 'Arial';
         }
 
+        self::$linkColor = get_post_meta($post->ID, 'rrze_newsletter_link_color', true);
+        self::$linkColor = self::$linkColor ?: 'inherit';
+
+        self::$linkTextDecoration = get_post_meta($post->ID, 'rrze_newsletter_link_text_decoration', true);
+        if (!in_array(self::$linkTextDecoration, ['none', 'underline'])) {
+            self::$linkTextDecoration = 'underline';
+        }
+
         $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true);
+        $previewText = $previewText ?: '';
+
         $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
+        $backgroundColor = $backgroundColor ?: '#f0f0f0';
 
         $data = [
             'title' => $post->post_title,
-            'preview_text' => $previewText ? $previewText : '',
-            'background_color' => $backgroundColor ? $backgroundColor : '#f0f0f0',
+            'preview_text' => $previewText,
+            'background_color' => $backgroundColor,
+            'link_color' => self::$linkColor,
+            'link_text_decoration' => self::$linkTextDecoration,
             'body' => self::postToMjmlComponents($post, $post->post_content, true)
         ];
 
