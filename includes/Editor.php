@@ -205,7 +205,7 @@ final class Editor
                     'defaultPalette' => false,
                     'background' => true,
                     'text' => true,
-                    'link' => false,
+                    'link' => true,
                     'button' => false,
                     'palette' => [
                         [
@@ -217,7 +217,7 @@ final class Editor
                             'slug' => '#000000',
                             'color' => '#000000',
                             'name' => __('Black')
-                        ],                        
+                        ],
                         [
                             'slug' => '#04316a',
                             'color' => '#04316a',
