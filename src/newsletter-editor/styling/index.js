@@ -8,6 +8,7 @@ import {
     Panel,
     PanelBody,
     PanelRow,
+    SelectControl,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useSelect, withDispatch, withSelect } from "@wordpress/data";
@@ -30,7 +31,7 @@ const fontOptgroups = [
             {
                 value: "Calibri, sans-serif",
                 label: __("Calibri", "rrze-newsletter"),
-            },			
+            },
             {
                 value: "Tahoma, sans-serif",
                 label: __("Tahoma", "rrze-newsletter"),
@@ -89,6 +90,9 @@ const customStylesSelector = (select) => {
             meta.rrze_newsletter_font_header ||
             fontOptgroups[0].options[0].value,
         backgroundColor: meta.rrze_newsletter_background_color || "#f0f0f0",
+        linkColor: meta.rrze_newsletter_link_color || "inherit",
+        linkTextDecoration:
+            meta.rrze_newsletter_link_text_decoration || "underline",
     };
 };
 
@@ -128,7 +132,8 @@ export const getScopedCss = (scope, css) => {
  */
 export const useCustomFontsInIframe = () => {
     const ref = useRef();
-    const { fontBody, fontHeader } = useSelect(customStylesSelector);
+    const { fontBody, fontHeader, linkColor, linkTextDecoration } =
+        useSelect(customStylesSelector);
     useEffect(() => {
         const node = ref.current;
         const updateIframe = () => {
@@ -144,6 +149,14 @@ export const useCustomFontsInIframe = () => {
                         element.style.setProperty(
                             "--rrze-newsletter-header-font",
                             fontHeader
+                        );
+                        element.style.setProperty(
+                            "--rrze-newsletter-link-color",
+                            linkColor
+                        );
+                        element.style.setProperty(
+                            "--rrze-newsletter-link-text-decoration",
+                            linkTextDecoration
                         );
                         element
                             .querySelector("body")
@@ -172,6 +185,8 @@ export const ApplyStyling = withSelect(customStylesSelector)(({
     fontBody,
     fontHeader,
     backgroundColor,
+    linkColor,
+    linkTextDecoration,
 }) => {
     useEffect(() => {
         document.documentElement.style.setProperty(
@@ -185,6 +200,18 @@ export const ApplyStyling = withSelect(customStylesSelector)(({
             fontHeader
         );
     }, [fontHeader]);
+    useEffect(() => {
+        document.documentElement.style.setProperty(
+            "--rrze-newsletter-link-color",
+            linkColor
+        );
+    }, [linkColor]);
+    useEffect(() => {
+        document.documentElement.style.setProperty(
+            "--rrze-newsletter-link-text-decoration",
+            linkTextDecoration
+        );
+    }, [linkTextDecoration]);
     useEffect(() => {
         const editorElement = document.querySelector(".editor-styles-wrapper");
         if (editorElement) {
@@ -201,7 +228,14 @@ export const Styling = compose([
         return { editPost };
     }),
     withSelect(customStylesSelector),
-])(({ editPost, fontBody, fontHeader, backgroundColor }) => {
+])(({
+    editPost,
+    fontBody,
+    fontHeader,
+    backgroundColor,
+    linkColor,
+    linkTextDecoration,
+}) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
     };
@@ -240,16 +274,16 @@ export const Styling = compose([
                 </PanelRow>
             </PanelBody>
             <PanelBody
-                name="rrze-newsletter-color-panel"
-                title={__("Color", "rrze-newsletter")}
+                name="rrze-newsletter-background-color-panel"
+                title={__("Background", "rrze-newsletter")}
             >
-                <PanelRow className="rrze-newsletter__color-panel">
+                <PanelRow className="rrze-newsletter__background-color-panel">
                     <BaseControl
                         label={__("Background color", "rrze-newsletter")}
-                        id={id}
+                        id={`${id}-background-color`}
                     >
                         <ColorPicker
-                            id={id}
+                            id={`${id}-background-color`}
                             color={backgroundColor}
                             onChangeComplete={(value) =>
                                 updateStyleValue(
@@ -260,6 +294,51 @@ export const Styling = compose([
                             disableAlpha
                         />
                     </BaseControl>
+                </PanelRow>
+            </PanelBody>
+            <PanelBody
+                name="rrze-newsletter-link-panel"
+                title={__("Links", "rrze-newsletter")}
+            >
+                <PanelRow className="rrze-newsletter__link-panel">
+                    <BaseControl
+                        label={__("Link color", "rrze-newsletter")}
+                        id={`${id}-link-color`}
+                    >
+                        <ColorPicker
+                            id={`${id}-link-color`}
+                            color={linkColor}
+                            onChangeComplete={(value) =>
+                                updateStyleValue(
+                                    "rrze_newsletter_link_color",
+                                    value.hex
+                                )
+                            }
+                            disableAlpha
+                        />
+                    </BaseControl>
+                </PanelRow>
+                <PanelRow>
+                    <SelectControl
+                        label={__("Link text decoration", "rrze-newsletter")}
+                        value={linkTextDecoration}
+                        options={[
+                            {
+                                label: __("None", "rrze-newsletter"),
+                                value: "none",
+                            },
+                            {
+                                label: __("Underline", "rrze-newsletter"),
+                                value: "underline",
+                            },
+                        ]}
+                        onChange={(value) =>
+                            updateStyleValue(
+                                "rrze_newsletter_link_text_decoration",
+                                value
+                            )
+                        }
+                    />
                 </PanelRow>
             </PanelBody>
         </Panel>
