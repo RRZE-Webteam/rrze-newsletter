@@ -518,9 +518,7 @@ final class Render
                     unset($textAttrs['textAlign']);
                 }
 
-                $linkColor = self::getLinkColorFromAttributes($attrs);
-                $linkColor = $linkColor ?: ($textAttrs['color'] ?? '');
-                if ($linkColor) {
+                if ($linkColor = self::getLinkColorFromAttributes($attrs)) {
                     $innerHtml = self::setLinkColorAttributeToHtml($innerHtml, $linkColor);
                 }
 
