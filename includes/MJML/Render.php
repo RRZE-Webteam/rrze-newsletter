@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
+use DOMDocument;
 
 final class Render
 {
@@ -29,6 +30,20 @@ final class Render
      * @var string
      */
     protected static $fontBody = null;
+
+    /**
+     * The link color.
+     *
+     * @var string
+     */
+    protected static $linkColor = null;
+
+    /**
+     * The link text decoration.
+     *
+     * @var string
+     */
+    protected static $linkTextDecoration = null;
 
     /**
      * Supported fonts.
@@ -125,6 +140,24 @@ final class Render
     }
 
     /**
+     * Get link color based on block attributes.
+     *
+     * @param array $attributes Block attributes.
+     * @return string Link color.
+     */
+    private static function getLinkColorFromAttributes($attributes)
+    {
+        $color = '';
+        if ($value = $attributes['style']['elements']['link']['color']['text'] ?? '') {
+            if ($value) {
+                $ary = explode('|', $value);
+                $color = end($ary);
+            }
+        }
+        return $color;
+    }
+
+    /**
      * Check if all values in an array are zero.
      *
      * @param array $array Array to check.
@@ -136,6 +169,54 @@ final class Render
             return $value !== 0;
         });
         return empty($nonZeroValues);
+    }
+
+    /**
+     * Set link color attribute to HTML.
+     *
+     * @param string $html HTML.
+     * @param string $color Color.
+     * @return string HTML with link color attribute.
+     */
+    private static function setLinkColorAttributeToHtml($html, $color)
+    {
+        // Temporary placeholders to prevent URL encoding by DOMDocument
+        $placeholder = '___HREF_PLACEHOLDER___';
+        preg_match_all('/<a\s+[^>]*href=["\']?([^"\'\s>]+)/i', $html, $matches);
+
+        // Replace href attributes with placeholders
+        foreach ($matches[1] as $index => $href) {
+            $html = str_replace($href, $placeholder . $index, $html);
+        }
+
+        // Load the HTML into a DOMDocument object with UTF-8 encoding
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        libxml_use_internal_errors(true); // Suppress errors due to malformed HTML
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+
+        // Get all the <a> tags within the HTML
+        $links = $dom->getElementsByTagName('a');
+
+        // Loop through each <a> tag and add the style
+        foreach ($links as $link) {
+            // Get the existing style attribute, if any
+            $currentStyle = $link->getAttribute('style');
+            // Append the color style
+            $newStyle = $currentStyle . 'color: ' . $color . ';';
+            $link->setAttribute('style', $newStyle);
+        }
+
+        // Save the modified HTML
+        $modifiedHtml = $dom->saveHTML($dom->documentElement);
+
+        // Replace the placeholders with the original href values
+        foreach ($matches[1] as $index => $href) {
+            $modifiedHtml = str_replace($placeholder . $index, $href, $modifiedHtml);
+        }
+
+        // Return the modified HTML
+        return $modifiedHtml;
     }
 
     /**
@@ -407,11 +488,9 @@ final class Render
         $fontFamily = 'core/heading' === $blockName ? self::$fontHeader : self::$fontBody;
 
         switch ($blockName) {
-                // Paragraph, List, Heading blocks.
+                // Paragraph, Heading blocks.
             case 'core/paragraph':
             case 'core/heading':
-            case 'rrze-newsletter/rss':
-            case 'rrze-newsletter/ics':
                 $textAttrs = array_merge(
                     [
                         'padding'     => '0',
@@ -439,28 +518,10 @@ final class Render
                     unset($textAttrs['textAlign']);
                 }
 
-                // Render rrze-newsletter/rss block.
-                if ($blockName == 'rrze-newsletter/rss') {
-                    $columnAttrs['padding'] = '0';
-                    $key = md5($attrs['feedURL']);
-                    if (!($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true))) {
-                        $rssAttrs = [];
-                    }
-                    $rssAttrs[$key] = $attrs;
-                    update_post_meta($postId, 'rrze_newsletter_rss_attrs', $rssAttrs);
-                    $innerHtml = 'RSS_BLOCK_' . $key;
-                }
-
-                // Render rrze-newsletter/ics block.
-                if ($blockName == 'rrze-newsletter/ics') {
-                    $columnAttrs['padding'] = '0';
-                    $key = md5($attrs['feedURL']);
-                    if (!($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true))) {
-                        $icsAttrs = [];
-                    }
-                    $icsAttrs[$key] = $attrs;
-                    update_post_meta($postId, 'rrze_newsletter_ics_attrs', $icsAttrs);
-                    $innerHtml = 'ICS_BLOCK_' . $key;
+                $linkColor = self::getLinkColorFromAttributes($attrs);
+                $linkColor = $linkColor ?: ($textAttrs['color'] ?? '');
+                if ($linkColor) {
+                    $innerHtml = self::setLinkColorAttributeToHtml($innerHtml, $linkColor);
                 }
 
                 $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
@@ -709,6 +770,47 @@ final class Render
                 }
                 $blockMjmlMarkup = $markup . '</mj-wrapper>';
                 break;
+
+                // RSS, ICS blocks.
+            case 'rrze-newsletter/rss':
+            case 'rrze-newsletter/ics':
+                $textAttrs = array_merge(
+                    [
+                        'padding'     => '0',
+                        'line-height' => '1.5',
+                        'font-size'   => '16px',
+                        'font-family' => $fontFamily,
+                    ],
+                    $attrs
+                );
+
+                // Render rrze-newsletter/rss block.
+                if ($blockName == 'rrze-newsletter/rss') {
+                    $columnAttrs['padding'] = '0';
+                    $key = md5($attrs['feedURL']);
+                    if (!($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true))) {
+                        $rssAttrs = [];
+                    }
+                    $rssAttrs[$key] = $attrs;
+                    update_post_meta($postId, 'rrze_newsletter_rss_attrs', $rssAttrs);
+                    $innerHtml = 'RSS_BLOCK_' . $key;
+                }
+
+                // Render rrze-newsletter/ics block.
+                if ($blockName == 'rrze-newsletter/ics') {
+                    $columnAttrs['padding'] = '0';
+                    $key = md5($attrs['feedURL']);
+                    if (!($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true))) {
+                        $icsAttrs = [];
+                    }
+                    $icsAttrs[$key] = $attrs;
+                    update_post_meta($postId, 'rrze_newsletter_ics_attrs', $icsAttrs);
+                    $innerHtml = 'ICS_BLOCK_' . $key;
+                }
+
+                $blockMjmlMarkup = '<mj-text ' . self::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
+
+                break;
         }
 
         $isPostInserterBlock = 'rrze-newsletter/post-inserter' == $blockName;
@@ -852,22 +954,37 @@ final class Render
     public static function fromPost($post)
     {
         self::$colorPalette = json_decode(get_option('rrze_newsletter_color_palette', false), true);
+
         self::$fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
-        self::$fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
         if (!in_array(self::$fontHeader, self::$supportedFonts)) {
             self::$fontHeader = 'Arial';
         }
+
+        self::$fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
         if (!in_array(self::$fontBody, self::$supportedFonts)) {
             self::$fontBody = 'Arial';
         }
 
+        self::$linkColor = get_post_meta($post->ID, 'rrze_newsletter_link_color', true);
+        self::$linkColor = self::$linkColor ?: 'inherit';
+
+        self::$linkTextDecoration = get_post_meta($post->ID, 'rrze_newsletter_link_text_decoration', true);
+        if (!in_array(self::$linkTextDecoration, ['none', 'underline'])) {
+            self::$linkTextDecoration = 'underline';
+        }
+
         $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true);
+        $previewText = $previewText ?: '';
+
         $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
+        $backgroundColor = $backgroundColor ?: '#f0f0f0';
 
         $data = [
             'title' => $post->post_title,
-            'preview_text' => $previewText ? $previewText : '',
-            'background_color' => $backgroundColor ? $backgroundColor : '#f0f0f0',
+            'preview_text' => $previewText,
+            'background_color' => $backgroundColor,
+            'link_color' => self::$linkColor,
+            'link_text_decoration' => self::$linkTextDecoration,
             'body' => self::postToMjmlComponents($post, $post->post_content, true)
         ];
 

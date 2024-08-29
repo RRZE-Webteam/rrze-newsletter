@@ -10,14 +10,14 @@
 
             /* Link */
             a {
-                color: inherit !important;
-                text-decoration: none;
+                color: {{=link_color}};
+                text-decoration: {{=link_text_decoration}};
             }
 
             a:active,
             a:focus,
             a:hover {
-                text-decoration: none;
+                text-decoration: {{=link_text_decoration}};
             }
 
             a:focus {
