@@ -648,8 +648,8 @@ final class Render
                 if (isset($attrs['backgroundColor']) && isset(self::$colorPalette[$attrs['backgroundColor']])) {
                     $dividerAttrs['border-color'] = self::$colorPalette[$attrs['backgroundColor']];
                 }
-                if (isset($attrs['style']['color']['background'])) {
-                    $dividerAttrs['border-color'] = $attrs['style']['color']['background'];
+                if (isset($attrs['color'])) {
+                    $dividerAttrs['border-color'] = $attrs['color'];
                 }
                 $blockMjmlMarkup .= '<mj-divider ' . self::arrayToAttributes($dividerAttrs) . '/>';
                 break;
