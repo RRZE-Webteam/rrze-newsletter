@@ -37,7 +37,7 @@ class Utils
         $email = self::sanitizeEmail($input);
         $parts = explode('@', $email);
         $domain = array_pop($parts);
-        $allowedDomains = (array) apply_filters('rrze_newsletter_sender_allowed_domains', []);
+        $allowedDomains = apply_filters('rrze_newsletter_sender_allowed_domains', '');
         if (
             filter_var($email, FILTER_VALIDATE_EMAIL)
             && (empty($allowedDomains) || in_array($domain, $allowedDomains))
@@ -52,7 +52,7 @@ class Utils
         $email = self::sanitizeEmail($input);
         $parts = explode('@', $email);
         $domain = array_pop($parts);
-        $allowedDomains = (array) apply_filters('rrze_newsletter_recipient_allowed_domains', []);
+        $allowedDomains = apply_filters('rrze_newsletter_recipient_allowed_domains', '');
         if (
             filter_var($email, FILTER_VALIDATE_EMAIL)
             && (empty($allowedDomains) || in_array($domain, $allowedDomains))
