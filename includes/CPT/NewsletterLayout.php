@@ -164,6 +164,7 @@ class NewsletterLayout
         foreach (scandir($layoutsBasePath) as $layout) {
             if (strpos($layout, '.json') !== false) {
                 $decodedLayout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
+                $title = $decodedLayout->title ?? 'Layout ' . $layoutId;
                 $postContent = self::layoutTokenReplacement($decodedLayout->content);
 
                 // Replace relative URLs with absolute URLs
@@ -177,7 +178,7 @@ class NewsletterLayout
 
                 $layouts[] = [
                     'ID'           => $layoutId,
-                    'post_title'   => '',
+                    'post_title'   => $title,
                     'post_content' => $postContent,
                 ];
                 $layoutId++;
