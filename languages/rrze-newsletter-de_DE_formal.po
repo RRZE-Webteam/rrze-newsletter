@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
-"POT-Creation-Date: 2024-08-21T13:21:46+00:00\n"
-"PO-Revision-Date: 2024-08-29 10:39+0200\n"
+"POT-Creation-Date: 2025-07-01T12:21:50+00:00\n"
+"PO-Revision-Date: 2025-07-01 14:24+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE@formal\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.6\n"
 
 #. Plugin Name of the plugin
 #: rrze-newsletter.php
@@ -30,13 +30,13 @@ msgstr "Plugin zum Erstellen und Senden von Newsletters."
 
 #. Author of the plugin
 #: rrze-newsletter.php
-msgid "RRZE-Webteam"
+msgid "RRZE Webteam"
 msgstr "RRZE-Webteam"
 
 #. Author URI of the plugin
 #: rrze-newsletter.php
-msgid "https://blogs.fau.de/webworking/"
-msgstr "https://blogs.fau.de/webworking/"
+msgid "https://www.rrze.fau.de"
+msgstr "https://www.rrze.fau.de"
 
 #: config/settings.php:23 config/settings.php:24
 msgid "Newsletters"
@@ -447,8 +447,8 @@ msgstr ""
 "Liste der E-Mail-Adressen, die diese Mailingliste abonniert haben. Geben Sie "
 "eine E-Mail-Adresse pro Zeile ein. Hinweis: Der durch Komma getrennte Vor- "
 "und Nachname des Empfängers ist optional und kann durch ein Komma nach der E-"
-"Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-Adresse,Vorname,"
-"Nachname"
+"Mail-Adresse im folgenden Format hinzugefügt werden: E-Mail-"
+"Adresse,Vorname,Nachname"
 
 #: includes/CPT/Newsletter.php:529
 msgid ""
@@ -654,7 +654,7 @@ msgstr "Beim Senden der E-Mail an %s ist ein Fehler aufgetreten."
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: includes/MJML/Render.php:1027
+#: includes/MJML/Render.php:1043
 msgid "MJML rendering error."
 msgstr "MJML-Rendering-Fehler."
 
@@ -1022,26 +1022,30 @@ msgstr "Monatlich am Tag %s"
 msgid "Monthly on the %1$s %2$s"
 msgstr "Monatlich am %1$s %2$s"
 
-#. translators: 1: Server PHP version number, 2: Required PHP version number.
-#: rrze-newsletter.php:66
-msgid ""
-"The server is running PHP version %1$s. The Plugin requires at least PHP "
-"version %2$s."
-msgstr ""
-"Auf dem Server wird die PHP-Version %1$s ausgeführt. Das Plugin benötigt "
-"mindestens die PHP-Version %2$s."
-
 #. translators: 1: Server WordPress version number, 2: Required WordPress version number.
-#: rrze-newsletter.php:73
+#: rrze-newsletter.php:137
 msgid ""
-"The server is running WordPress version %1$s. The Plugin requires at least "
+"The server is running WordPress version %1$s. The plugin requires at least "
 "WordPress version %2$s."
 msgstr ""
 "Auf dem Server wird die WordPress-Version %1$s ausgeführt. Das Plugin "
 "benötigt mindestens die WordPress-Version %2$s."
 
+#. translators: 1: Server PHP version number, 2: Required PHP version number.
+#: rrze-newsletter.php:144
+msgid ""
+"The server is running PHP version %1$s. The plugin requires at least PHP "
+"version %2$s."
+msgstr ""
+"Auf dem Server wird die PHP-Version %1$s ausgeführt. Das Plugin benötigt "
+"mindestens die PHP-Version %2$s."
+
+#: rrze-newsletter.php:149
+msgid "This plugin can not be activated networkwide."
+msgstr "Dieses Plugin kann nicht netzwerkweit aktiviert werden."
+
 #. translators: 1: The plugin name, 2: The error string.
-#: rrze-newsletter.php:92 rrze-newsletter.php:158
+#: rrze-newsletter.php:160
 msgid "Plugins: %1$s: %2$s"
 msgstr "Plugins: %1$s: %2$s"
 
@@ -1710,3 +1714,6 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#~ msgid "https://blogs.fau.de/webworking/"
+#~ msgstr "https://blogs.fau.de/webworking/"
