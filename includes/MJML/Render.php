@@ -7,6 +7,7 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\Templates;
 use function RRZE\Newsletter\plugin;
 use DOMDocument;
+use DOMXpath;
 
 final class Render
 {
@@ -190,7 +191,7 @@ final class Render
         }
 
         // Load the HTML into a DOMDocument object with UTF-8 encoding
-        $dom = new DOMDocument('1.0', 'UTF-8');
+        $dom = new DOMDocument();
         libxml_use_internal_errors(true); // Suppress errors due to malformed HTML
         $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         libxml_clear_errors();
@@ -564,9 +565,11 @@ final class Render
                 $columnAttrs['width'] = '100%';
 
                 // Parse block content.
-                $dom = new \DomDocument();
-                @$dom->loadHtml(mb_convert_encoding($innerHtml, 'HTML-ENTITIES', "UTF-8"));
-                $xpath = new \DOMXpath($dom);
+                $dom = new DOMDocument();
+                libxml_use_internal_errors(true); // Suppress errors due to malformed HTML
+                $dom->loadHTML('<?xml encoding="UTF-8">' . $innerHtml, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                libxml_clear_errors();
+                $xpath = new DOMXpath($dom);
                 $img = $xpath->query('//img')[0];
                 $imgSrc = $img ? $img->getAttribute('src') : '';
                 $figcaption = $xpath->query('//figcaption/text()')[0];
