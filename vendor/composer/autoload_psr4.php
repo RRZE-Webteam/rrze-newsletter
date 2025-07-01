@@ -8,5 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'RRule\\' => array($baseDir . '/src', $vendorDir . '/rlanvin/php-rrule/src'),
     'RRZE\\Newsletter\\' => array($baseDir . '/includes'),
-    'Html2Text\\' => array($vendorDir . '/html2text/html2text/src', $vendorDir . '/html2text/html2text/test'),
+    'Html2Text\\' => array($vendorDir . '/html2text/html2text/src'),
 );

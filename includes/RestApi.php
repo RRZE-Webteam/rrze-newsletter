@@ -238,7 +238,7 @@ class RestApi
         $postId = $request['id'];
         $postDate = get_post_time('Y-m-d', false, $postId);
         $data = Utils::getWeeklyRecurrence($postDate, 1, true);
-        $response = json_encode($data[$postDate]);
+        $response = isset($data[$postDate]) ? json_encode($data[$postDate]) : json_encode([]);
         return rest_ensure_response($response);
     }
 
