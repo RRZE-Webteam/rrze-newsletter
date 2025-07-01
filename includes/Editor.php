@@ -209,14 +209,14 @@ final class Editor
                     'button' => false,
                     'palette' => [
                         [
-                            'slug' => '#ffffff',
+                            'slug' => 'base',
                             'color' => '#ffffff',
-                            'name' => __('White')
+                            'name' => __('Base')
                         ],
                         [
-                            'slug' => '#000000',
+                            'slug' => 'contrast',
                             'color' => '#000000',
-                            'name' => __('Black')
+                            'name' => __('Contrast')
                         ],
                         [
                             'slug' => '#04316a',
