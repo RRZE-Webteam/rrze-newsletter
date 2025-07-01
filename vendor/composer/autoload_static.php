@@ -31,7 +31,6 @@ class ComposerStaticInitd40cab252d5dc297accbba8a108176e9
         'Html2Text\\' => 
         array (
             0 => __DIR__ . '/..' . '/html2text/html2text/src',
-            1 => __DIR__ . '/..' . '/html2text/html2text/test',
         ),
     );
 

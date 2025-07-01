@@ -1313,6 +1313,7 @@ class ICal
 
             $eventKeysToRemove = array();
 
+            $checks = [];
             foreach ($events as $key => $event) {
                 $checks[] = !isset($event['RECURRENCE-ID']);
                 $checks[] = isset($event['UID']);
