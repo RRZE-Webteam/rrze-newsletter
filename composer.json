@@ -2,8 +2,8 @@
     "require": {
         "php": "^8.2",
         "johngrogg/ics-parser": "^3.4.1",
-        "rlanvin/php-rrule": "^2.5.1",
-        "html2text/html2text": "^4.3.1"
+        "rlanvin/php-rrule": "^2.6.0",
+        "html2text/html2text": "^4.3.2"
     },
     "suggest": {
         "ext-mbstring": "*",
