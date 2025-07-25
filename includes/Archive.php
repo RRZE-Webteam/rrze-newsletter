@@ -5,7 +5,7 @@ namespace RRZE\Newsletter;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
-use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 
@@ -103,7 +103,7 @@ class Archive
     protected function testContent(object $post)
     {
         $postId = $post->ID;
-        $content = Render::retrieveEmailHtml($post);
+        $content = Renderer::retrieveEmailHtml($post);
         if (is_wp_error($content)) {
             return $content;
         }
