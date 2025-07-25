@@ -9,7 +9,7 @@ use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Mail\Send;
-use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\MJML\Renderer;
 use Html2Text\Html2Text;
 
 class RestApi
@@ -379,7 +379,7 @@ class RestApi
         $post = get_post($postId);
         $subject = $post->post_title;
 
-        $body = Render::retrieveEmailHtml($post);
+        $body = Renderer::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }
@@ -518,6 +518,6 @@ class RestApi
             $post->post_title = $request['title'];
         }
         $post->post_content = $request['content'];
-        return rest_ensure_response(['mjml' => Render::fromPost($post)]);
+        return rest_ensure_response(['mjml' => Renderer::fromPost($post)]);
     }
 }
