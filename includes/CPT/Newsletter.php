@@ -8,7 +8,7 @@ namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
@@ -601,7 +601,7 @@ class Newsletter
             return $data;
         }
 
-        $body = Render::retrieveEmailHtml($post);
+        $body = Renderer::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }
