@@ -180,13 +180,72 @@ final class Editor
     }
 
     /**
-     * Is editing a newsletter?
+     * Check if the current post type is a newsletter post type.
+     *
+     * @return bool True if editing a newsletter post type, false otherwise.
      */
     public static function isEditingNewsletter()
     {
         return Newsletter::POST_TYPE === get_post_type();
     }
 
+    /**
+     * Returns the color palette for the newsletter editor.
+     *
+     * @return array The color palette.
+     */
+    public static function colorPallete()
+    {
+        return [
+            [
+                'slug' => 'base',
+                'color' => '#ffffff',
+                'name' => __('Base')
+            ],
+            [
+                'slug' => 'contrast',
+                'color' => '#000000',
+                'name' => __('Contrast')
+            ],
+            [
+                'slug' => '#04316a',
+                'color' => '#04316a',
+                'name' => 'Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)'
+            ],
+            [
+                'slug' => '#fdb735',
+                'color' => '#fdb735',
+                'name' => 'Philosophische Fakultät'
+            ],
+            [
+                'slug' => '#c50f3c',
+                'color' => '#c50f3c',
+                'name' => 'Rechts- und Wirtschaftswissenschaftliche Fakultät'
+            ],
+            [
+                'slug' => '#18b4f1',
+                'color' => '#18b4f1',
+                'name' => 'Medizinische Fakultät'
+            ],
+            [
+                'slug' => '#7bb725',
+                'color' => '#7bb725',
+                'name' => 'Naturwissenschaftliche Fakultät'
+            ],
+            [
+                'slug' => '#8C9FB1',
+                'color' => '#8C9FB1',
+                'name' => 'Technische Fakultät'
+            ]
+        ];
+    }
+
+    /**
+     * Filters the theme JSON data for the newsletter editor.
+     *
+     * @param WP_Theme_JSON_Resolver $themeJson The theme JSON resolver instance.
+     * @return WP_Theme_JSON_Resolver The modified theme JSON resolver.
+     */
     public function filterThemeJsonTheme($themeJson)
     {
         if (!self::isEditingNewsletter()) {
@@ -207,53 +266,20 @@ final class Editor
                     'text' => true,
                     'link' => true,
                     'button' => false,
-                    'palette' => [
-                        [
-                            'slug' => 'base',
-                            'color' => '#ffffff',
-                            'name' => __('Base')
-                        ],
-                        [
-                            'slug' => 'contrast',
-                            'color' => '#000000',
-                            'name' => __('Contrast')
-                        ],
-                        [
-                            'slug' => '#04316a',
-                            'color' => '#04316a',
-                            'name' => 'Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)'
-                        ],
-                        [
-                            'slug' => '#fdb735',
-                            'color' => '#fdb735',
-                            'name' => 'Philosophische Fakultät'
-                        ],
-                        [
-                            'slug' => '#c50f3c',
-                            'color' => '#c50f3c',
-                            'name' => 'Rechts- und Wirtschaftswissenschaftliche Fakultät'
-                        ],
-                        [
-                            'slug' => '#18b4f1',
-                            'color' => '#18b4f1',
-                            'name' => 'Medizinische Fakultät'
-                        ],
-                        [
-                            'slug' => '#7bb725',
-                            'color' => '#7bb725',
-                            'name' => 'Naturwissenschaftliche Fakultät'
-                        ],
-                        [
-                            'slug' => '#8C9FB1',
-                            'color' => '#8C9FB1',
-                            'name' => 'Technische Fakultät'
-                        ]
-                    ]
+                    'palette' => self::colorPallete()
                 ],
                 'spacing' => [
                     'blockGap' => false,
                     'customSpacingSize' => true,
-                    'padding' => true,
+                    'padding' => [
+                        'individual' => true
+                    ],
+                    'units' => [
+                        'px',
+                        'em',
+                        'rem',
+                        '%'
+                    ],
                     'spacingScale' => [
                         'operator' => '+',
                         'increment' => 20,
@@ -299,6 +325,48 @@ final class Editor
                     'lineHeight' => false,
                     'textDecoration' => true,
                     'dropCap' => false,
+                ],
+                'blocks' => [
+                    'core/group' => [
+                        'shadow' => [
+                            'defaultPresets' => false
+                        ],
+                        'color' => [
+                            'palette' => self::colorPallete()
+                        ],
+                        'spacing' => [
+                            'padding' => [
+                                'individual' => true
+                            ]
+                        ]
+                    ],
+                    'core/paragraph' => [
+                        'color' => [
+                            'palette' => self::colorPallete()
+                        ]
+                    ],
+                    'core/heading' => [
+                        'color' => [
+                            'palette' => self::colorPallete()
+                        ]
+                    ],
+                    'core/column' => [
+                        'color' => [
+                            'palette' => self::colorPallete()
+                        ]
+                    ]
+                ]
+            ],
+            'styles' => [
+                'color' => [
+                    'text' => '#000000',
+                ],
+                'elements' => [
+                    'link' => [
+                        'color' => [
+                            'text' => '#000000',
+                        ]
+                    ]
                 ]
             ]
         ];
