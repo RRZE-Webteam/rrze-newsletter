@@ -6,6 +6,13 @@ defined('ABSPATH') || exit;
 
 use WP_Post;
 
+/**
+ * Class LinkProcessor
+ * 
+ * Processes links in MJML content, replacing them with UTM-tagged URLs or special tokens.
+ * 
+ * @package RRZE\Newsletter\MJML
+ */
 class LinkProcessor
 {
     /**
