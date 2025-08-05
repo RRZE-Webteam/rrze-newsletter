@@ -9,6 +9,13 @@ use RRZE\Newsletter\MJML\Renderer;
 use WP_Post;
 use WP_Theme_JSON_Resolver;
 
+/**
+ * Class StyleProcessor
+ * 
+ * Handles style processing for MJML components in newsletters.
+ * 
+ * @package RRZE\Newsletter\MJML
+ */
 class StyleProcessor
 {
     /**
