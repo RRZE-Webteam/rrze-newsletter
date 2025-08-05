@@ -4,6 +4,13 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+/**
+ * Class SocialIcons
+ * 
+ * Provides methods to handle social media icons for MJML rendering.
+ * 
+ * @package RRZE\Newsletter\MJML
+ */
 class SocialIcons
 {
     /**
