@@ -11,6 +11,13 @@ use RRZE\Newsletter\MJML\SocialIcons;
 
 use function RRZE\Newsletter\plugin;
 
+/**
+ * Class BlockProcessor
+ * 
+ * Processes MJML blocks for rendering in newsletters.
+ * 
+ * @package RRZE\Newsletter\MJML
+ */
 class BlockProcessor
 {
     /**
