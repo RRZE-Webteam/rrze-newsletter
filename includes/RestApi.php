@@ -217,9 +217,7 @@ class RestApi
                 $post->meta = [
                     'rrze_newsletter_background_color' => get_post_meta($post->ID, 'rrze_newsletter_background_color', true),
                     'rrze_newsletter_font_body' => get_post_meta($post->ID, 'rrze_newsletter_font_body', true),
-                    'rrze_newsletter_font_header' => get_post_meta($post->ID, 'rrze_newsletter_font_header', true),
-                    'rrze_newsletter_link_color' => get_post_meta($post->ID, 'rrze_newsletter_link_color', true),
-                    'rrze_newsletter_link_text_decoration' => get_post_meta($post->ID, 'rrze_newsletter_link_text_decoration', true),
+                    'rrze_newsletter_font_header' => get_post_meta($post->ID, 'rrze_newsletter_font_header', true)
                 ];
                 return $post;
             },
@@ -483,8 +481,6 @@ class RestApi
                 'rrze_newsletter_font_header',
                 'rrze_newsletter_font_body',
                 'rrze_newsletter_background_color',
-                'rrze_newsletter_link_color',
-                'rrze_newsletter_link_text_decoration',
                 'rrze_newsletter_preview_text'
             ]
         );
