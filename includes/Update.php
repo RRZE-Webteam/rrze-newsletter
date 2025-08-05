@@ -4,10 +4,19 @@ namespace RRZE\Newsletter;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Newsletter\Roles;
+
+/**
+ * Class Update
+ * Handles plugin updates and version management.
+ * 
+ * @package RRZE\Newsletter
+ */
 class Update
 {
     /**
      * Execute on 'plugins_loaded' API/action.
+     * 
      * @return void
      */
     public static function loaded()
@@ -20,6 +29,7 @@ class Update
 
     /**
      * Update to version 2.1.2
+     * 
      * @return void
      */
     protected static function updateToVersion212()
