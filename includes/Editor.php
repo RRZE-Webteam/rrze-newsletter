@@ -6,12 +6,30 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
 
+/**
+ * Class Editor
+ * 
+ * This class handles the editor enhancements for the RRZE Newsletter plugin.
+ * It disables featured image support, modifies allowed block types,
+ * and sets up custom styles and scripts for the newsletter editor.
+ * 
+ * @package RRZE\Newsletter
+ */
 final class Editor
 {
+    /**
+     * @var Editor|null $instance The singleton instance of the Editor class.
+     */
     protected static $instance = null;
 
+    /**
+     * @var string|null $newsletterExcerptLengthFilter The filter for the newsletter excerpt length.
+     */
     public static $newsletterExcerptLengthFilter = null;
 
+    /**
+     * Returns the singleton instance of the Editor class.
+     */
     public static function instance()
     {
         if (is_null(self::$instance)) {
@@ -20,28 +38,76 @@ final class Editor
         return self::$instance;
     }
 
+    /**
+     * Constructor method.
+     * 
+     * This method sets up the editor by disabling featured image support,
+     * modifying allowed block types, and enqueuing necessary scripts and styles.
+     * It also registers block patterns for the newsletter editor.
+     * 
+     * @return void
+     */
     public function __construct()
     {
+        // Disable featured image support for the newsletter post type.
         add_action('init', [$this, 'disableFeaturedImageSupport']);
+
+        // After theme setup, filter the theme JSON data for the newsletter editor.
         add_action('after_setup_theme', [$this, 'afterSetupTheme'], 99);
+
+        // Remove editor modifications when viewing a newsletter post.
         add_action('the_post', [__CLASS__, 'removeEditorModifications']);
+
+        // Enqueue block editor assets for the newsletter editor.
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
+
+        // Modify allowed block types for the newsletter editor.
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
+
+        // Filter the excerpt length for the newsletter editor.
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
+
+        // Reset the excerpt length after the posts are retrieved.
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
+
+        // Register block patterns for the newsletter editor.
         add_action('init', ['\RRZE\Newsletter\Patterns\Patterns', 'registerBlockPatterns']);
     }
 
+    /**
+     * Disables featured image support for the newsletter post type.
+     * 
+     * This method removes the featured image support from the newsletter post type,
+     * ensuring that featured images are not used in newsletters.
+     * 
+     * @return void
+     */
     public function disableFeaturedImageSupport()
     {
         remove_post_type_support(Newsletter::POST_TYPE, 'thumbnail');
     }
 
+    /**
+     * After theme setup, filter the theme JSON data for the newsletter editor.
+     * This method modifies the theme JSON data to customize the editor styles,
+     * colors, and typography settings specifically for the newsletter editor.
+     * 
+     * @return void
+     */
     public function afterSetupTheme()
     {
         add_filter('wp_theme_json_data_theme', [$this, 'filterThemeJsonTheme']);
     }
 
+    /**
+     * Removes editor modifications when viewing a newsletter post.
+     * 
+     * This method checks if the current post type is a newsletter post type,
+     * and if so, it removes unnecessary editor modifications such as custom colors,
+     * gradients, and editor styles.
+     * 
+     * @return void
+     */
     public static function removeEditorModifications()
     {
         if (!self::isEditingNewsletter()) {
@@ -70,6 +136,16 @@ final class Editor
         add_theme_support('editor-gradient-presets', []);
     }
 
+    /**
+     * Filters the allowed block types for the newsletter editor.
+     * 
+     * This method modifies the allowed block types when editing a newsletter post type.
+     * It restricts the available blocks to those relevant for newsletters, such as paragraphs,
+     * headings, images, and custom blocks like RSS and ICS.
+     * 
+     * @param array $allowedBlockTypes The existing allowed block types.
+     * @return array The modified allowed block types for the newsletter editor.
+     */
     public static function newsletterAllowedBlockTypes($allowedBlockTypes)
     {
         if (!self::isEditingNewsletter()) {
@@ -95,6 +171,17 @@ final class Editor
         ];
     }
 
+    /**
+     * Filters the excerpt length for the newsletter editor.
+     * 
+     * This method checks if the request has an 'excerpt_length' parameter and applies
+     * a filter to change the excerpt length accordingly. It is used to customize the
+     * excerpt length for newsletter posts in the REST API.
+     * 
+     * @param array $args The existing query arguments.
+     * @param \WP_REST_Request $request The REST API request object.
+     * @return array The modified query arguments with the excerpt length filter applied.
+     */
     public static function maybeFilterExcerptLength($args, $request)
     {
         $params = $request->get_params();
@@ -106,6 +193,16 @@ final class Editor
         return $args;
     }
 
+    /**
+     * Resets the excerpt length after the posts are retrieved.
+     * 
+     * This method checks if a newsletter excerpt length filter is set and removes it
+     * after the posts are retrieved. This ensures that the excerpt length is reset
+     * for subsequent queries.
+     * 
+     * @param array $posts The retrieved posts.
+     * @return array The posts with the excerpt length filter removed.
+     */
     public static function maybeResetExcerptLength($posts)
     {
         if (self::$newsletterExcerptLengthFilter) {
@@ -115,6 +212,15 @@ final class Editor
         return $posts;
     }
 
+    /**
+     * Filters the excerpt length for the newsletter editor.
+     * 
+     * This method applies a filter to change the excerpt length for newsletter posts.
+     * It is used to customize the excerpt length when displaying newsletters in the editor.
+     * 
+     * @param int $excerptLength The desired excerpt length.
+     * @return void
+     */
     public static function filterExcerptLength($excerptLength)
     {
         if (is_int($excerptLength)) {
@@ -128,6 +234,14 @@ final class Editor
         }
     }
 
+    /**
+     * Removes the excerpt length filter for the newsletter editor.
+     * 
+     * This method removes the previously set excerpt length filter, ensuring that
+     * the excerpt length is reset to its default value after processing newsletter posts.
+     * 
+     * @return void
+     */
     public static function removeExcerptLengthFilter()
     {
         remove_filter(
@@ -137,6 +251,15 @@ final class Editor
         );
     }
 
+    /**
+     * Enqueues block editor assets for the newsletter editor.
+     * 
+     * This method registers and enqueues the necessary styles and scripts for the
+     * newsletter editor in the block editor. It also localizes script data for use
+     * in the editor, such as service provider configuration and email HTML meta.
+     * 
+     * @return void
+     */
     public static function enqueueBlockEditorAssets()
     {
         if (!self::isEditingNewsletter()) {
