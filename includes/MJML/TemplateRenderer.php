@@ -6,6 +6,13 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\Templates;
 
+/**
+ * Class TemplateRenderer
+ * 
+ * Renders MJML templates with provided data.
+ * 
+ * @package RRZE\Newsletter\MJML
+ */
 class TemplateRenderer
 {
     /**
