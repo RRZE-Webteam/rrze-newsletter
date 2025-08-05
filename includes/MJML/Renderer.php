@@ -17,6 +17,8 @@ use WP_Error;
  * Class Renderer
  *
  * Handles rendering and conversion of post content to MJML for email newsletters.
+ * 
+ * @package RRZE\Newsletter\MJML
  */
 final class Renderer
 {
