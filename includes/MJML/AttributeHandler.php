@@ -4,6 +4,13 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+/**
+ * Class AttributeHandler
+ * 
+ * Handles processing of block attributes for MJML rendering.
+ * 
+ * @package RRZE\Newsletter\MJML
+ */
 class AttributeHandler
 {
     /**
