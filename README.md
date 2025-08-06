@@ -44,15 +44,15 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
-**WordPress-Version:** `>=6.6.0`
+**WordPress-Version:** `^6.8`
 
-**PHP-Version:** `>=8.2.0`
+**PHP-Version:** `8.2`
 
-**WP-CLI-Version:** `>=2.11.0`
+**WP-CLI-Version:** `^2.12.0`
 
-**Composer-Version:** `>=2.7.7`
+**Composer-Version:** `^2.8.6`
 
-**Node-Version:** `>=22.6.0`
+**Node-Version:** `^24.5.0`
 
 **Übersetzung: Erstellen der .pot-Datei (WP-CLI)**
 
