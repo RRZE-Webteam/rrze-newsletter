@@ -86,7 +86,7 @@ final class Renderer
         foreach ($validBlocks as $block) {
             $blockContent = '';
 
-            // If block is a reusable block, convert to group block.
+            // Convert reusable blocks to group blocks
             if (
                 $block['blockName'] === 'core/block' &&
                 !empty($block['attrs']['ref'])
@@ -100,24 +100,7 @@ final class Renderer
                 }
             }
 
-            // Handle group blocks specially for MJML wrapper structure.
-            if ($block['blockName'] === 'core/group') {
-                $defaultAttrs = [];
-                $attrs = AttributeHandler::processAttributes($block['attrs'] ?? []);
-                // Pass color down to children if set.
-                if (!empty($attrs['color'])) {
-                    $defaultAttrs['color'] = $attrs['color'];
-                }
-                $attrs['padding'] = StyleProcessor::getPaddingFromAttributes($attrs) ?: '0';
-                $mjmlMarkup = '<mj-wrapper ' . AttributeHandler::arrayToAttributes($attrs) . '>';
-
-                foreach ($block['innerBlocks'] as $innerBlock) {
-                    $mjmlMarkup .= BlockProcessor::renderMjmlComponent($postId, $innerBlock, $defaultAttrs, false, true);
-                }
-                $blockContent = $mjmlMarkup . '</mj-wrapper>';
-            } else {
-                $blockContent = BlockProcessor::renderMjmlComponent($postId, $block);
-            }
+            $blockContent = BlockProcessor::renderMjmlComponent($postId, $block);
 
             $mjmlBody .= $blockContent;
         }
