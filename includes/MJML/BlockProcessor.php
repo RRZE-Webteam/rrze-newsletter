@@ -4,6 +4,7 @@ namespace RRZE\Newsletter\MJML;
 
 defined('ABSPATH') || exit;
 
+use BorlabsCookie\Cookie\Frontend\Style;
 use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\MJML\AttributeHandler;
 use RRZE\Newsletter\MJML\StyleProcessor;
@@ -177,8 +178,9 @@ class BlockProcessor
     {
         // Inherit link color if available
         if (!empty($attrs['style']['elements']['link']['color']['text'])) {
-            $attrs['link'] = $attrs['style']['elements']['link']['color']['text'];
+            $attrs['link'] = StyleProcessor::extractLinkColor($attrs['style']['elements']['link']['color']['text']);
         }
+
         $textAttrs = array_merge([
             'padding'     => '0',
             'line-height' => '1.5',
@@ -214,7 +216,7 @@ class BlockProcessor
     private static function renderListBlock($postId, $block, $attrs, $innerBlocks, $innerContent, $isInList, $fontFamily)
     {
         if (!empty($attrs['style']['elements']['link']['color']['text'])) {
-            $attrs['link'] = $attrs['style']['elements']['link']['color']['text'];
+            $attrs['link'] = StyleProcessor::extractLinkColor($attrs['style']['elements']['link']['color']['text']);
         }
         $textAttrs = array_merge([
             'padding'     => '0',
@@ -318,9 +320,9 @@ class BlockProcessor
                 'padding' => '16px 0',
                 'font-family' => $fontFamily,
             ];
-            if (isset($attrs['color'])) {
-                $captionAttrs['color'] = $attrs['color'];
-            }
+
+            $captionAttrs['color'] = $attrs['color'] ?? 'base';
+
             $markup .= '<mj-text ' . AttributeHandler::arrayToAttributes($captionAttrs) . '>' . $figcaption->wholeText . '</mj-text>';
         }
         return $markup;
@@ -473,12 +475,12 @@ class BlockProcessor
             }
         }
 
-        if (isset($attrs['color'])) {
-            $defaultAttrs['color'] = $attrs['color'];
-        }
-        if (isset($attrs['link'])) {
-            $defaultAttrs['link'] = $attrs['link'];
-        }
+        // if (isset($attrs['color'])) {
+        //     $defaultAttrs['color'] = $attrs['color'];
+        // }
+        // if (isset($attrs['link'])) {
+        //     $defaultAttrs['link'] = $attrs['link'];
+        // }
 
         $isStackedOnMobile = !isset($attrs['isStackedOnMobile']) || $attrs['isStackedOnMobile'] === true;
         $markup = $isStackedOnMobile ? '' : '<mj-group>';
@@ -512,24 +514,41 @@ class BlockProcessor
      */
     private static function renderGroupBlock($postId, $block, $attrs, $innerBlocks, $defaultAttrs)
     {
-        if (isset($attrs['color'])) {
-            $defaultAttrs['color'] = $attrs['color'];
-        }
-        if (isset($attrs['link'])) {
-            $defaultAttrs['link'] = $attrs['link'];
-        }
+        // Process group attributes
+        $attrs = AttributeHandler::processAttributes($block['attrs'] ?? []);
+        $attrs['padding'] = StyleProcessor::getPaddingFromAttributes($attrs) ?: '0';
+
+        // Prepare default attributes for children
+        $color = $attrs['color'] ?? 'base';
+        $link = $attrs['link'] ?? 'base';
 
         $markup = '<mj-wrapper ' . AttributeHandler::arrayToAttributes($attrs) . '>';
-        foreach ($innerBlocks as $childBlock) {
-            $childDefaultAttrs = $defaultAttrs;
-            $hasOwnLinkColor =
-                !empty($childBlock['attrs']['style']['elements']['link']['color']['text']) ||
-                !empty($childBlock['attrs']['link']);
-            if ($hasOwnLinkColor && isset($childDefaultAttrs['link'])) {
-                unset($childDefaultAttrs['link']);
+
+        // error_log('Rendering group block: ' . $block['blockName']);
+        // error_log('Group block attributes: ' . print_r($attrs, true));
+
+        $markup = '<mj-wrapper ' . AttributeHandler::arrayToAttributes($attrs) . '>';
+
+        foreach ($block['innerBlocks'] as $innerBlock) {
+            $attrs = $innerBlock['attrs'] ?? [];
+            // error_log('Processing inner block: ' . $innerBlock['blockName']);
+
+            $attrs['color'] = $attrs['color'] ?? $color;
+            $attrs['link'] = $attrs['link'] ?? $link;
+
+            if (isset($attrs['textColor'])) {
+                unset($attrs['color']);
             }
-            $markup .= self::renderMjmlComponent($postId, $childBlock, $childDefaultAttrs, false, true);
+
+            if (!empty($attrs['style']['elements']['link']['color']['text'])) {
+                $attrs['link'] = StyleProcessor::extractLinkColor($attrs['style']['elements']['link']['color']['text']);
+            }
+
+            // error_log($innerBlock['blockName'] . ' default attributes after processing: ' . print_r($attrs, true));
+            // Render child block with conditional inherited attributes
+            $markup .= self::renderMjmlComponent($postId, $innerBlock, $attrs, false, true);
         }
+
         $markup .= '</mj-wrapper>';
         return $markup;
     }
@@ -547,8 +566,9 @@ class BlockProcessor
     private static function renderNewsletterRssBlock($postId, $block, $attrs, $fontFamily, $columnAttrs)
     {
         if (!empty($attrs['style']['elements']['link']['color']['text'])) {
-            $attrs['link'] = $attrs['style']['elements']['link']['color']['text'];
+            $attrs['link'] = StyleProcessor::extractLinkColor($attrs['style']['elements']['link']['color']['text']);
         }
+
         $textAttrs = array_merge([
             'padding'     => '0',
             'line-height' => '1.5',
@@ -579,8 +599,9 @@ class BlockProcessor
     private static function renderNewsletterIcsBlock($postId, $block, $attrs, $fontFamily, $columnAttrs)
     {
         if (!empty($attrs['style']['elements']['link']['color']['text'])) {
-            $attrs['link'] = $attrs['style']['elements']['link']['color']['text'];
+            $attrs['link'] = StyleProcessor::extractLinkColor($attrs['style']['elements']['link']['color']['text']);
         }
+
         $textAttrs = array_merge([
             'padding'     => '0',
             'line-height' => '1.5',
