@@ -1,8 +1,6 @@
 :root {
     --rrze-newsletter-header-font: Arial, Helvetica, sans-serif;
     --rrze-newsletter-body-font: Arial, Helvetica, sans-serif;
-    --rrze-newsletter-link-color: inherit;
-    --rrze-newsletter-link-text-decoration: underline;
     --rrze-newsletter-max-width: 680px;
 }
 
@@ -91,9 +89,7 @@
         }
 
         a {
-            color: var(--rrze-newsletter-link-color);
             font-family: inherit;
-            text-decoration: var(--rrze-newsletter-link-text-decoration);
         }
 
         code {
@@ -116,6 +112,13 @@
         p {
             &.has-background {
                 padding: 12px;
+            }
+        }
+
+        a {
+            &:hover,
+            &:active {
+                color: currentColor !important;
             }
         }
 

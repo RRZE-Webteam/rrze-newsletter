@@ -9,7 +9,7 @@ use RRZE\Newsletter\CPT\NewsletterLayout;
 use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Mail\Send;
-use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\MJML\Renderer;
 use Html2Text\Html2Text;
 
 class RestApi
@@ -217,9 +217,7 @@ class RestApi
                 $post->meta = [
                     'rrze_newsletter_background_color' => get_post_meta($post->ID, 'rrze_newsletter_background_color', true),
                     'rrze_newsletter_font_body' => get_post_meta($post->ID, 'rrze_newsletter_font_body', true),
-                    'rrze_newsletter_font_header' => get_post_meta($post->ID, 'rrze_newsletter_font_header', true),
-                    'rrze_newsletter_link_color' => get_post_meta($post->ID, 'rrze_newsletter_link_color', true),
-                    'rrze_newsletter_link_text_decoration' => get_post_meta($post->ID, 'rrze_newsletter_link_text_decoration', true),
+                    'rrze_newsletter_font_header' => get_post_meta($post->ID, 'rrze_newsletter_font_header', true)
                 ];
                 return $post;
             },
@@ -379,7 +377,7 @@ class RestApi
         $post = get_post($postId);
         $subject = $post->post_title;
 
-        $body = Render::retrieveEmailHtml($post);
+        $body = Renderer::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }
@@ -483,8 +481,6 @@ class RestApi
                 'rrze_newsletter_font_header',
                 'rrze_newsletter_font_body',
                 'rrze_newsletter_background_color',
-                'rrze_newsletter_link_color',
-                'rrze_newsletter_link_text_decoration',
                 'rrze_newsletter_preview_text'
             ]
         );
@@ -518,6 +514,6 @@ class RestApi
             $post->post_title = $request['title'];
         }
         $post->post_content = $request['content'];
-        return rest_ensure_response(['mjml' => Render::fromPost($post)]);
+        return rest_ensure_response(['mjml' => Renderer::fromPost($post)]);
     }
 }

@@ -8,7 +8,7 @@ namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
@@ -380,36 +380,6 @@ class Newsletter
                 'auth_callback'  => '__return_true',
             ]
         );
-        register_meta(
-            'post',
-            'rrze_newsletter_link_color',
-            [
-                'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => [
-                    'schema' => [
-                        'context' => ['edit'],
-                    ],
-                ],
-                'type'           => 'string',
-                'single'         => true,
-                'auth_callback'  => '__return_true',
-            ]
-        );
-        register_meta(
-            'post',
-            'rrze_newsletter_link_text_decoration',
-            [
-                'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => [
-                    'schema' => [
-                        'context' => ['edit'],
-                    ],
-                ],
-                'type'           => 'string',
-                'single'         => true,
-                'auth_callback'  => '__return_true',
-            ]
-        );
     }
 
     public static function registerCategory()
@@ -601,7 +571,7 @@ class Newsletter
             return $data;
         }
 
-        $body = Render::retrieveEmailHtml($post);
+        $body = Renderer::retrieveEmailHtml($post);
         if (is_wp_error($body)) {
             return $body;
         }

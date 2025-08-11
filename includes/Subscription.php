@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\Mail\Send;
-use RRZE\Newsletter\MJML\Render;
+use RRZE\Newsletter\MJML\Renderer;
 use Html2Text\Html2Text;
 
 class Subscription
@@ -588,7 +588,7 @@ class Subscription
             'replyTo' => $replyTo,
             'to' => $email,
             'subject' => $title,
-            'mjml' => Render::fromAry($mjmlData)
+            'mjml' => Renderer::fromAry($mjmlData)
         ];
 
         add_action(

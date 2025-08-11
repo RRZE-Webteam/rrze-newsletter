@@ -84,36 +84,6 @@ class NewsletterLayout
                 'auth_callback'  => '__return_true',
             ]
         );
-        register_meta(
-            'post',
-            'rrze_newsletter_link_color',
-            [
-                'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => [
-                    'schema' => [
-                        'context' => ['edit'],
-                    ],
-                ],
-                'type'           => 'string',
-                'single'         => true,
-                'auth_callback'  => '__return_true',
-            ]
-        );
-        register_meta(
-            'post',
-            'rrze_newsletter_link_text_decoration',
-            [
-                'object_subtype' => self::POST_TYPE,
-                'show_in_rest'   => [
-                    'schema' => [
-                        'context' => ['edit'],
-                    ],
-                ],
-                'type'           => 'string',
-                'single'         => true,
-                'auth_callback'  => '__return_true',
-            ]
-        );
     }
 
     public static function layoutTokenReplacement($content, $extra = [])

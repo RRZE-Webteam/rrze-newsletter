@@ -7,8 +7,24 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\CPT\Newsletter;
 use function RRZE\Newsletter\plugin;
 
+/**
+ * Class Patterns
+ * 
+ * Handles the registration of block patterns for the RRZE Newsletter plugin.
+ *
+ * @package RRZE\Newsletter\Patterns
+ */
 class Patterns
 {
+    /**
+     * Registers block patterns for the RRZE Newsletter plugin.
+     *
+     * This method retrieves content patterns from a JSON file, registers block pattern categories,
+     * and registers individual block patterns with their respective content.
+     * It ensures that relative URLs in the patterns are replaced with absolute URLs.
+     *
+     * @return void
+     */
     public static function registerBlockPatterns()
     {
         $contentPatterns = self::getContentPatterns();
@@ -49,6 +65,13 @@ class Patterns
         }
     }
 
+    /**
+     * Returns an array of available block pattern categories.
+     *
+     * Each category is represented by an associative array with a 'label' key.
+     *
+     * @return array An array of available block pattern categories.
+     */
     public static function availableCategories()
     {
         return [
@@ -58,6 +81,14 @@ class Patterns
         ];
     }
 
+    /**
+     * Returns an array of available block patterns.
+     *
+     * Each pattern is represented by an associative array with keys such as 'title', 'categories',
+     * 'postTypes', and 'description'.
+     *
+     * @return array An array of available block patterns.
+     */
     public static function availablePatterns()
     {
         return [
@@ -106,6 +137,14 @@ class Patterns
         ];
     }
 
+    /**
+     * Retrieves content patterns from a JSON file.
+     *
+     * The JSON file is expected to be located in the 'includes/Patterns' directory of the plugin.
+     * If the file cannot be read or if there is a JSON decoding error, an empty array is returned.
+     *
+     * @return array An associative array of content patterns.
+     */
     public static function getContentPatterns()
     {
         $jsonFilePath = plugin()->getPath('includes/Patterns') . 'patterns.json';

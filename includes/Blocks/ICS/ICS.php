@@ -6,7 +6,6 @@ defined('ABSPATH') || exit;
 
 use ICal\ICal;
 use RRule\RRule;
-use RRZE\Newsletter\Utils;
 use function RRZE\Newsletter\plugin;
 
 class ICS
