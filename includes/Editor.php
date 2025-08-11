@@ -71,7 +71,7 @@ final class Editor
         add_filter('the_posts', [__CLASS__, 'maybeResetExcerptLength']);
 
         // Register block patterns for the newsletter editor.
-        add_action('init', ['\RRZE\Newsletter\Patterns\Patterns', 'registerBlockPatterns']);
+        add_action('init', ['\RRZE\Newsletter\Patterns\Patterns', 'registerBlockPatterns']);       
     }
 
     /**
@@ -322,12 +322,12 @@ final class Editor
         return [
             [
                 'slug' => 'base',
-                'color' => '#ffffff',
+                'color' => '#000000',
                 'name' => __('Base')
             ],
             [
                 'slug' => 'contrast',
-                'color' => '#000000',
+                'color' => '#ffffff',
                 'name' => __('Contrast')
             ],
             [
@@ -483,11 +483,13 @@ final class Editor
             'styles' => [
                 'color' => [
                     'text' => '#000000',
+                    'background' => 'transparent',
                 ],
                 'elements' => [
                     'link' => [
                         'color' => [
-                            'text' => '#000000',
+                            'text'       => '#000000',
+                            ':hover'     => '#000000',
                         ]
                     ]
                 ]
