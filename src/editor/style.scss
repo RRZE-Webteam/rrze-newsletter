@@ -115,6 +115,13 @@
             }
         }
 
+        a {
+            &:hover,
+            &:active {
+                color: currentColor !important;
+            }
+        }
+
         .wp-block-group {
             padding-left: 0;
             padding-right: 0;
