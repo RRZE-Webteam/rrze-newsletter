@@ -59,11 +59,11 @@ class StyleProcessor
             'link'             => self::getLinkColor($blockAttrs),
         ];
 
-        foreach ($colors as $k => $v) {
-            if ($v && strpos($v, '!important') === false) {
-                $colors[$k] .= ' !important';
-            }
-        }
+        // foreach ($colors as $k => $v) {
+        //     if ($v && strpos($v, '!important') === false) {
+        //         $colors[$k] .= ' !important';
+        //     }
+        // }
 
         if (isset($colors['link']) && strpos($colors['link'], 'var(') === 0) {
             $colors['link'] = self::extractFallbackCssVar($colors['link']);
@@ -243,6 +243,20 @@ class StyleProcessor
             return $attrs['link'];
         }
         return null;
+    }
+
+    /**
+     * Extracts the link color from a string.
+     *
+     * @param string $linkColor The link color string.
+     * @return string|null The extracted link color.
+     */
+    public static function extractLinkColor($linkColor): ?string
+    {
+        if (strpos($linkColor, 'var:preset|color|') === 0) {
+            $linkColor = str_replace('var:preset|color|', '', $linkColor);
+        }
+        return $linkColor;
     }
 
     /**
