@@ -1,6 +1,6 @@
 {
   "name": "rrze-newsletter",
-  "version": "3.2.10",
+  "version": "3.2.11",
   "description": "Multilanguage plugin for WordPress.",
   "main": "webpack.config.js",
   "author": "RRZE Webteam <webmaster@fau.de> (https://www.rrze.fau.de/)",
