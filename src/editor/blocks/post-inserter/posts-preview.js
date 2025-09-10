@@ -18,7 +18,10 @@ import classnames from "classnames";
 const PostsPreview = ({ isReady, blocks, className, viewportWidth }, ref) => {
     const useIframeBorderFix = useRefEffect((node) => {
         const observerCallback = () => {
-            const iframe = node.querySelector('iframe[title="Editor canvas"]');
+            const iframe =
+                node.querySelector(
+                    ".block-editor-block-preview__content iframe"
+                ) || node.querySelector("iframe");
             if (iframe) {
                 const updateIframeStyle = () => {
                     iframe.style.border = 0;
