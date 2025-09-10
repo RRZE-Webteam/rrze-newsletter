@@ -1,9 +1,15 @@
 {
   "name": "rrze-newsletter/post-inserter",
   "category": "widgets",
-  "supports": [
-    "align"
-  ],
+  "apiVersion": 3,
+  "supports": {
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false,
+    "inserter": true
+  },
   "attributes": {
     "areBlocksInserted": {
       "type": "boolean",

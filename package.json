@@ -1,7 +1,13 @@
 {
+  "name": "rrze-newsletter",
+  "version": "3.2.11",
+  "description": "Multilanguage plugin for WordPress.",
+  "main": "webpack.config.js",
+  "author": "RRZE Webteam <webmaster@fau.de> (https://www.rrze.fau.de/)",
+  "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">=22.6.0",
-    "npm": ">=10.8.2"
+    "node": ">=24.5.0",
+    "npm": ">=11.5.1"
   },
   "browserslist": [
     "extends @wordpress/browserslist-config"
@@ -12,20 +18,19 @@
     "format": "wp-scripts format src",
     "lint:js": "wp-scripts lint-js src",
     "check-engines": "wp-scripts check-engines",
-    "check-licenses": "wp-scripts check-licenses --prod --gpl2",
+    "check-licenses": "wp-scripts check-licenses --prod --gpl3",
     "packages-update": "wp-scripts packages-update"
   },
   "dependencies": {
-    "@wordpress/blocks": "latest",
-    "@wordpress/components": "latest",
-    "@wordpress/data": "latest",
-    "@wordpress/edit-post": "latest",
-    "@wordpress/plugins": "latest",
+    "@wordpress/blocks": "^15.3.0",
+    "@wordpress/components": "^30.3.0",
+    "@wordpress/data": "^10.30.0",
+    "@wordpress/edit-post": "^8.30.0",
+    "@wordpress/plugins": "^7.30.0",
     "classnames": "latest",
     "mjml-browser": "latest"
   },
   "devDependencies": {
-    "@wordpress/scripts": "latest"
-  },
-  "version": "3.2.10"
+    "@wordpress/scripts": "^30.23.0"
+  }
 }

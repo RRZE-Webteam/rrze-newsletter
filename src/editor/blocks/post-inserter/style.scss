@@ -2,17 +2,31 @@
 
 :root {
     --rrze-newsletter-post-inserter-width: 474px;
+    --rrze-newsletter-post-inserter-border: #{wp-colors.$gray-900};
+    --rrze-newsletter-post-inserter-bg: #fff;
 }
 
 .rrze-newsletter-post-inserter {
-    border: 1px solid wp-colors.$gray-900;
+    border: 1px solid var(--rrze-newsletter-post-inserter-border);
     border-radius: 2px;
     padding: 0;
+    background: var(--rrze-newsletter-post-inserter-bg);
+
+    &:empty,
+    & > :empty {
+        min-height: 24px;
+        outline: 1px dashed var(--rrze-newsletter-post-inserter-border);
+        outline-offset: -2px;
+    }
+
+    &.is-selected {
+        box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #007cba) inset;
+    }
 
     &__header {
         align-items: center;
-        background: white;
-        border-bottom: 1px solid wp-colors.$gray-900;
+        background: var(--rrze-newsletter-post-inserter-bg);
+        border-bottom: 1px solid var(--rrze-newsletter-post-inserter-border);
         display: flex;
         padding: 1em;
         position: relative;
@@ -21,13 +35,17 @@
         span {
             font-size: 18pt;
             margin-left: 1ch;
+            line-height: 1.1;
         }
     }
 
     &__footer {
-        background: white;
-        border-top: 1px solid wp-colors.$gray-900;
+        background: var(--rrze-newsletter-post-inserter-bg);
+        border-top: 1px solid var(--rrze-newsletter-post-inserter-border);
         padding: 1em;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
     }
 
     &--loading {
@@ -48,7 +66,8 @@
 
         .block-editor-block-preview {
             &__container {
-                overflow-y: scroll;
+                max-height: 420px;
+                overflow-y: auto;
             }
 
             &__content {
@@ -63,8 +82,9 @@
         &.image-left,
         &.image-right {
             .block-editor-block-preview__content {
-                box-sizing: unset !important;
-                @media only screen and (min-width: 680px) {
+                box-sizing: content-box !important;
+
+                @media (min-width: 680px) {
                     margin-left: calc(
                         var(--rrze-newsletter-post-inserter-width) / -2
                     );
@@ -75,9 +95,18 @@
             }
         }
     }
-}
 
-// FormTokenField
+    &__content {
+        padding: 0 1em 1em;
+        min-height: 20px;
+
+        /* Hide any inserter/appender inside the locked InnerBlocks */
+        .block-editor-default-block-appender,
+        .block-list-appender {
+            display: none !important;
+        }
+    }
+}
 
 .rrze-newsletter-query-controls {
     .components-form-token-field__help {
@@ -87,4 +116,10 @@
 
 .wp-block-heading a {
     color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+    }
 }

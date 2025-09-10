@@ -16,7 +16,13 @@ import {
     Spinner,
 } from "@wordpress/components";
 import { addQueryArgs } from "@wordpress/url";
-import { Fragment, useState, useEffect } from "@wordpress/element";
+import {
+    Fragment,
+    useState,
+    useEffect,
+    useMemo,
+    useRef,
+} from "@wordpress/element";
 import apiFetch from "@wordpress/api-fetch";
 import { decodeEntities } from "@wordpress/html-entities";
 
@@ -54,28 +60,58 @@ const decodePost = (encodedPost) => {
 };
 
 const QueryControlsSettings = ({ attributes, setAttributes }) => {
+    // Destructure FIRST (prevents "Cannot access 'tags' before initialization")
+    const {
+        categoryExclusions,
+        tags,
+        tagExclusions,
+        order,
+        orderBy,
+        isDisplayingSpecificPosts,
+        specificPosts,
+        postsToShow,
+        categories,
+        postType,
+    } = attributes;
+
     const [categoriesList, setCategoriesList] = useState([]);
     const [postTypesList, setPostTypesList] = useState([
         { value: "post", label: "Posts" },
     ]);
-    const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
-    const { categoryExclusions, tags, tagExclusions } = attributes;
+    // Auto-open Advanced Filters if saved filters exist
+    const defaultOrder = "desc";
+    const defaultOrderBy = "date";
+    const hasAdvancedSaved =
+        (Array.isArray(tags) && tags.length > 0) ||
+        (Array.isArray(tagExclusions) && tagExclusions.length > 0) ||
+        (Array.isArray(categoryExclusions) && categoryExclusions.length > 0) ||
+        (order && order !== defaultOrder) ||
+        (orderBy && orderBy !== defaultOrderBy);
+    const [showAdvancedFilters, setShowAdvancedFilters] =
+        useState(hasAdvancedSaved);
+
+    useEffect(() => {
+        if (hasAdvancedSaved && !showAdvancedFilters)
+            setShowAdvancedFilters(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        order,
+        orderBy,
+        tags?.length,
+        tagExclusions?.length,
+        categoryExclusions?.length,
+    ]);
 
     useEffect(() => {
         apiFetch({
-            path: addQueryArgs(`/wp/v2/categories`, {
-                per_page: -1,
-            }),
+            path: addQueryArgs(`/wp/v2/categories`, { per_page: -1 }),
         }).then(setCategoriesList);
         // fetchPostTypes().then(setPostTypesList);
     }, []);
 
     const categorySuggestions = categoriesList.reduce(
-        (accumulator, category) => ({
-            ...accumulator,
-            [category.name]: category,
-        }),
+        (acc, category) => ({ ...acc, [category.name]: category }),
         {}
     );
 
@@ -83,66 +119,65 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
         const hasNoSuggestion = tokens.some(
             (token) => typeof token === "string" && !categorySuggestions[token]
         );
-        if (hasNoSuggestion) {
-            return;
-        }
-        // Categories that are already will be objects, while new additions will be strings (the name).
-        // allCategories nomalizes the array so that they are all objects.
-        const allCategories = tokens.map((token) => {
-            return typeof token === "string"
-                ? categorySuggestions[token]
-                : token;
-        });
-        // We do nothing if the category is not selected
-        // from suggestions.
-        if (includes(allCategories, null)) {
-            return false;
-        }
+        if (hasNoSuggestion) return;
+
+        const allCategories = tokens.map((token) =>
+            typeof token === "string" ? categorySuggestions[token] : token
+        );
+
+        if (includes(allCategories, null)) return false;
         setAttributes({ categories: allCategories });
     };
 
-    const selectTags = (tokens) => {
-        const validTags = tokens.filter((token) => !!token);
+    const selectTags = (tokens) =>
+        setAttributes({ tags: tokens.filter(Boolean) });
+    const selectExcludedTags = (tokens) =>
+        setAttributes({ tagExclusions: tokens.filter(Boolean) });
+    const selectExcludedCategories = (tokens) =>
+        setAttributes({ categoryExclusions: tokens.filter(Boolean) });
 
-        setAttributes({ tags: validTags });
-    };
-
-    const selectExcludedTags = (tokens) => {
-        const validTags = tokens.filter((token) => !!token);
-
-        setAttributes({ tagExclusions: validTags });
-    };
-
-    const selectExcludedCategories = (tokens) => {
-        const validCats = tokens.filter((token) => !!token);
-
-        setAttributes({ categoryExclusions: validCats });
-    };
-
+    // Specific posts search
     const [isFetchingPosts, setIsFetchingPosts] = useState(false);
     const [foundPosts, setFoundPosts] = useState([]);
-    const handleSpecificPostsInput = (search) => {
-        if (isFetchingPosts || search.length === 0) {
-            return;
+    const acRef = useRef(null);
+
+    const handleSpecificPostsInput = async (search) => {
+        if (isFetchingPosts || search.length === 0) return;
+        acRef.current?.abort?.();
+        const ac = new AbortController();
+        acRef.current = ac;
+        try {
+            setIsFetchingPosts(true);
+            const posts = await fetchPostSuggestions(postType)(search);
+            if (!ac.signal.aborted) setFoundPosts(posts);
+        } catch (e) {
+            if (!ac.signal.aborted) setFoundPosts([]);
+        } finally {
+            if (!ac.signal.aborted) setIsFetchingPosts(false);
         }
-        setIsFetchingPosts(true);
-        fetchPostSuggestions(attributes.postType)(search).then((posts) => {
-            setIsFetchingPosts(false);
-            setFoundPosts(posts);
-        });
     };
+
+    const debouncedSpecificPostsInput = useMemo(
+        () => debounce(handleSpecificPostsInput, 400),
+        [postType]
+    );
+    useEffect(
+        () => () => debouncedSpecificPostsInput.cancel(),
+        [debouncedSpecificPostsInput]
+    );
+    useEffect(() => () => acRef.current?.abort?.(), []);
 
     const handleSpecificPostsSelection = (postTitles) => {
         setAttributes({
             specificPosts: postTitles.map((encodedTitle) => {
                 const [id, title] = decodePost(encodedTitle);
-                return { id: parseInt(id), title };
+                return { id: parseInt(id, 10), title };
             }),
         });
     };
 
-    const fetchCategorySuggestions = (search) => {
-        return apiFetch({
+    const fetchCategorySuggestions = (search) =>
+        apiFetch({
             path: addQueryArgs("/wp/v2/categories", {
                 search,
                 per_page: 20,
@@ -150,55 +185,52 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                 orderby: "count",
                 order: "desc",
             }),
-        }).then((categories) => {
-            return categories.map((category) => ({
+        }).then((categories) =>
+            categories.map((category) => ({
                 value: category.id,
                 label:
                     decodeEntities(category.name) ||
                     __("(no title)", "rrze-newsletter"),
-            }));
-        });
-    };
+            }))
+        );
 
-    const fetchPostTypes = () => {
-        return apiFetch({
+    const fetchPostTypes = () =>
+        apiFetch({
             path: addQueryArgs("/wp/v2/types", { context: "edit" }),
-        }).then((postTypes) => {
-            return Object.values(postTypes)
+        }).then((postTypes) =>
+            Object.values(postTypes)
                 .filter(
-                    (postType) =>
-                        postType.slug === "post" &&
-                        postType.viewable === true &&
-                        postType.visibility?.show_ui === true
+                    (pt) =>
+                        pt.slug === "post" &&
+                        pt.viewable === true &&
+                        pt.visibility?.show_ui === true
                 )
-                .map((postType) => ({
-                    value: postType.slug,
+                .map((pt) => ({
+                    value: pt.slug,
                     label:
-                        decodeEntities(postType.name) ||
+                        decodeEntities(pt.name) ||
                         __("(no title)", "rrze-newsletter"),
-                }));
-        });
-    };
+                }))
+        );
 
-    const fetchSavedCategories = (categoryIDs) => {
-        return apiFetch({
+    const fetchSavedCategories = (categoryIDs) =>
+        apiFetch({
             path: addQueryArgs("/wp/v2/categories", {
                 per_page: 100,
                 _fields: "id,name",
                 include: categoryIDs.join(","),
             }),
-        }).then((categories) => {
-            return categories.map((category) => ({
+        }).then((categories) =>
+            categories.map((category) => ({
                 value: category.id,
                 label:
                     decodeEntities(category.name) ||
                     __("(no title)", "rrze-newsletter"),
-            }));
-        });
-    };
+            }))
+        );
 
-    const fetchTagSuggestions = (search) => {
-        return apiFetch({
+    const fetchTagSuggestions = (search) =>
+        apiFetch({
             path: addQueryArgs("/wp/v2/tags", {
                 search,
                 per_page: 20,
@@ -206,43 +238,42 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                 orderby: "count",
                 order: "desc",
             }),
-        }).then((fetchedTags) => {
-            return fetchedTags.map((tag) => ({
+        }).then((fetchedTags) =>
+            fetchedTags.map((tag) => ({
                 value: tag.id,
                 label:
                     decodeEntities(tag.name) ||
                     __("(no title)", "rrze-newsletter"),
-            }));
-        });
-    };
+            }))
+        );
 
-    const fetchSavedTags = (tagIDs) => {
-        return apiFetch({
+    const fetchSavedTags = (tagIDs) =>
+        apiFetch({
             path: addQueryArgs("/wp/v2/tags", {
                 per_page: 100,
                 _fields: "id,name",
                 include: tagIDs.join(","),
             }),
-        }).then((fetchedTags) => {
-            return fetchedTags.map((tag) => ({
+        }).then((fetchedTags) =>
+            fetchedTags.map((tag) => ({
                 value: tag.id,
                 label:
                     decodeEntities(tag.name) ||
                     __("(no title)", "rrze-newsletter"),
-            }));
-        });
-    };
+            }))
+        );
 
     return (
         <div className="rrze-newsletter-query-controls">
             <ToggleControl
                 label={__("Display specific posts", "rrze-newsletter")}
-                checked={attributes.isDisplayingSpecificPosts}
+                checked={isDisplayingSpecificPosts}
                 onChange={(value) =>
                     setAttributes({ isDisplayingSpecificPosts: value })
                 }
             />
-            {attributes.isDisplayingSpecificPosts ? (
+
+            {isDisplayingSpecificPosts ? (
                 <FormTokenField
                     label={
                         <div>
@@ -251,30 +282,31 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                         </div>
                     }
                     onChange={handleSpecificPostsSelection}
-                    value={encodePosts(attributes.specificPosts)}
+                    value={encodePosts(specificPosts)}
                     suggestions={encodePosts(foundPosts)}
                     displayTransform={(string) => {
                         const [id, title] = decodePost(string);
                         return title || id || "";
                     }}
-                    onInputChange={debounce(handleSpecificPostsInput, 400)}
+                    onInputChange={debouncedSpecificPostsInput}
                 />
             ) : (
                 <Fragment>
                     <QueryControls
-                        numberOfItems={attributes.postsToShow}
+                        numberOfItems={postsToShow}
                         onNumberOfItemsChange={(value) =>
                             setAttributes({ postsToShow: value })
                         }
                         categorySuggestions={categorySuggestions}
                         onCategoryChange={selectCategories}
-                        selectedCategories={attributes.categories}
+                        selectedCategories={categories}
                         minItems={1}
                         maxItems={20}
                     />
+
                     <p key="toggle-advanced-filters">
                         <Button
-                            isLink
+                            variant="link"
                             onClick={() =>
                                 setShowAdvancedFilters(!showAdvancedFilters)
                             }
@@ -287,6 +319,7 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                                   )}
                         </Button>
                     </p>
+
                     {showAdvancedFilters && (
                         <Fragment>
                             <AutocompleteTokenField
@@ -297,6 +330,7 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                                 fetchSavedInfo={fetchSavedTags}
                                 label={__("Tags", "rrze-newsletter")}
                             />
+
                             <AutocompleteTokenField
                                 key="category-exclusion"
                                 tokens={categoryExclusions}
@@ -308,6 +342,7 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                                     "rrze-newsletter"
                                 )}
                             />
+
                             <AutocompleteTokenField
                                 key="tag-exclusion"
                                 tokens={tagExclusions}
@@ -316,10 +351,13 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                                 fetchSavedInfo={fetchSavedTags}
                                 label={__("Excluded Tags", "rrze-newsletter")}
                             />
+
                             <SelectControl
                                 key="query-controls-order-select"
                                 label={__("Order by", "rrze-newsletter")}
-                                value={`${attributes.orderBy}/${attributes.order}`}
+                                value={`${order || "date"}/${
+                                    orderBy || "desc"
+                                }`.replace("undefined", "")}
                                 options={[
                                     {
                                         label: __(
@@ -336,12 +374,10 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                                         value: "date/asc",
                                     },
                                     {
-                                        /* translators: label for ordering posts by title in ascending order */
                                         label: __("A → Z", "rrze-newsletter"),
                                         value: "title/asc",
                                     },
                                     {
-                                        /* translators: label for ordering posts by title in descending order */
                                         label: __("Z → A", "rrze-newsletter"),
                                         value: "title/desc",
                                     },
@@ -349,12 +385,10 @@ const QueryControlsSettings = ({ attributes, setAttributes }) => {
                                 onChange={(value) => {
                                     const [newOrderBy, newOrder] =
                                         value.split("/");
-                                    if (newOrder !== attributes.order) {
+                                    if (newOrder !== order)
                                         setAttributes({ order: newOrder });
-                                    }
-                                    if (newOrderBy !== attributes.orderBy) {
+                                    if (newOrderBy !== orderBy)
                                         setAttributes({ orderBy: newOrderBy });
-                                    }
                                 }}
                             />
                         </Fragment>
