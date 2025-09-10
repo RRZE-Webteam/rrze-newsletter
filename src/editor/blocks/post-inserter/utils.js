@@ -20,9 +20,10 @@ const assignFontSize = (fontSize, attributes) => {
     if (typeof fontSize === "number") {
         fontSize = fontSize + "px";
     }
+    const prev = attributes.style?.typography || {};
     attributes.style = {
         ...(attributes.style || {}),
-        typography: { fontSize },
+        typography: { ...prev, fontSize },
     };
     return attributes;
 };
@@ -41,7 +42,7 @@ const getDateBlockTemplate = (post, { textFontSize, textColor }) => {
     return [
         "core/paragraph",
         assignFontSize(textFontSize, {
-            content: dateI18n(dateFormat, post.date_gmt),
+            content: dateI18n(dateFormat, post.date),
             fontSize: "normal",
             style: { color: { text: textColor } },
         }),
@@ -70,11 +71,16 @@ const getExcerptBlockTemplate = (
     excerptElement.innerHTML = excerpt;
     excerpt = excerptElement.textContent || excerptElement.innerText || "";
 
-    const needsEllipsis = excerptLength < excerpt.trim().split(" ").length;
+    const words = excerpt.trim().split(/\s+/).filter(Boolean);
+    const safeLen =
+        Number.isFinite(excerptLength) && excerptLength > 0
+            ? excerptLength
+            : 15;
+    const needsEllipsis = safeLen < words.length;
 
     const postExcerpt = needsEllipsis
-        ? `${excerpt.split(" ", excerptLength).join(" ")} […]`
-        : excerpt;
+        ? `${words.slice(0, safeLen).join(" ")} […]`
+        : words.join(" ");
 
     const attributes = {
         content: postExcerpt.trim(),
@@ -101,31 +107,27 @@ const getAuthorBlockTemplate = (post, { textFontSize, textColor }) => {
     const { rrze_author_info } = post;
 
     if (Array.isArray(rrze_author_info) && rrze_author_info.length) {
-        const authorLinks = rrze_author_info.reduce((acc, author, index) => {
-            const { author_link, display_name } = author;
-
-            if (author_link && display_name) {
-                const comma =
-                    rrze_author_info.length > 2 &&
-                    index < rrze_author_info.length - 1
-                        ? _x(
-                              ",",
-                              "comma separator for multiple authors",
-                              "rrze-newsletter"
-                          )
-                        : "";
-                const and =
-                    rrze_author_info.length > 1 &&
-                    index === rrze_author_info.length - 1
-                        ? __("and ", "rrze-newsletter")
-                        : "";
-                acc.push(
-                    `${and}<a href="${author_link}">${display_name}</a>${comma}`
-                );
-            }
-
-            return acc;
-        }, []);
+        const authorLinks = rrze_author_info.reduce(
+            (acc, { author_link, display_name }, i, arr) => {
+                if (!author_link || !display_name) return acc;
+                const link = `<a href="${author_link}">${display_name}</a>`;
+                if (arr.length === 1) return [link];
+                if (arr.length === 2)
+                    return i === 0
+                        ? [link]
+                        : [acc[0], `${__("and ", "rrze-newsletter")}${link}`];
+                if (i < arr.length - 1) {
+                    const comma = _x(
+                        ",",
+                        "comma separator for multiple authors",
+                        "rrze-newsletter"
+                    );
+                    return [...acc, `${link}${comma}`];
+                }
+                return [...acc, `${__("and ", "rrze-newsletter")}${link}`];
+            },
+            []
+        );
 
         return [
             "core/heading",
@@ -175,17 +177,56 @@ const createBlockTemplatesForSinglePost = (post, attributes) => {
 
     if (attributes.displayFeaturedImage && hasFeaturedImage) {
         const featuredImageId = post.featured_media;
-        const getImageBlock = (alignCenter = false) => [
-            "core/image",
-            {
-                id: featuredImageId,
-                url: alignCenter
-                    ? post.featuredImageLargeURL
-                    : post.featuredImageMediumURL,
-                href: post.link,
-                ...(alignCenter ? { align: "center" } : {}),
-            },
-        ];
+        // Picks the most suitable URL depending on alignment/size, with graceful fallbacks.
+        const getImageBlock = (alignCenter = false) => {
+            // Preferred URL when the image is on top (centered)
+            const preferredTop =
+                post.featuredImageLargeURL ||
+                post.featuredImageFullURL ||
+                post.featuredImageMediumURL ||
+                post.featuredImageThumbURL;
+
+            // Preferred URL when the image is on the side (left/right), honoring user size
+            let preferredSide;
+            switch (attributes.featuredImageSize) {
+                case "small":
+                    preferredSide =
+                        post.featuredImageThumbURL ||
+                        post.featuredImageMediumURL ||
+                        post.featuredImageLargeURL ||
+                        post.featuredImageFullURL;
+                    break;
+                case "medium":
+                    preferredSide =
+                        post.featuredImageMediumURL ||
+                        post.featuredImageLargeURL ||
+                        post.featuredImageFullURL ||
+                        post.featuredImageThumbURL;
+                    break;
+                case "large":
+                default:
+                    preferredSide =
+                        post.featuredImageLargeURL ||
+                        post.featuredImageFullURL ||
+                        post.featuredImageMediumURL ||
+                        post.featuredImageThumbURL;
+                    break;
+            }
+
+            const url = alignCenter ? preferredTop : preferredSide;
+
+            return [
+                "core/image",
+                {
+                    id: post.featured_media || undefined,
+                    url,
+                    href: post.link,
+                    // Ensures the editor honors the anchor when clicking the image
+                    linkDestination: "custom",
+                    ...(alignCenter ? { align: "center" } : {}),
+                },
+            ];
+        };
 
         let imageColumnBlockSize = "50%";
         let postContentColumnBlockSize = "50%";
@@ -294,14 +335,13 @@ export const convertBlockSerializationFormat = (block) => ({
 // The deduplication store relies on the assumption that a post has a single blocks list, which
 // is not true when there are block previews used.
 export const setPreventDeduplicationForPostInserter = (blocks) =>
-    blocks.map((block) => {
-        if (block.name === POST_INSERTER_BLOCK_NAME) {
-            block.attributes.preventDeduplication = true;
-        }
-        if (block.innerBlocks) {
-            block.innerBlocks = setPreventDeduplicationForPostInserter(
-                block.innerBlocks
-            );
-        }
-        return block;
-    });
+    blocks.map((block) => ({
+        ...block,
+        attributes:
+            block.name === POST_INSERTER_BLOCK_NAME
+                ? { ...block.attributes, preventDeduplication: true }
+                : block.attributes,
+        innerBlocks: block.innerBlocks
+            ? setPreventDeduplicationForPostInserter(block.innerBlocks)
+            : block.innerBlocks,
+    }));
