@@ -52,8 +52,11 @@ class StyleProcessor
      */
     public static function getColors(array $blockAttrs): array
     {
+        $textColor = self::getTextColor($blockAttrs);
         $colors = [
-            'color'            => self::getTextColor($blockAttrs),
+            'customTextColor'  => $textColor,
+            'textColor'        => $textColor,
+            'color'            => $textColor,
             'background-color' => self::getBackgroundColor($blockAttrs),
             'border-color'     => self::getBorderColor($blockAttrs),
             'link'             => self::getLinkColor($blockAttrs),
