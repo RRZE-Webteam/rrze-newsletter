@@ -182,7 +182,6 @@ class BlockProcessor
         }
 
         $textAttrs = array_merge([
-            'padding'     => '0',
             'line-height' => '1.5',
             'font-size'   => '16px',
             'font-family' => $fontFamily,
@@ -198,6 +197,7 @@ class BlockProcessor
         if ($isInList) {
             return $innerHtml;
         }
+        // error_log('Rendering text block with attributes: ' . print_r($textAttrs, true));
         return '<mj-text ' . AttributeHandler::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
     }
 
