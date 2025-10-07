@@ -25,9 +25,7 @@ class AttributeHandler
 
         // Merge colors without overriding existing values
         foreach ($colors as $key => $value) {
-            if (empty($attrs[$key])) {
-                $attrs[$key] = $value;
-            }
+            $attrs[$key] = $value;
         }
 
         // Set font size
