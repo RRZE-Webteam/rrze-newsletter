@@ -321,7 +321,7 @@ class BlockProcessor
                 'font-family' => $fontFamily,
             ];
 
-            $captionAttrs['color'] = $attrs['color'] ?? 'base';
+            $captionAttrs['color'] = $attrs['color'] ?? '#000000';
 
             $markup .= '<mj-text ' . AttributeHandler::arrayToAttributes($captionAttrs) . '>' . $figcaption->wholeText . '</mj-text>';
         }
@@ -332,10 +332,10 @@ class BlockProcessor
      * Render separator block as mj-divider.
      * 
      * @param array $attrs The block attributes.
-     * @param array $sectionAttrs The section attributes.
+     * @param array $sectionAttrs The section attributes to modify if needed.
      * @return string Rendered MJML markup for the separator block.
      */
-    private static function renderSeparatorBlock($attrs, $sectionAttrs)
+    private static function renderSeparatorBlock($attrs, &$sectionAttrs)
     {
         $isWide = isset($attrs['className']) && $attrs['className'] === 'is-style-wide';
         $dividerAttrs = [
@@ -346,9 +346,8 @@ class BlockProcessor
         unset($sectionAttrs['background-color']);
         if (isset($attrs['backgroundColor']) && Renderer::getColorFromPalette($attrs['backgroundColor'])) {
             $dividerAttrs['border-color'] = Renderer::getColorFromPalette($attrs['backgroundColor']);
-        }
-        if (isset($attrs['color'])) {
-            $dividerAttrs['border-color'] = $attrs['color'];
+        } else {
+            $dividerAttrs['border-color'] = $attrs['background-color'] ?? $attrs['border-color'] ?? $attrs['color'] ?? '#000000';
         }
         return '<mj-divider ' . AttributeHandler::arrayToAttributes($dividerAttrs) . ' />';
     }
@@ -519,8 +518,8 @@ class BlockProcessor
         $attrs['padding'] = StyleProcessor::getPaddingFromAttributes($attrs) ?: '0';
 
         // Prepare default attributes for children
-        $color = $attrs['color'] ?? 'base';
-        $link = $attrs['link'] ?? 'base';
+        $color = $attrs['color'] ?? '#000000';
+        $link = $attrs['link'] ?? '#000000';
 
         $markup = '<mj-wrapper ' . AttributeHandler::arrayToAttributes($attrs) . '>';
 
