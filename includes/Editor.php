@@ -56,13 +56,13 @@ final class Editor
         add_action('after_setup_theme', [$this, 'afterSetupTheme'], 99);
 
         // Remove editor modifications when viewing a newsletter post.
-        add_action('the_post', [__CLASS__, 'removeEditorModifications']);
+        add_action('the_post', [__CLASS__, 'removeEditorModifications'], 99);
 
         // Enqueue block editor assets for the newsletter editor.
         add_action('enqueue_block_editor_assets', [__CLASS__, 'enqueueBlockEditorAssets']);
 
         // Modify allowed block types for the newsletter editor.
-        add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes']);
+        add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes'], 99);
 
         // Filter the excerpt length for the newsletter editor.
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
@@ -331,32 +331,32 @@ final class Editor
                 'name' => __('Contrast')
             ],
             [
-                'slug' => '#04316a',
+                'slug' => 'fau',
                 'color' => '#04316a',
                 'name' => 'Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)'
             ],
             [
-                'slug' => '#fdb735',
+                'slug' => 'phil',
                 'color' => '#fdb735',
                 'name' => 'Philosophische Fakultät'
             ],
             [
-                'slug' => '#c50f3c',
+                'slug' => 'rw',
                 'color' => '#c50f3c',
                 'name' => 'Rechts- und Wirtschaftswissenschaftliche Fakultät'
             ],
             [
-                'slug' => '#18b4f1',
+                'slug' => 'med',
                 'color' => '#18b4f1',
                 'name' => 'Medizinische Fakultät'
             ],
             [
-                'slug' => '#7bb725',
+                'slug' => 'nat',
                 'color' => '#7bb725',
                 'name' => 'Naturwissenschaftliche Fakultät'
             ],
             [
-                'slug' => '#8C9FB1',
+                'slug' => 'tf',
                 'color' => '#8C9FB1',
                 'name' => 'Technische Fakultät'
             ]
