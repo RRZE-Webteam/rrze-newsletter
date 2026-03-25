@@ -122,6 +122,7 @@ class ICS
 
         $i = 0;
         $multidayEventKeysUsed = [];
+        $uidsDisplayed = [];
 
         foreach (array_keys((array)$feedItems['events']) as $year) {
             for ($m = 1; $m <= 12; $m++) {
@@ -205,6 +206,10 @@ class ICS
                                     continue;
                                 }
 
+                                if (in_array($event['uid'], $uidsDisplayed)) {
+                                    continue;
+                                }
+
                                 // Event label (title)
                                 $title = self::eventLabelHtml($event);
                                 if (!empty($event['url'])) {
@@ -239,6 +244,7 @@ class ICS
                                 // Location/Organizer/Description
                                 $listItems .= self::eventDescriptionHtml($atts, $event, $textStyle);
 
+                                $uidsDisplayed[] = $event['uid'];
                                 $i++;
                                 if (!empty($atts['itemsToShow']) && $i >= intval($atts['itemsToShow'])) {
                                     break 5;
@@ -361,6 +367,7 @@ class ICS
 
                     // General event item details (regardless of all-day/start/end times)
                     $eventItem = [
+                        'uid' => @$event->uid,
                         'label' => (!empty($maskinfo) ? $maskinfo : @$event->summary),
                         'dtstart_time' => @$dtstartTime,
                         'dtend_time' => @$dtendTime,
@@ -714,7 +721,7 @@ class ICS
 
         // Format output
         switch ($format) {
-                // 12-hour formats without seconds
+            // 12-hour formats without seconds
             case 'g:i a':
                 $output = intval($timeH12) . ':' . $timeM . '&nbsp;' . $timeAmPm;
                 break;
@@ -739,18 +746,18 @@ class ICS
             case 'h:iA':
                 $output = $timeH12 . ':' . $timeM . strtoupper($timeAmPm);
                 break;
-                // 24-hour formats without seconds
+            // 24-hour formats without seconds
             case 'G:i':
                 $output = intval($timeH) . ':' . $timeM;
                 break;
             case 'Gi':
                 $output = intval($timeH) . $timeM;
                 break;
-                // case 'H:i': is the default, below
+            // case 'H:i': is the default, below
             case 'Hi':
                 $output = $timeH . $timeM;
                 break;
-                // 24-hour formats without seconds, using h and m or min
+            // 24-hour formats without seconds, using h and m or min
             case 'G \h i \m\i\n':
                 $output = intval($timeH) . '&nbsp;h&nbsp;' . $timeM . '&nbsp;min';
                 break;
@@ -787,7 +794,7 @@ class ICS
             case 'H\hi\m':
                 $output = $timeH . 'h' . $timeM . 'm';
                 break;
-                // 12-hour formats with seconds
+            // 12-hour formats with seconds
             case 'g:i:s a':
                 $output = intval($timeH12) . ':' . $timeM . ':' . $timeS . '&nbsp;' . $timeAmPm;
                 break;
@@ -812,7 +819,7 @@ class ICS
             case 'h:i:sA':
                 $output = $timeH12 . ':' . $timeM . ':' . $timeS . strtoupper($timeAmPm);
                 break;
-                // 24-hour formats with seconds
+            // 24-hour formats with seconds
             case 'G:i:s':
                 $output = intval($timeH) . ':' . $timeM . ':' . $timeS;
                 break;
@@ -822,7 +829,7 @@ class ICS
             case 'His':
                 $output = $timeH . $timeM . $timeS;
                 break;
-                // Hour-only formats used for grid labels
+            // Hour-only formats used for grid labels
             case 'H:00':
                 $output = $timeH . ':00';
                 break;
@@ -838,7 +845,7 @@ class ICS
             case 'g A':
                 $output = intval($timeH12) . ' ' . strtoupper($timeAmPm);
                 break;
-                // Default
+            // Default
             case 'H:i':
             default:
                 $output = $timeH . ':' . $timeM;
