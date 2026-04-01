@@ -9,4 +9,4 @@ License URI:        https://www.gnu.org/licenses/gpl-3.0.html
 Text Domain:        rrze-newsletter
 Domain Path:        /languages
 Requires at least:  6.8
-Requires PHP:       8.3
+Requires PHP:       8.2
