@@ -6,8 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\CPT\Newsletter;
 use RRZE\Newsletter\Mail\Send;
-use RRZE\Newsletter\MJML\Renderer;
-use Html2Text\Html2Text;
+
 
 class Subscription
 {
@@ -86,7 +85,7 @@ class Subscription
                 $emailError = '';
                 $postEmail = isset($_POST['email']) ? sanitize_text_field($_POST['email']) : '';
                 $email = Utils::sanitizeEmail($postEmail);
-                $mailingLists = $_POST['mailing_lists'] ?? [];
+                $mailingLists = $this->sanitizeMailingListsInput($_POST['mailing_lists'] ?? []);
                 $data = [
                     'email' => $email,
                     'mailing_lists' => $mailingLists,
@@ -97,7 +96,7 @@ class Subscription
                     && !empty($mailingLists)
                     && !$this->emailExists($email)
                 ) {
-                    $transient = bin2hex(random_bytes(4));
+                    $transient = bin2hex(random_bytes(16));
                     set_transient($transient, $data, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('added|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -119,7 +118,7 @@ class Subscription
                         'ml_error' => $mlError,
                         'email_error' => $emailError
                     ];
-                    $transient = bin2hex(random_bytes(4));
+                    $transient = bin2hex(random_bytes(16));
                     set_transient($transient, $this->sanitizeData($data), MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('add_error|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -144,7 +143,7 @@ class Subscription
                     $postEmail = $_POST['email'] ?? '';
                     $email = Utils::sanitizeEmail($postEmail);
                     if ($email) {
-                        $mailingLists = $_POST['mailing_lists'] ?? [];
+                        $mailingLists = $this->sanitizeMailingListsInput($_POST['mailing_lists'] ?? []);
                         $unsubscribeAll = isset($_POST['unsubscribe_all']) ? true : false;
                         $data = [
                             'action' => $action,
@@ -152,7 +151,7 @@ class Subscription
                             'mailing_lists' => $mailingLists
                         ];
                         $this->updateMailingLists($this->sanitizeData($data), $unsubscribeAll);
-                        $transient = bin2hex(random_bytes(4));
+                        $transient = bin2hex(random_bytes(16));
                         set_transient($transient, $email, MINUTE_IN_SECONDS);
                         $redirect = add_query_arg('a', Utils::encryptQueryVar('updated|' . $transient), $this->pageLink);
                         wp_redirect($redirect);
@@ -177,7 +176,7 @@ class Subscription
                         $unsubscribed[] = $email;
                         $this->updateUnsubscribed($unsubscribed);
                     }
-                    $transient = bin2hex(random_bytes(4));
+                    $transient = bin2hex(random_bytes(16));
                     set_transient($transient, $email, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('canceled|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -196,7 +195,7 @@ class Subscription
                     'email' => $email
                 ];
                 if ($submitted && $email) {
-                    $transient = bin2hex(random_bytes(4));
+                    $transient = bin2hex(random_bytes(16));
                     set_transient($transient, $data, MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('cancel_change|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -212,7 +211,7 @@ class Subscription
                         'email' => $postEmail,
                         'email_error' => $error
                     ];
-                    $transient = bin2hex(random_bytes(4));
+                    $transient = bin2hex(random_bytes(16));
                     set_transient($transient, $this->sanitizeData($data), MINUTE_IN_SECONDS);
                     $redirect = add_query_arg('a', Utils::encryptQueryVar('cancel_change_error|' . $transient), $this->pageLink);
                     wp_redirect($redirect);
@@ -239,7 +238,7 @@ class Subscription
                     if (!empty($data['mailing_lists'])) {
                         $this->updateMailingLists($this->sanitizeData($data), false, false);
                     }
-                    $transient = bin2hex(random_bytes(4));
+                    $transient = bin2hex(random_bytes(16));
                     if ($data['action'] == 'cancel') {
                         $unsubscribed = $this->options->mailing_list_unsubscribed;
                         $unsubscribed = Utils::sanitizeUnsubscribedList($unsubscribed, \ARRAY_N);
@@ -361,8 +360,7 @@ class Subscription
         $this->content = str_replace(PHP_EOL, '', Templates::getContent('subscription/cancel-change.html', $data));
     }
 
-    public function updateSubscription($email)
-    {
+    public function updateSubscription(string $email) {
         $options = (object) Settings::getOptions();
         $unsubscribed = explode(PHP_EOL, sanitize_textarea_field((string) $options->mailing_list_unsubscribed));
         $canceled = in_array($email, $unsubscribed) ? 'checked="checked"' : '';
@@ -523,94 +521,185 @@ class Subscription
         return $text;
     }
 
-    protected function sendConfirmation(array $data) {
-        $action = $data['action'];
-        $email = $data['email'];
+   protected function sendConfirmation(array $data) {
+        $action = $data['action'] ?? '';
+        $email = Utils::sanitizeEmail($data['email'] ?? '');
 
-        $confirmToken = bin2hex(random_bytes(16));
-        set_transient($confirmToken, $data, DAY_IN_SECONDS);
-
-        $options = (object) Settings::getOptions();
-
-        $hostname = parse_url(site_url(), PHP_URL_HOST);
-        $siteLink = sprintf(
-            '<a href="%1$s">%2$s</a>',
-            site_url(),
-            $hostname
-        );
-
-        $blogName = get_bloginfo('name');
-
-        $from = 'no-reply@' . $hostname;
-        $fromName = $blogName ? $blogName : $hostname;
-        $replyTo = $from;
-
-        $title = $options->subscription_confirmation_subject;
-        $message = $options->subscription_confirmation_message;
-
-        if (in_array($action, ['cancel', 'change'], true)) {
-            $title = $options->subscription_change_cancel_subject;
-            $message = $options->subscription_change_cancel_message;
+        if (!$email) {
+            return;
         }
 
-        $confirmationLink = add_query_arg(
+        $confirmToken = bin2hex(random_bytes(16));
+        set_transient($confirmToken, $this->sanitizeData($data), DAY_IN_SECONDS);
+
+        $hostname = (string) parse_url(site_url(), PHP_URL_HOST);
+        $blogName = get_bloginfo('name');
+
+        $from = sanitize_email('no-reply@' . $hostname);
+        $fromName = sanitize_text_field($blogName ? $blogName : $hostname);
+        $replyTo = $from;
+
+        $mailConfig = $this->getConfirmationMailSubjectAndMessage($action);
+        $title = $mailConfig['subject'];
+        $message = $mailConfig['message'];
+
+        $confirmationUrl = add_query_arg(
             'a',
             Utils::encryptQueryVar('confirm|' . $confirmToken),
             $this->pageLink
         );
 
-        $confirmationLink = sprintf(
-            '<a href="%1$s">%1$s</a>',
-            $confirmationLink
+        $siteUrl = site_url();
+
+        $body = $this->buildConfirmationEmailHtml(
+            $title,
+            $message,
+            $confirmationUrl,
+            $siteUrl,
+            $hostname
         );
 
-        $content = $message;
-        $content = strip_tags($content);
-        $content = wpautop($content);
-        $content = str_replace(['<p>', '</p>'], ['<!-- wp:paragraph --><p>', '</p><!-- /wp:paragraph -->'], $content);
-        $content = str_replace('CONFIRMATION_LINK', $confirmationLink, $content);
-        $content = str_replace('SITE_LINK', $siteLink, $content);
-        $content = sprintf(
-            '<!-- wp:heading {"textAlign":"center","level":1} --><h1 class="has-text-align-center">%s</h1><!-- /wp:heading -->',
-            esc_html($title)
-        ) . $content;
-
-        $mjmlData = [
-            'title' => $title,
-            'preview_text' => '',
-            'background_color' => '#ffffff',
-            'content' => $content
-        ];
-
-        $mjml = Renderer::fromAry($mjmlData);
-
-        if (!class_exists('\\Spatie\\Mjml\\Mjml')) {
-            return;
-        }
-
-        $body = \Spatie\Mjml\Mjml::new()->toHtml($mjml);
-
-        $html2text = new Html2Text($body);
-        $altBody = $html2text->getText();
+        $altBody = $this->buildConfirmationEmailText(
+            $message,
+            $confirmationUrl,
+            $siteUrl
+        );
 
         $mailData = [
-            'from' => sanitize_email($from),
-            'fromName' => sanitize_text_field($fromName),
-            'replyTo' => sanitize_email($replyTo),
-            'to' => sanitize_email($email),
+            'from' => $from,
+            'fromName' => $fromName,
+            'replyTo' => $replyTo,
+            'to' => $email,
             'subject' => sanitize_text_field($title),
             'body' => $body,
             'altBody' => $altBody
         ];
 
-        $send = new Send;
-        $send->email($mailData);
+        try {
+            $send = new Send;
+            $result = $send->email($mailData);
+
+            if ($result === false) {
+                delete_transient($confirmToken);
+            }
+        } catch (\Throwable $e) {
+            delete_transient($confirmToken);
+        }
+    }
+
+
+    /*
+     * Helper-Funktionen zum Bau des Inhalts der Confirmationmail
+     */
+    protected function getConfirmationMailSubjectAndMessage(string $action): array {
+        $options = (object) Settings::getOptions();
+
+        $subject = (string) $options->subscription_confirmation_subject;
+        $message = (string) $options->subscription_confirmation_message;
+
+        if (in_array($action, ['cancel', 'change'], true)) {
+            $subject = (string) $options->subscription_change_cancel_subject;
+            $message = (string) $options->subscription_change_cancel_message;
+        }
+
+        return [
+            'subject' => $subject,
+            'message' => $message
+        ];
     }
     
- 
     
+    protected function buildConfirmationEmailHtml(
+        string $title,
+        string $message,
+        string $confirmationUrl,
+        string $siteUrl,
+        string $siteLabel
+    ): string {
+        $titleEsc = esc_html($title);
+        $messageEsc = nl2br(esc_html(wp_strip_all_tags($message)));
+        $confirmationUrlEsc = esc_url($confirmationUrl);
+        $siteUrlEsc = esc_url($siteUrl);
+        $siteLabelEsc = esc_html($siteLabel);
+
+        $messageEsc = str_replace(
+            'CONFIRMATION_LINK',
+            sprintf(
+                '<a href="%1$s">%1$s</a>',
+                $confirmationUrlEsc
+            ),
+            $messageEsc
+        );
+
+        $messageEsc = str_replace(
+            'SITE_LINK',
+            sprintf(
+                '<a href="%1$s">%2$s</a>',
+                $siteUrlEsc,
+                $siteLabelEsc
+            ),
+            $messageEsc
+        );
+
+        return <<<HTML
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$titleEsc}</title>
+    </head>
+    <body style="margin:0; padding:0; background:#f5f5f5; font-family:Arial, Helvetica, sans-serif; color:#222222;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f5f5; margin:0; padding:24px 0;">
+    <tr>
+    <td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:680px; background:#ffffff; border-collapse:collapse;">
+    <tr>
+    <td style="padding:32px 32px 16px 32px;">
+    <h1 style="margin:0 0 24px 0; font-size:28px; line-height:1.3; color:#111111;">{$titleEsc}</h1>
+    <div style="font-size:16px; line-height:1.6;">{$messageEsc}</div>
+    </td>
+    </tr>
+    </table>
+    </td>
+    </tr>
+    </table>
+    </body>
+    </html>
+    HTML;
+    }
+
+    protected function buildConfirmationEmailText(
+        string $message,
+        string $confirmationUrl,
+        string $siteUrl
+    ): string {
+        $text = wp_strip_all_tags($message);
+
+        $text = str_replace('CONFIRMATION_LINK', $confirmationUrl, $text);
+        $text = str_replace('SITE_LINK', $siteUrl, $text);
+
+        return trim($text);
+    }
+
     
-    
+    protected function sanitizeMailingListsInput($mailingLists): array {
+        if (!is_array($mailingLists)) {
+            return [];
+        }
+
+        $sanitized = [];
+
+        foreach ($mailingLists as $key => $value) {
+            $termId = absint($key);
+
+            if ($termId > 0) {
+                $sanitized[$termId] = 1;
+            }
+        }
+
+        return $sanitized;
+    }
     
 
     public function getMailingLists(string $email)
@@ -813,6 +902,9 @@ class Subscription
     {
         $val = get_transient($transient);
         delete_transient($transient);
+        if (!is_array($val)) {
+           return $this->sanitizeData([]);
+        }
         $data = [
             'action' => $val['action'] ?? '',
             'email' => $val['email'] ?? '',

@@ -1,6 +1,31 @@
+[![Aktuelle Version](https://img.shields.io/github/package-json/v/rrze-webteam/rrze-newsletter/main?label=Version)](https://github.com/RRZE-Webteam/rrze-newsletter)
+[![Release Version](https://img.shields.io/github/v/release/rrze-webteam/rrze-newsletter?label=Release+Version)](https://github.com/rrze-webteam/rrze-newsletter/releases/)
+[![GitHub License](https://img.shields.io/github/license/rrze-webteam/rrze-newsletter)](https://github.com/RRZE-Webteam/rrze-newsletter)
+[![GitHub issues](https://img.shields.io/github/issues/RRZE-Webteam/rrze-newsletter)](https://github.com/RRZE-Webteam/rrze-newsletter/issues)
+
 # RRZE Newsletter
 
 WordPress-Plugin für die Erstellung von E-Mail-Newslettern und deren anschließendes Versenden.
+
+
+## Contributors
+
+* RRZE-Webteam, http://www.rrze.fau.de
+
+## Copyright
+
+GNU General Public License (GPL) Version 3
+
+
+## Documentation
+
+See documenation at https://www.wp.rrze.fau.de
+
+## Feedback
+
+* https://github.com/RRZE-Webteam/rrze-newsletter/issues
+* webmaster@rrze.fau.de
+
 
 ## Beschreibung
 
