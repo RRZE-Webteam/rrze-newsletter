@@ -36,8 +36,7 @@ class Subscription
         $this->options = (object) Settings::getOptions();
 
         add_action('wp', [$this, 'init']);
-        add_action('wp_ajax_mjml2html', [$this, 'sendEmailConfirmation']);
-        add_action('wp_ajax_nopriv_mjml2html', [$this, 'sendEmailConfirmation']);
+
     }
 
     public function init()
@@ -516,7 +515,7 @@ class Subscription
     public static function changeOrCancelMessage()
     {
         $text = __('Thank you for your request!', 'rrze-newsletter') . "\n\n";
-        $text = __('You would like to change or cancel your newsletter subscription. To make the change or unsubscribe, please click on the following link:', 'rrze-newsletter') . "\n\n";
+        $text .= __('You would like to change or cancel your newsletter subscription. To make the change or unsubscribe, please click on the following link:', 'rrze-newsletter') . "\n\n";
         $text .= 'CONFIRMATION_LINK' . "\n\n";
         $text .= __('If the page does not open, copy the link and paste it into the address bar of your browser.', 'rrze-newsletter') . "\n\n";
         $text .= __('Sincerely', 'rrze-newsletter') . "\n";
@@ -524,19 +523,18 @@ class Subscription
         return $text;
     }
 
-    protected function sendConfirmation(array $data)
-    {
+    protected function sendConfirmation(array $data) {
         $action = $data['action'];
         $email = $data['email'];
 
-        $transient = bin2hex(random_bytes(4));
-        set_transient($transient, $data, DAY_IN_SECONDS);
+        $confirmToken = bin2hex(random_bytes(16));
+        set_transient($confirmToken, $data, DAY_IN_SECONDS);
 
         $options = (object) Settings::getOptions();
 
         $hostname = parse_url(site_url(), PHP_URL_HOST);
         $siteLink = sprintf(
-            '<a href="%1$s">%2$s',
+            '<a href="%1$s">%2$s</a>',
             site_url(),
             $hostname
         );
@@ -549,16 +547,18 @@ class Subscription
 
         $title = $options->subscription_confirmation_subject;
         $message = $options->subscription_confirmation_message;
-        if (in_array($action, ['cancel', 'change'])) {
+
+        if (in_array($action, ['cancel', 'change'], true)) {
             $title = $options->subscription_change_cancel_subject;
             $message = $options->subscription_change_cancel_message;
         }
 
         $confirmationLink = add_query_arg(
             'a',
-            Utils::encryptQueryVar('confirm|' . $transient),
+            Utils::encryptQueryVar('confirm|' . $confirmToken),
             $this->pageLink
         );
+
         $confirmationLink = sprintf(
             '<a href="%1$s">%1$s</a>',
             $confirmationLink
@@ -572,7 +572,7 @@ class Subscription
         $content = str_replace('SITE_LINK', $siteLink, $content);
         $content = sprintf(
             '<!-- wp:heading {"textAlign":"center","level":1} --><h1 class="has-text-align-center">%s</h1><!-- /wp:heading -->',
-            $title
+            esc_html($title)
         ) . $content;
 
         $mjmlData = [
@@ -581,61 +581,37 @@ class Subscription
             'background_color' => '#ffffff',
             'content' => $content
         ];
-        $data = [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'from' => $from,
-            'fromName' => $fromName,
-            'replyTo' => $replyTo,
-            'to' => $email,
-            'subject' => $title,
-            'mjml' => Renderer::fromAry($mjmlData)
-        ];
 
-        add_action(
-            'wp_enqueue_scripts',
-            function ($hook) use ($data) {
-                $assetFile = include plugin()->getPath('build') . 'subscriptionemail.asset.php';
-                wp_enqueue_script(
-                    'rrze-newsletter-subscriptionemail',
-                    plugins_url('build/subscriptionemail.js', plugin()->getBasename()),
-                    $assetFile['dependencies'] ?? [],
-                    $assetFile['version'] ?? plugin()->getVersion(),
-                    true
-                );
-                wp_localize_script(
-                    'rrze-newsletter-subscriptionemail',
-                    'subscriptionEmail',
-                    $data
-                );
-            }
-        );
-    }
+        $mjml = Renderer::fromAry($mjmlData);
 
-    public function sendEmailConfirmation()
-    {
-        $from = $_POST['from'] ?? '';
-        $fromName = $_POST['fromName'] ?? '';
-        $replyTo = $_POST['replyTo'] ?? '';
-        $to = $_POST['to'] ?? '';
-        $subject = $_POST['subject'] ?? '';
-        $body = $_POST['body']['html'] ?? '';
+        if (!class_exists('\\Spatie\\Mjml\\Mjml')) {
+            return;
+        }
+
+        $body = \Spatie\Mjml\Mjml::new()->toHtml($mjml);
 
         $html2text = new Html2Text($body);
         $altBody = $html2text->getText();
 
-        $data = [
-            'from' => $from,
-            'fromName' => $fromName,
-            'replyTo' => $replyTo,
-            'to' => $to,
-            'subject' => $subject,
-            'body' => stripslashes($body),
+        $mailData = [
+            'from' => sanitize_email($from),
+            'fromName' => sanitize_text_field($fromName),
+            'replyTo' => sanitize_email($replyTo),
+            'to' => sanitize_email($email),
+            'subject' => sanitize_text_field($title),
+            'body' => $body,
             'altBody' => $altBody
         ];
 
         $send = new Send;
-        $send->email($data);
+        $send->email($mailData);
     }
+    
+ 
+    
+    
+    
+    
 
     public function getMailingLists(string $email)
     {

@@ -6,7 +6,6 @@ const srcDir = "src";
 const admin = resolve(process.cwd(), srcDir, "admin");
 const editor = resolve(process.cwd(), srcDir, "editor");
 const subscription = resolve(process.cwd(), srcDir, "subscription");
-const subscriptionemail = resolve(process.cwd(), srcDir, "subscriptionemail");
 
 module.exports = {
     ...defaultConfig,
@@ -14,7 +13,6 @@ module.exports = {
         admin,
         editor,
         subscription,
-        subscriptionemail,
     },
     output: {
         path: resolve(process.cwd(), "build"),
