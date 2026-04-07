@@ -82,6 +82,11 @@ class ICS
     public static function renderMJML(array $atts): string
     {
         $atts = self::parseAtts($atts);
+        $postId = absint($atts['postId'] ?? 0);
+
+        if ($postId) {
+            wp_cache_delete('rrze_newsletter_ics_block_not_empty', $postId);
+        }
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (!is_wp_error($feedItems) && $feedItems) {
@@ -93,7 +98,9 @@ class ICS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-ics"><p>%s</p></div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
-            wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $atts['postId']);
+            if ($postId) {
+                wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $postId);
+            }
         }
 
         return $feedItems;

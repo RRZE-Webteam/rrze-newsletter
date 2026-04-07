@@ -96,6 +96,11 @@ class RSS
     {
         $feedItems = '';
         $atts = self::parseAtts($atts);
+        $postId = absint($atts['postId'] ?? 0);
+
+        if ($postId) {
+            wp_cache_delete('rrze_newsletter_rss_block_not_empty', $postId);
+        }
 
         $feed = self::fetchFeed($atts['feedURL']);
 
@@ -106,7 +111,9 @@ class RSS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-rss"><p>%s</p></div>', __('There are no items available.', 'rrze-newsletter'));
         } else {
-            wp_cache_set('rrze_newsletter_rss_block_not_empty', 1, $atts['postId']);
+            if ($postId) {
+                wp_cache_set('rrze_newsletter_rss_block_not_empty', 1, $postId);
+            }
         }
 
         return $feedItems;

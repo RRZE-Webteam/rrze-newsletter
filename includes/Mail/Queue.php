@@ -420,6 +420,9 @@ class Queue
             $isRssBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_rss_block_not_empty', $postId);
             $isIcsBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_ics_block_not_empty', $postId);
 
+            wp_cache_delete('rrze_newsletter_rss_block_not_empty', $postId);
+            wp_cache_delete('rrze_newsletter_ics_block_not_empty', $postId);
+
             if ($rssBlock && !$isRssBlockNotEmpty) {
                 $skipped = true;
             }
