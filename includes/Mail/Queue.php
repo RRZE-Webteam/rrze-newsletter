@@ -74,8 +74,23 @@ class Queue
             return;
         }
 
+        $currentSendDateGmt = $post->post_date_gmt ?: get_gmt_from_date($post->post_date);
+        $hadPreviousSendDateGmt = metadata_exists('post', $postId, 'rrze_newsletter_send_date_gmt');
+        $previousSendDateGmt = $hadPreviousSendDateGmt ? get_post_meta($postId, 'rrze_newsletter_send_date_gmt', true) : '';
+        update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $currentSendDateGmt);
+
+        $restoreSendDateMeta = static function () use ($hadPreviousSendDateGmt, $previousSendDateGmt, $postId) {
+            if ($hadPreviousSendDateGmt) {
+                update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $previousSendDateGmt);
+                return;
+            }
+
+            delete_post_meta($postId, 'rrze_newsletter_send_date_gmt');
+        };
+
         $data = Newsletter::getData($postId);
         if (empty($data) || is_wp_error($data)) {
+            $restoreSendDateMeta();
             Newsletter::setStatus($postId, 'error');
             do_action(
                 'rrze.log.error',
@@ -93,6 +108,7 @@ class Queue
 
         // Check if it should be skipped.
         if ($this->maybeSkipped($postId)) {
+            $restoreSendDateMeta();
             // Set the newsletter status to 'skipped'.
             Newsletter::setStatus($postId, 'skipped');
             return;
@@ -157,6 +173,7 @@ class Queue
         }
 
         if (empty($recipient)) {
+            $restoreSendDateMeta();
             Newsletter::setStatus($postId, 'error');
             do_action(
                 'rrze.log.error',
