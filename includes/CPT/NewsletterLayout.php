@@ -1,9 +1,5 @@
 <?php
 
-/* ---------------------------------------------------------------------------
- * Custom Post Type 'newsletter_layout'
- * ------------------------------------------------------------------------- */
-
 namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
@@ -11,6 +7,9 @@ defined('ABSPATH') || exit;
 use RRZE\Newsletter\Capabilities;
 use function RRZE\Newsletter\plugin;
 
+/**
+ * Custom Post Type Newsletter Layout
+ */
 class NewsletterLayout
 {
     const POST_TYPE = 'newsletter_layout';
@@ -21,7 +20,7 @@ class NewsletterLayout
         add_action('init', [__CLASS__, 'registerMeta']);
     }
 
-    public static function registerPostType()
+    public static function registerPostType(): void
     {
         $args = [
             'public'              => false,
@@ -37,7 +36,7 @@ class NewsletterLayout
     /**
      * Register custom fields.
      */
-    public static function registerMeta()
+    public static function registerMeta(): void
     {
         register_meta(
             'post',
@@ -86,7 +85,7 @@ class NewsletterLayout
         );
     }
 
-    public static function layoutTokenReplacement($content, $extra = [])
+    public static function layoutTokenReplacement($content, $extra = []): array|string
     {
         $sitename = get_bloginfo('name');
         $customLogoId = get_theme_mod('custom_logo');
@@ -124,7 +123,7 @@ class NewsletterLayout
         return str_replace($search, $replace, $content);
     }
 
-    public static function getDefaultLayouts()
+    public static function getDefaultLayouts(): array
     {
         $layoutsBasePath = plugin()->getPath('includes/layouts/');
         $layouts = [];
@@ -132,7 +131,7 @@ class NewsletterLayout
         $siteUrl = get_site_url();
 
         foreach (scandir($layoutsBasePath) as $layout) {
-            if (strpos($layout, '.json') !== false) {
+            if (str_contains($layout, '.json')) {
                 $decodedLayout = json_decode(file_get_contents($layoutsBasePath . $layout, true));
                 $title = $decodedLayout->title ?? 'Layout ' . $layoutId;
                 $postContent = self::layoutTokenReplacement($decodedLayout->content);

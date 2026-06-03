@@ -5,7 +5,7 @@ namespace RRZE\Newsletter\Config;
 defined('ABSPATH') || exit;
 
 /**
- * Returns the name of the option.
+ * Returns the Newsletter option name.
  * @return string Option name
  */
 function getOptionName(): string
@@ -14,8 +14,15 @@ function getOptionName(): string
 }
 
 /**
- * Returns the settings of the menu.
- * @return array Menu settings
+ * Returns the settings for the newsletter admin menu page.
+ *
+ * @return array{
+ *     page_title: string,
+ *     menu_title: string,
+ *     capability: string,
+ *     menu_slug: string,
+ *     title: string
+ * } Admin menu settings.
  */
 function getMenuSettings(): array
 {
@@ -29,7 +36,7 @@ function getMenuSettings(): array
 }
 
 /**
- * Returns the sections settings.
+ * Returns the SubSection settings in WP Admin Newsletter Menu.
  * @return array Sections settings
  */
 function getSections(): array
@@ -58,7 +65,7 @@ function getSections(): array
 }
 
 /**
- * Returns the settings fields.
+ * Returns the Newsletter settings fields.
  * @return array Settings fields
  */
 function getFields(): array

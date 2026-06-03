@@ -1,28 +1,25 @@
 <?php
 
-/* ---------------------------------------------------------------------------
- * Custom Post Type 'newsletter_mail_queue'
- * ------------------------------------------------------------------------- */
-
 namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\{Archive, Capabilities, Utils};
 
+/**
+ * Custom Post Type NewsletterMailQueue
+ */
 class NewsletterQueue
 {
     const POST_TYPE = 'newsletter_queue';
 
     public function __construct()
     {
-        // Register CPT.
         add_action('init', [__CLASS__, 'registerPostType']);
-        // Custom Post Status
         add_action('init', [__CLASS__, 'registerPostStatus']);
     }
 
-    public function onLoaded()
+    public function onLoaded(): void
     {
         // CPT Menu
         add_action('admin_menu', [__CLASS__, 'adminMenu']);
@@ -42,7 +39,7 @@ class NewsletterQueue
         add_filter('views_edit-' . self::POST_TYPE, [__CLASS__, 'views']);
     }
 
-    public static function registerPostType()
+    public static function registerPostType(): void
     {
         $labels = [
             'name'                  => _x('Mail Queue', 'Post type general name', 'rrze-newsletter'),
@@ -84,7 +81,7 @@ class NewsletterQueue
         register_post_type(self::POST_TYPE, $args);
     }
 
-    public static function adminMenu()
+    public static function adminMenu(): void
     {
         add_submenu_page(
             'edit.php?post_type=' . Newsletter::POST_TYPE,
@@ -97,7 +94,7 @@ class NewsletterQueue
         );
     }
 
-    public static function registerPostStatus()
+    public static function registerPostStatus(): void
     {
         register_post_status('mail-queued', [
             'label'                     => _x('Queued', 'Mail Queue Status', 'rrze-newsletter'),
@@ -178,7 +175,7 @@ class NewsletterQueue
         return $data;
     }
 
-    public static function columns($columns)
+    public static function columns($columns): array
     {
         $queryVar = get_query_var('post_status');
         $columns = [
@@ -199,7 +196,7 @@ class NewsletterQueue
         return $columns;
     }
 
-    public static function customColumn($column, $postId)
+    public static function customColumn($column, $postId): void
     {
         $data = self::getData($postId);
         if (empty($data) || is_wp_error($data)) {
@@ -219,34 +216,17 @@ class NewsletterQueue
             $subject = sprintf('<a href="%1$s">%2$s</a>', $archiveUrl, $subject);
         }
 
-        switch ($column) {
-            case 'subject':
-                echo $subject;
-                break;
-            case 'send_date':
-                echo $data['send_date'];
-                break;
-            case 'sent_date':
-                echo $data['sent_date'] ?: '&mdash;';
-                break;
-            case 'from':
-                echo esc_attr($data['from']);
-                break;
-            case 'to':
-                echo esc_attr($data['to']);
-                break;
-            case 'retries':
-                echo $data['retries'];
-                break;
-            case 'status':
-                echo $statusLabel;
-                break;
-            case 'error':
-                echo $data['error'];
-                break;
-            default:
-                echo '&mdash;';
-        }
+        echo match ($column) {
+            'subject' => $subject,
+            'send_date' => $data['send_date'],
+            'sent_date' => $data['sent_date'] ?: '&mdash;',
+            'from' => esc_attr($data['from']),
+            'to' => esc_attr($data['to']),
+            'retries' => $data['retries'],
+            'status' => $statusLabel,
+            'error' => $data['error'],
+            default => '&mdash;',
+        };
     }
 
     public static function sortableColumns($columns)
@@ -319,11 +299,10 @@ class NewsletterQueue
                 )
             ";
         $like = '%' . $wpdb->esc_like($query->query['s']) . '%';
-        $search = preg_replace(
+        return preg_replace(
             "#\({$wpdb->posts}.post_title LIKE [^)]+\)\K#",
             $wpdb->prepare($sql, $like),
             $search
         );
-        return $search;
     }
 }
