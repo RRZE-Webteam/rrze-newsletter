@@ -8,6 +8,9 @@ use RRZE\Newsletter\MJML\AttributeHandler;
 
 final class ImageProcessor
 {
+    /**
+     * Reset image dimension state for a new newsletter render.
+     */
     public static function beginRender(): void
     {
         ImageSizeResolver::reset();
@@ -16,9 +19,10 @@ final class ImageProcessor
     /**
      * Render image block as mj-image and figcaption as mj-text.
      *
-     * @param array $attrs The block attributes.
-     * @param string $innerHtml The inner HTML of the block.
-     * @param string $fontFamily The font family to use for the text.
+     * @param array<string, mixed> $attrs          Block attributes.
+     * @param string               $innerHtml      Rendered block HTML.
+     * @param string               $fontFamily     Caption font family.
+     * @param int                  $availableWidth Maximum available width in pixels.
      * @return string Rendered MJML markup for the image block.
      */
     public static function render(
@@ -59,7 +63,10 @@ final class ImageProcessor
     }
 
     /**
-     * @return array{image: \DOMElement, caption: \DOMText|null, size: array{0: int, 1: int}|null}|null
+     * Extract the image, caption, and explicit dimensions from block HTML.
+     *
+     * @param string $innerHtml Rendered block HTML.
+     * @return array{image: \DOMElement, caption: \DOMText|null, size: array{0: int, 1: int}|null}|null Parsed image content.
      */
     private static function parseImageContent(string $innerHtml): ?array
     {
@@ -91,6 +98,12 @@ final class ImageProcessor
         ];
     }
 
+    /**
+     * Normalize absolute, relative, and protocol-relative image URLs.
+     *
+     * @param string $imageUrl Image source URL.
+     * @return string Normalized image URL.
+     */
     private static function normalizeImageUrl(string $imageUrl): string
     {
         $imageUrl = trim($imageUrl);
@@ -105,6 +118,14 @@ final class ImageProcessor
         return $imageUrl;
     }
 
+    /**
+     * Build the initial MJML image attributes.
+     *
+     * @param \DOMElement         $image    Parsed image element.
+     * @param array<string, mixed> $attrs    Block attributes.
+     * @param string               $imageUrl Normalized image URL.
+     * @return array<string, mixed> MJML image attributes.
+     */
     private static function buildImageAttributes(
         \DOMElement $image,
         array $attrs,
@@ -140,6 +161,12 @@ final class ImageProcessor
         return $imgAttrs;
     }
 
+    /**
+     * Resolve the width associated with a WordPress image-size preset.
+     *
+     * @param array<string, mixed> $attrs Block attributes.
+     * @return string|null Width with a CSS unit, or null when unrestricted.
+     */
     private static function getImagePresetWidth(array $attrs): ?string
     {
         $sizeSlug = $attrs['sizeSlug'] ?? null;
@@ -156,7 +183,14 @@ final class ImageProcessor
     }
 
     /**
-     * @param array{0: int, 1: int}|null $htmlImageSize
+     * Resolve safe display dimensions from explicit and intrinsic image data.
+     *
+     * @param array<string, mixed>          $imgAttrs       MJML image attributes.
+     * @param array<string, mixed>          $attrs          Block attributes.
+     * @param array{0: int, 1: int}|null    $htmlImageSize  Dimensions from HTML.
+     * @param string                        $imageUrl        Normalized image URL.
+     * @param int                           $availableWidth  Maximum available width.
+     * @return array<string, mixed> Updated MJML image attributes.
      */
     private static function resolveImageDimensions(
         array $imgAttrs,
@@ -209,6 +243,15 @@ final class ImageProcessor
         return $imgAttrs;
     }
 
+    /**
+     * Clamp an explicit width and proportionally scale an explicit height.
+     *
+     * @param array<string, mixed> $imgAttrs       MJML image attributes.
+     * @param int|null             $requestedWidth Requested width in pixels.
+     * @param int|null             $requestedHeight Requested height in pixels.
+     * @param int                  $availableWidth Maximum available width.
+     * @return array<string, mixed> Updated MJML image attributes.
+     */
     private static function normalizeRequestedImageWidth(
         array $imgAttrs,
         ?int $requestedWidth,
@@ -237,7 +280,13 @@ final class ImageProcessor
     }
 
     /**
-     * @param array{0: int, 1: int}|null $imageSize
+     * Derive a width for an image that only has an explicit height.
+     *
+     * @param array<string, mixed>       $imgAttrs       MJML image attributes.
+     * @param array{0: int, 1: int}|null $imageSize      Intrinsic dimensions.
+     * @param int                        $requestedHeight Requested height.
+     * @param int                        $availableWidth  Maximum available width.
+     * @return array<string, mixed> Updated MJML image attributes.
      */
     private static function resolveHeightOnlyImage(
         array $imgAttrs,
@@ -270,7 +319,13 @@ final class ImageProcessor
     }
 
     /**
-     * @param array{0: int, 1: int} $imageSize
+     * Calculate a proportional height for the rendered image width.
+     *
+     * @param array<string, mixed>  $imgAttrs       MJML image attributes.
+     * @param array{0: int, 1: int} $imageSize      Intrinsic dimensions.
+     * @param int|null              $requestedWidth Requested width in pixels.
+     * @param int                   $availableWidth Maximum available width.
+     * @return array<string, mixed> Updated MJML image attributes.
      */
     private static function applyImageAspectRatio(
         array $imgAttrs,
@@ -290,6 +345,14 @@ final class ImageProcessor
         return $imgAttrs;
     }
 
+    /**
+     * Add link and style attributes derived from the block markup.
+     *
+     * @param array<string, mixed> $imgAttrs MJML image attributes.
+     * @param \DOMElement          $image    Parsed image element.
+     * @param array<string, mixed> $attrs    Block attributes.
+     * @return array<string, mixed> Updated MJML image attributes.
+     */
     private static function applyImagePresentationAttributes(
         array $imgAttrs,
         \DOMElement $image,
@@ -317,6 +380,14 @@ final class ImageProcessor
         return $imgAttrs;
     }
 
+    /**
+     * Render an image caption as MJML text.
+     *
+     * @param \DOMText|null        $caption    Parsed caption node.
+     * @param array<string, mixed> $attrs      Block attributes.
+     * @param string               $fontFamily Caption font family.
+     * @return string Rendered caption markup, or an empty string.
+     */
     private static function renderImageCaption(
         ?\DOMText $caption,
         array $attrs,

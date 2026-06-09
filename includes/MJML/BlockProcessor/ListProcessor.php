@@ -12,10 +12,11 @@ final class ListProcessor
     /**
      * Render a list or list-item as mj-text and recursively render children.
      *
-     * @param array $attrs The block attributes.
-     * @param array $innerBlocks The inner blocks to render.
-     * @param array $innerContent The inner content of the block.
-     * @param string $fontFamily The font family to use for the text.
+     * @param array<string, mixed>             $attrs        Block attributes.
+     * @param array<int, array<string, mixed>> $innerBlocks  Child blocks.
+     * @param array<int, string|null>          $innerContent Interleaved block content.
+     * @param string                           $fontFamily   Text font family.
+     * @param RenderContext                    $context      Current render context.
      * @return string Rendered MJML markup for the list block.
      */
     public static function render(

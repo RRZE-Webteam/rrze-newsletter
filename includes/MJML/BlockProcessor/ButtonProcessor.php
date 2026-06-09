@@ -9,6 +9,15 @@ use RRZE\Newsletter\MJML\Renderer;
 
 final class ButtonProcessor
 {
+    /**
+     * Render the supported button children of a core/buttons block.
+     *
+     * @param array<string, mixed>              $attrs          Container attributes.
+     * @param array<int, array<string, mixed>>  $innerBlocks    Child blocks.
+     * @param string                            $fontFamily     Button font family.
+     * @param int                               $availableWidth Maximum available width.
+     * @return string Rendered MJML button markup.
+     */
     public static function renderButtons(
         array $attrs,
         array $innerBlocks,
@@ -41,6 +50,16 @@ final class ButtonProcessor
         return $markup;
     }
 
+    /**
+     * Render a single core/button block.
+     *
+     * @param array<string, mixed> $attrs          Button attributes.
+     * @param string               $innerHtml      Rendered button HTML.
+     * @param string               $fontFamily     Button font family.
+     * @param string               $align          Horizontal alignment.
+     * @param int                  $availableWidth Maximum available width.
+     * @return string Rendered MJML button, or an empty string.
+     */
     public static function renderButton(
         array $attrs,
         string $innerHtml,
@@ -68,6 +87,13 @@ final class ButtonProcessor
             . '</mj-button>';
     }
 
+    /**
+     * Inherit typography defaults from a core/buttons container.
+     *
+     * @param array<string, mixed> $containerAttrs Container attributes.
+     * @param array<string, mixed> $buttonAttrs    Child button attributes.
+     * @return array<string, mixed> Merged button attributes.
+     */
     private static function getButtonAttributes(
         array $containerAttrs,
         array $buttonAttrs
@@ -91,6 +117,12 @@ final class ButtonProcessor
         return $buttonAttrs;
     }
 
+    /**
+     * Resolve a supported horizontal button alignment.
+     *
+     * @param array<string, mixed> $attrs Block attributes.
+     * @return string One of left, center, or right.
+     */
     private static function getAlignment(array $attrs): string
     {
         $align = $attrs['layout']['justifyContent']
@@ -104,7 +136,11 @@ final class ButtonProcessor
     }
 
     /**
-     * @return array{text: string, url: string, target: string, rel: string, title: string}
+     * Extract button text and link properties from attributes and HTML.
+     *
+     * @param array<string, mixed> $attrs     Button attributes.
+     * @param string               $innerHtml Rendered button HTML.
+     * @return array{text: string, url: string, target: string, rel: string, title: string} Button content.
      */
     private static function parseContent(array $attrs, string $innerHtml): array
     {
@@ -159,7 +195,14 @@ final class ButtonProcessor
     }
 
     /**
-     * @param array{text: string, url: string, target: string, rel: string, title: string} $content
+     * Build MJML attributes for a button.
+     *
+     * @param array<string, mixed> $attrs Button attributes.
+     * @param array{text: string, url: string, target: string, rel: string, title: string} $content Button content.
+     * @param string $fontFamily Button font family.
+     * @param string $align Horizontal alignment.
+     * @param int $availableWidth Maximum available width.
+     * @return array<string, mixed> MJML button attributes.
      */
     private static function buildAttributes(
         array $attrs,
@@ -225,6 +268,12 @@ final class ButtonProcessor
         return $buttonAttrs;
     }
 
+    /**
+     * Sanitize a button URL against supported email link schemes.
+     *
+     * @param string $url Candidate URL.
+     * @return string Sanitized URL, or an empty string.
+     */
     private static function sanitizeUrl(string $url): string
     {
         if ($url === '') {
@@ -237,6 +286,12 @@ final class ButtonProcessor
         return esc_url_raw($url, ['http', 'https', 'mailto', 'tel']);
     }
 
+    /**
+     * Resolve WordPress padding values to an MJML inner-padding value.
+     *
+     * @param array<string, mixed> $attrs Button attributes.
+     * @return string CSS padding shorthand.
+     */
     private static function getInnerPadding(array $attrs): string
     {
         $padding = $attrs['style']['spacing']['padding'] ?? null;
@@ -263,6 +318,12 @@ final class ButtonProcessor
         ]);
     }
 
+    /**
+     * Normalize a spacing value or WordPress spacing preset.
+     *
+     * @param mixed $value Spacing value.
+     * @return string Supported CSS length, or zero.
+     */
     private static function normalizeSpacingValue(mixed $value): string
     {
         if ($value === null || $value === '' || $value === 0 || $value === '0') {
@@ -281,6 +342,12 @@ final class ButtonProcessor
             : '0';
     }
 
+    /**
+     * Resolve the button border radius.
+     *
+     * @param array<string, mixed> $attrs Button attributes.
+     * @return string CSS border-radius value.
+     */
     private static function getBorderRadius(array $attrs): string
     {
         $radius = $attrs['style']['border']['radius'] ?? null;
@@ -294,6 +361,14 @@ final class ButtonProcessor
         ) ? '0' : '4px';
     }
 
+    /**
+     * Build the button border declaration.
+     *
+     * @param array<string, mixed> $attrs     Button attributes.
+     * @param bool                 $isOutline Whether the outline style is active.
+     * @param string               $textColor Resolved button text color.
+     * @return string|null CSS border shorthand, or null when no border applies.
+     */
     private static function getBorder(
         array $attrs,
         bool $isOutline,
@@ -315,6 +390,13 @@ final class ButtonProcessor
             . ' ' . trim((string) $color);
     }
 
+    /**
+     * Convert the block width percentage to pixels.
+     *
+     * @param array<string, mixed> $attrs          Button attributes.
+     * @param int                  $availableWidth Maximum available width.
+     * @return string|null Width in pixels, or null when unspecified.
+     */
     private static function getWidth(
         array $attrs,
         int $availableWidth

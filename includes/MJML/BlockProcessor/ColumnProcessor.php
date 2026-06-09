@@ -8,6 +8,15 @@ use RRZE\Newsletter\MJML\AttributeHandler;
 
 final class ColumnProcessor
 {
+    /**
+     * Renders one core/column block and its children.
+     *
+     * @param array<string, mixed> $attrs Processed column attributes.
+     * @param array<int, array<string, mixed>> $innerBlocks Child blocks.
+     * @param array<string, mixed> $columnAttrs Initial MJML column attributes.
+     * @param RenderContext $context Current rendering context.
+     * @return string Rendered mj-column.
+     */
     public static function renderColumn(
         array $attrs,
         array $innerBlocks,
@@ -53,6 +62,14 @@ final class ColumnProcessor
         return $markup . '</mj-column>';
     }
 
+    /**
+     * Renders the children of a core/columns block.
+     *
+     * @param array<string, mixed> $attrs Processed columns attributes.
+     * @param array<int, array<string, mixed>> $innerBlocks Column blocks.
+     * @param RenderContext $context Current rendering context.
+     * @return string Rendered columns markup.
+     */
     public static function renderColumns(
         array $attrs,
         array $innerBlocks,
@@ -79,6 +96,12 @@ final class ColumnProcessor
         return $markup . ($isStackedOnMobile ? '' : '</mj-group>');
     }
 
+    /**
+     * Distributes remaining percentage width among columns without a width.
+     *
+     * @param array<int, array<string, mixed>> $innerBlocks Column blocks.
+     * @return array<int, array<string, mixed>> Blocks with explicit widths.
+     */
     private static function assignAutomaticWidths(array $innerBlocks): array
     {
         $widthsSum = 0.0;

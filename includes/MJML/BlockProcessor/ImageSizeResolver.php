@@ -14,6 +14,9 @@ final class ImageSizeResolver
 
     private static array $cache = [];
 
+    /**
+     * Clear request-local dimension lookup state.
+     */
     public static function reset(): void
     {
         self::$remoteLookups = 0;
@@ -21,7 +24,11 @@ final class ImageSizeResolver
     }
 
     /**
-     * @return array{0: int, 1: int}|null
+     * Resolve intrinsic image dimensions from WordPress, local, or remote data.
+     *
+     * @param string               $imageUrl Image URL.
+     * @param array<string, mixed> $attrs    Image block attributes.
+     * @return array{0: int, 1: int}|null Width and height in pixels.
      */
     public static function resolve(
         string $imageUrl,
@@ -44,6 +51,13 @@ final class ImageSizeResolver
         return $size;
     }
 
+    /**
+     * Build a cache key that accounts for the requested attachment size.
+     *
+     * @param string               $imageUrl Image URL.
+     * @param array<string, mixed> $attrs    Image block attributes.
+     * @return string Cache key.
+     */
     private static function getCacheKey(
         string $imageUrl,
         array $attrs
@@ -56,7 +70,11 @@ final class ImageSizeResolver
     }
 
     /**
-     * @return array{0: int, 1: int}|null
+     * Resolve dimensions from WordPress attachment metadata.
+     *
+     * @param string               $imageUrl Image URL.
+     * @param array<string, mixed> $attrs    Image block attributes.
+     * @return array{0: int, 1: int}|null Width and height in pixels.
      */
     private static function getAttachmentSize(
         string $imageUrl,
@@ -84,6 +102,13 @@ final class ImageSizeResolver
         return [(int) $attachment[1], (int) $attachment[2]];
     }
 
+    /**
+     * Determine whether an upload URL can use the block attachment ID.
+     *
+     * @param string               $imageUrl Image URL.
+     * @param array<string, mixed> $attrs    Image block attributes.
+     * @return bool True when the URL belongs to the uploads directory.
+     */
     private static function isUploadWithAttachmentId(
         string $imageUrl,
         array $attrs
@@ -105,7 +130,10 @@ final class ImageSizeResolver
     }
 
     /**
-     * @return array{0: int, 1: int}|null
+     * Resolve dimensions from a readable file below the content directory.
+     *
+     * @param string $imageUrl Image URL.
+     * @return array{0: int, 1: int}|null Width and height in pixels.
      */
     private static function getLocalFileSize(string $imageUrl): ?array
     {
@@ -123,7 +151,10 @@ final class ImageSizeResolver
     }
 
     /**
-     * @return array{0: int, 1: int}|null
+     * Resolve dimensions through a bounded and cached remote request.
+     *
+     * @param string $imageUrl Image URL.
+     * @return array{0: int, 1: int}|null Width and height in pixels.
      */
     private static function getRemoteSize(string $imageUrl): ?array
     {
@@ -158,7 +189,10 @@ final class ImageSizeResolver
     }
 
     /**
-     * @return array{0: int, 1: int}|null
+     * Extract dimensions from a successful image HTTP response.
+     *
+     * @param array<string, mixed> $response WordPress HTTP response.
+     * @return array{0: int, 1: int}|null Width and height in pixels.
      */
     private static function extractRemoteSize(array $response): ?array
     {
@@ -187,7 +221,10 @@ final class ImageSizeResolver
     }
 
     /**
-     * @param array{0: int, 1: int}|null $size
+     * Cache a successful or failed remote dimension lookup.
+     *
+     * @param string                       $transientKey Transient key.
+     * @param array{0: int, 1: int}|null   $size         Resolved dimensions.
      */
     private static function cacheRemoteSize(
         string $transientKey,
@@ -200,6 +237,12 @@ final class ImageSizeResolver
         );
     }
 
+    /**
+     * Map a same-site content URL to a validated local file path.
+     *
+     * @param string $imageUrl Image URL.
+     * @return string|null Local path, or null when the URL is not eligible.
+     */
     private static function getLocalPath(string $imageUrl): ?string
     {
         $imageHost = wp_parse_url($imageUrl, PHP_URL_HOST);

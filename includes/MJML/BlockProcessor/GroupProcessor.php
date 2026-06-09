@@ -9,6 +9,13 @@ use RRZE\Newsletter\MJML\StyleProcessor;
 
 final class GroupProcessor
 {
+    /**
+     * Renders a group as an MJML wrapper or flattens it when nesting requires it.
+     *
+     * @param array<string, mixed> $block Parsed core/group block.
+     * @param RenderContext $context Current rendering context.
+     * @return string Rendered group MJML.
+     */
     public static function render(
         array $block,
         RenderContext $context
@@ -70,6 +77,14 @@ final class GroupProcessor
         return $markup . '</mj-wrapper>';
     }
 
+    /**
+     * Renders group children without introducing another MJML wrapper.
+     *
+     * @param array<int, array<string, mixed>> $innerBlocks Child blocks.
+     * @param array<string, mixed> $groupAttrs Processed group attributes.
+     * @param RenderContext $context Context inherited by the children.
+     * @return string Concatenated child MJML.
+     */
     private static function renderFlattenedChildren(
         array $innerBlocks,
         array $groupAttrs,
@@ -91,6 +106,12 @@ final class GroupProcessor
         return $markup;
     }
 
+    /**
+     * Determines whether a group uses the WordPress grid layout.
+     *
+     * @param array<string, mixed> $block Parsed core/group block.
+     * @return bool Whether the group is a grid.
+     */
     private static function isGrid(array $block): bool
     {
         return ($block['attrs']['layout']['type'] ?? null) === 'grid';

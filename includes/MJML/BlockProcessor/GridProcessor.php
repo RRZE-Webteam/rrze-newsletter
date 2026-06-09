@@ -11,6 +11,15 @@ final class GridProcessor
 {
     private const DEFAULT_MINIMUM_COLUMN_WIDTH = '12rem';
 
+    /**
+     * Renders a WordPress grid group as MJML rows and columns.
+     *
+     * @param array<string, mixed> $block Parsed grid group block.
+     * @param array<string, mixed> $groupAttrs Processed group attributes.
+     * @param RenderContext $context Current rendering context.
+     * @param bool $includeWrapper Whether to add an outer mj-wrapper.
+     * @return string Rendered grid MJML.
+     */
     public static function render(
         array $block,
         array $groupAttrs,
@@ -36,6 +45,15 @@ final class GridProcessor
         return $markup . ($includeWrapper ? '</mj-wrapper>' : '');
     }
 
+    /**
+     * Renders one grid row.
+     *
+     * @param array<int, array<string, mixed>> $blocks Blocks in the row.
+     * @param array<string, mixed> $groupAttrs Processed grid attributes.
+     * @param RenderContext $context Current rendering context.
+     * @param int $columnCount Number of columns in the grid.
+     * @return string Rendered mj-section.
+     */
     private static function renderRow(
         array $blocks,
         array $groupAttrs,
@@ -62,6 +80,16 @@ final class GridProcessor
         return $markup . '</mj-section>';
     }
 
+    /**
+     * Renders one block inside an MJML grid column.
+     *
+     * @param array<string, mixed> $block Grid cell block.
+     * @param array<string, mixed> $groupAttrs Processed grid attributes.
+     * @param RenderContext $context Current rendering context.
+     * @param int $columnWidth Column width in pixels.
+     * @param string $columnWidthPercent Column width as an MJML percentage.
+     * @return string Rendered mj-column.
+     */
     private static function renderCell(
         array $block,
         array $groupAttrs,
@@ -91,6 +119,13 @@ final class GridProcessor
             . '</mj-column>';
     }
 
+    /**
+     * Renders grid cell content while flattening nested group blocks.
+     *
+     * @param array<string, mixed> $block Grid cell block.
+     * @param RenderContext $context Context scoped to the cell.
+     * @return string Rendered cell content.
+     */
     private static function renderCellContent(
         array $block,
         RenderContext $context
@@ -119,6 +154,11 @@ final class GridProcessor
     }
 
     /**
+     * Resolves MJML column attributes and the remaining content width.
+     *
+     * @param array<string, mixed> $block Grid cell block.
+     * @param int $columnWidth Column width in pixels.
+     * @param string $columnWidthPercent Column width as a percentage.
      * @return array{0: array<string, mixed>, 1: int}
      */
     private static function getCellLayout(
@@ -154,6 +194,13 @@ final class GridProcessor
         ];
     }
 
+    /**
+     * Opens the optional wrapper around grid rows.
+     *
+     * @param array<string, mixed> $groupAttrs Processed grid attributes.
+     * @param bool $includeWrapper Whether a wrapper is required.
+     * @return string Opening wrapper markup or an empty string.
+     */
     private static function openWrapper(
         array $groupAttrs,
         bool $includeWrapper
@@ -169,6 +216,13 @@ final class GridProcessor
             . '>';
     }
 
+    /**
+     * Determines the effective desktop column count.
+     *
+     * @param array<string, mixed> $layout WordPress layout attributes.
+     * @param int $availableWidth Available grid width in pixels.
+     * @return int Number of columns, always at least one.
+     */
     private static function resolveColumnCount(
         array $layout,
         int $availableWidth
@@ -196,6 +250,12 @@ final class GridProcessor
             : min($configuredCount, $responsiveCount);
     }
 
+    /**
+     * Converts a positive numeric value to an integer.
+     *
+     * @param mixed $value Candidate value.
+     * @return int|null Positive integer or null.
+     */
     private static function positiveInteger(mixed $value): ?int
     {
         if (!is_numeric($value) || (int) $value <= 0) {
@@ -205,6 +265,12 @@ final class GridProcessor
         return (int) $value;
     }
 
+    /**
+     * Converts supported CSS lengths to pixels using a 16px em/rem base.
+     *
+     * @param mixed $value CSS length using px, em, rem, or no unit.
+     * @return float|null Pixel value or null for unsupported input.
+     */
     private static function cssLengthToPixels(mixed $value): ?float
     {
         if (
@@ -228,6 +294,12 @@ final class GridProcessor
             : $amount;
     }
 
+    /**
+     * Formats a percentage without unnecessary trailing zeroes.
+     *
+     * @param float $percentage Percentage value.
+     * @return string MJML-compatible percentage.
+     */
     private static function formatPercentage(float $percentage): string
     {
         return rtrim(
@@ -236,6 +308,12 @@ final class GridProcessor
         ) . '%';
     }
 
+    /**
+     * Keeps only attributes supported by mj-column.
+     *
+     * @param array<string, mixed> $attrs Processed block attributes.
+     * @return array<string, mixed> Filtered column attributes.
+     */
     private static function filterColumnAttributes(array $attrs): array
     {
         $allowed = [

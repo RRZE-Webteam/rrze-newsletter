@@ -15,11 +15,11 @@ final class ParagraphProcessor
     /**
      * Render paragraph or heading as mj-text.
      *
-     * @param array $block The block data.
-     * @param array $attrs The block attributes.
-     * @param string $innerHtml The inner HTML of the block.
-     * @param bool $isInList Whether the block is inside a list.
-     * @param string $fontFamily The font family to use for the text.
+     * @param array<string, mixed> $block      Block data.
+     * @param array<string, mixed> $attrs      Block attributes.
+     * @param string               $innerHtml  Rendered block HTML.
+     * @param bool                 $isInList   Whether the block is inside a list.
+     * @param string               $fontFamily Text font family.
      * @return string Rendered MJML markup for the text block.
      */
     public static function render(
@@ -69,6 +69,10 @@ final class ParagraphProcessor
     /**
      * Adds alignment directly to the rendered HTML element for email clients
      * that do not reliably inherit text alignment from the MJML container.
+     *
+     * @param string $innerHtml Rendered block HTML.
+     * @param string $textAlign Validated text alignment.
+     * @return string HTML with inline and legacy alignment attributes.
      */
     private static function applyTextAlignment(
         string $innerHtml,

@@ -24,11 +24,21 @@ final class BlockProcessor
         'core/separator',
     ];
 
+    /**
+     * Resets request-scoped state used by individual block processors.
+     */
     public static function beginRender(): void
     {
         ImageProcessor::beginRender();
     }
 
+    /**
+     * Converts one parsed WordPress block into MJML.
+     *
+     * @param array<string, mixed> $block Parsed WordPress block.
+     * @param RenderContext $context Rendering state inherited from parent blocks.
+     * @return string Rendered MJML, or an empty string for unsupported blocks.
+     */
     public static function render(
         array $block,
         RenderContext $context
@@ -81,6 +91,12 @@ final class BlockProcessor
         );
     }
 
+    /**
+     * Checks whether a parsed block contains renderable content.
+     *
+     * @param array<string, mixed> $block Parsed WordPress block.
+     * @return bool Whether the block should be skipped.
+     */
     private static function isEmptyBlock(array $block): bool
     {
         $blockName = (string) ($block['blockName'] ?? '');
@@ -96,6 +112,17 @@ final class BlockProcessor
             );
     }
 
+    /**
+     * Delegates a supported block to its specialized processor.
+     *
+     * @param string $blockName Registered WordPress block name.
+     * @param array<string, mixed> $block Parsed WordPress block.
+     * @param array<string, mixed> $attrs Processed block attributes.
+     * @param array<string, mixed> $columnAttrs Attributes for an outer MJML column.
+     * @param string $fontFamily Font family selected for the block.
+     * @param RenderContext $context Current rendering context.
+     * @return string Block-level MJML without top-level wrapping.
+     */
     private static function renderBlock(
         string $blockName,
         array $block,
@@ -214,6 +241,17 @@ final class BlockProcessor
         }
     }
 
+    /**
+     * Adds the required MJML column and section around block-level markup.
+     *
+     * @param string $blockName Registered WordPress block name.
+     * @param string $markup Rendered block-level MJML.
+     * @param array<string, mixed> $columnAttrs Outer MJML column attributes.
+     * @param array<string, mixed> $sectionAttrs Outer MJML section attributes.
+     * @param string $padding Normalized block padding.
+     * @param RenderContext $context Current rendering context.
+     * @return string MJML wrapped for its current nesting position.
+     */
     private static function wrapMarkup(
         string $blockName,
         string $markup,

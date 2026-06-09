@@ -11,6 +11,13 @@ use function RRZE\Newsletter\plugin;
 
 final class SocialLinksProcessor
 {
+    /**
+     * Render a core/social-links block and its supported children.
+     *
+     * @param array<string, mixed>             $attrs       Container attributes.
+     * @param array<int, array<string, mixed>> $innerBlocks Social link blocks.
+     * @return string Rendered MJML social markup.
+     */
     public static function render(
         array $attrs,
         array $innerBlocks
@@ -31,6 +38,13 @@ final class SocialLinksProcessor
         return $markup . '</mj-social>';
     }
 
+    /**
+     * Render a single social link element.
+     *
+     * @param array<string, mixed> $block       Social link block.
+     * @param array<string, mixed> $parentAttrs Container attributes.
+     * @return string Rendered MJML element, or an empty string.
+     */
     private static function renderElement(
         array $block,
         array $parentAttrs
@@ -62,6 +76,12 @@ final class SocialLinksProcessor
             . ' />';
     }
 
+    /**
+     * Build MJML attributes for the social links container.
+     *
+     * @param array<string, mixed> $attrs Container attributes.
+     * @return array<string, mixed> MJML social attributes.
+     */
     private static function getContainerAttributes(array $attrs): array
     {
         return [

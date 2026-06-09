@@ -8,6 +8,14 @@ use RRZE\Newsletter\MJML\StyleProcessor;
 
 final class AttributeInheritance
 {
+    /**
+     * Builds the effective attributes inherited by a child block.
+     *
+     * @param array<string, mixed> $block Child WordPress block.
+     * @param array<string, mixed> $parentAttrs Processed parent attributes.
+     * @param array<string, mixed> $defaultAttrs Existing inherited attributes.
+     * @return array<string, mixed> Effective child attributes.
+     */
     public static function forChild(
         array $block,
         array $parentAttrs,
@@ -33,6 +41,13 @@ final class AttributeInheritance
         return $attrs;
     }
 
+    /**
+     * Removes an inherited link color when the child defines its own.
+     *
+     * @param array<string, mixed> $defaultAttrs Existing inherited attributes.
+     * @param array<string, mixed> $block Child WordPress block.
+     * @return array<string, mixed> Attributes safe to inherit.
+     */
     public static function withoutParentLinkColor(
         array $defaultAttrs,
         array $block

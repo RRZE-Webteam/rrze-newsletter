@@ -6,6 +6,12 @@ defined('ABSPATH') || exit;
 
 final class LayoutHelper
 {
+    /**
+     * Keep only attributes supported by an MJML section.
+     *
+     * @param array<string, mixed> $attrs Candidate attributes.
+     * @return array<string, mixed> Supported section attributes.
+     */
     public static function filterSectionAttributes(array $attrs): array
     {
         $allowed = [
@@ -32,6 +38,13 @@ final class LayoutHelper
         return array_intersect_key($attrs, array_flip($allowed));
     }
 
+    /**
+     * Subtract horizontal CSS shorthand padding from a container width.
+     *
+     * @param int    $width   Container width in pixels.
+     * @param string $padding CSS padding shorthand.
+     * @return int Remaining content width in pixels.
+     */
     public static function subtractHorizontalPadding(int $width, string $padding): int
     {
         $parts = preg_split('/\s+/', trim($padding)) ?: [];
@@ -54,6 +67,13 @@ final class LayoutHelper
         );
     }
 
+    /**
+     * Resolve a pixel or percentage width against the available width.
+     *
+     * @param mixed $width          Candidate width.
+     * @param int   $availableWidth Available width in pixels.
+     * @return int|null Resolved width in pixels.
+     */
     public static function resolveWidth(mixed $width, int $availableWidth): ?int
     {
         if (!is_string($width) && !is_numeric($width)) {
@@ -71,6 +91,12 @@ final class LayoutHelper
         return self::resolvePixelValue($width);
     }
 
+    /**
+     * Resolve a unitless or pixel CSS value to a positive integer.
+     *
+     * @param mixed $value Candidate value.
+     * @return int|null Pixel value, or null when invalid.
+     */
     public static function resolvePixelValue(mixed $value): ?int
     {
         if (

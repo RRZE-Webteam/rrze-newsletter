@@ -9,6 +9,14 @@ use RRZE\Newsletter\MJML\StyleProcessor;
 
 final class FeedProcessor
 {
+    /**
+     * Persist and render an RSS feed placeholder.
+     *
+     * @param int                  $postId     Newsletter post ID.
+     * @param array<string, mixed> $attrs      Feed block attributes.
+     * @param string               $fontFamily Placeholder font family.
+     * @return string Rendered MJML placeholder.
+     */
     public static function renderRss(
         int $postId,
         array $attrs,
@@ -23,6 +31,14 @@ final class FeedProcessor
         );
     }
 
+    /**
+     * Persist and render an ICS feed placeholder.
+     *
+     * @param int                  $postId     Newsletter post ID.
+     * @param array<string, mixed> $attrs      Feed block attributes.
+     * @param string               $fontFamily Placeholder font family.
+     * @return string Rendered MJML placeholder.
+     */
     public static function renderIcs(
         int $postId,
         array $attrs,
@@ -37,6 +53,16 @@ final class FeedProcessor
         );
     }
 
+    /**
+     * Store feed attributes and render the replacement token.
+     *
+     * @param int                  $postId           Newsletter post ID.
+     * @param array<string, mixed> $attrs            Feed block attributes.
+     * @param string               $fontFamily       Placeholder font family.
+     * @param string               $metaKey          Post-meta key for block data.
+     * @param string               $placeholderPrefix Replacement-token prefix.
+     * @return string Rendered MJML placeholder.
+     */
     private static function renderFeedPlaceholder(
         int $postId,
         array $attrs,
