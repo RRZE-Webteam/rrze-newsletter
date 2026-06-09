@@ -22,6 +22,8 @@ use WP_Error;
  */
 final class Renderer
 {
+    public const EMAIL_WIDTH = 680;
+
     /** @var array|null Color palette configuration */
     private static $colorPalette = null;
 
@@ -75,6 +77,8 @@ final class Renderer
      */
     private static function postToMjmlComponents(object $post, string $content, bool $processLinks): string
     {
+        BlockProcessor::beginRender();
+
         $postId = ($post instanceof WP_Post) ? $post->ID : 0;
         $mjmlBody = '';
 
@@ -139,6 +143,7 @@ final class Renderer
             'title' => $post->post_title,
             'preview_text' => $previewText,
             'background_color' => $backgroundColor,
+            'body_width' => self::EMAIL_WIDTH,
             'link_color' => self::$linkColor,
             'link_text_decoration' => self::$linkTextDecoration,
             'body' => self::postToMjmlComponents($post, $post->post_content, true)
@@ -171,6 +176,7 @@ final class Renderer
             'title' => $args['title'],
             'preview_text' => $args['preview_text'],
             'background_color' => $args['background_color'],
+            'body_width' => self::EMAIL_WIDTH,
             'body' => self::postToMjmlComponents(new \stdClass, $args['content'], false)
         ];
 
