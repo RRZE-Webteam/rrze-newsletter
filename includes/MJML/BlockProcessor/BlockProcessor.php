@@ -13,25 +13,28 @@ use RRZE\Newsletter\MJML\StyleProcessor;
  */
 final class BlockProcessor
 {
+    private const BLOCKS_WITHOUT_INNER_HTML = [
+        'rrze-newsletter/rss',
+        'rrze-newsletter/ics',
+    ];
+
+    private const BLOCKS_WITH_OWN_COLUMN = [
+        'core/columns',
+        'core/column',
+        'core/separator',
+    ];
+
     public static function beginRender(): void
     {
         ImageProcessor::beginRender();
     }
 
-    public static function renderMjmlComponent(
-        int $postId,
+    public static function render(
         array $block,
-        array $defaultAttrs = [],
-        bool $isInColumn = false,
-        bool $isInGroup = false,
-        bool $isInList = false,
-        int $availableWidth = Renderer::EMAIL_WIDTH
+        RenderContext $context
     ): string {
         $blockName = (string) ($block['blockName'] ?? '');
         $blockAttrs = $block['attrs'] ?? [];
-        $innerBlocks = $block['innerBlocks'] ?? [];
-        $innerHtml = (string) ($block['innerHTML'] ?? '');
-        $innerContent = $block['innerContent'] ?? [$innerHtml];
 
         if (
             !isset($blockAttrs['innerBlocksToInsert'])
@@ -40,34 +43,28 @@ final class BlockProcessor
             return '';
         }
 
-        $defaultAttrs['postId'] = $postId;
+        $defaultAttrs = $context->defaultAttrs;
+        $defaultAttrs['postId'] = $context->postId;
         $attrs = AttributeHandler::processAttributes(
             array_merge($defaultAttrs, $blockAttrs)
         );
         $padding = StyleProcessor::getPaddingFromAttributes($attrs);
         $sectionAttrs = array_merge($attrs, ['padding' => '0']);
+        if ($blockName === 'core/separator') {
+            unset($sectionAttrs['background-color']);
+        }
         $columnAttrs = ['padding' => $padding ?: '0'];
         $fontFamily = $blockName === 'core/heading'
             ? Renderer::getFontHeader()
             : Renderer::getFontBody();
 
         $markup = self::renderBlock(
-            $postId,
             $blockName,
             $block,
-            $blockAttrs,
             $attrs,
-            $innerBlocks,
-            $innerHtml,
-            $innerContent,
-            $defaultAttrs,
             $columnAttrs,
-            $sectionAttrs,
             $fontFamily,
-            $isInColumn,
-            $isInGroup,
-            $isInList,
-            $availableWidth
+            $context->withDefaultAttrs($defaultAttrs)
         );
 
         if ($markup === '') {
@@ -80,44 +77,37 @@ final class BlockProcessor
             $columnAttrs,
             $sectionAttrs,
             $padding,
-            $isInColumn,
-            $isInList
+            $context
         );
     }
 
-    public static function isEmptyBlock(array $block): bool
+    private static function isEmptyBlock(array $block): bool
     {
         $blockName = (string) ($block['blockName'] ?? '');
-        $blocksWithoutInnerHtml = [
-            'rrze-newsletter/rss',
-            'rrze-newsletter/ics',
-        ];
 
         return $blockName === ''
             || (
-                !in_array($blockName, $blocksWithoutInnerHtml, true)
+                !in_array(
+                    $blockName,
+                    self::BLOCKS_WITHOUT_INNER_HTML,
+                    true
+                )
                 && empty($block['innerHTML'])
             );
     }
 
     private static function renderBlock(
-        int $postId,
         string $blockName,
         array $block,
-        array $blockAttrs,
         array $attrs,
-        array $innerBlocks,
-        string $innerHtml,
-        array $innerContent,
-        array $defaultAttrs,
         array $columnAttrs,
-        array &$sectionAttrs,
         string $fontFamily,
-        bool $isInColumn,
-        bool $isInGroup,
-        bool $isInList,
-        int $availableWidth
+        RenderContext $context
     ): string {
+        $innerBlocks = $block['innerBlocks'] ?? [];
+        $innerHtml = (string) ($block['innerHTML'] ?? '');
+        $innerContent = $block['innerContent'] ?? [$innerHtml];
+
         switch ($blockName) {
             case 'core/paragraph':
             case 'core/heading':
@@ -125,117 +115,96 @@ final class BlockProcessor
                     $block,
                     $attrs,
                     $innerHtml,
-                    $isInList,
+                    $context->inList,
                     $fontFamily
                 );
 
             case 'core/list':
             case 'core/list-item':
                 return ListProcessor::render(
-                    $postId,
                     $attrs,
                     $innerBlocks,
                     $innerContent,
-                    $isInList,
                     $fontFamily,
-                    $availableWidth
+                    $context
                 );
 
             case 'core/image':
-                $sectionAttrs = LayoutHelper::filterSectionAttributes(
-                    $sectionAttrs
-                );
                 return ImageProcessor::render(
                     $attrs,
                     $innerHtml,
                     $fontFamily,
                     LayoutHelper::subtractHorizontalPadding(
-                        $availableWidth,
+                        $context->availableWidth,
                         $columnAttrs['padding']
                     )
                 );
 
             case 'core/separator':
-                return BasicBlockProcessor::renderSeparator(
-                    $attrs,
-                    $sectionAttrs
-                );
+                return SeparatorProcessor::render($attrs);
 
             case 'core/spacer':
-                return BasicBlockProcessor::renderSpacer($attrs);
+                return SpacerProcessor::render($attrs);
 
             case 'core/social-links':
-                return BasicBlockProcessor::renderSocialLinks(
+                return SocialLinksProcessor::render(
                     $attrs,
                     $innerBlocks
                 );
 
             case 'core/buttons':
-                $sectionAttrs = LayoutHelper::filterSectionAttributes(
-                    $sectionAttrs
-                );
                 return ButtonProcessor::renderButtons(
                     $attrs,
                     $innerBlocks,
                     $fontFamily,
-                    $availableWidth
+                    $context->availableWidth
                 );
 
             case 'core/button':
-                $sectionAttrs = LayoutHelper::filterSectionAttributes(
-                    $sectionAttrs
-                );
                 return ButtonProcessor::renderButton(
-                    AttributeHandler::processAttributes($blockAttrs),
+                    AttributeHandler::processAttributes($block['attrs'] ?? []),
                     $innerHtml,
                     $fontFamily,
                     'left',
-                    $availableWidth
+                    $context->availableWidth
                 );
 
             case 'core/column':
                 return ColumnProcessor::renderColumn(
-                    $postId,
                     $attrs,
                     $innerBlocks,
-                    $defaultAttrs,
                     $columnAttrs,
-                    $availableWidth
+                    $context
                 );
 
             case 'core/columns':
                 return ColumnProcessor::renderColumns(
-                    $postId,
                     $attrs,
                     $innerBlocks,
-                    $defaultAttrs,
-                    LayoutHelper::subtractHorizontalPadding(
-                        $availableWidth,
-                        StyleProcessor::getPaddingFromAttributes($attrs)
+                    $context->withAvailableWidth(
+                        LayoutHelper::subtractHorizontalPadding(
+                            $context->availableWidth,
+                            StyleProcessor::getPaddingFromAttributes($attrs)
+                        )
                     )
                 );
 
             case 'core/group':
                 return GroupProcessor::render(
-                    $postId,
                     $block,
-                    $innerBlocks,
-                    $defaultAttrs,
-                    $availableWidth,
-                    $isInColumn,
-                    $isInGroup
+                    $context
                 );
 
             case 'rrze-newsletter/rss':
                 return FeedProcessor::renderRss(
-                    $postId,
+                    $context->postId,
                     $attrs,
                     $fontFamily
                 );
 
             case 'rrze-newsletter/ics':
                 return FeedProcessor::renderIcs(
-                    $postId,
+                    $context->postId,
                     $attrs,
                     $fontFamily
                 );
@@ -251,21 +220,20 @@ final class BlockProcessor
         array $columnAttrs,
         array $sectionAttrs,
         string $padding,
-        bool $isInColumn,
-        bool $isInList
+        RenderContext $context
     ): string {
         $isPostInserterBlock =
             $blockName === 'rrze-newsletter/post-inserter';
         $isGroupBlock = $blockName === 'core/group';
         $hasOwnColumn = in_array(
             $blockName,
-            ['core/columns', 'core/column', 'core/separator'],
+            self::BLOCKS_WITH_OWN_COLUMN,
             true
         );
 
         if (
-            !$isInColumn
-            && !$isInList
+            !$context->inColumn
+            && !$context->inList
             && !$isGroupBlock
             && !$hasOwnColumn
             && !$isPostInserterBlock
@@ -279,8 +247,8 @@ final class BlockProcessor
         }
 
         if (
-            $isInColumn
-            || $isInList
+            $context->inColumn
+            || $context->inList
             || $isGroupBlock
             || $isPostInserterBlock
         ) {

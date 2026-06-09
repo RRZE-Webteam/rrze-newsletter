@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\MJML\AttributeHandler;
 use RRZE\Newsletter\MJML\BlockProcessor\BlockProcessor;
+use RRZE\Newsletter\MJML\BlockProcessor\RenderContext;
 use RRZE\Newsletter\MJML\StyleProcessor;
 use RRZE\Newsletter\MJML\LinkProcessor;
 use RRZE\Newsletter\MJML\TemplateRenderer;
@@ -104,7 +105,10 @@ final class Renderer
                 }
             }
 
-            $blockContent = BlockProcessor::renderMjmlComponent($postId, $block);
+            $blockContent = BlockProcessor::render(
+                $block,
+                RenderContext::root($postId)
+            );
 
             $mjmlBody .= $blockContent;
         }

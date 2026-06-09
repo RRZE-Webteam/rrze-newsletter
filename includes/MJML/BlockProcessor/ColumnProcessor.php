@@ -9,12 +9,10 @@ use RRZE\Newsletter\MJML\AttributeHandler;
 final class ColumnProcessor
 {
     public static function renderColumn(
-        int $postId,
         array $attrs,
         array $innerBlocks,
-        array $defaultAttrs,
         array $columnAttrs,
-        int $availableWidth
+        RenderContext $context
     ): string {
         if (isset($attrs['verticalAlignment'])) {
             $columnAttrs['vertical-align'] = $attrs['verticalAlignment'] === 'center'
@@ -28,8 +26,8 @@ final class ColumnProcessor
 
         $columnWidth = LayoutHelper::resolveWidth(
             $attrs['width'] ?? null,
-            $availableWidth
-        ) ?? $availableWidth;
+            $context->availableWidth
+        ) ?? $context->availableWidth;
         $columnWidth = LayoutHelper::subtractHorizontalPadding(
             $columnWidth,
             $columnAttrs['padding']
@@ -39,18 +37,16 @@ final class ColumnProcessor
             . AttributeHandler::arrayToAttributes($columnAttrs)
             . '>';
         foreach ($innerBlocks as $childBlock) {
-            $childDefaultAttrs = self::withoutInheritedLinkColor(
-                $defaultAttrs,
+            $childDefaultAttrs = AttributeInheritance::withoutParentLinkColor(
+                $context->defaultAttrs,
                 $childBlock
             );
-            $markup .= BlockProcessor::renderMjmlComponent(
-                $postId,
+            $markup .= BlockProcessor::render(
                 $childBlock,
-                $childDefaultAttrs,
-                true,
-                false,
-                false,
-                $columnWidth
+                $context
+                    ->withDefaultAttrs($childDefaultAttrs)
+                    ->withAvailableWidth($columnWidth)
+                    ->insideColumn()
             );
         }
 
@@ -58,11 +54,9 @@ final class ColumnProcessor
     }
 
     public static function renderColumns(
-        int $postId,
         array $attrs,
         array $innerBlocks,
-        array $defaultAttrs,
-        int $availableWidth
+        RenderContext $context
     ): string {
         $innerBlocks = self::assignAutomaticWidths($innerBlocks);
         $isStackedOnMobile = !isset($attrs['isStackedOnMobile'])
@@ -70,18 +64,15 @@ final class ColumnProcessor
         $markup = $isStackedOnMobile ? '' : '<mj-group>';
 
         foreach ($innerBlocks as $childBlock) {
-            $childDefaultAttrs = self::withoutInheritedLinkColor(
-                $defaultAttrs,
+            $childDefaultAttrs = AttributeInheritance::withoutParentLinkColor(
+                $context->defaultAttrs,
                 $childBlock
             );
-            $markup .= BlockProcessor::renderMjmlComponent(
-                $postId,
+            $markup .= BlockProcessor::render(
                 $childBlock,
-                $childDefaultAttrs,
-                true,
-                false,
-                false,
-                $availableWidth
+                $context
+                    ->withDefaultAttrs($childDefaultAttrs)
+                    ->insideColumn()
             );
         }
 
@@ -113,19 +104,5 @@ final class ColumnProcessor
         }
 
         return $innerBlocks;
-    }
-
-    private static function withoutInheritedLinkColor(
-        array $defaultAttrs,
-        array $block
-    ): array {
-        $hasOwnLinkColor =
-            !empty($block['attrs']['style']['elements']['link']['color']['text'])
-            || !empty($block['attrs']['link']);
-        if ($hasOwnLinkColor) {
-            unset($defaultAttrs['link']);
-        }
-
-        return $defaultAttrs;
     }
 }
