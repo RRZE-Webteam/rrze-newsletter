@@ -5,10 +5,10 @@ namespace RRZE\Newsletter\MJML;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\MJML\AttributeHandler;
+use RRZE\Newsletter\MJML\BlockProcessor\BlockProcessor;
 use RRZE\Newsletter\MJML\StyleProcessor;
 use RRZE\Newsletter\MJML\LinkProcessor;
 use RRZE\Newsletter\MJML\TemplateRenderer;
-use RRZE\Newsletter\MJML\BlockProcessor;
 
 use WP_Post;
 use WP_Error;
