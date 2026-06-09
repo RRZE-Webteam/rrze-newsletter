@@ -885,8 +885,10 @@ class BlockProcessor
     private static function renderSpacerBlock($attrs)
     {
         $ary = explode('|', $attrs['height'] ?? '0');
-        $attrs['height'] = absint(end($ary)) . 'px';
-        return '<mj-spacer ' . AttributeHandler::arrayToAttributes($attrs) . ' />';
+        $spacerAttrs = [
+            'height' => absint(end($ary)) . 'px',
+        ];
+        return '<mj-spacer ' . AttributeHandler::arrayToAttributes($spacerAttrs) . ' />';
     }
 
     /**
@@ -1053,6 +1055,16 @@ class BlockProcessor
             $attrs['padding']
         );
 
+        if (self::isGridGroup($block)) {
+            return self::renderGridGroupBlock(
+                $postId,
+                $block,
+                $attrs,
+                $defaultAttrs,
+                $innerWidth
+            );
+        }
+
         // Prepare default attributes for children
         $color = $attrs['color'] ?? '#000000';
         $link = $attrs['link'] ?? '#000000';
@@ -1062,9 +1074,7 @@ class BlockProcessor
         // error_log('Rendering group block: ' . $block['blockName']);
         // error_log('Group block attributes: ' . print_r($attrs, true));
 
-        $markup = '<mj-wrapper ' . AttributeHandler::arrayToAttributes($attrs) . '>';
-
-        foreach ($block['innerBlocks'] as $innerBlock) {
+        foreach ($innerBlocks as $innerBlock) {
             $attrs = $innerBlock['attrs'] ?? [];
             // error_log('Processing inner block: ' . $innerBlock['blockName']);
 
@@ -1086,6 +1096,189 @@ class BlockProcessor
 
         $markup .= '</mj-wrapper>';
         return $markup;
+    }
+
+    private static function isGridGroup(array $block): bool
+    {
+        return ($block['attrs']['layout']['type'] ?? null) === 'grid';
+    }
+
+    private static function getGridColumnCount(array $block, int $availableWidth): int
+    {
+        $layout = $block['attrs']['layout'] ?? [];
+        $configuredCount = $layout['columnCount'] ?? null;
+        $configuredCount = is_numeric($configuredCount) && (int) $configuredCount > 0
+            ? (int) $configuredCount
+            : null;
+
+        $minimumWidth = $layout['minimumColumnWidth'] ?? null;
+        if ($minimumWidth === null && $configuredCount === null) {
+            $minimumWidth = '12rem';
+        }
+
+        $minimumWidthPixels = self::cssLengthToPixels($minimumWidth);
+        if ($minimumWidthPixels === null) {
+            return $configuredCount ?? 1;
+        }
+
+        $responsiveCount = max(1, (int) floor($availableWidth / $minimumWidthPixels));
+        return $configuredCount !== null
+            ? min($configuredCount, $responsiveCount)
+            : $responsiveCount;
+    }
+
+    private static function cssLengthToPixels($value): ?float
+    {
+        if (!is_string($value) && !is_numeric($value)) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+        if (!preg_match('/^(\d+(?:\.\d+)?)\s*(px|rem|em)?$/i', $value, $matches)) {
+            return null;
+        }
+
+        $amount = (float) $matches[1];
+        if ($amount <= 0) {
+            return null;
+        }
+
+        $unit = strtolower($matches[2] ?? 'px');
+        return in_array($unit, ['rem', 'em'], true) ? $amount * 16 : $amount;
+    }
+
+    private static function renderGridGroupBlock(
+        int $postId,
+        array $block,
+        array $wrapperAttrs,
+        array $defaultAttrs,
+        int $availableWidth
+    ): string {
+        $columnCount = self::getGridColumnCount($block, $availableWidth);
+        $columnWidthPercent = 100 / $columnCount;
+        $columnWidth = max(1, (int) floor($availableWidth / $columnCount));
+        $rows = array_chunk($block['innerBlocks'], $columnCount);
+        $markup = '<mj-wrapper ' . AttributeHandler::arrayToAttributes($wrapperAttrs) . '>';
+
+        foreach ($rows as $row) {
+            $markup .= '<mj-section padding="0">';
+            foreach ($row as $innerBlock) {
+                $childDefaultAttrs = self::getGroupChildAttributes(
+                    $innerBlock,
+                    $wrapperAttrs,
+                    $defaultAttrs
+                );
+                $columnAttrs = [
+                    'padding' => '0',
+                    'width' => rtrim(rtrim(number_format($columnWidthPercent, 6, '.', ''), '0'), '.') . '%',
+                ];
+                $contentWidth = $columnWidth;
+
+                if (($innerBlock['blockName'] ?? null) === 'core/group') {
+                    $groupAttrs = AttributeHandler::processAttributes($innerBlock['attrs'] ?? []);
+                    $groupAttrs['padding'] = StyleProcessor::getPaddingFromAttributes($groupAttrs) ?: '0';
+                    $columnAttrs = array_merge(
+                        $columnAttrs,
+                        self::filterGridColumnAttributes($groupAttrs)
+                    );
+                    $contentWidth = self::subtractHorizontalPadding(
+                        $columnWidth,
+                        $columnAttrs['padding']
+                    );
+                }
+
+                $markup .= '<mj-column ' . AttributeHandler::arrayToAttributes($columnAttrs) . '>';
+                $markup .= self::renderGridCellBlock(
+                    $postId,
+                    $innerBlock,
+                    $childDefaultAttrs,
+                    $contentWidth
+                );
+                $markup .= '</mj-column>';
+            }
+            $markup .= '</mj-section>';
+        }
+
+        return $markup . '</mj-wrapper>';
+    }
+
+    private static function renderGridCellBlock(
+        int $postId,
+        array $block,
+        array $defaultAttrs,
+        int $availableWidth
+    ): string {
+        if (($block['blockName'] ?? null) !== 'core/group') {
+            return self::renderMjmlComponent(
+                $postId,
+                $block,
+                $defaultAttrs,
+                true,
+                true,
+                false,
+                $availableWidth
+            );
+        }
+
+        $groupAttrs = AttributeHandler::processAttributes($block['attrs'] ?? []);
+        $markup = '';
+        foreach ($block['innerBlocks'] ?? [] as $innerBlock) {
+            $childDefaultAttrs = self::getGroupChildAttributes(
+                $innerBlock,
+                $groupAttrs,
+                $defaultAttrs
+            );
+            $markup .= self::renderGridCellBlock(
+                $postId,
+                $innerBlock,
+                $childDefaultAttrs,
+                $availableWidth
+            );
+        }
+
+        return $markup;
+    }
+
+    private static function filterGridColumnAttributes(array $attrs): array
+    {
+        $allowed = [
+            'background-color',
+            'border',
+            'border-bottom',
+            'border-left',
+            'border-radius',
+            'border-right',
+            'border-top',
+            'padding',
+            'padding-bottom',
+            'padding-left',
+            'padding-right',
+            'padding-top',
+            'vertical-align',
+        ];
+
+        return array_intersect_key($attrs, array_flip($allowed));
+    }
+
+    private static function getGroupChildAttributes(
+        array $innerBlock,
+        array $groupAttrs,
+        array $defaultAttrs
+    ): array {
+        $attrs = array_merge($defaultAttrs, $innerBlock['attrs'] ?? []);
+        $attrs['color'] = $attrs['color'] ?? $groupAttrs['color'] ?? '#000000';
+        $attrs['link'] = $attrs['link'] ?? $groupAttrs['link'] ?? '#000000';
+
+        if (isset($attrs['textColor'])) {
+            unset($attrs['color']);
+        }
+        if (!empty($attrs['style']['elements']['link']['color']['text'])) {
+            $attrs['link'] = StyleProcessor::extractLinkColor(
+                $attrs['style']['elements']['link']['color']['text']
+            );
+        }
+
+        return $attrs;
     }
 
     /**
