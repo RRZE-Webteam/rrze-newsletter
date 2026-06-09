@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\MJML;
 defined('ABSPATH') || exit;
 
 use BorlabsCookie\Cookie\Frontend\Style;
+use RRZE\Newsletter\Helper;
 use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\MJML\AttributeHandler;
 use RRZE\Newsletter\MJML\StyleProcessor;
@@ -181,10 +182,17 @@ class BlockProcessor
             $attrs['link'] = StyleProcessor::extractLinkColor($attrs['style']['elements']['link']['color']['text']);
         }
 
+        $textAlign = $attrs['style']['typography']['textAlign'] ?? 'left';
+        if (!in_array($textAlign, ['left', 'center', 'right', 'justify'], true)) {
+            $textAlign = 'left';
+        }
+        $innerHtml = self::applyTextAlignment($innerHtml, $textAlign);
+
         $textAttrs = array_merge([
             'line-height' => '1.5',
             'font-size'   => '16px',
             'font-family' => $fontFamily,
+            'align'       => $textAlign,
         ], $attrs);
 
         if (isset($textAttrs['background-color'])) {
@@ -197,8 +205,29 @@ class BlockProcessor
         if ($isInList) {
             return $innerHtml;
         }
-        // error_log('Rendering text block with attributes: ' . print_r($textAttrs, true));
         return '<mj-text ' . AttributeHandler::arrayToAttributes($textAttrs) . '>' . $innerHtml . '</mj-text>';
+    }
+
+    /**
+     * Adds alignment directly to the rendered HTML element for email clients
+     * that do not reliably inherit text alignment from the MJML container.
+     */
+    private static function applyTextAlignment(string $innerHtml, string $textAlign): string
+    {
+        $processor = new \WP_HTML_Tag_Processor($innerHtml);
+        if (!$processor->next_tag()) {
+            return $innerHtml;
+        }
+
+        $style = (string) $processor->get_attribute('style');
+        $style = preg_replace('/(?:^|;)\s*text-align\s*:[^;]*/i', '', $style) ?? $style;
+        $style = trim($style, " \t\n\r\0\x0B;");
+        $style = ($style !== '' ? $style . '; ' : '') . 'text-align: ' . $textAlign . ';';
+
+        $processor->set_attribute('style', $style);
+        $processor->set_attribute('align', $textAlign);
+
+        return $processor->get_updated_html();
     }
 
     /**
