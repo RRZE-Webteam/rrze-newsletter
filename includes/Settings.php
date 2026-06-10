@@ -11,76 +11,17 @@ use function RRZE\Newsletter\Config\getFields;
 
 class Settings
 {
-    /**
-     * Option name.
-     * 
-     * @var string
-     */
-    protected static $optionName;
+    protected static string $optionName;
+    protected static array $options;
+    protected array $settingsMenu;
+    protected array $settingsSections;
+    protected array $allTabs = [];
+    protected string $defaultTab = '';
+    protected string $currentTab = '';
+    protected string $settingsPrefix;
+    protected array $hiddenSections = [];
+    protected array $hiddenFields = [];
 
-    /**
-     * Settings options.
-     * 
-     * @var array
-     */
-    protected static $options;
-
-    /**
-     * Settings menu
-     * 
-     * @var array
-     */
-    protected $settingsMenu;
-
-    /**
-     * Settings sections.
-     * 
-     * @var array
-     */
-    protected $settingsSections;
-
-    /**
-     * All tabs.
-     * 
-     * @var array
-     */
-    protected $allTabs = [];
-
-    /**
-     * Standard tab.
-     * 
-     * @var string
-     */
-    protected $defaultTab = '';
-
-    /**
-     * Current tab.
-     * 
-     * @var string
-     */
-    protected $currentTab = '';
-
-    /**
-     * Settings prefix.
-     * @var string
-     */
-    protected $settingsPrefix;
-
-    /**
-     * Hidden sections.
-     * @var array
-     */
-    protected $hiddenSections = [];
-
-    /**
-     * Disabled fields.
-     * @var array
-     */
-    protected $hiddenFields = [];
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->settingsPrefix = plugin()->getSlug() . '-';
@@ -91,7 +32,7 @@ class Settings
      * 
      * @return void
      */
-    public function onLoaded()
+    public function onLoaded(): void
     {
         self::$optionName = getOptionName();
         self::$options = self::getOptions();
@@ -103,42 +44,35 @@ class Settings
         add_action('admin_menu', [$this, 'adminMenu']);
     }
 
-    protected function setMenu()
+    // =============================================================================
+    // Setters
+    // =============================================================================
+    protected function setMenu(): void
     {
         $this->settingsMenu = getmenuSettings();
     }
 
-    /**
-     * Set sections.
-     */
-    protected function setSections()
+    protected function setSections(): void
     {
         $this->settingsSections = getSections();
     }
 
-    /**
-     * Returns the option name.
-     *
-     * @return string
-     */
+    // =============================================================================
+    // Getters
+    // =============================================================================
     public static function getOptionName(): string
     {
         return self::$optionName;
     }
 
-    /**
-     * Returns the default options.
-     * 
-     * @return array
-     */
-    protected static function defaultOptions(): array
+    protected static function getDefaultOptions(): array
     {
         $options = [];
 
         foreach (getFields() as $section => $field) {
             foreach ($field as $option) {
                 $name = $option['name'];
-                $default = isset($option['default']) ? $option['default'] : '';
+                $default = $option['default'] ?? '';
                 $options = array_merge($options, [$section . '_' . $name => $default]);
             }
         }
@@ -146,14 +80,9 @@ class Settings
         return $options;
     }
 
-    /**
-     * Returns the options.
-     * 
-     * @return array
-     */
     public static function getOptions(): array
     {
-        $defaults = self::defaultOptions();
+        $defaults = self::getDefaultOptions();
 
         $options = (array) get_option(self::$optionName);
         $options = wp_parse_args($options, $defaults);
@@ -166,7 +95,7 @@ class Settings
     }
 
     /**
-     * Returns an option.
+     * Returns a selected option.
      * 
      * @param string  $name  Settings field name
      * @param string  $section The section name this field belongs to
@@ -184,12 +113,17 @@ class Settings
         return $default;
     }
 
+    // =============================================================================
+    // Sanitizer Functions
+    // =============================================================================
+
     /**
      * Sanitize callback for the options.
-     * 
-     * @return mixed
+     *
+     * @param array $options
+     * @return array
      */
-    public function sanitizeOptions($options)
+    public function sanitizeOptions(array $options): array
     {
         if (!$options) {
             return self::$options;
@@ -205,7 +139,7 @@ class Settings
                     if ($section . '_' . $option['name'] == $key) {
                         $settings = $this->settingsPrefix . $section;
                         $label = $option['label'];
-                        $required = isset($option['required']) ? (bool) $option['required'] : false;
+                        $required = isset($option['required']) && (bool)$option['required'];
                     }
                 }
             }
@@ -243,9 +177,9 @@ class Settings
      * Returns a sanitized option for the specified option key.
      * 
      * @param string $key Option key
-     * @return mixed string|boolean false
+     * @return callable|false string|boolean false
      */
-    protected function getSanitizeCallback(string $key = '')
+    protected function getSanitizeCallback(string $key = ''): callable|bool
     {
         if (empty($key)) {
             return false;
@@ -264,11 +198,15 @@ class Settings
         return false;
     }
 
+    // =============================================================================
+    // Display Helpers
+    // =============================================================================
+
     /**
      * Display the settings sections as tabs.
      * Displays all labels of the setting sections as a tab.
      */
-    public function showTabs()
+    public function showTabs(): void
     {
         $html = '<h1>' . $this->settingsMenu['title'] . '</h1>' . PHP_EOL;
 
@@ -302,28 +240,28 @@ class Settings
      * Display the setting sections.
      * Displays the corresponding form for each setting sections.
      */
-    public function showSections()
+    public function showSections(): void
     {
         foreach ($this->settingsSections as $section) {
             if ($this->settingsPrefix . $section['id'] != $this->currentTab) {
                 continue;
             }
-?>
-            <div id="<?php echo $this->settingsPrefix . $section['id']; ?>">
-                <form method="post" action="options.php">
-                    <?php settings_fields($this->settingsPrefix . $section['id']); ?>
-                    <?php do_settings_sections($this->settingsPrefix . $section['id']); ?>
-                    <?php submit_button(); ?>
-                </form>
-            </div>
-<?php
+            ?>
+                <div id="<?php echo $this->settingsPrefix . $section['id']; ?>">
+                    <form method="post" action="options.php">
+                        <?php settings_fields($this->settingsPrefix . $section['id']); ?>
+                        <?php do_settings_sections($this->settingsPrefix . $section['id']); ?>
+                        <?php submit_button(); ?>
+                    </form>
+                </div>
+            <?php
         }
     }
 
     /**
      * Settings page output.
      */
-    public function pageOutput()
+    public function pageOutput(): void
     {
         echo '<div class="wrap">', PHP_EOL;
         $this->showTabs();
@@ -334,7 +272,7 @@ class Settings
     /**
      * Registration of sections and fields.
      */
-    public function adminInit()
+    public function adminInit(): void
     {
         foreach ($this->settingsSections as $section) {
             // Register the settings
@@ -379,28 +317,28 @@ class Settings
                     continue;
                 }
                 $name = $option['name'];
-                $type = isset($option['type']) ? $option['type'] : 'text';
-                $label = isset($option['label']) ? $option['label'] : '';
-                $callback = isset($option['callback']) ? $option['callback'] : [$this, 'callback' . ucfirst($type)];
+                $type = $option['type'] ?? 'text';
+                $label = $option['label'] ?? '';
+                $callback = $option['callback'] ?? [$this, 'callback' . ucfirst($type)];
 
                 $args = [
                     'id' => $name,
-                    'class' => isset($option['class']) ? $option['class'] : $name,
+                    'class' => $option['class'] ?? $name,
                     'label_for' => "{$section}[{$name}]",
-                    'desc' => isset($option['desc']) ? $option['desc'] : '',
+                    'desc' => $option['desc'] ?? '',
                     'name' => $label,
                     'section' => $section,
-                    'size' => isset($option['size']) ? $option['size'] : null,
-                    'options' => isset($option['options']) ? $option['options'] : '',
-                    'default' => isset($option['default']) ? $option['default'] : '',
+                    'size' => $option['size'] ?? null,
+                    'options' => $option['options'] ?? '',
+                    'default' => $option['default'] ?? '',
                     'type' => $type,
-                    'placeholder' => isset($option['placeholder']) ? $option['placeholder'] : '',
-                    'min' => isset($option['min']) ? $option['min'] : '',
-                    'max' => isset($option['max']) ? $option['max'] : '',
-                    'step' => isset($option['step']) ? $option['step'] : '',
+                    'placeholder' => $option['placeholder'] ?? '',
+                    'min' => $option['min'] ?? '',
+                    'max' => $option['max'] ?? '',
+                    'step' => $option['step'] ?? '',
                     'disabled' => isset($option['disabled']) ? 'disabled' : '',
-                    'sanitize_callback' => isset($option['sanitize_callback']) ? $option['sanitize_callback'] : '',
-                    'required' => isset($option['required']) ? (bool) $option['required'] : false,
+                    'sanitize_callback' => $option['sanitize_callback'] ?? '',
+                    'required' => isset($option['required']) && (bool)$option['required'],
                     'errors' => get_settings_errors($this->settingsPrefix . $section)
                 ];
 
@@ -413,7 +351,7 @@ class Settings
      * Add the options page.
      * @return void
      */
-    public function adminMenu()
+    public function adminMenu(): void
     {
         $this->setTabs();
 
@@ -429,7 +367,7 @@ class Settings
     /**
      * Set tabs.
      */
-    protected function setTabs()
+    protected function setTabs(): void
     {
         foreach ($this->settingsSections as $key => $val) {
             if ($key == 0) {
@@ -445,7 +383,7 @@ class Settings
      * Returns a description of the settings field.
      * @param array   $args Description arguments
      */
-    public function getFieldDescription(array $args)
+    public function getFieldDescription(array $args): string
     {
         if (!empty($args['desc'])) {
             $desc = sprintf('<p class="description">%s</p>', $args['desc']);
@@ -456,15 +394,19 @@ class Settings
         return $desc;
     }
 
+    // =============================================================================
+    // Settings Fields & UI
+    // =============================================================================
+
     /**
-     * Displays a text input field.
+     * Displays a text input field via echo.
      * @param array   $args Field settings arguments
      */
     public function callbackText(array $args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
-        $type = isset($args['type']) ? $args['type'] : 'text';
+        $type = $args['type'] ?? 'text';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
 
         $html = sprintf(
@@ -483,14 +425,14 @@ class Settings
     }
 
     /**
-     * Displays a number input field.
+     * Displays a number input field via echo.
      * @param array   $args Field settings arguments
      */
     public function callbackNumber(array $args)
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
-        $type = isset($args['type']) ? $args['type'] : 'number';
+        $type = $args['type'] ?? 'number';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
         $min = ($args['min'] == '') ? '' : ' min="' . $args['min'] . '"';
         $max = ($args['max'] == '') ? '' : ' max="' . $args['max'] . '"';
@@ -515,10 +457,10 @@ class Settings
     }
 
     /**
-     * Displays a checkbox input field.
+     * Displays a checkbox input field via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackCheckbox(array $args)
+    public function callbackCheckbox(array $args): void
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
 
@@ -551,10 +493,10 @@ class Settings
     }
 
     /**
-     * Displays a multi-checkbox input field.
+     * Displays a multi-checkbox input field via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackMulticheck(array $args)
+    public function callbackMulticheck(array $args): void
     {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
         $html = '<fieldset>';
@@ -590,10 +532,10 @@ class Settings
     }
 
     /**
-     * Displays a radio input field.
+     * Displays a radio input field via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackRadio(array $args)
+    public function callbackRadio(array $args): void
     {
         $value = $this->getOption($args['section'], $args['id'], $args['default']);
         $html  = '<fieldset>';
@@ -650,17 +592,17 @@ class Settings
             );
         }
 
-        $html .= sprintf('</select>');
+        $html .= '</select>';
         $html .= $this->getFieldDescription($args);
 
         echo $html;
     }
 
     /**
-     * Displays a selectbox field with all pages available to select from.
+     * Displays a selectbox field with all pages available to select from via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackSelectPage(array $args)
+    public function callbackSelectPage(array $args): void
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
         $class  = isset($args['class']) && !is_null($args['class']) ? $args['class'] : 'none';
@@ -687,10 +629,10 @@ class Settings
     }
 
     /**
-     * Displays a multi-selectbox field.
+     * Displays a multi-selectbox field via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackMultiSelect(array $args)
+    public function callbackMultiSelect(array $args): void
     {
         $value = (array) $this->getOption($args['section'], $args['id'], $args['default']);
         $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
@@ -719,10 +661,10 @@ class Settings
 
 
     /**
-     * Displays a textarea field.
+     * Displays a textarea field via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackTextarea(array $args)
+    public function callbackTextarea(array $args): void
     {
         $value = esc_textarea($this->getOption($args['section'], $args['id'], $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
@@ -743,10 +685,10 @@ class Settings
     }
 
     /**
-     * Displays a password input field.
+     * Displays a password input field via echo.
      * @param array   $args Field settings arguments
      */
-    public function callbackPassword(array $args)
+    public function callbackPassword(array $args): void
     {
         $value = esc_attr($this->getOption($args['section'], $args['id'], ''));
         $value = $value ? Utils::getPassword($value) : '';

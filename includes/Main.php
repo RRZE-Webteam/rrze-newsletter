@@ -41,53 +41,48 @@ class Main
      */
     public function __construct()
     {
+        //ToDo: Konstruktor aufräumen, damit nicht alles über den Main Constructor initialisiert wird.
+
         // Adds a settings link to the plugin action links.
         add_filter('plugin_action_links_' . plugin()->getBaseName(), [$this, 'settingsLink']);
 
         // Sets the queue for the newsletter when a post is published.
         add_action('transition_post_status', [$this, 'maybeSetQueue'], 10, 3);
 
-        // Settings
         $settings = new Settings;
         $settings->onLoaded();
 
         // Custom Post Types
         $newsletter = new Newsletter;
         $newsletter->onLoaded();
-        $newslQueue = new NewsletterQueue;
-        $newslQueue->onLoaded();
+
+        $newsletterQueue = new NewsletterQueue;
+        $newsletterQueue->onLoaded();
+
         new NewsletterLayout;
-
-        // Newsletter Subscription
         new Subscription;
-
-        // Newsletter Archive
         new Archive;
 
-        // Blocks
+        // Block Registration
         RSS::register();
         ICS::register();
 
-        // Editor
         Editor::instance();
 
-        // Notices
         new Notices;
-
-        // RestApi
         new RestApi;
 
-        // Schedule
         Cron::init();
     }
 
+    //ToDo: In Settings-Klasse verschieben. Dort ist es besser aufgehoben.
     /**
      * Adds a settings link to the plugin action links.
      * 
      * @param array $links The existing plugin action links.
      * @return array The modified plugin action links with the settings link added.
      */
-    public function settingsLink($links)
+    public function settingsLink(array $links): array
     {
         $settingsLink = sprintf(
             '<a href="%s">%s</a>',
@@ -98,6 +93,7 @@ class Main
         return $links;
     }
 
+    //ToDo: In andere Klasse auslagern. Sollte hier eigentlich nicht stehen.
     /**
      * Sets the queue for the newsletter when a post is published.
      * 
@@ -107,10 +103,10 @@ class Main
      * 
      * @param string $newStatus The new post status.
      * @param string $oldStatus The old post status.
-     * @param WP_Post $post The post object.
+     * @param \WP_Post $post The post object.
      * @return void
      */
-    public function maybeSetQueue($newStatus, $oldStatus, $post)
+    public function maybeSetQueue(string $newStatus, string $oldStatus, \WP_Post $post): void
     {
         if (
             'publish' !== $newStatus || 'publish' === $oldStatus

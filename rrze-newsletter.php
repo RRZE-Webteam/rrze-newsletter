@@ -41,12 +41,12 @@ register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
 add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
 
 /**
- * Activation callback function.
+ * Plugin Activation callback function.
  * 
  * @param $networkWide boolean
  * @return void
  */
-function activation($networkWide)
+function activation(bool $networkWide): void
 {
     if ($networkWide) {
         // If the plugin is activated network-wide, we do not want to run the activation code.
@@ -69,11 +69,11 @@ function activation($networkWide)
 }
 
 /**
- * Deactivation callback function.
+ * Plugin Deactivation callback function.
  * 
  * @return void
  */
-function deactivation()
+function deactivation(): void
 {
     Roles::removeRoleCaps();
     Roles::removeRoles();
@@ -84,9 +84,11 @@ function deactivation()
 }
 
 /**
- * Instantiate Plugin class.
- * 
- * @return object Plugin
+ * Instantiate Plugin Helper class.
+ *
+ * Helper Functions for Directory Retrieval and Co.
+ *
+ * @return Plugin Plugin
  */
 function plugin(): Plugin
 {
@@ -102,7 +104,7 @@ function plugin(): Plugin
  * 
  * @return void
  */
-function loadTextDomain()
+function loadTextDomain(): void
 {
     load_plugin_textdomain('rrze-newsletter', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
@@ -117,7 +119,6 @@ function loadTextDomain()
  */
 function systemRequirements(): string
 {
-    // Initialize an error message string.
     $error = '';
 
     // Check if the WordPress version is compatible with the plugin's requirement.
@@ -152,28 +153,22 @@ function systemRequirements(): string
  * 
  * @return void
  */
-function loaded()
+function loaded(): void
 {
-    // Load the plugin text domain for translations.
     loadTextDomain();
-
-    // Trigger the 'loaded' method of the main plugin instance.
     plugin()->loaded();
 
     // Check system requirements.
     if ($error = systemRequirements()) {
         // If there is an error, add an action to display an admin notice with the error message.
         add_action('admin_init', function () use ($error) {
-            // Check if the current user has the capability to activate plugins.
-            if (current_user_can('activate_plugins')) {
-                // Get plugin data to retrieve the plugin's name.
-                $pluginName = plugin()->getName();
 
-                // Determine the admin notice tag based on network-wide activation.
-                $tag = is_plugin_active_for_network(plugin()->getBaseName()) ? 'network_admin_notices' : 'admin_notices';
+            if (current_user_can('activate_plugins')) {
+                $pluginName = plugin()->getName();
+                $adminNoticeTag = is_plugin_active_for_network(plugin()->getBaseName()) ? 'network_admin_notices' : 'admin_notices';
 
                 // Add an action to display the admin notice.
-                add_action($tag, function () use ($pluginName, $error) {
+                add_action($adminNoticeTag, function () use ($pluginName, $error) {
                     printf(
                         '<div class="notice notice-error"><p>' .
                             /* translators: 1: The plugin name, 2: The error string. */
@@ -186,11 +181,10 @@ function loaded()
             }
         });
 
-        // Return to prevent further initialization if there is an error.
         return;
     }
 
-    // Try to update first...
+    // Try to update first... If older Versions previous to 2.1.12 are in use
     Update::loaded();
 
     // If there are no errors, create an instance of the 'Main' class

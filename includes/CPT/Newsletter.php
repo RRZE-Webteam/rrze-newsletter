@@ -1,9 +1,5 @@
 <?php
 
-/* ---------------------------------------------------------------------------
- * Custom Post Type 'newsletter'
- * ------------------------------------------------------------------------- */
-
 namespace RRZE\Newsletter\CPT;
 
 defined('ABSPATH') || exit;
@@ -16,33 +12,31 @@ use RRZE\Newsletter\Capabilities;
 use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 
+/**
+ * Custom Post Type 'Newsletter'
+ */
 class Newsletter
 {
     const POST_TYPE = 'newsletter';
-
     const CATEGORY = 'newsletter_category';
-
     const MAILING_LIST = 'newsletter_mailing_list';
 
     public function __construct()
     {
-        // Register Post Type.
         add_action('init', [__CLASS__, 'registerPostType']);
-        // Register Metadata.
         add_action('init', [__CLASS__, 'registerMeta']);
-        // Register Taxonomies.
         add_action('init', [__CLASS__, 'registerCategory']);
         add_action('init', [__CLASS__, 'registerMailingList']);
     }
 
-    public function onLoaded()
+    public function onLoaded(): void
     {
         if (!apply_filters('rrze_newsletter_disable_mailing_list', false)) {
-            // Taxonomy Terms Fields.
             add_action('newsletter_mailing_list_add_form_fields', [__CLASS__, 'addFormFields']);
             add_action('newsletter_mailing_list_edit_form_fields', [__CLASS__, 'editFormFields'], 10, 2);
             add_action('created_newsletter_mailing_list', [__CLASS__, 'saveFormFields']);
             add_action('edited_newsletter_mailing_list', [__CLASS__, 'saveFormFields']);
+
             // Taxonomy Custom Columns.
             add_filter('manage_edit-newsletter_mailing_list_columns', [__CLASS__, 'mailListColumns']);
             add_filter('manage_newsletter_mailing_list_custom_column', [__CLASS__, 'mailListCustomColumns'], 10, 3);
@@ -58,7 +52,10 @@ class Newsletter
         add_action('wp_trash_post', [__CLASS__, 'trash'], 10, 1);
     }
 
-    public static function registerPostType()
+    /**
+     * Registers the CPT Newsletter via individual Options
+     */
+    public static function registerPostType(): void
     {
         $labels = [
             'name'               => _x('Newsletters', 'post type general name', 'rrze-newsletter'),
@@ -93,7 +90,21 @@ class Newsletter
         register_post_type(self::POST_TYPE, $args);
     }
 
-    public static function registerMeta()
+    /**
+     * Registers newsletter post meta fields for use in the block editor.
+     *
+     * This method exposes newsletter-related post meta fields through the REST API
+     * for the newsletter post type. These fields store editor data, validation
+     * errors, generated email content, sender and reply-to information, preview text,
+     * conditional block flags, recurrence settings, template settings, font choices,
+     * and background color configuration.
+     *
+     * The `rrze_newsletter_to_email` meta field is registered only when mailing list
+     * support is disabled via the `rrze_newsletter_disable_mailing_list` filter.
+     *
+     * @return void
+     */
+    public static function registerMeta(): void
     {
         // Used only for the block editor.
         register_meta(
@@ -382,7 +393,7 @@ class Newsletter
         );
     }
 
-    public static function registerCategory()
+    public static function registerCategory(): void
     {
         $labels = [
             'name' => _x('Categories', 'Taxonomy general name', 'rrze-newsletter'),
@@ -417,7 +428,7 @@ class Newsletter
         register_taxonomy(self::CATEGORY, self::POST_TYPE, $args);
     }
 
-    public static function registerMailingList()
+    public static function registerMailingList(): void
     {
         $labels = [
             'name' => _x('Mailing Lists', 'Taxonomy general name', 'rrze-newsletter'),
@@ -453,7 +464,7 @@ class Newsletter
         }
     }
 
-    public static function addFormFields($taxonomy)
+    public static function addFormFields($taxonomy): void
     {
         echo '<div class="form-field">',
         '<input type="checkbox" name="rrze_newsletter_mailing_list_public" value="true">',
@@ -468,7 +479,7 @@ class Newsletter
         '</div>';
     }
 
-    public static function editFormFields($term, $taxonomy)
+    public static function editFormFields($term, $taxonomy): void
     {
         $value = (bool) get_term_meta($term->term_id, 'rrze_newsletter_mailing_list_public', true);
 
@@ -501,7 +512,7 @@ class Newsletter
         '</tr>';
     }
 
-    public static function saveFormFields(int $termId)
+    public static function saveFormFields(int $termId): void
     {
         $isPublic = isset($_POST['rrze_newsletter_mailing_list_public']);
         update_term_meta(
@@ -562,7 +573,7 @@ class Newsletter
         return $content;
     }
 
-    public static function getData(int $postId)
+    public static function getData(int $postId): \WP_Error|array|string
     {
         $data = [];
 
@@ -578,7 +589,7 @@ class Newsletter
 
         if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
             foreach ($rssAttrs as $key => $attrs) {
-                if (strpos($body, 'RSS_BLOCK_' . $key) !== false) {
+                if (str_contains($body, 'RSS_BLOCK_' . $key)) {
                     $body = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $body);
                 }
             }
@@ -586,7 +597,7 @@ class Newsletter
 
         if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
             foreach ($icsAttrs as $key => $attrs) {
-                if (strpos($body, 'ICS_BLOCK_' . $key) !== false) {
+                if (str_contains($body, 'ICS_BLOCK_' . $key)) {
                     $body = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $body);
                 }
             }
@@ -626,7 +637,7 @@ class Newsletter
         return $data;
     }
 
-    protected static function getTermsList($postId, $taxonomy)
+    protected static function getTermsList($postId, $taxonomy): \WP_Error|bool|array
     {
         $terms = get_the_terms($postId, $taxonomy);
         if ($terms !== false && !is_wp_error($terms)) {
@@ -663,7 +674,7 @@ class Newsletter
         return $content;
     }
 
-    public static function publicCustomStyle()
+    public static function publicCustomStyle(): void
     {
         if (!is_single()) {
             return;
@@ -673,7 +684,7 @@ class Newsletter
             $fontHeader = get_post_meta($post->ID, 'rrze_newsletter_font_header', true);
             $fontBody = get_post_meta($post->ID, 'rrze_newsletter_font_body', true);
             $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true);
-?>
+            ?>
             <style>
                 .main-content {
                     background-color: <?php echo esc_attr($backgroundColor); ?>;
@@ -695,7 +706,7 @@ class Newsletter
 
                 <?php endif; ?>
             </style>
-<?php
+            <?php
         }
     }
 
@@ -761,7 +772,7 @@ class Newsletter
         return $actions;
     }
 
-    public static function savePost($postId, $post, $update)
+    public static function savePost($postId, $post, $update): void
     {
         if (!$update) {
             update_post_meta($postId, 'rrze_newsletter_template_id', -1);
@@ -781,7 +792,7 @@ class Newsletter
         return get_post_meta($postId, 'rrze_newsletter_status', true);
     }
 
-    public static function getLastSendDateGmt(int $postId)
+    public static function getLastSendDateGmt(int $postId): string
     {
         $sendDate = date('Y-m-d H:i:s', HOUR_IN_SECONDS); // UNIX Epoch time + 1 hour
         if (in_array(get_post_status($postId), ['publish', 'future'])) {
@@ -793,12 +804,12 @@ class Newsletter
         return $sendDate;
     }
 
-    public static function validateNewsletterId($postId)
+    public static function validateNewsletterId($postId): bool
     {
         return Newsletter::POST_TYPE === get_post_type($postId);
     }
 
-    public static function trash($postId)
+    public static function trash($postId): void
     {
         if (Newsletter::POST_TYPE !== get_post_type($postId)) {
             return;

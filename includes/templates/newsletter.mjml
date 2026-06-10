@@ -111,9 +111,9 @@
                 padding-left: 1.3em;
             }
 
-            /* Image */
-            @media all and (max-width: 590px) {
-                img {
+            /* Keep MJML images proportional when their wrapper becomes fluid. */
+            @media all and (max-width: 479px) {
+                .mj-full-width-mobile img {
                     height: auto !important;
                 }
             }
@@ -148,7 +148,7 @@
         <mj-preview>{{=preview_text}}</mj-preview>
         {{/preview_text}}
     </mj-head>
-    <mj-body background-color="{{=background_color}}" width="680px">
+    <mj-body background-color="{{=background_color}}" width="{{=body_width}}px">
         {{=body}}
     </mj-body>
 </mjml>

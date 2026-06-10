@@ -138,7 +138,6 @@
 
         .wp-block-buttons {
             font-weight: bold;
-            text-align: center;
 
             .block-list-appender {
                 margin: 0;
@@ -151,8 +150,6 @@
         }
 
         .wp-block-button {
-            margin-left: auto !important;
-            margin-right: auto !important;
             padding: 0;
         }
 
@@ -200,6 +197,10 @@
             > span {
                 font-family: inherit;
             }
+        }
+
+        .wp-block-button__link {
+            border-radius: 0;
         }
 
         .wp-block-columns {

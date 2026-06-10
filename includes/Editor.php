@@ -157,6 +157,8 @@ final class Editor
             'core/group',
             'core/paragraph',
             'core/heading',
+            'core/buttons',
+            'core/button',
             'core/column',
             'core/columns',
             'core/image',
