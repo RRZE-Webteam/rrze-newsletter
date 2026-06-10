@@ -9,6 +9,9 @@ use function RRZE\Newsletter\plugin;
 
 class RSS
 {
+    private const CONDITIONAL_CACHE_KEY =
+        'rrze_newsletter_rss_block_not_empty';
+
     /**
      * register
      * Registers the block on server.
@@ -94,13 +97,23 @@ class RSS
      */
     public static function renderMJML(array $atts): string
     {
+        self::resetConditionalState(absint($atts['postId'] ?? 0));
+
+        return self::renderMJMLWithState($atts)['content'];
+    }
+
+    /**
+     * Render the block and report whether feed items were included.
+     *
+     * @param array $atts The block attributes.
+     * @return array{content: string, hasItems: bool} Render result.
+     */
+    public static function renderMJMLWithState(array $atts): array
+    {
         $feedItems = '';
         $atts = self::parseAtts($atts);
         $postId = absint($atts['postId'] ?? 0);
-
-        if ($postId) {
-            wp_cache_delete('rrze_newsletter_rss_block_not_empty', $postId);
-        }
+        $hasItems = false;
 
         $feed = self::fetchFeed($atts['feedURL']);
 
@@ -111,12 +124,29 @@ class RSS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-rss"><p>%s</p></div>', __('There are no items available.', 'rrze-newsletter'));
         } else {
+            $hasItems = true;
             if ($postId) {
-                wp_cache_set('rrze_newsletter_rss_block_not_empty', 1, $postId);
+                wp_cache_set(self::CONDITIONAL_CACHE_KEY, 1, $postId);
             }
         }
 
-        return $feedItems;
+        return [
+            'content' => $feedItems,
+            'hasItems' => $hasItems,
+        ];
+    }
+
+    /**
+     * Reset the aggregate RSS condition before rendering newsletter feeds.
+     *
+     * @param int $postId Newsletter post ID.
+     * @return void
+     */
+    public static function resetConditionalState(int $postId): void
+    {
+        if ($postId) {
+            wp_cache_delete(self::CONDITIONAL_CACHE_KEY, $postId);
+        }
     }
 
     /**
