@@ -10,9 +10,6 @@ use function RRZE\Newsletter\plugin;
 
 class ICS
 {
-    private const CONDITIONAL_CACHE_KEY =
-        'rrze_newsletter_ics_block_not_empty';
-
     /**
      * register
      * Registers the block on server.
@@ -84,23 +81,12 @@ class ICS
      */
     public static function renderMJML(array $atts): string
     {
-        self::resetConditionalState(absint($atts['postId'] ?? 0));
-
-        return self::renderMJMLWithState($atts)['content'];
-    }
-
-    /**
-     * Render the block and report whether events were included.
-     *
-     * @param array $atts The block attributes.
-     * @return array{content: string, hasItems: bool} Render result.
-     */
-    public static function renderMJMLWithState(array $atts): array
-    {
         $atts = self::parseAtts($atts);
         $postId = absint($atts['postId'] ?? 0);
-        $hasItems = false;
 
+        if ($postId) {
+            wp_cache_delete('rrze_newsletter_ics_block_not_empty', $postId);
+        }
         $feedItems = self::getItems($atts['feedURL'], $atts);
 
         if (!is_wp_error($feedItems) && $feedItems) {
@@ -112,29 +98,12 @@ class ICS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-ics"><p>%s</p></div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
-            $hasItems = true;
             if ($postId) {
-                wp_cache_set(self::CONDITIONAL_CACHE_KEY, 1, $postId);
+                wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $postId);
             }
         }
 
-        return [
-            'content' => $feedItems,
-            'hasItems' => $hasItems,
-        ];
-    }
-
-    /**
-     * Reset the aggregate ICS condition before rendering newsletter feeds.
-     *
-     * @param int $postId Newsletter post ID.
-     * @return void
-     */
-    public static function resetConditionalState(int $postId): void
-    {
-        if ($postId) {
-            wp_cache_delete(self::CONDITIONAL_CACHE_KEY, $postId);
-        }
+        return $feedItems;
     }
 
     /**

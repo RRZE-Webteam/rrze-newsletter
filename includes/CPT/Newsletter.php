@@ -587,45 +587,23 @@ class Newsletter
             return $body;
         }
 
-        RSS::resetConditionalState($postId);
-        ICS::resetConditionalState($postId);
-
-        // A feed type is non-empty when any active block renders content.
-        $isRssBlockNotEmpty = false;
         if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
             foreach ($rssAttrs as $key => $attrs) {
                 if (str_contains($body, 'RSS_BLOCK_' . $key)) {
-                    $renderResult = RSS::renderMJMLWithState($attrs);
-                    $body = str_replace(
-                        'RSS_BLOCK_' . $key,
-                        $renderResult['content'],
-                        $body
-                    );
-                    $isRssBlockNotEmpty = $isRssBlockNotEmpty
-                        || $renderResult['hasItems'];
+                    $body = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $body);
                 }
             }
         }
 
-        $isIcsBlockNotEmpty = false;
         if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
             foreach ($icsAttrs as $key => $attrs) {
                 if (str_contains($body, 'ICS_BLOCK_' . $key)) {
-                    $renderResult = ICS::renderMJMLWithState($attrs);
-                    $body = str_replace(
-                        'ICS_BLOCK_' . $key,
-                        $renderResult['content'],
-                        $body
-                    );
-                    $isIcsBlockNotEmpty = $isIcsBlockNotEmpty
-                        || $renderResult['hasItems'];
+                    $body = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $body);
                 }
             }
         }
 
         $data['id'] = $postId;
-        $data['rss_block_not_empty'] = $isRssBlockNotEmpty;
-        $data['ics_block_not_empty'] = $isIcsBlockNotEmpty;
 
         $data['post_date_gmt'] = $post->post_date_gmt;
         $data['post_date'] = $post->post_date;

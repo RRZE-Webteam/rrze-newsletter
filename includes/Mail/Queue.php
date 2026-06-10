@@ -107,7 +107,7 @@ class Queue
         $this->maybeSetRecurrence($postId);
 
         // Check if it should be skipped.
-        if ($this->maybeSkipped($postId, $data)) {
+        if ($this->maybeSkipped($postId)) {
             $restoreSendDateMeta();
             // Set the newsletter status to 'skipped'.
             Newsletter::setStatus($postId, 'skipped');
@@ -424,10 +424,9 @@ class Queue
      * Check if sending the newsletter should be skipped.
      *
      * @param integer $postId Id of the post.
-     * @param array $data Newsletter data generated for this send attempt.
      * @return boolean True if sending should be skipped.
      */
-    protected function maybeSkipped($postId, array $data = [])
+    protected function maybeSkipped($postId)
     {
         $skipped = false;
 
@@ -435,24 +434,8 @@ class Queue
         if ((bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true)) {
             $rssBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_rss_block', true);
             $icsBlock = (bool) get_post_meta($postId, 'rrze_newsletter_conditionals_ics_block', true);
-            $isRssBlockNotEmpty = array_key_exists(
-                'rss_block_not_empty',
-                $data
-            )
-                ? (bool) $data['rss_block_not_empty']
-                : (bool) wp_cache_get(
-                    'rrze_newsletter_rss_block_not_empty',
-                    $postId
-                );
-            $isIcsBlockNotEmpty = array_key_exists(
-                'ics_block_not_empty',
-                $data
-            )
-                ? (bool) $data['ics_block_not_empty']
-                : (bool) wp_cache_get(
-                    'rrze_newsletter_ics_block_not_empty',
-                    $postId
-                );
+            $isRssBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_rss_block_not_empty', $postId);
+            $isIcsBlockNotEmpty = (bool) wp_cache_get('rrze_newsletter_ics_block_not_empty', $postId);
 
             wp_cache_delete('rrze_newsletter_rss_block_not_empty', $postId);
             wp_cache_delete('rrze_newsletter_ics_block_not_empty', $postId);
