@@ -125,14 +125,17 @@ final class ButtonProcessor
      */
     private static function getAlignment(array $attrs): string
     {
-        $align = $attrs['layout']['justifyContent']
+        $justifyContent = $attrs['layout']['justifyContent']
             ?? $attrs['contentJustification']
             ?? $attrs['align']
             ?? 'left';
 
-        return in_array($align, ['left', 'center', 'right'], true)
-            ? $align
-            : 'left';
+        return match ($justifyContent) {
+            'center' => 'center',
+            'right', 'end', 'flex-end' => 'right',
+            'left', 'start', 'flex-start' => 'left',
+            default => 'left',
+        };
     }
 
     /**
