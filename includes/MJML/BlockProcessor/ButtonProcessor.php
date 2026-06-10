@@ -159,12 +159,16 @@ final class ButtonProcessor
         }
 
         $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8">' . $innerHtml,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        $previousErrorMode = libxml_use_internal_errors(true);
+        try {
+            $dom->loadHTML(
+                '<?xml encoding="UTF-8">' . $innerHtml,
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousErrorMode);
+        }
 
         $xpath = new \DOMXPath($dom);
         $element = $xpath->query('//a | //button')[0] ?? null;
@@ -353,6 +357,22 @@ final class ButtonProcessor
         $radius = $attrs['style']['border']['radius'] ?? null;
         if (is_string($radius) || is_numeric($radius)) {
             return (string) $radius;
+        }
+        if (is_array($radius) && $radius !== []) {
+            $corners = [
+                $radius['topLeft'] ?? '0',
+                $radius['topRight'] ?? '0',
+                $radius['bottomRight'] ?? '0',
+                $radius['bottomLeft'] ?? '0',
+            ];
+
+            return implode(' ', array_map(
+                static fn(mixed $value): string =>
+                    is_string($value) || is_numeric($value)
+                        ? (string) $value
+                        : '0',
+                $corners
+            ));
         }
 
         return str_contains(

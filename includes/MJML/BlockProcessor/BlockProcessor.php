@@ -135,110 +135,81 @@ final class BlockProcessor
         $innerHtml = (string) ($block['innerHTML'] ?? '');
         $innerContent = $block['innerContent'] ?? [$innerHtml];
 
-        switch ($blockName) {
-            case 'core/paragraph':
-            case 'core/heading':
-                return ParagraphProcessor::render(
-                    $block,
-                    $attrs,
-                    $innerHtml,
-                    $context->inList,
-                    $fontFamily
-                );
-
-            case 'core/list':
-            case 'core/list-item':
-                return ListProcessor::render(
-                    $attrs,
-                    $innerBlocks,
-                    $innerContent,
-                    $fontFamily,
-                    $context
-                );
-
-            case 'core/image':
-                return ImageProcessor::render(
-                    $attrs,
-                    $innerHtml,
-                    $fontFamily,
+        return match ($blockName) {
+            'core/paragraph', 'core/heading' => ParagraphProcessor::render(
+                $block,
+                $attrs,
+                $innerHtml,
+                $context->inList,
+                $fontFamily
+            ),
+            'core/list', 'core/list-item' => ListProcessor::render(
+                $attrs,
+                $innerBlocks,
+                $innerContent,
+                $fontFamily,
+                $context
+            ),
+            'core/image' => ImageProcessor::render(
+                $attrs,
+                $innerHtml,
+                $fontFamily,
+                LayoutHelper::subtractHorizontalPadding(
+                    $context->availableWidth,
+                    $columnAttrs['padding']
+                )
+            ),
+            'core/separator' => SeparatorProcessor::render($attrs),
+            'core/spacer' => SpacerProcessor::render($attrs),
+            'core/social-links' => SocialLinksProcessor::render(
+                $attrs,
+                $innerBlocks
+            ),
+            'core/buttons' => ButtonProcessor::renderButtons(
+                $attrs,
+                $innerBlocks,
+                $fontFamily,
+                $context->availableWidth
+            ),
+            'core/button' => ButtonProcessor::renderButton(
+                $attrs,
+                $innerHtml,
+                $fontFamily,
+                'left',
+                $context->availableWidth
+            ),
+            'core/column' => ColumnProcessor::renderColumn(
+                $attrs,
+                $innerBlocks,
+                $columnAttrs,
+                $context
+            ),
+            'core/columns' => ColumnProcessor::renderColumns(
+                $attrs,
+                $innerBlocks,
+                $context->withAvailableWidth(
                     LayoutHelper::subtractHorizontalPadding(
                         $context->availableWidth,
-                        $columnAttrs['padding']
+                        StyleProcessor::getPaddingFromAttributes($attrs)
                     )
-                );
-
-            case 'core/separator':
-                return SeparatorProcessor::render($attrs);
-
-            case 'core/spacer':
-                return SpacerProcessor::render($attrs);
-
-            case 'core/social-links':
-                return SocialLinksProcessor::render(
-                    $attrs,
-                    $innerBlocks
-                );
-
-            case 'core/buttons':
-                return ButtonProcessor::renderButtons(
-                    $attrs,
-                    $innerBlocks,
-                    $fontFamily,
-                    $context->availableWidth
-                );
-
-            case 'core/button':
-                return ButtonProcessor::renderButton(
-                    AttributeHandler::processAttributes($block['attrs'] ?? []),
-                    $innerHtml,
-                    $fontFamily,
-                    'left',
-                    $context->availableWidth
-                );
-
-            case 'core/column':
-                return ColumnProcessor::renderColumn(
-                    $attrs,
-                    $innerBlocks,
-                    $columnAttrs,
-                    $context
-                );
-
-            case 'core/columns':
-                return ColumnProcessor::renderColumns(
-                    $attrs,
-                    $innerBlocks,
-                    $context->withAvailableWidth(
-                        LayoutHelper::subtractHorizontalPadding(
-                            $context->availableWidth,
-                            StyleProcessor::getPaddingFromAttributes($attrs)
-                        )
-                    )
-                );
-
-            case 'core/group':
-                return GroupProcessor::render(
-                    $block,
-                    $context
-                );
-
-            case 'rrze-newsletter/rss':
-                return FeedProcessor::renderRss(
-                    $context->postId,
-                    $attrs,
-                    $fontFamily
-                );
-
-            case 'rrze-newsletter/ics':
-                return FeedProcessor::renderIcs(
-                    $context->postId,
-                    $attrs,
-                    $fontFamily
-                );
-
-            default:
-                return '';
-        }
+                )
+            ),
+            'core/group' => GroupProcessor::render(
+                $block,
+                $context
+            ),
+            'rrze-newsletter/rss' => FeedProcessor::renderRss(
+                $context->postId,
+                $attrs,
+                $fontFamily
+            ),
+            'rrze-newsletter/ics' => FeedProcessor::renderIcs(
+                $context->postId,
+                $attrs,
+                $fontFamily
+            ),
+            default => '',
+        };
     }
 
     /**
