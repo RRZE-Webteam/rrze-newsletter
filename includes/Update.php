@@ -19,7 +19,7 @@ class Update
      * 
      * @return void
      */
-    public static function loaded()
+    public static function loaded(): void
     {
         $version = get_option('rrze_newsletter_version', '0');
         if (version_compare($version, '2.1.2', '<')) {
@@ -29,10 +29,12 @@ class Update
 
     /**
      * Update to version 2.1.2
+     *
+     * This function is necessary for older Plugin Versions to Migrate to Version 2.1.2
      * 
      * @return void
      */
-    protected static function updateToVersion212()
+    protected static function updateToVersion212(): void
     {
         // Remove custom roles/caps.
         Roles::removeRoleCaps();
