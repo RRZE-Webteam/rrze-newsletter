@@ -73,6 +73,16 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 * [Versand- und Queue-Invarianten](docs/maintainer/queue-invariants.md)
 
+### Tests
+
+Die schnellen Smoke-Tests für Parser, Wiederholungen und Mail-Queue verwenden
+die Composer-Entwicklungsabhängigkeit PHPUnit 9.6 und benötigen keine laufende
+WordPress-Installation:
+
+```shell
+composer test
+```
+
 **WordPress-Version:** `^6.8`
 
 **PHP-Version:** `8.2`

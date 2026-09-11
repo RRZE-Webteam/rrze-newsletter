@@ -17,5 +17,16 @@
             "RRZE\\Newsletter\\": "includes/",
             "RRule\\": "src/"
         }
+    },
+    "scripts": {
+        "test": "phpunit --configuration phpunit.xml.dist"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        }
     }
 }
