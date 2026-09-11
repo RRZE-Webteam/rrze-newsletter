@@ -69,6 +69,10 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 
 ## Hinweis für Entwickler
 
+### Maintainer-Dokumentation
+
+* [Versand- und Queue-Invarianten](docs/maintainer/queue-invariants.md)
+
 **WordPress-Version:** `^6.8`
 
 **PHP-Version:** `8.2`
