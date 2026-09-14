@@ -7,7 +7,7 @@
 >
     <testsuites>
         <testsuite name="RRZE Newsletter">
-            <directory>tests</directory>
+            <directory>tests/Unit</directory>
         </testsuite>
     </testsuites>
 </phpunit>
