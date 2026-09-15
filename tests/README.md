@@ -23,6 +23,25 @@ on WordPress hooks, post storage, permissions, REST routing, taxonomies or
 multisite belongs in the future integration suite and should run against a
 real WordPress test installation.
 
+### MJML helper tests
+
+Run the rendering helper tests on their own with:
+
+```shell
+composer test:unit -- --filter 'Tests\\Unit\\MJML'
+```
+
+These tests cover attribute conversion, color and font precedence, spacing
+presets used by the bundled layouts, pixel and percentage widths, inheritance
+between blocks, and independent render contexts for sibling columns.
+Expected values are explicit; no database, network or wall-clock time is used.
+The spacing tests use a namespaced stub for WordPress's numeric conversion
+function `absint()`.
+
+WordPress theme-palette resolution, HTML attribute escaping and full newsletter
+rendering remain integration-test work. These helper tests do not establish
+that generated emails render correctly in mail clients.
+
 ## Code coverage
 
 PCOV must be installed and loadable by PHP. The Composer command enables it

@@ -114,6 +114,14 @@ namespace RRZE\Newsletter\Mail {
     }
 }
 
+namespace RRZE\Newsletter\MJML {
+    // Only the numeric conversion boundary is needed by spacing unit tests.
+    function absint(mixed $value): int
+    {
+        return abs((int) $value);
+    }
+}
+
 namespace {
     if (!defined('ABSPATH')) {
         define('ABSPATH', dirname(__DIR__) . '/');
