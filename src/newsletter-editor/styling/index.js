@@ -21,6 +21,7 @@ import SelectControlWithOptGroup from "../../components/select-control-with-optg
  * Plugin dependencies
  */
 import "./style.scss";
+import { isManagedSpacing, mountManagedSpacing } from "./managed-spacing.mjs";
 
 const fontOptgroups = [
     {
@@ -180,7 +181,14 @@ export const ApplyStyling = withSelect(customStylesSelector)(({
     fontBody,
     fontHeader,
     backgroundColor,
+    spacingMode,
 }) => {
+    const managedSpacing = isManagedSpacing(spacingMode, window.rrze_newsletter_data?.global_managed_spacing);
+    useEffect(() => {
+        if (managedSpacing) {
+            return mountManagedSpacing(document);
+        }
+    }, [managedSpacing]);
     useEffect(() => {
         document.documentElement.style.setProperty(
             "--rrze-newsletter-body-font",
@@ -229,7 +237,7 @@ export const Styling = compose([
                         { value: "expert", label: __("Expert mode (manual spacing)", "rrze-newsletter") },
                     ]}
                     onChange={(value) => updateStyleValue("rrze_newsletter_spacing_mode", value)}
-                    help={window.rrze_newsletter_data?.global_managed_spacing
+                    help={isManagedSpacing("inherit", window.rrze_newsletter_data?.global_managed_spacing)
                         ? __("Global setting: managed spacing enabled. Save and preview the generated email to see the result. Editor blocks stay unchanged.", "rrze-newsletter")
                         : __("Global setting: manual spacing. Save and preview the generated email to see the result. Editor blocks stay unchanged.", "rrze-newsletter")}
                 />
@@ -238,8 +246,8 @@ export const Styling = compose([
                         {__("Expert mode disables spacing safeguards for this newsletter. Large gaps and deeply nested group padding can reduce readability on small screens. Check the generated email before sending. Contrast protection is controlled separately.", "rrze-newsletter")}
                     </Notice>
                 )}
-                {(spacingMode === "managed" || (spacingMode === "inherit" && window.rrze_newsletter_data?.global_managed_spacing)) && (
-                    <p>{__("The generated email uses consistent content gaps and outer gutters. Manual margins, padding and spacer heights are normalized; nested groups do not add extra padding.", "rrze-newsletter")}</p>
+                {isManagedSpacing(spacingMode, window.rrze_newsletter_data?.global_managed_spacing) && (
+                    <p>{__("The editor now approximates the email's consistent content gaps and outer gutters. Manual spacing values stay saved but are overridden while managed spacing is active. Nested groups do not add extra padding. Use the generated email preview for the final check.", "rrze-newsletter")}</p>
                 )}
             </PanelBody>
             <PanelBody

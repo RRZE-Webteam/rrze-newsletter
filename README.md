@@ -47,9 +47,15 @@ globale Einstellung übernehmen, automatische Abstände aktivieren oder ausdrüc
 den **Expertenmodus (manuelle Abstände)** verwenden. Der Expertenmodus zeigt einen
 Warnhinweis; der separate Kontrastschutz bleibt davon unberührt.
 
+Im automatischen Modus zeigt der Editor die Abstände näherungsweise direkt an,
+auch in der iframe-Ansicht. Beim Wechsel in den Expertenmodus gelten wieder die
+gespeicherten manuellen Werte. Ein Hinweis bei den Abstandsreglern erklärt die
+Übersteuerung; die Blockdaten selbst bleiben unverändert.
+
 Nach einer Änderung den Newsletter erneut speichern und die generierte E-Mail
-prüfen. Gespeicherte Blöcke und die Editoransicht werden nicht umgeschrieben;
-bereits gespeicherte Versand-HTMLs ändern sich nicht rückwirkend.
+prüfen. Die Editor-Darstellung ist keine pixelgenaue Mailclient-Vorschau; unter
+anderem bleiben Spacer im Editor einzeln auswählbar. Bereits gespeicherte
+Versand-HTMLs ändern sich nicht rückwirkend.
 
 ## Tags
 

@@ -42,6 +42,26 @@ Save middleware tests verify the mode is persisted before MJML generation, show
 a preview notice for managed output and keep contrast protection independent.
 These do not prove real WordPress REST storage or browser interaction.
 
+Editor spacing tests additionally exercise the live mode effect, the selected
+block's Dimensions hint, and the DOM presentation controller. The controller
+styles only newsletter canvas roots and known editor/post-inserter preview
+iframes. Tests cover late mounts, frame loads/replacement (including Gutenberg's
+body-less iframe load followed by a React body portal), React root-class
+updates, canvas-width breakpoints, cleanup and byte-for-byte preservation of
+block markup/inline attributes. jsdom tests verify lifecycle and DOM contracts,
+not native CSS layout. No WordPress store writes are used by this presentation.
+Mode regression tests also cover the string values `"1"`/`""` produced by
+`wp_localize_script`, along with booleans and false-like strings. Inspector tests
+use the real mode resolver, so the preview effect, hint and global-setting label
+cannot silently diverge at this PHP-to-JavaScript boundary.
+The editor CSS approximates the PHP spacing preset; keep its values in sync with
+`ManagedSpacing` and the group/column/grid processors. Adjacent spacer blocks
+remain individually selectable in the editor, even if output combines them.
+
+`tests/Browser/editor-spacing.test.cjs` checks computed spacing against the built
+editor CSS in a native browser, including simultaneous iframe/main canvases,
+resizing, nested groups, untouched inspector UI and return to manual spacing.
+
 `npm run test:browser` includes optional headless Chrome checks at 240–680px,
 both with and without head styles. Network requests are blocked. Browser tests
 are separate from the default suite and do not establish Outlook/Apple Mail/Gmail
