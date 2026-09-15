@@ -8,13 +8,17 @@ import mjml2html from 'mjml-browser';
  * WordPress dependencies
  */
 import apiFetch from '@wordpress/api-fetch';
-import { select as globalSelect } from '@wordpress/data';
+import { select as globalSelect, dispatch } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
+import { protectEmailHtml } from '../contrast/contrast.mjs';
+import { showEmailPreview } from '../contrast/preview';
 
 const POST_META_WHITELIST = [
 	'rrze_newsletter_preview_text',
 	'rrze_newsletter_font_body',
 	'rrze_newsletter_font_header',
 	'rrze_newsletter_background_color',
+	'rrze_newsletter_contrast_protection',
 	'rrze_newsletter_sent',
 ];
 
@@ -89,11 +93,35 @@ apiFetch.use( async ( options, next ) => {
 	// Once received MJML markup, convert it to email-compliant HTML
 	// and save as post meta for later retrieval.
 	const { html } = mjml2html( mjml, { keepComments: false } );
+	let protectedEmail;
+	try {
+		protectedEmail = await protectEmailHtml( html, postMeta.rrze_newsletter_contrast_protection !== false );
+	} catch ( error ) {
+		dispatch( 'core/notices' ).createErrorNotice(
+			__( 'Email contrast protection could not run. Please retry saving or disable it in the newsletter styling settings.', 'rrze-newsletter' ),
+			{ id: 'rrze-newsletter-contrast' }
+		);
+		throw error;
+	}
 	await apiFetch( {
-		data: { meta: { [ emailHTMLMetaName ]: html } },
+		data: { meta: { [ emailHTMLMetaName ]: protectedEmail.html } },
 		method: 'POST',
 		path: `/wp/v2/${ postType }/${ data.id }`,
 	} );
+	dispatch( 'core/notices' ).removeNotice( 'rrze-newsletter-contrast' );
+	if ( protectedEmail.corrected || protectedEmail.skipped ) {
+		dispatch( 'core/notices' ).createWarningNotice(
+			sprintf(
+				/* translators: 1: corrected text elements, 2: elements needing manual review. */
+				__( 'Email contrast protection: %1$d text elements adjusted; %2$d could not be checked safely (for example, image backgrounds or transparency). Review the generated email before sending. Editor block colors were not changed.', 'rrze-newsletter' ),
+				protectedEmail.corrected, protectedEmail.skipped
+			),
+			{ id: 'rrze-newsletter-contrast', actions: [ {
+				label: __( 'Preview generated email', 'rrze-newsletter' ),
+				onClick: () => showEmailPreview( protectedEmail.html ),
+			} ] }
+		);
+	}
 
 	return next( options ); // Proceed with the post update request.
 } );

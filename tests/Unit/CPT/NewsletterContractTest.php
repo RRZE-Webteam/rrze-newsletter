@@ -34,6 +34,7 @@ final class NewsletterContractTest extends ApplicationTestCase
             'has_conditionals' => 'boolean', 'conditionals_rss_block' => 'boolean', 'conditionals_ics_block' => 'boolean',
             'is_recurring' => 'boolean', 'recurrence_repeat' => 'string', 'recurrence_monthly' => 'string',
             'template_id' => 'integer', 'font_header' => 'string', 'font_body' => 'string', 'background_color' => 'string',
+            'contrast_protection' => 'boolean',
         ];
         self::assertCount(count($expected), App::$registrations['meta']);
         foreach ($expected as $suffix => $type) {
@@ -49,6 +50,7 @@ final class NewsletterContractTest extends ApplicationTestCase
         self::assertSame('DAILY', App::$registrations['meta']['rrze_newsletter_recurrence_repeat']['default']);
         self::assertSame('BYSETPOS', App::$registrations['meta']['rrze_newsletter_recurrence_monthly']['default']);
         self::assertSame(-1, App::$registrations['meta']['rrze_newsletter_template_id']['default']);
+        self::assertTrue(App::$registrations['meta']['rrze_newsletter_contrast_protection']['default']);
     }
 
     public function testDirectRecipientMetaAppearsOnlyWhenMailingListsAreDisabled(): void

@@ -391,6 +391,18 @@ class Newsletter
                 'auth_callback'  => '__return_true',
             ]
         );
+        register_meta(
+            'post',
+            'rrze_newsletter_contrast_protection',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest' => ['schema' => ['context' => ['edit']]],
+                'type' => 'boolean',
+                'single' => true,
+                'default' => true,
+                'auth_callback' => '__return_true',
+            ]
+        );
     }
 
     public static function registerCategory(): void

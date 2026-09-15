@@ -9,6 +9,7 @@ import {
     PanelBody,
     PanelRow,
     SelectControl,
+    ToggleControl,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useSelect, withDispatch, withSelect } from "@wordpress/data";
@@ -90,6 +91,7 @@ const customStylesSelector = (select) => {
             meta.rrze_newsletter_font_header ||
             fontOptgroups[0].options[0].value,
         backgroundColor: meta.rrze_newsletter_background_color || "#f0f0f0",
+        contrastProtection: meta.rrze_newsletter_contrast_protection !== false,
         linkColor: meta.rrze_newsletter_link_color || "inherit",
         linkTextDecoration:
             meta.rrze_newsletter_link_text_decoration || "underline",
@@ -205,7 +207,7 @@ export const Styling = compose([
         return { editPost };
     }),
     withSelect(customStylesSelector),
-])(({ editPost, fontBody, fontHeader, backgroundColor }) => {
+])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection }) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
     };
@@ -265,6 +267,14 @@ export const Styling = compose([
                         />
                     </BaseControl>
                 </PanelRow>
+            </PanelBody>
+            <PanelBody title={__("Email contrast protection", "rrze-newsletter")}>
+                <ToggleControl
+                    label={__("Automatically improve text contrast", "rrze-newsletter")}
+                    checked={contrastProtection}
+                    onChange={(value) => updateStyleValue("rrze_newsletter_contrast_protection", value)}
+                    help={__("When saving, adjust low-contrast text on solid backgrounds in the generated email. Block colors stay unchanged. A notice lets you preview corrections and review backgrounds that cannot be checked safely.", "rrze-newsletter")}
+                />
             </PanelBody>
         </Panel>
     );

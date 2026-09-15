@@ -18,7 +18,7 @@ composer test
 composer test:unit
 ```
 
-`npm run test` runs both the PHP suite and the compiled MJML/HTML regressions
+`npm run test` runs the PHP suite, compiled MJML/HTML and contrast regressions
 described below. It requires the Composer and npm dependencies to be installed.
 
 Keep these stubs limited to small, deterministic boundaries. Contract tests can
@@ -345,6 +345,55 @@ must overflow at 320px. Browser profiles are temporary and page network requests
 are blocked. This validates the isolated button layout in Chromium, not every
 possible newsletter or Outlook/Apple Mail rendering engine. After deploying,
 save affected newsletters again to regenerate their stored HTML.
+
+### Email contrast protection
+
+The newsletter styling panel now offers **Automatically improve text contrast**,
+enabled by default through the boolean `rrze_newsletter_contrast_protection`
+metadata. During editor saves, the final MJML-generated HTML is inspected in an
+offscreen, sandboxed iframe. Its temporary CSP blocks external resources and
+scripts; the iframe is removed on success, error or timeout. No analysis script
+or temporary CSP is included in the delivered email.
+
+The safeguard resolves computed text colors and the nearest opaque background,
+including enclosing tables, groups and button backgrounds. It preserves colors
+meeting 4.5:1 and replaces failing colors with whichever of black/white provides
+greater contrast. The calculation follows the [WCAG luminance formula and
+unrounded threshold](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
+The 4.5:1 threshold is deliberately used for all text, including headings.
+Original colors are snapshotted before changes so correcting a parent cannot
+break readable descendants on a different background. When correction is needed,
+explicit text colors are emitted inline, including preserved descendant colors.
+Saved Gutenberg block content, links, images and backgrounds are not rewritten.
+
+Background images/gradients, partial transparency, filters, blending and
+unsupported computed colors are reported for manual review rather than guessed.
+Hidden text and SVG/logo content are not adjusted. This is not a complete
+accessibility audit, image-text analysis or a dark-mode guarantee. Analysis uses
+a 680px viewport; arbitrary viewport-dependent color rules and downstream dynamic
+content inserted after HTML generation still require separate checks.
+
+After saving, a notice reports adjusted and unassessed text elements and offers
+a sandboxed **Preview generated email** modal. The ordinary Gutenberg canvas is
+unchanged. Test sends, archive output and new queue entries use the same stored
+HTML. Disabling protection and saving regenerates the original colors from the
+unchanged blocks. Existing queued/delivered messages are not rewritten. If the
+analysis fails, the middleware shows an error and does not store unchecked HTML
+or forward that post update.
+
+```shell
+npm run test:contrast
+npm run test:browser
+```
+
+Contrast tests cover reference ratios, threshold boundaries, solid/inherited
+backgrounds, nested readable children, links, captions, buttons, uncertain
+backgrounds, idempotence, Outlook comments and personalization placeholders.
+The installed jsdom lacks complete computed CSS, so unit tests explicitly adapt
+its inheritance, named-color and gradient boundaries. They are not a browser
+layout engine. Save-middleware tests run the actual module with recorded API,
+notice and preview boundaries. The opt-in native-browser test covers real CSS,
+iframe isolation, resource blocking, script blocking, cleanup and serialization.
 
 ### Feed placeholders, RSS and archive output
 
