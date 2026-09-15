@@ -5,6 +5,52 @@ const policy = import( '../../src/newsletter-editor/styling/managed-spacing.mjs'
 const canvas = '<div class="editor-styles-wrapper"><div class="is-root-container"><p data-type="core/paragraph" style="margin:90px;padding:80px">Unchanged content</p></div></div>';
 const tick = () => new Promise( ( resolve ) => setImmediate( resolve ) );
 
+for ( const legacyWrapper of [ false, true ] ) {
+	for ( const type of [ 'heading', 'paragraph' ] ) {
+		test( `${ type } bottom spacing stays contained by modern/legacy groups (legacy=${ legacyWrapper })`, async () => {
+			const { mountManagedSpacing } = await policy;
+			const tag = type === 'heading' ? 'h3' : 'p';
+			const group = ( children ) => `<div data-type="core/group" style="background-color:#04316a">${ legacyWrapper ? `<div class="wp-block-group__inner-container">${ children }</div>` : children }</div>`;
+			for ( const depth of [ 0, 1, 12 ] ) {
+				let markup = `<${ tag } data-type="core/${ type }">News</${ tag }>`;
+				for ( let level = 0; level <= depth; level++ ) markup = group( markup );
+				const dom = new JSDOM( `<div class="editor-styles-wrapper"><div class="is-root-container">${ markup }</div></div>` );
+				const doc = dom.window.document;
+				const original = doc.body.innerHTML;
+				const dispose = mountManagedSpacing( doc );
+				const css = ( node ) => dom.window.getComputedStyle( node );
+				// jsdom does not perform layout: assert the formatting context that
+				// prevents the last child's margin from collapsing outside its group.
+				for ( const container of doc.querySelectorAll( '[data-type="core/group"], .wp-block-group__inner-container' ) ) {
+					assert.equal( css( container ).display, 'flow-root' );
+					assert.ok( [ '', '0px' ].includes( css( container ).paddingBottom ), 'Nested groups must not accumulate padding' );
+				}
+				assert.equal( css( doc.querySelector( tag ) ).marginBottom, '16px' );
+				dispose();
+				assert.equal( doc.body.innerHTML, original, 'Expert mode restores the original content and styling' );
+				assert.equal( css( doc.querySelector( '[data-type="core/group"]' ) ).display, 'block' );
+				dom.window.close();
+			}
+		} );
+	}
+}
+
+test( 'group margin containment leaves grid, columns, buttons and outside groups in their own layouts', async () => {
+	const { mountManagedSpacing } = await policy;
+	const dom = new JSDOM( `<div id="outside" data-type="core/group"></div><div class="editor-styles-wrapper"><div class="is-root-container">
+		<div id="grid" data-type="core/group" class="is-layout-grid" style="display:grid"><div class="wp-block-group__inner-container"></div></div>
+		<div id="columns" data-type="core/columns" style="display:flex"></div>
+		<div id="buttons" data-type="core/buttons"></div>
+	</div></div>` );
+	const doc = dom.window.document;
+	const dispose = mountManagedSpacing( doc );
+	for ( const [ selector, display ] of [ [ '#outside', 'block' ], [ '#grid', 'grid' ], [ '#grid > div', 'block' ], [ '#columns', 'flex' ], [ '#buttons', 'block' ] ] ) {
+		assert.equal( dom.window.getComputedStyle( doc.querySelector( selector ) ).display, display );
+	}
+	dispose();
+	dom.window.close();
+} );
+
 test( 'editor mode resolution matches PHP precedence, including missing and invalid values', async () => {
 	const { isManagedSpacing } = await policy;
 	for ( const globalEnabled of [ false, true ] ) {

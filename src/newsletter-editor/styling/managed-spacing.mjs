@@ -31,7 +31,13 @@ export const editorSpacingCss = `
 .${ ROOT_CLASS } [data-type="core/buttons"] {
 	gap:0 !important;
 }
+/* Contain the last child's bottom margin within the group's background.
+   A formatting context avoids collapsed margins without adding padding at
+   every nesting level. Legacy editors need the inner wrapper contained too. */
 .${ ROOT_CLASS } [data-type="core/group"]:not(.is-layout-grid),
+.${ ROOT_CLASS } [data-type="core/group"]:not(.is-layout-grid) > .wp-block-group__inner-container {
+	display:flow-root !important;
+}
 .${ ROOT_CLASS } [data-type="core/buttons"] { display:block !important; }
 .${ ROOT_CLASS } [data-type="core/paragraph"],
 .${ ROOT_CLASS } [data-type="core/heading"],
