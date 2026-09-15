@@ -43,6 +43,11 @@ function getSections(): array
 {
     return [
         [
+            'id' => 'design',
+            'title' => __('Design', 'rrze-newsletter'),
+            'desc' => ''
+        ],
+        [
             'id'    => 'mail_server',
             'title' => __('Mail Server', 'rrze-newsletter'),
             'desc' => ''
@@ -71,6 +76,15 @@ function getSections(): array
 function getFields(): array
 {
     return [
+        'design' => [
+            [
+                'name' => 'managed_spacing',
+                'label' => __('Email spacing', 'rrze-newsletter'),
+                'desc' => __('Manage email spacing automatically. Normalize manual margins, padding and spacer heights, and prevent nested groups from accumulating padding. Each newsletter can override this setting under Styling → Email spacing. Changes apply when a newsletter is saved again; saved editor blocks are not changed.', 'rrze-newsletter'),
+                'type' => 'checkbox',
+                'default' => 'off',
+            ],
+        ],
         'mail_server' => [
             [
                 'name'    => 'encryption',

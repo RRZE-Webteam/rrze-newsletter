@@ -35,6 +35,22 @@ Mit dem Plugin kann man mit dem WordPress-Blockeditor (Gutenberg) auffällige E-
 
 Dashboard / Einstellungen / Newsletters
 
+### Automatische E-Mail-Abstände
+
+Unter **Design → Email spacing** lässt sich eine automatische Abstandsregelung
+aktivieren. Sie vereinheitlicht Abstände in der generierten E-Mail und verhindert,
+dass verschachtelte Gruppen immer mehr Innenabstand aufbauen. Standardmäßig bleibt
+sie deaktiviert, damit bestehende Newsletter ihr bisheriges Layout behalten.
+
+Im Newsletter-Editor unter **Styling → Email spacing** kann jeder Newsletter die
+globale Einstellung übernehmen, automatische Abstände aktivieren oder ausdrücklich
+den **Expertenmodus (manuelle Abstände)** verwenden. Der Expertenmodus zeigt einen
+Warnhinweis; der separate Kontrastschutz bleibt davon unberührt.
+
+Nach einer Änderung den Newsletter erneut speichern und die generierte E-Mail
+prüfen. Gespeicherte Blöcke und die Editoransicht werden nicht umgeschrieben;
+bereits gespeicherte Versand-HTMLs ändern sich nicht rückwirkend.
+
 ## Tags
 
 Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den Newsletter einfügen, um personalisierte oder dynamische Inhalte hinzuzufügen. Die folgende Liste zeigt alle verfügbaren Tags.

@@ -514,6 +514,9 @@ class RestApi
             $post->post_title = $request['title'];
         }
         $post->post_content = $request['content'];
-        return rest_ensure_response(['mjml' => Renderer::fromPost($post)]);
+        return rest_ensure_response([
+            'mjml' => Renderer::fromPost($post),
+            'managed_spacing' => \RRZE\Newsletter\MJML\ManagedSpacing::forPost($post->ID),
+        ]);
     }
 }

@@ -136,4 +136,16 @@ final class RestApiTest extends ApplicationTestCase
         self::assertInstanceOf(\WP_Error::class, $error);
         self::assertSame('rrze_newsletter_mjml_render_error', $error->get_error_code());
     }
+
+    public function testMjmlResponseReportsTheEffectiveSpacingModeForSaveNotices(): void
+    {
+        $this->post();
+        App::$options['rrze_newsletter'] = ['design_managed_spacing' => 'on'];
+        foreach (['inherit' => true, 'managed' => true, 'expert' => false] as $mode => $enabled) {
+            App::$meta[42]['rrze_newsletter_spacing_mode'] = $mode;
+            $output = (new RestApi())->apiGetMjml(['post_id' => 42, 'content' => 'empty-editor-content']);
+            self::assertSame($enabled, $output['managed_spacing']);
+            self::assertSame($enabled, str_contains($output['mjml'], 'rrze-managed-spacing'));
+        }
+    }
 }

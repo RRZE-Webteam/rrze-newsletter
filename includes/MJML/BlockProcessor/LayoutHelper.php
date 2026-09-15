@@ -15,6 +15,7 @@ final class LayoutHelper
     public static function filterSectionAttributes(array $attrs): array
     {
         $allowed = [
+            'css-class',
             'background-color',
             'background-url',
             'background-repeat',

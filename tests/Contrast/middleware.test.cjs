@@ -10,7 +10,7 @@ const { code } = transformSync( readFileSync( path.join( __dirname, '../../src/e
 	babelrc: false, configFile: false, plugins: [ '@babel/plugin-transform-modules-commonjs' ],
 } );
 
-function harness( { enabled, failure, skipped = 0 } = {} ) {
+function harness( { enabled, failure, skipped = 0, spacingMode = 'inherit', managedSpacing = false } = {} ) {
 	let middleware;
 	const calls = [];
 	const notices = [];
@@ -18,10 +18,10 @@ function harness( { enabled, failure, skipped = 0 } = {} ) {
 	const guardCalls = [];
 	const apiFetch = async ( options ) => {
 		calls.push( options );
-		return options.path === '/rrze-newsletter/v1/post-mjml' ? { mjml: '<mjml />' } : {};
+		return options.path === '/rrze-newsletter/v1/post-mjml' ? { mjml: '<mjml />', managed_spacing: managedSpacing } : {};
 	};
 	apiFetch.use = ( handler ) => { middleware = handler; };
-	const meta = { rrze_newsletter_contrast_protection: enabled, rrze_newsletter_background_color: '#000000' };
+	const meta = { rrze_newsletter_contrast_protection: enabled, rrze_newsletter_background_color: '#000000', rrze_newsletter_spacing_mode: spacingMode };
 	const dependencies = {
 		lodash: require( 'lodash' ),
 		'mjml-browser': () => ( { html: '<html>Original</html>' } ),
@@ -29,6 +29,7 @@ function harness( { enabled, failure, skipped = 0 } = {} ) {
 		'@wordpress/data': {
 			select: () => ( { getCurrentPostType: () => 'newsletter', getEditedPostAttribute: () => meta } ),
 			dispatch: () => ( {
+				createInfoNotice: ( ...args ) => notices.push( [ 'info', ...args ] ),
 				createWarningNotice: ( ...args ) => notices.push( [ 'warning', ...args ] ),
 				createErrorNotice: ( ...args ) => notices.push( [ 'error', ...args ] ),
 				removeNotice: ( ...args ) => notices.push( [ 'remove', ...args ] ),
@@ -87,3 +88,24 @@ test( 'analysis failure is visible and does not save unchecked HTML or continue 
 	assert.equal( state.forwarded(), false );
 	assert.equal( state.notices[ 0 ][ 0 ], 'error' );
 } );
+
+for ( const spacingMode of [ 'inherit', 'managed', 'expert' ] ) {
+	test( `${ spacingMode }: spacing mode is saved before rendering and removed from the later update`, async () => {
+		const state = harness( { spacingMode, managedSpacing: spacingMode !== 'expert' } );
+		state.options.data.meta.rrze_newsletter_spacing_mode = spacingMode;
+		await state.run();
+		assert.equal( state.calls[ 0 ].data.meta.rrze_newsletter_spacing_mode, spacingMode );
+		assert.equal( state.calls[ 1 ].path, '/rrze-newsletter/v1/post-mjml' );
+		assert.ok( ! ( 'rrze_newsletter_spacing_mode' in state.options.data.meta ) );
+		assert.equal( state.options.data.content, '<p>Original blocks</p>' );
+		// Expert spacing must not implicitly disable the independent contrast guard.
+		assert.equal( state.guardCalls[ 0 ][ 1 ], true );
+		const notice = state.notices.find( ( item ) => item[ 0 ] === 'info' );
+		assert.equal( Boolean( notice ), spacingMode !== 'expert' );
+		if ( notice ) {
+			assert.equal( notice[ 2 ].id, 'rrze-newsletter-spacing' );
+			notice[ 2 ].actions[ 0 ].onClick();
+			assert.deepEqual( state.previews, [ '<html>Corrected</html>' ] );
+		}
+	} );
+}

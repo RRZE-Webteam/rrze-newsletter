@@ -23,6 +23,9 @@ final class ColumnProcessor
         array $columnAttrs,
         RenderContext $context
     ): string {
+        if ($context->managedSpacing) {
+            $columnAttrs['padding'] = '0 8px';
+        }
         if (isset($attrs['verticalAlignment'])) {
             $columnAttrs['vertical-align'] = $attrs['verticalAlignment'] === 'center'
                 ? 'middle'

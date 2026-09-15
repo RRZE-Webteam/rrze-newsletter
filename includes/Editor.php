@@ -296,6 +296,7 @@ final class Editor
                 'is_service_provider_configured' => true,
                 'service_provider' => 'provider',
                 'email_html_meta' => 'rrze_newsletter_email_html',
+                'global_managed_spacing' => \RRZE\Newsletter\MJML\ManagedSpacing::globallyEnabled(),
                 'mjml_handling_post_types' => [Newsletter::POST_TYPE],
             ]
         );

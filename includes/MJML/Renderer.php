@@ -76,7 +76,7 @@ final class Renderer
      * @param bool $processLinks Whether to process links for tracking, etc.
      * @return string MJML markup.
      */
-    private static function postToMjmlComponents(object $post, string $content, bool $processLinks): string
+    private static function postToMjmlComponents(object $post, string $content, bool $processLinks, bool $managedSpacing = false): string
     {
         BlockProcessor::beginRender();
 
@@ -107,7 +107,7 @@ final class Renderer
 
             $blockContent = BlockProcessor::render(
                 $block,
-                RenderContext::root($postId)
+                RenderContext::root($postId, managedSpacing: $managedSpacing)
             );
 
             $mjmlBody .= $blockContent;
@@ -142,6 +142,7 @@ final class Renderer
 
         $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true) ?: '';
         $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true) ?: '#f0f0f0';
+        $managedSpacing = ManagedSpacing::forPost($post->ID);
 
         $data = [
             'title' => $post->post_title,
@@ -150,7 +151,8 @@ final class Renderer
             'body_width' => self::EMAIL_WIDTH,
             'link_color' => self::$linkColor,
             'link_text_decoration' => self::$linkTextDecoration,
-            'body' => self::postToMjmlComponents($post, $post->post_content, true)
+            'managed_spacing' => $managedSpacing,
+            'body' => self::postToMjmlComponents($post, $post->post_content, true, $managedSpacing)
         ];
 
         return TemplateRenderer::renderTemplate($data);
@@ -176,12 +178,15 @@ final class Renderer
         self::$fontHeader = 'Arial';
         self::$fontBody = 'Arial';
 
+        $managedSpacing = ManagedSpacing::globallyEnabled();
+
         $data = [
             'title' => $args['title'],
             'preview_text' => $args['preview_text'],
             'background_color' => $args['background_color'],
             'body_width' => self::EMAIL_WIDTH,
-            'body' => self::postToMjmlComponents(new \stdClass, $args['content'], false)
+            'managed_spacing' => $managedSpacing,
+            'body' => self::postToMjmlComponents(new \stdClass, $args['content'], false, $managedSpacing)
         ];
 
         return TemplateRenderer::renderTemplate($data);

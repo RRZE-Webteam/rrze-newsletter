@@ -22,7 +22,8 @@ final readonly class RenderContext
         public bool $inColumn = false,
         public bool $inGroup = false,
         public bool $inList = false,
-        public int $availableWidth = Renderer::EMAIL_WIDTH
+        public int $availableWidth = Renderer::EMAIL_WIDTH,
+        public bool $managedSpacing = false
     ) {
     }
 
@@ -35,11 +36,13 @@ final readonly class RenderContext
      */
     public static function root(
         int $postId,
-        int $availableWidth = Renderer::EMAIL_WIDTH
+        int $availableWidth = Renderer::EMAIL_WIDTH,
+        bool $managedSpacing = false
     ): self {
         return new self(
             postId: $postId,
-            availableWidth: $availableWidth
+            availableWidth: $availableWidth,
+            managedSpacing: $managedSpacing
         );
     }
 
@@ -118,7 +121,8 @@ final readonly class RenderContext
             inColumn: $inColumn ?? $this->inColumn,
             inGroup: $inGroup ?? $this->inGroup,
             inList: $inList ?? $this->inList,
-            availableWidth: $availableWidth ?? $this->availableWidth
+            availableWidth: $availableWidth ?? $this->availableWidth,
+            managedSpacing: $this->managedSpacing
         );
     }
 }

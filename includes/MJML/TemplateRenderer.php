@@ -24,6 +24,9 @@ class TemplateRenderer
     public static function renderTemplate(array $data): string
     {
         $tpl = preg_replace('/\s+/', ' ', Templates::getContent('newsletter.mjml', $data));
+        if (!empty($data['managed_spacing'])) {
+            $tpl = str_replace('</mj-head>', ManagedSpacing::styles() . '</mj-head>', $tpl);
+        }
         // Remove a:hover styles, as they are not supported by MJML.
         $tpl = preg_replace('/a:hover\s*{[^}]*}/i', '', $tpl);
         return str_replace(PHP_EOL, '', $tpl);

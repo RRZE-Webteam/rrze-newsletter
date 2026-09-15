@@ -10,6 +10,7 @@ import {
     PanelRow,
     SelectControl,
     ToggleControl,
+    Notice,
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useSelect, withDispatch, withSelect } from "@wordpress/data";
@@ -92,6 +93,7 @@ const customStylesSelector = (select) => {
             fontOptgroups[0].options[0].value,
         backgroundColor: meta.rrze_newsletter_background_color || "#f0f0f0",
         contrastProtection: meta.rrze_newsletter_contrast_protection !== false,
+        spacingMode: meta.rrze_newsletter_spacing_mode || "inherit",
         linkColor: meta.rrze_newsletter_link_color || "inherit",
         linkTextDecoration:
             meta.rrze_newsletter_link_text_decoration || "underline",
@@ -207,7 +209,7 @@ export const Styling = compose([
         return { editPost };
     }),
     withSelect(customStylesSelector),
-])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection }) => {
+])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection, spacingMode }) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
     };
@@ -217,6 +219,29 @@ export const Styling = compose([
 
     return (
         <Panel>
+            <PanelBody title={__("Email spacing", "rrze-newsletter")}>
+                <SelectControl
+                    label={__("Spacing mode", "rrze-newsletter")}
+                    value={spacingMode}
+                    options={[
+                        { value: "inherit", label: __("Use global setting", "rrze-newsletter") },
+                        { value: "managed", label: __("Managed spacing", "rrze-newsletter") },
+                        { value: "expert", label: __("Expert mode (manual spacing)", "rrze-newsletter") },
+                    ]}
+                    onChange={(value) => updateStyleValue("rrze_newsletter_spacing_mode", value)}
+                    help={window.rrze_newsletter_data?.global_managed_spacing
+                        ? __("Global setting: managed spacing enabled. Save and preview the generated email to see the result. Editor blocks stay unchanged.", "rrze-newsletter")
+                        : __("Global setting: manual spacing. Save and preview the generated email to see the result. Editor blocks stay unchanged.", "rrze-newsletter")}
+                />
+                {spacingMode === "expert" && (
+                    <Notice status="warning" isDismissible={false}>
+                        {__("Expert mode disables spacing safeguards for this newsletter. Large gaps and deeply nested group padding can reduce readability on small screens. Check the generated email before sending. Contrast protection is controlled separately.", "rrze-newsletter")}
+                    </Notice>
+                )}
+                {(spacingMode === "managed" || (spacingMode === "inherit" && window.rrze_newsletter_data?.global_managed_spacing)) && (
+                    <p>{__("The generated email uses consistent content gaps and outer gutters. Manual margins, padding and spacer heights are normalized; nested groups do not add extra padding.", "rrze-newsletter")}</p>
+                )}
+            </PanelBody>
             <PanelBody
                 name="rrze-newsletter-typography-panel"
                 title={__("Typography", "rrze-newsletter")}

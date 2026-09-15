@@ -403,6 +403,21 @@ class Newsletter
                 'auth_callback' => '__return_true',
             ]
         );
+        register_meta(
+            'post',
+            'rrze_newsletter_spacing_mode',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest' => ['schema' => [
+                    'context' => ['edit'],
+                    'enum' => ['inherit', 'managed', 'expert'],
+                ]],
+                'type' => 'string',
+                'single' => true,
+                'default' => 'inherit',
+                'auth_callback' => '__return_true',
+            ]
+        );
     }
 
     public static function registerCategory(): void

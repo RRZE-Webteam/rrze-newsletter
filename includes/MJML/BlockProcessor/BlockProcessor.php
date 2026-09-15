@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\MJML\BlockProcessor;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\MJML\AttributeHandler;
+use RRZE\Newsletter\MJML\ManagedSpacing;
 use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\MJML\StyleProcessor;
 
@@ -43,6 +44,10 @@ final class BlockProcessor
         array $block,
         RenderContext $context
     ): string {
+        $isRoot = !$context->inGroup && !$context->inColumn && !$context->inList;
+        if ($context->managedSpacing && $isRoot) {
+            $block = ManagedSpacing::normalizeBlock($block);
+        }
         $blockName = (string) ($block['blockName'] ?? '');
         $blockAttrs = $block['attrs'] ?? [];
 
@@ -64,6 +69,12 @@ final class BlockProcessor
             unset($sectionAttrs['background-color']);
         }
         $columnAttrs = ['padding' => $padding ?: '0'];
+        if ($context->managedSpacing && $isRoot && $blockName !== 'core/group'
+            && ($blockAttrs['align'] ?? '') !== 'full') {
+            $sectionAttrs['padding'] = '0 24px';
+            $sectionAttrs['css-class'] = 'rrze-managed-spacing';
+            $context = $context->withAvailableWidth(max(1, $context->availableWidth - 48));
+        }
         $fontFamily = $blockName === 'core/heading'
             ? Renderer::getFontHeader()
             : Renderer::getFontBody();
@@ -79,6 +90,10 @@ final class BlockProcessor
 
         if ($markup === '') {
             return '';
+        }
+
+        if ($context->managedSpacing && !in_array($blockName, ['core/group', 'core/columns', 'core/column'], true)) {
+            $markup = ManagedSpacing::spaceComponents($markup);
         }
 
         return self::wrapMarkup(

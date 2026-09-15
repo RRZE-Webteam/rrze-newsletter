@@ -23,6 +23,14 @@ final class GroupProcessor
         $innerBlocks = $block['innerBlocks'] ?? [];
         $attrs = AttributeHandler::processAttributes($block['attrs'] ?? []);
         $attrs['padding'] = StyleProcessor::getPaddingFromAttributes($attrs) ?: '0';
+        if ($context->managedSpacing) {
+            // Flattened groups contribute no additional gutters, regardless of depth.
+            $outer = !$context->inColumn && !$context->inGroup;
+            $attrs['padding'] = $outer ? '16px 24px 0' : '0';
+            if ($outer) {
+                $attrs['css-class'] = 'rrze-managed-spacing';
+            }
+        }
         $innerWidth = LayoutHelper::subtractHorizontalPadding(
             $context->availableWidth,
             $attrs['padding']

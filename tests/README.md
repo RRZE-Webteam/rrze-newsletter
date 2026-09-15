@@ -18,8 +18,34 @@ composer test
 composer test:unit
 ```
 
-`npm run test` runs the PHP suite, compiled MJML/HTML and contrast regressions
+`npm run test` runs the PHP suite, compiled MJML/HTML, contrast and editor regressions
 described below. It requires the Composer and npm dependencies to be installed.
+
+### Managed spacing and per-newsletter overrides
+
+The opt-in global `design_managed_spacing` setting is overridden by newsletter
+meta `rrze_newsletter_spacing_mode`: `inherit` (default), `managed`, or `expert`.
+PHP tests cover precedence, invalid/missing values, unchanged manual-mode output,
+immutable source blocks, nested groups through twelve levels, grids, columns,
+full-bleed root images, spacer normalization and REST response metadata.
+
+Managed output uses 24px outer side gutters (16px below 480px), 16px component
+gaps and 8px side padding inside layout columns. Flattened groups add no gutters.
+Typography margins/padding are reset during MJML inlining; list indentation and
+button inner padding retain usable defaults. This is a spacing preset, not a
+general validator for arbitrary HTML, column widths, borders or email designs.
+
+`tests/MJML/spacing.test.cjs` compiles synthetic fixtures with the real compiler.
+`npm run test:editor` checks the actual inspector component against small UI/store
+boundaries and loads the production settings schema in an isolated PHP process.
+Save middleware tests verify the mode is persisted before MJML generation, show
+a preview notice for managed output and keep contrast protection independent.
+These do not prove real WordPress REST storage or browser interaction.
+
+`npm run test:browser` includes optional headless Chrome checks at 240–680px,
+both with and without head styles. Network requests are blocked. Browser tests
+are separate from the default suite and do not establish Outlook/Apple Mail/Gmail
+compatibility; preview and test-send representative newsletters before rollout.
 
 Keep these stubs limited to small, deterministic boundaries. Contract tests can
 assert the arguments supplied to WordPress and the plugin's decisions given

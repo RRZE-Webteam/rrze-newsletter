@@ -19,6 +19,7 @@ const POST_META_WHITELIST = [
 	'rrze_newsletter_font_header',
 	'rrze_newsletter_background_color',
 	'rrze_newsletter_contrast_protection',
+	'rrze_newsletter_spacing_mode',
 	'rrze_newsletter_sent',
 ];
 
@@ -80,7 +81,7 @@ apiFetch.use( async ( options, next ) => {
 
 	// Then, send the content over to the server to convert the post content
 	// into MJML markup.
-	const { mjml } = await apiFetch( {
+	const { mjml, managed_spacing } = await apiFetch( {
 		path: `/rrze-newsletter/v1/post-mjml`,
 		method: 'POST',
 		data: {
@@ -109,6 +110,16 @@ apiFetch.use( async ( options, next ) => {
 		path: `/wp/v2/${ postType }/${ data.id }`,
 	} );
 	dispatch( 'core/notices' ).removeNotice( 'rrze-newsletter-contrast' );
+	dispatch( 'core/notices' ).removeNotice( 'rrze-newsletter-spacing' );
+	if ( managed_spacing ) {
+		dispatch( 'core/notices' ).createInfoNotice(
+			__( 'Managed spacing was applied to the generated email. Manual spacing and nested group padding were normalized; editor blocks were not changed. Preview the email before sending.', 'rrze-newsletter' ),
+			{ id: 'rrze-newsletter-spacing', actions: [ {
+				label: __( 'Preview generated email', 'rrze-newsletter' ),
+				onClick: () => showEmailPreview( protectedEmail.html ),
+			} ] }
+		);
+	}
 	if ( protectedEmail.corrected || protectedEmail.skipped ) {
 		dispatch( 'core/notices' ).createWarningNotice(
 			sprintf(
