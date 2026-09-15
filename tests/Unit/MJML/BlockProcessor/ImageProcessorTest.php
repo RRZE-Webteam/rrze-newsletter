@@ -24,7 +24,7 @@ final class ImageProcessorTest extends MjmlTestCase
 
     protected function tearDown(): void
     {
-        // Image parsing currently changes libxml's global mode; isolate each test.
+        // Restore the caller's state even if a regression assertion fails.
         libxml_clear_errors();
         libxml_use_internal_errors($this->originalLibxmlErrorMode);
         ImageSizeResolver::reset();
@@ -57,6 +57,53 @@ final class ImageProcessorTest extends MjmlTestCase
     {
         self::assertSame([$width], $this->values($xpath, '//mj-image/@width'));
         self::assertSame([$height], $this->values($xpath, '//mj-image/@height'));
+    }
+
+    public function testImageRenderingRestoresThePreviousLibxmlErrorMode(): void
+    {
+        foreach ([false, true] as $mode) {
+            libxml_use_internal_errors($mode);
+
+            $markup = ImageProcessor::render([], $this->imageHtml(), 'Arial', 600);
+
+            self::assertStringContainsString('<mj-image ', $markup);
+            self::assertSame($mode, libxml_use_internal_errors());
+            self::assertSame([], libxml_get_errors());
+        }
+    }
+
+    public function testMissingImageRestoresThePreviousLibxmlErrorMode(): void
+    {
+        foreach ([false, true] as $mode) {
+            foreach (['', '<p>No image here</p>'] as $html) {
+                libxml_use_internal_errors($mode);
+
+                self::assertSame('', ImageProcessor::render([], $html, 'Arial', 600));
+
+                self::assertSame($mode, libxml_use_internal_errors());
+                self::assertSame([], libxml_get_errors());
+            }
+        }
+    }
+
+    public function testMalformedImageMarkupClearsParserErrorsAndRestoresLibxmlMode(): void
+    {
+        $html = '</unexpected>' . $this->imageHtml();
+        // Verify that this fixture actually produces libxml diagnostics.
+        libxml_use_internal_errors(true);
+        (new \DOMDocument())->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        self::assertNotEmpty(libxml_get_errors());
+        libxml_clear_errors();
+
+        foreach ([false, true] as $mode) {
+            libxml_use_internal_errors($mode);
+
+            $markup = ImageProcessor::render([], $html, 'Arial', 600);
+
+            self::assertStringContainsString('<mj-image ', $markup);
+            self::assertSame($mode, libxml_use_internal_errors());
+            self::assertSame([], libxml_get_errors());
+        }
     }
 
     public function testLargeImageFitsContainerWithoutChangingAspectRatio(): void

@@ -71,12 +71,16 @@ final class ImageProcessor
     private static function parseImageContent(string $innerHtml): ?array
     {
         $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8">' . $innerHtml,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        $previousErrorMode = libxml_use_internal_errors(true);
+        try {
+            $dom->loadHTML(
+                '<?xml encoding="UTF-8">' . $innerHtml,
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousErrorMode);
+        }
 
         $xpath = new \DOMXpath($dom);
         $image = $xpath->query('//img')[0];

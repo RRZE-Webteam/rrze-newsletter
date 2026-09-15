@@ -255,9 +255,16 @@ on `WP_HTML_Tag_Processor` is deferred to tests with the real WordPress API.
 
 Button URL tests use ordinary valid URLs. WordPress's `esc_url_raw()` scheme
 validation, image URL normalization and the real attachment, transient and HTTP
-APIs still need integration coverage. Image tests restore the libxml error mode and reset
-dimension caches after each test: the current image parser changes libxml's
-global mode without restoring it, which remains a separate cleanup task.
+APIs still need integration coverage. Image tests restore the libxml error mode
+and reset dimension caches after each test, including when an assertion fails.
+
+Image-parser libxml state leak — fixed: the parser previously enabled internal
+error handling without restoring the caller's setting. It now saves the prior
+mode and restores it in `finally`, alongside the existing error-buffer cleanup.
+Three regression tests were verified failing before the fix and passing after
+it. They cover both prior modes with valid images, empty/image-free markup and
+malformed markup that produces real libxml diagnostics. The tests check mode
+restoration and cleared diagnostics directly, without mocking libxml.
 
 Top-level renderer tests assemble the real newsletter template with scripted,
 already-parsed blocks. They cover block order, unsupported-block skipping,
