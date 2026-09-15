@@ -16,12 +16,35 @@ installation or a database.
 ```shell
 composer test
 composer test:unit
+npm run test
 ```
 
 Keep these stubs limited to small, deterministic units. Behaviour that depends
 on WordPress hooks, post storage, permissions, REST routing, taxonomies or
 multisite belongs in the future integration suite and should run against a
 real WordPress test installation.
+
+### Mail queue tests
+
+Queue tests cover message forwarding and headers, legacy unencoded HTML,
+successful delivery, retry boundaries, independent recipient failures, missing
+or wrong-type newsletters, and the exact one-minute processing cutoff.
+`tests/Support/QueueEnvironment.php` supplies a deterministic clock and small
+in-memory cache/option boundaries. The fake SMTP transport never sends mail.
+State is reset before and after each queue test.
+
+Policy tests expose the queue's protected skip and rescheduling methods through
+a test-only subclass. They exercise RSS/calendar condition combinations,
+per-newsletter cache cleanup, recurrence guards, hourly/daily/weekly/monthly
+dates, daylight-saving conversion and the five-minute fallback. Real `Utils`
+and `Recurrence` code calculates the next occurrences. Weekly and monthly queue
+rules currently start from date-only values and therefore schedule at midnight;
+the tests explicitly characterize that behavior.
+
+These tests assert database query arguments and requested writes, not real
+WordPress query filtering, persistence or cron execution. End-to-end queue
+creation, recipient deduplication/unsubscribe handling, SMTP integration and
+protection against concurrent duplicate sends still need integration coverage.
 
 ### MJML helper and block processor tests
 

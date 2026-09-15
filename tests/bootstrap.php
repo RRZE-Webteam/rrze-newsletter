@@ -105,7 +105,7 @@ namespace RRZE\Newsletter\Mail {
 
     function get_bloginfo(string $show): string
     {
-        return $show === 'name' ? 'Test Site' : '';
+        return $show === 'name' ? \RRZE\Newsletter\Tests\Support\QueueEnvironment::$blogName : '';
     }
 
     function site_url(): string
@@ -159,4 +159,5 @@ namespace {
     require dirname(__DIR__) . '/vendor/autoload.php';
     require __DIR__ . '/Support/MjmlTestCase.php';
     require __DIR__ . '/Support/ImageLookupEnvironment.php';
+    require __DIR__ . '/Support/QueueEnvironment.php';
 }

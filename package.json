@@ -13,6 +13,7 @@
     "extends @wordpress/browserslist-config"
   ],
   "scripts": {
+    "test": "composer test",
     "start": "wp-scripts start",
     "build": "wp-scripts build",
     "format": "wp-scripts format src",
