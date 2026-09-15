@@ -42,6 +42,16 @@ Save middleware tests verify the mode is persisted before MJML generation, show
 a preview notice for managed output and keep contrast protection independent.
 These do not prove real WordPress REST storage or browser interaction.
 
+Newsletter-start tests mount the actual picker with React and jsdom. They cover
+the default selection without store writes, category isolation/empty states,
+desktop/mobile preview widths, updated template content, unchanged tokens on
+insertion, blank starts, save failures and single-preview rendering. WordPress
+stores, block parsing and the preview renderer are explicit boundaries.
+Preview-ready tests cover late iframe bodies, timeout, one-shot notification and
+cleanup. Layout-fetch tests cover visible failures/retry and deletion failures
+without prematurely removing the user's saved template. These tests do not
+replace native-browser checks of the modal layout or a WordPress save workflow.
+
 Editor spacing tests additionally exercise the live mode effect, the selected
 block's Dimensions hint, and the DOM presentation controller. The controller
 styles only newsletter canvas roots and known editor/post-inserter preview

@@ -1716,3 +1716,171 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start a newsletter"
+msgstr "Newsletter starten"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Choose a starting point. You can edit all content and adjust the design afterwards."
+msgstr "Wählen Sie einen Ausgangspunkt. Inhalte und Gestaltung können Sie anschließend anpassen."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Back to newsletters"
+msgstr "Zur Newsletter-Übersicht"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Templates"
+msgstr "Vorlagen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Template category"
+msgstr "Vorlagenkategorie"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Template preview"
+msgstr "Vorlagenvorschau"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Preview width"
+msgstr "Vorschaubreite"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Desktop"
+msgstr "Desktop"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Mobile"
+msgstr "Mobil"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Loading templates…"
+msgstr "Vorlagen werden geladen…"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Templates could not be loaded."
+msgstr "Die Vorlagen konnten nicht geladen werden."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Try again"
+msgstr "Erneut versuchen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "No templates here yet"
+msgstr "Hier gibt es noch keine Vorlagen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start with a prebuilt design or a blank newsletter. You can save your own template later in the editor."
+msgstr "Starten Sie mit einer Standardvorlage oder einem leeren Newsletter. Eine eigene Vorlage können Sie später im Editor speichern."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Browse prebuilt templates"
+msgstr "Standardvorlagen ansehen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Manage your own templates later under Layout in the editor."
+msgstr "Eigene Vorlagen können Sie später im Editor unter „Vorlage“ speichern."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Choose a template from the list to see its preview."
+msgstr "Wählen Sie eine Vorlage aus der Liste für die Vorschau."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Layout preview with sample content. Check the generated email before sending; mail apps may display it differently."
+msgstr "Layout-Vorschau mit Beispielinhalten. Prüfen Sie vor dem Versand die erzeugte E-Mail; Mailprogramme können sie anders darstellen."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "The newsletter could not be saved. Please try again in the editor."
+msgstr "Der Newsletter konnte nicht gespeichert werden. Bitte versuchen Sie es im Editor erneut."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Nothing is sent when you start."
+msgstr "Beim Starten wird nichts versendet."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start without a template"
+msgstr "Ohne Vorlage starten"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start with this template"
+msgstr "Mit dieser Vorlage starten"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Starting…"
+msgstr "Wird gestartet…"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Your saved design, ready to reuse."
+msgstr "Ihre gespeicherte Gestaltung zum Wiederverwenden."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Classic layout with text and images."
+msgstr "Klassisches Layout mit Texten und Bildern."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Alternative layout with highlighted sections."
+msgstr "Alternatives Layout mit hervorgehobenen Abschnitten."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "General FAU design for university news."
+msgstr "Allgemeines FAU-Design für Neuigkeiten aus der Universität."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for the Faculty of Medicine."
+msgstr "FAU-Design für die Medizinische Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for the Faculty of Sciences."
+msgstr "FAU-Design für die Naturwissenschaftliche Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for Humanities, Social Sciences, and Theology."
+msgstr "FAU-Design für die Philosophische Fakultät und den Fachbereich Theologie."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for Business, Economics, and Law."
+msgstr "FAU-Design für die Rechts- und Wirtschaftswissenschaftliche Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for the Faculty of Engineering."
+msgstr "FAU-Design für die Technische Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "A starting point for your newsletter."
+msgstr "Ein Ausgangspunkt für Ihren Newsletter."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "General starting point"
+msgstr "Allgemeiner Einstieg"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "This template could not be previewed. Choose another template or start without one."
+msgstr "Diese Vorlage kann nicht angezeigt werden. Wählen Sie eine andere Vorlage oder starten Sie ohne Vorlage."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "This is a blank template. Add your content after starting."
+msgstr "Dies ist eine leere Vorlage. Ergänzen Sie Ihre Inhalte nach dem Start."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Loading preview…"
+msgstr "Vorschau wird geladen…"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "The preview is taking too long or could not be loaded."
+msgstr "Die Vorschau benötigt zu lange oder konnte nicht geladen werden."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Template name"
+msgstr "Vorlagenname"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "The template could not be updated. Please try again."
+msgstr "Die Vorlage konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Manage saved templates"
+msgstr "Gespeicherte Vorlagen verwalten"
+
+#: src/components/init-modal/screens/layout-picker/ManageTemplates.js
+msgid "Close"
+msgstr "Schließen"

@@ -19,7 +19,7 @@ export default () => {
 			shouldCloseOnClickOutside={ false }
 			shouldCloseOnEsc={ false }
 			title={ __(
-				'Select a layout for the newsletter',
+				'Start a newsletter',
 				'rrze-newsletter'
 			) }
 		>

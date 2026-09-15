@@ -1,323 +1,91 @@
-@import "~@wordpress/base-styles/colors.native";
-@import "~@wordpress/base-styles/colors";
-
-// Modal
 .rrze-newsletter-modal {
-    &__screen-overlay {
-        animation: none;
-        background: white;
-        top: 46px;
-
-        @media only screen and (min-width: 783px) {
-            left: 36px;
-            top: 32px;
-
-            // Fullscreen mode
-            .is-fullscreen-mode & {
-                left: 60px;
-                top: 0;
-
-                .components-modal__header {
-                    height: 60px;
-                }
-            }
-        }
-
-        @media only screen and (min-width: 961px) {
-            // Not folded sidebar
-            body:not(.folded):not(.is-fullscreen-mode) & {
-                left: 160px;
-            }
-        }
-    }
-
-    &__frame {
-        animation: none;
-        border: 0;
-        bottom: 0;
-        box-shadow: none;
-        height: 100%;
-        left: 0;
-        max-height: 100%;
-        max-width: 100%;
-        min-height: 100%;
-        min-width: 100%;
-        overflow-y: hidden;
-        right: 0;
-        top: 0;
-        transform: none;
-        width: 100%;
-
-        .components-modal__header-heading {
-            display: none;
-            font-size: 0.8rem;
-            line-height: 1.25;
-
-            @media only screen and (min-width: 680px) {
-                display: block;
-            }
-
-            @media only screen and (min-width: 783px) {
-                font-size: 1rem;
-                line-height: 1;
-            }
-        }
-    }
-
-    &__content {
-        background: white;
-        height: calc(100% - 36px);
-        margin: -24px;
-
-        @media only screen and (min-width: 680px) {
-            display: grid;
-            grid-auto-rows: calc(100% - 48px);
-            gap: 0;
-            grid-template-columns: 1fr 2fr;
-            grid-template-rows: 1fr;
-        }
-
-        @media only screen and (min-width: 783px) {
-            // Fullscreen mode
-            .is-fullscreen-mode & {
-                bottom: 0;
-                height: calc(100vh - 60px);
-                left: 0;
-                margin: 0;
-                position: fixed;
-                right: 0;
-                top: 60px;
-            }
-        }
-    }
-
-    &__action-buttons {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        position: absolute;
-        right: 24px;
-        top: 12px;
-        z-index: 11;
-
-        .separator {
-            margin-left: 6px;
-            margin-right: 6px;
-        }
-    }
-
-    &__settings {
-        align-items: flex-start;
-        display: flex;
-        justify-content: center;
-
-        @media only screen and (min-width: 680px) {
-            display: flex;
-        }
-
-        &-wrapper {
-            flex: 0 0 100%;
-            max-width: 680px;
-            padding-left: 24px;
-            padding-right: 24px;
-            position: relative;
-
-            @media only screen and (min-width: 648px) {
-                max-width: 648px;
-            }
-        }
-
-        .components-spinner {
-            left: 50%;
-            margin: -9px 0 0 -9px;
-            margin-left: -9px;
-            position: absolute;
-            top: 50%;
-        }
-
-        .error {
-            color: $alert-red;
-        }
-
-        .components-base-control {
-            &.has-error {
-                input[type="text"] {
-                    border-color: $alert-red;
-                }
-            }
-        }
-
-        .components-text-control__input,
-        .components-select-control__input {
-            margin: 0;
-            max-width: 100%;
-            width: 100%;
-        }
-    }
-
-    &__in-flight {
-        pointer-events: none;
-
-        > div > *:not(.components-spinner) {
-            opacity: 0.3;
-        }
-    }
-
-    &__layouts {
-        grid-column-start: 1;
-        overflow-y: scroll;
-        min-height: 1080px;
-        padding: 20px;
-
-        &--loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .rrze-newsletter-layouts {
-            display: grid;
-            gap: 16px;
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: minmax(min-content, max-content);
-            overflow: hidden;
-            padding: 0;
-
-            @media only screen and (min-width: 680px) {
-                grid-template-columns: 1fr;
-            }
-
-            @media only screen and (min-width: 783px) {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            &__item {
-                cursor: pointer;
-                margin: 0;
-                width: 100%;
-                text-align: center;
-
-                &.is-active {
-                    .rrze-newsletter-layouts__item-preview {
-                        pointer-events: none;
-                        border-color: currentColor;
-                        position: relative;
-
-                        &::before {
-                            border: 1px solid;
-                            bottom: 0;
-                            content: "";
-                            display: block;
-                            left: 0;
-                            position: absolute;
-                            right: 0;
-                            top: 0;
-                            z-index: 1;
-                        }
-                    }
-                }
-
-                button {
-                    margin: 0;
-                    height: 20px;
-                    &.is-destructive {
-                        color: $alert-red;
-                    }
-                }
-            }
-
-            &__item-preview {
-                background: white;
-                border: 1px solid $light-gray-500;
-                border-radius: 2px;
-                overflow: hidden;
-                padding: 0 0 calc(100% - 2px);
-                position: relative;
-                width: 100%;
-
-                .block-editor-block-preview__container {
-                    position: absolute;
-                    top: 0;
-                }
-            }
-
-            &__item-label {
-                padding: 4px 2px;
-                text-align: center;
-            }
-        }
-    }
-
-    &__preview {
-        grid-column-start: 2;
-        grid-row-start: 1;
-        grid-row-end: 3;
-        align-items: center;
-        background: white;
-        border: 1px solid $light-gray-500;
-        border-top: none;
-        display: none;
-        justify-content: center;
-        overflow-y: scroll;
-        position: relative;
-
-        @media only screen and (min-width: 680px) {
-            display: flex;
-        }
-
-        .block-editor-block-preview {
-            &__container {
-                align-self: flex-start;
-                margin: 0 auto;
-            }
-        }
-    }
+	&__screen-overlay { background: #f0f2f5; padding: 20px; }
+	&__frame {
+		width: 1280px; max-width: 100%; height: calc(100dvh - 40px);
+		max-height: calc(100dvh - 40px); border-radius: 12px;
+		.components-modal__content {
+			display: flex; flex-direction: column; overflow: hidden;
+			padding: 0 24px 0; margin-top: 0; min-height: 0;
+		}
+		.components-modal__children-container { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+		.components-modal__header {
+			position: relative; flex-shrink: 0; height: auto; min-height: 64px;
+			padding: 20px 0 8px; margin: 0; border: 0;
+		}
+		.components-modal__header-heading { font-size: 22px; line-height: 1.3; }
+	}
+	&__intro {
+		display: flex; align-items: baseline; justify-content: space-between;
+		gap: 16px; padding: 0 0 20px; flex-shrink: 0;
+		p { margin: 0; color: #50575e; max-width: 700px; }
+		a { white-space: nowrap; }
+	}
+	&__content { display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); flex: 1; min-height: 0; border-top: 1px solid #dcdcde; }
+	&__library { display: flex; flex-direction: column; min-height: 0; padding: 20px 20px 0 0; }
+	&__layouts { overflow-y: auto; flex: 1; min-height: 0; padding: 12px 3px; }
+	&__library-note, &__preview-note { font-size: 12px; line-height: 1.5; color: #50575e; }
+	&__library-note { padding: 12px 0; margin: 0; }
+	&__preview { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #f0f2f5; border-left: 1px solid #dcdcde; }
+	&__preview-heading { padding: 16px 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; background: #fff;
+		h2 { margin: 0 0 4px; font-size: 16px; }
+		p { margin: 0; font-size: 12px; color: #50575e; }
+	}
+	&__preview-scroll { overflow: auto; padding: 24px; min-height: 0; flex: 1; }
+	&__preview-note { padding: 12px 20px; margin: 0; border-top: 1px solid #dcdcde; }
+	&__action-buttons {
+		display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+		flex-shrink: 0; padding: 16px 0; border-top: 1px solid #dcdcde;
+		> span { margin-right: auto; color: #50575e; font-size: 12px; }
+	}
 }
-
-// Buttons group
+.rrze-newsletter-picker-switch {
+	display: flex; gap: 4px; padding: 4px; background: #f0f0f1; border-radius: 8px; flex-shrink: 0;
+	.components-button { flex: 1; justify-content: center; border-radius: 5px; height: 36px; }
+	// WordPress also colors pressed buttons on hover/focus; retain contrast.
+	.components-button[aria-pressed="true"] { background: #fff !important; color: #04316a !important; box-shadow: 0 1px 3px #0002; font-weight: 600; }
+}
+.rrze-newsletter-layout-card.components-button {
+	width: 100%; height: auto; min-height: 80px; padding: 14px 12px; margin: 0 0 8px;
+	border: 1px solid #dcdcde; border-radius: 8px; gap: 12px; text-align: left; align-items: flex-start;
+	&:hover { background: #f6f8fb; }
+	&.is-selected { border-color: #04316a; box-shadow: inset 0 0 0 1px #04316a; background: #f0f5fb !important; color: #04316a !important; }
+	.rrze-newsletter-layout-card__icon { font-size: 26px; line-height: 1; color: #04316a; }
+	.rrze-newsletter-layout-card__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+	strong { font-size: 13px; }
+	span span { font-size: 12px; color: #50575e; line-height: 1.4; }
+	small { color: #04316a; font-weight: 600; font-size: 11px; }
+}
+.rrze-newsletter-picker-empty { padding: 24px 12px; color: #50575e; line-height: 1.6; }
+.rrze-newsletter-template-management-row { padding: 16px 0; border-bottom: 1px solid #dcdcde; margin-bottom: 16px; }
+// Shared by the existing Layout sidebar as well as the start flow.
 .rrze-newsletter-buttons-group {
-    display: flex;
-    justify-content: space-around;
-    &--spaced {
-        margin-left: -5px;
-        margin-right: -5px;
-        button {
-            margin-left: 5px;
-            margin-right: 5px;
-            justify-content: center;
-        }
-    }
-    button {
-        flex: 1;
-    }
+	display: flex; justify-content: space-around;
+	&--spaced { margin: 0 -5px; button { margin: 0 5px; } }
+	button { flex: 1; }
 }
-
-// Tabs
-.rrze-newsletter-tabs {
-    &__button {
-        font-weight: 500;
-        min-height: 48px;
-        padding: 6px 20px;
-        position: relative;
-        border-radius: 0;
-        &:focus:not(:disabled) {
-            outline: none;
-            box-shadow: none;
-        }
-        &::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background-color: $light-gray-500;
-        }
-        &--is-active::after {
-            font-weight: 600;
-            height: 4px;
-            background-color: #007cba;
-        }
-    }
+.rrze-newsletter-picker-canvas {
+	margin: 0 auto; background: #fff; box-shadow: 0 2px 12px #0001; min-height: 240px;
+	> p { padding: 16px; }
+	// Override the absolute thumbnail positioning only in the large picker.
+	.rrze-newsletter__layout-preview { position: relative; height: auto; min-height: 240px; }
+}
+@media (max-width: 780px) {
+	.rrze-newsletter-modal {
+		&__screen-overlay { padding: 0; }
+		&__frame { height: 100dvh; max-height: 100dvh; border-radius: 0;
+			.components-modal__content { overflow-y: auto; padding: 0 16px; }
+			.components-modal__children-container { flex: none; min-height: auto; }
+		}
+		&__intro { flex-direction: column; gap: 8px; }
+		&__content { display: flex; flex-direction: column; flex: none; }
+		&__library { padding: 16px 0; }
+		&__layouts { max-height: 300px; flex: none; }
+		&__preview { border-left: 0; min-height: 460px; }
+		&__preview-heading { flex-wrap: wrap; }
+		&__preview-scroll { flex: none; max-height: 550px; padding: 16px; }
+		&__action-buttons { flex-wrap: wrap; background: #fff; position: sticky; bottom: 0; z-index: 1;
+			> span { width: 100%; }
+			.components-button { flex: 1; justify-content: center; height: auto; min-height: 40px; text-align: center; }
+		}
+	}
 }
