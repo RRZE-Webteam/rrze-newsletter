@@ -52,6 +52,12 @@ cleanup. Layout-fetch tests cover visible failures/retry and deletion failures
 without prematurely removing the user's saved template. These tests do not
 replace native-browser checks of the modal layout or a WordPress save workflow.
 
+The start screen is a non-modal workspace below the WordPress admin bar. Shell
+tests cover toolbar-height changes (including 32/46px), a missing toolbar,
+covered-workspace inertness without hiding the toolbar, focus and cleanup.
+Fullscreen preferences remain untouched; the temporary toolbar visibility is
+scoped to the start screen. Actual confirmation/management modals stay modal.
+
 Editor spacing tests additionally exercise the live mode effect, the selected
 block's Dimensions hint, and the DOM presentation controller. The controller
 styles only newsletter canvas roots and known editor/post-inserter preview
