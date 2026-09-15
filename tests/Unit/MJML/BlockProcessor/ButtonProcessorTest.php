@@ -193,15 +193,25 @@ final class ButtonProcessorTest extends MjmlTestCase
         }
     }
 
-    public function testWidthPercentageUsesAvailableSpaceAndClampsToBounds(): void
+    public function testWidthPercentageIsPreservedAndClampedToBounds(): void
     {
-        foreach ([[50, 600, '300px'], ['33.3', 500, '167px'], [150, 600, '600px'], [0, 600, '6px'], [1, 20, '1px']] as [$width, $available, $expected]) {
+        foreach ([[50, 600, '50%'], ['33.3', 500, '33.3%'], [150, 600, '100%'], [0, 600, '1%'], [-25, 600, '1%'], [1, 20, '1%']] as [$width, $available, $expected]) {
             self::assertSame(
                 [$expected],
                 $this->values($this->button(['width' => $width], '', $available), '//mj-button/@width')
             );
         }
         $this->assertNodes($this->button(['width' => 'auto']), '//mj-button/@width', 0);
+    }
+
+    public function testFullWidthButtonStaysFluidRegardlessOfRenderTimeContainerWidth(): void
+    {
+        foreach ([160, 240, 320, 479, 480, 600, 680] as $availableWidth) {
+            self::assertSame(
+                ['100%'],
+                $this->values($this->button(['width' => 100], '', $availableWidth), '//mj-button/@width')
+            );
+        }
     }
 
     public function testTypographyAndFontSizeAreInheritedWithChildOverrides(): void
@@ -305,8 +315,8 @@ final class ButtonProcessorTest extends MjmlTestCase
         ]);
         $xpath = $this->parseMjml(BlockProcessor::render($columns, RenderContext::root(42, 600)));
 
-        // Each column: 300px minus 40px padding; the button uses half of 260px.
-        self::assertSame(['130px', '130px'], $this->values($xpath, '//mj-button/@width'));
+        // Half of each column's content box, including after a mobile resize.
+        self::assertSame(['50%', '50%'], $this->values($xpath, '//mj-button/@width'));
         self::assertSame(['left', 'center'], $this->values($xpath, '//mj-button/@align'));
         $this->assertNodes($xpath, '/test-root/mj-section/mj-column/mj-button', 2);
         $this->assertNodes($xpath, '//mj-column//mj-column | //mj-column//mj-section', 0);
@@ -328,7 +338,7 @@ final class ButtonProcessorTest extends MjmlTestCase
         ], ['layout' => ['type' => 'grid', 'columnCount' => 2]]);
         $xpath = $this->parseMjml(BlockProcessor::render($grid, RenderContext::root(42, 600)));
 
-        self::assertSame(['260px'], $this->values($xpath, '//mj-button/@width'));
+        self::assertSame(['100%'], $this->values($xpath, '//mj-button/@width'));
         self::assertSame(['12px 24px'], $this->values($xpath, '//mj-button/@inner-padding'));
         self::assertSame(['700'], $this->values($xpath, '//mj-button/@font-weight'));
         self::assertSame(['1.8'], $this->values($xpath, '//mj-button/@line-height'));

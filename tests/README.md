@@ -314,6 +314,38 @@ These are output-contract tests, not visual email-client compatibility tests.
 Existing newsletters need to be saved again in the editor to regenerate their
 stored email HTML. Already queued or delivered messages are not rewritten.
 
+### Responsive button regressions
+
+Button percentages are now kept as percentages in MJML, with the existing
+1–100% limits. Previously a full-width button became a 600px table containing
+a 552px link and 48px horizontal padding. With 40px section padding on either
+side, this forced a 680px layout even in a narrow viewport. Public renderer
+arguments remain compatible; container width is no longer used to turn button
+percentages into fixed pixel widths.
+
+`tests/MJML/buttons.test.cjs` runs through `npm run test` and verifies the real
+compiler output for full, partial, fractional, clamped, outline and automatic
+button widths. Seven HTML cases failed before the production fix. PHP tests
+also check container independence and direct/grouped buttons in padded columns
+and grids. The CLI fixtures share `tests/MJML/bootstrap.php` and contain only
+synthetic content, never the original reported email or its addresses/links.
+
+An additional opt-in layout regression uses Playwright (already brought in by
+`@wordpress/scripts`) and a locally installed Chrome:
+
+```shell
+npm run test:browser
+```
+
+Set `PLAYWRIGHT_CHANNEL=chromium` to use an installed Playwright Chromium instead.
+The browser run is separate so the default suite does not require a browser.
+It checks actual document scroll width and button bounds at 240, 280, 320, 375,
+479, 480, 600 and 680px, with and without head styles. A legacy-markup control
+must overflow at 320px. Browser profiles are temporary and page network requests
+are blocked. This validates the isolated button layout in Chromium, not every
+possible newsletter or Outlook/Apple Mail rendering engine. After deploying,
+save affected newsletters again to regenerate their stored HTML.
+
 ### Feed placeholders, RSS and archive output
 
 Feed-placeholder tests cover per-feed keys, attribute updates without erasing

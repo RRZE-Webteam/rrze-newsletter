@@ -15,6 +15,7 @@
   "scripts": {
     "test": "composer test && npm run test:mjml",
     "test:mjml": "node --test tests/MJML/*.test.cjs",
+    "test:browser": "node --test tests/Browser/*.test.cjs",
     "start": "wp-scripts start",
     "build": "wp-scripts build",
     "format": "wp-scripts format src",

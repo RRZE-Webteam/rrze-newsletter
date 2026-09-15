@@ -57,7 +57,7 @@ final class ButtonProcessor
      * @param string               $innerHtml      Rendered button HTML.
      * @param string               $fontFamily     Button font family.
      * @param string               $align          Horizontal alignment.
-     * @param int                  $availableWidth Maximum available width.
+     * @param int                  $availableWidth Retained for caller compatibility; widths resolve in the rendered container.
      * @return string Rendered MJML button, or an empty string.
      */
     public static function renderButton(
@@ -76,8 +76,7 @@ final class ButtonProcessor
             $attrs,
             $content,
             $fontFamily,
-            $align,
-            $availableWidth
+            $align
         );
 
         return '<mj-button '
@@ -208,15 +207,13 @@ final class ButtonProcessor
      * @param array{text: string, url: string, target: string, rel: string, title: string} $content Button content.
      * @param string $fontFamily Button font family.
      * @param string $align Horizontal alignment.
-     * @param int $availableWidth Maximum available width.
      * @return array<string, mixed> MJML button attributes.
      */
     private static function buildAttributes(
         array $attrs,
         array $content,
         string $fontFamily,
-        string $align,
-        int $availableWidth
+        string $align
     ): array {
         $isOutline = str_contains(
             (string) ($attrs['className'] ?? ''),
@@ -255,7 +252,7 @@ final class ButtonProcessor
             $buttonAttrs['border'] = $border;
         }
 
-        $width = self::getWidth($attrs, $availableWidth);
+        $width = self::getWidth($attrs);
         if ($width !== null) {
             $buttonAttrs['width'] = $width;
         }
@@ -414,24 +411,20 @@ final class ButtonProcessor
     }
 
     /**
-     * Convert the block width percentage to pixels.
+     * Preserve the block width percentage so buttons shrink with their container.
      *
      * @param array<string, mixed> $attrs          Button attributes.
-     * @param int                  $availableWidth Maximum available width.
-     * @return string|null Width in pixels, or null when unspecified.
+     * @return string|null Width in percent, or null when unspecified.
      */
     private static function getWidth(
-        array $attrs,
-        int $availableWidth
+        array $attrs
     ): ?string {
         if (!isset($attrs['width']) || !is_numeric($attrs['width'])) {
             return null;
         }
 
         $percentage = max(1, min(100, (float) $attrs['width']));
-        return max(
-            1,
-            (int) round($availableWidth * $percentage / 100)
-        ) . 'px';
+        // Pixel widths make MJML emit a fixed-width link as well as a table.
+        return $percentage . '%';
     }
 }
