@@ -69,6 +69,26 @@ credentials. They characterize the existing storage/link format, not its
 cryptographic strength, authentication or tamper resistance. An intentional
 format migration will need corresponding compatibility-test updates.
 
+### Recipient and validation helpers
+
+Recipient tests cover email shapes, independent sender/recipient allow lists,
+exact-domain restrictions, failure logging, mailing-list field parsing, sorting,
+last-duplicate-wins behavior, optional names, and unsubscribe-list cleanup.
+Both text and associative-array outputs are checked, including empty lists and
+mixed valid/invalid rows. The current parser is comma-delimited, not a general
+quoted-CSV parser; columns after the last name are ignored.
+
+`tests/Support/RecipientEnvironment.php` supplies scripted sanitization results,
+domain-filter values and recorded log calls. Default fixtures are already
+sanitized. These stubs do not validate WordPress sanitization, filter dispatch,
+log delivery or persisted unsubscribe enforcement. State is reset before and
+after each recipient test.
+
+Pure utility tests additionally check inclusive integer bounds, date/time
+overflow rejection, leap years, exact/custom date formats, and recursive key
+search ordering and value preservation. Integer-range cases use integer text;
+they do not establish strict validation of arbitrary numeric input.
+
 ### MJML helper and block processor tests
 
 Run the rendering helper tests on their own with:

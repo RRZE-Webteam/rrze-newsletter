@@ -33,6 +33,11 @@ namespace RRZE\Newsletter\Tests\Support {
 
     final class PluginStub
     {
+        public function getBaseName(): string
+        {
+            return 'rrze-newsletter/rrze-newsletter.php';
+        }
+
         public function getVersion(): string
         {
             return 'test';
@@ -161,4 +166,5 @@ namespace {
     require __DIR__ . '/Support/ImageLookupEnvironment.php';
     require __DIR__ . '/Support/QueueEnvironment.php';
     require __DIR__ . '/Support/MailEnvironment.php';
+    require __DIR__ . '/Support/RecipientEnvironment.php';
 }
