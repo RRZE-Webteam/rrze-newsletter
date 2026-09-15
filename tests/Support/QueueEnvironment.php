@@ -84,7 +84,9 @@ namespace RRZE\Newsletter {
             'rrze_newsletter_unit' => \RRZE\Newsletter\Tests\Support\SettingsEnvironment::$stored,
             'timezone_string' => QueueEnvironment::$timezone,
             'gmt_offset' => 0,
-            default => throw new \LogicException('Unexpected option lookup: ' . $name),
+            default => array_key_exists($name, \RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$options)
+                ? \RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$options[$name]
+                : throw new \LogicException('Unexpected option lookup: ' . $name),
         };
     }
 

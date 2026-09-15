@@ -19,10 +19,45 @@ composer test:unit
 npm run test
 ```
 
-Keep these stubs limited to small, deterministic units. Behaviour that depends
-on WordPress hooks, post storage, permissions, REST routing, taxonomies or
-multisite belongs in the future integration suite and should run against a
-real WordPress test installation.
+Keep these stubs limited to small, deterministic boundaries. Contract tests can
+assert the arguments supplied to WordPress and the plugin's decisions given
+scripted responses. Actual hook dispatch, post storage, permission resolution,
+REST routing, taxonomies and multisite belong in the future integration suite
+and should run against a real WordPress test installation.
+
+### Newsletter, queue and REST contracts
+
+Post-type tests cover registration arguments, metadata types and defaults,
+conditional direct-recipient fields, taxonomy visibility and capabilities,
+initial template/status writes, send-data assembly and admin status/actions.
+REST tests cover declared permission callbacks, capability decisions, metadata
+allow lists, requested writes, sender/recipient feedback, recurrence labels,
+author payloads, palette merging and unsaved editor previews. Preview sending
+must stop when rendered HTML is missing.
+
+`ApplicationEnvironment.php` records calls and supplies in-memory fixtures. Its
+minimal `WP_Post`, `WP_Error` and `WP_REST_Server` aliases are value-object and
+constant doubles, not WordPress implementations. This bootstrap is exclusively
+for standalone unit tests; do not load it into a real WordPress integration
+suite. REST handlers are called directly, so these tests do not verify route
+matching, HTTP dispatch, request sanitization, response wrapping or actual
+authorization enforcement. Capability mapping and persistence remain WordPress
+integration concerns. `ApplicationTestCase` resets fixture state and restores
+the renderer's static configuration between tests.
+
+### Calendar formatting and rendering
+
+Calendar tests cover 12/24-hour formats, meridiem localization, date offsets,
+daylight-saving transitions, feed timezone fallback, localized date names,
+empty/media content, labels, organizers and description options. Prepared event
+arrays exercise date-range filtering, duplicate UID suppression, item limits
+and style attributes through a test-only subclass of the real calendar block.
+
+`CalendarEnvironment.php` records presentation calls; typography and trimming
+are scripted boundaries rather than implementations of WordPress formatting.
+Locale fixtures, server-name state and renderer configuration are isolated and
+restored. These tests neither fetch nor parse ICS feeds, and do not establish
+WordPress URL sanitization, real locale behavior or email-client compatibility.
 
 ### Recurrence boundaries
 
@@ -187,9 +222,18 @@ APIs still need integration coverage. Image tests restore the libxml error mode 
 dimension caches after each test: the current image parser changes libxml's
 global mode without restoring it, which remains a separate cleanup task.
 
-WordPress theme-palette resolution, HTML attribute escaping and full newsletter
-rendering remain integration-test work. These helper tests do not establish
-that generated emails render correctly in mail clients.
+Top-level renderer tests assemble the real newsletter template with scripted,
+already-parsed blocks. They cover block order, unsupported-block skipping,
+reusable group references, preview/background settings, palette/font selection,
+stored HTML retrieval and missing-HTML errors. Link tests verify requested UTM
+parameters, repeated links and preservation of personalization placeholders.
+Their query-string adapter uses ordinary fixture URLs; it is not WordPress URL
+validation. No production content or database is loaded.
+
+Real Gutenberg parsing, WordPress theme-palette resolution, HTML attribute
+escaping and the complete newsletter-to-email pipeline remain integration-test
+work. These tests do not establish that generated emails render correctly in
+mail clients.
 
 ### Template assembly
 
@@ -216,3 +260,11 @@ composer test:coverage
 
 Generated files, dependencies and WordPress itself are intentionally excluded
 from the coverage scope.
+
+Local milestone (2026-09-15): **61.02% line coverage (3,967 / 6,501)** across the
+unchanged `includes` scope, with **366 tests and 2,219 assertions** passing in
+random order (seed `9152060`). This run used PHP 8.5.10, PCOV 1.0.12 and the
+locally available PHPUnit 13.3.3; the Composer development requirement remains
+PHPUnit 9.6. Exact executable-line totals can differ between runtime versions.
+Coverage measures executed plugin lines, not branch completeness or successful
+integration with WordPress and external services.

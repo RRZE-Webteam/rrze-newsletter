@@ -184,4 +184,7 @@ namespace {
     require __DIR__ . '/Support/SettingsEnvironment.php';
     require __DIR__ . '/Support/SettingsTestCase.php';
     require __DIR__ . '/Support/SubscriptionEnvironment.php';
+    require __DIR__ . '/Support/ApplicationEnvironment.php';
+    require __DIR__ . '/Support/ApplicationTestCase.php';
+    require __DIR__ . '/Support/CalendarEnvironment.php';
 }
