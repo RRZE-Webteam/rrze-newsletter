@@ -13,7 +13,9 @@ export function showEmailPreview( html ) {
 	root.render(
 		<Modal title={ __( 'Generated email preview', 'rrze-newsletter' ) } onRequestClose={ close } size="large">
 			<p>{ __( 'This is the generated email. Mail apps may render colors differently, especially in dark mode.', 'rrze-newsletter' ) }</p>
-			<iframe title={ __( 'Email content', 'rrze-newsletter' ) } sandbox="" srcDoc={ html } style={ { width: '100%', height: '65vh', border: 0 } } />
+			{/* Keep own-site images in the authenticated site context. Never add
+				allow-scripts: email HTML must remain inert, even on the same origin. */}
+			<iframe title={ __( 'Email content', 'rrze-newsletter' ) } sandbox="allow-same-origin" srcDoc={ html } style={ { width: '100%', height: '65vh', border: 0 } } />
 		</Modal>
 	);
 }

@@ -441,6 +441,15 @@ layout engine. Save-middleware tests run the actual module with recorded API,
 notice and preview boundaries. The opt-in native-browser test covers real CSS,
 iframe isolation, resource blocking, script blocking, cleanup and serialization.
 
+`tests/Editor/preview.test.cjs` runs the actual modal component with WordPress UI
+doubles. It verifies that preview frames preserve the site's origin (needed for
+authenticated/local media) while keeping scripts, forms, popups and top navigation
+sandboxed. It also checks unchanged email HTML and cleanup on close/reopen.
+Unlike the hidden contrast-analysis frame, the visible preview intentionally
+loads images. These unit tests assert the frame contract, not browser cookie or
+image-loading behavior. Private/local images can work in the editor preview and
+still be inaccessible to email recipients; this does not rewrite outgoing URLs.
+
 ### Feed placeholders, RSS and archive output
 
 Feed-placeholder tests cover per-feed keys, attribute updates without erasing
