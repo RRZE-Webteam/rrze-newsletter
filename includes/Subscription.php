@@ -579,7 +579,7 @@ class Subscription
             $send = new Send;
             $result = $send->email($mailData);
 
-            if ($result === false) {
+            if ($result === false || is_wp_error($result)) {
                 delete_transient($confirmToken);
             }
         } catch (\Throwable $e) {

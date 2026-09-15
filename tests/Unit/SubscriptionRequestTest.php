@@ -302,6 +302,38 @@ final class SubscriptionRequestTest extends ApplicationTestCase
         self::assertSame([], State::$transients);
     }
 
+    public function testConfirmationRemovesOnlyItsTokenWhenMailDeliveryFails(): void
+    {
+        State::$transients['unrelated-token'] = ['email' => 'other@example.test'];
+        Mail::$result = false;
+
+        // Exercise the real Send/SMTP chain: wp_mail false becomes a WP_Error.
+        (new ConfirmationHarness())->send(['email' => 'ada@example.test', 'mailing_lists' => [12 => 1]]);
+
+        self::assertCount(1, Mail::$messages);
+        self::assertSame('ada@example.test', Mail::$messages[0]['to']);
+        self::assertCount(1, Request::$transientWrites);
+        $token = Request::$transientWrites[0][0];
+        self::assertArrayNotHasKey($token, State::$transients);
+        self::assertSame([$token], State::$deletedTransients);
+        self::assertSame(['unrelated-token' => ['email' => 'other@example.test']], State::$transients);
+        self::assertSame([], State::$termWrites);
+    }
+
+    public function testConfirmationKeepsItsTokenWhenMailDeliverySucceeds(): void
+    {
+        (new ConfirmationHarness())->send(['email' => 'ada@example.test', 'mailing_lists' => [12 => 1]]);
+
+        self::assertCount(1, Mail::$messages);
+        self::assertCount(1, Request::$transientWrites);
+        [$token, $data, $ttl] = Request::$transientWrites[0];
+        self::assertSame(86400, $ttl);
+        self::assertSame('ada@example.test', $data['email']);
+        self::assertSame([12 => 1], $data['mailing_lists']);
+        self::assertSame($data, State::$transients[$token]);
+        self::assertSame([], State::$deletedTransients);
+    }
+
     public function testSendReturnsSuccessOrErrorAndDiscardsUnknownHeaderInput(): void
     {
         $send = new Send();

@@ -98,7 +98,9 @@ rejection, initial signup staging, field errors, confirmation-token consumption
 and replay, membership updates, unsubscribe requests and management notices.
 The real templates and parser generate forms and notices. Confirmation tests
 check message-token replacement, one-day token TTL, invalid email rejection and
-token cleanup on a thrown transport exception. `Send` tests separately assert
+token cleanup on failed delivery or a thrown transport exception. Regression
+tests assert that failed-send cleanup preserves unrelated transients and that
+successful delivery retains its confirmation token. `Send` tests separately assert
 success/error return values and the fixed header allow list.
 
 `RequestEnvironment.php` records transient writes and throws a test-only
@@ -299,19 +301,20 @@ These are not Gutenberg parsing, JavaScript execution or browser layout tests.
 
 ### Follow-up defects identified during the 80% milestone
 
-- Confirmation cleanup: `Subscription::sendConfirmation()` only removes its
-  token for a `false` result or thrown exception. `Send::email()` returns a
-  `WP_Error` on ordinary transport failure, so this failure does not take the
-  cleanup branch. A fix needs an assertion that the failed-send token is removed;
-  the current tests cover the return-value contract and exception cleanup, not
-  successful cleanup of an ordinary failed send.
+- Confirmation cleanup — fixed: `Send::email()` returns a `WP_Error` on ordinary
+  transport failure, but `Subscription::sendConfirmation()` previously checked
+  only for `false`. It now recognizes both failure results. The regression test
+  was verified failing before the fix, then passing afterward; it exercises the
+  real `Send`/`SMTP` chain with a non-networked `wp_mail()` failure. A companion
+  test verifies that successful delivery retains the token.
 - Excerpt cleanup: `Editor::filterExcerptLength()` stores `add_filter()`'s boolean
   return value, then passes it to `remove_filter()` instead of the registered
   closure. The new boundary correctly returns `true`; tests verify registration
   and callback output but do not claim the filter is removed. A fix should keep
   the callback itself and verify subsequent queries no longer use it.
 
-These production fixes are intentionally separate from the coverage expansion.
+These fixes are handled separately from the coverage expansion; excerpt cleanup
+remains outstanding.
 
 ### Template assembly
 
