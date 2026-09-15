@@ -8,7 +8,19 @@ namespace RRZE\Newsletter\Tests\Support {
         public static array $calls = [];
         public static int $logoId = 0;
         public static array $patterns = [];
-        public static function reset(): void { self::$calls = self::$patterns = []; self::$logoId = 0; }
+        public static array $excerptFilters = [];
+        public static function reset(): void { self::$calls = self::$patterns = self::$excerptFilters = []; self::$logoId = 0; }
+
+        /** Single-argument closure fixture, not a WordPress hook dispatcher. */
+        public static function excerptLength(int $default): int
+        {
+            $filters = self::$excerptFilters;
+            ksort($filters);
+            foreach ($filters as $callbacks) {
+                foreach ($callbacks as $callback) { $default = $callback($default); }
+            }
+            return $default;
+        }
     }
 }
 
@@ -18,7 +30,19 @@ namespace RRZE\Newsletter {
 
     function remove_post_type_support(string $type, string $feature): void { Editor::$calls[] = ['remove_support', $type, $feature]; }
     function remove_action(string $hook, mixed $callback, int $priority = 10): bool { Editor::$calls[] = ['remove_action', $hook, $callback, $priority]; return true; }
-    function remove_filter(string $hook, mixed $callback, int $priority = 10): bool { Editor::$calls[] = ['remove_filter', $hook, $callback, $priority]; return true; }
+    function remove_filter(string $hook, mixed $callback, int $priority = 10): bool
+    {
+        Editor::$calls[] = ['remove_filter', $hook, $callback, $priority];
+        if ($hook === 'excerpt_length') {
+            if (!$callback instanceof \Closure) { return false; }
+            $id = spl_object_id($callback);
+            $exists = isset(Editor::$excerptFilters[$priority][$id]);
+            unset(Editor::$excerptFilters[$priority][$id]);
+            if (empty(Editor::$excerptFilters[$priority])) { unset(Editor::$excerptFilters[$priority]); }
+            return $exists;
+        }
+        return true;
+    }
     function remove_editor_styles(): void { Editor::$calls[] = ['remove_editor_styles']; }
     function add_theme_support(mixed ...$args): void { Editor::$calls[] = ['theme_support', ...$args]; }
     function wp_register_style(mixed ...$args): void { Request::$assets[] = ['register_style', $args]; }

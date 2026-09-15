@@ -23,7 +23,7 @@ final class Editor
     protected static $instance = null;
 
     /**
-     * @var string|null $newsletterExcerptLengthFilter The filter for the newsletter excerpt length.
+     * @var \Closure|null $newsletterExcerptLengthFilter The filter for the newsletter excerpt length.
      */
     public static $newsletterExcerptLengthFilter = null;
 
@@ -226,13 +226,11 @@ final class Editor
     public static function filterExcerptLength($excerptLength)
     {
         if (is_int($excerptLength)) {
-            self::$newsletterExcerptLengthFilter = add_filter(
-                'excerpt_length',
-                function () use ($excerptLength) {
-                    return $excerptLength;
-                },
-                999
-            );
+            self::removeExcerptLengthFilter();
+            self::$newsletterExcerptLengthFilter = static function () use ($excerptLength) {
+                return $excerptLength;
+            };
+            add_filter('excerpt_length', self::$newsletterExcerptLengthFilter, 999);
         }
     }
 
@@ -246,11 +244,16 @@ final class Editor
      */
     public static function removeExcerptLengthFilter()
     {
+        if (self::$newsletterExcerptLengthFilter === null) {
+            return;
+        }
+
         remove_filter(
             'excerpt_length',
             self::$newsletterExcerptLengthFilter,
             999
         );
+        self::$newsletterExcerptLengthFilter = null;
     }
 
     /**

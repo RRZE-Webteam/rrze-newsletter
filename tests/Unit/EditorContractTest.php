@@ -152,9 +152,71 @@ final class EditorContractTest extends ApplicationTestCase
         self::assertSame('excerpt_length', App::$hooks[0][1]);
         self::assertSame(23, (App::$hooks[0][2])());
         self::assertSame(999, App::$hooks[0][3]);
-        // Deliberately not claiming successful removal: add_filter returns true, not the closure.
         Editor::filterExcerptLength('not-an-integer');
         self::assertCount(1, App::$hooks);
+    }
+
+    public function testExcerptCleanupRemovesRegisteredCallbackAndPreservesOtherFilters(): void
+    {
+        $otherCallback = static fn (int $length): int => $length + 5;
+        \RRZE\Newsletter\add_filter('excerpt_length', $otherCallback, 999);
+        $request = new class { public function get_params(): array { return ['excerpt_length' => '23']; } };
+        $args = ['posts_per_page' => 5];
+        self::assertSame($args, Editor::maybeFilterExcerptLength($args, $request));
+        self::assertSame(23, State::excerptLength(55));
+        $registeredCallback = App::$hooks[1][2];
+        $posts = [(object) ['ID' => 42]];
+
+        self::assertSame($posts, Editor::maybeResetExcerptLength($posts));
+
+        self::assertSame(60, State::excerptLength(55), 'Only the unrelated filter should affect later excerpts.');
+        self::assertSame([['remove_filter', 'excerpt_length', $registeredCallback, 999]], State::$calls);
+        self::assertNull(Editor::$newsletterExcerptLengthFilter);
+        self::assertSame([999 => [spl_object_id($otherCallback) => $otherCallback]], State::$excerptFilters);
+    }
+
+    public function testReplacingExcerptLengthDoesNotLeaveAnOlderCallbackBehind(): void
+    {
+        Editor::filterExcerptLength(23);
+        $firstCallback = App::$hooks[0][2];
+        Editor::filterExcerptLength(12);
+        self::assertSame(12, State::excerptLength(55));
+        self::assertCount(1, State::$excerptFilters[999]);
+        self::assertSame(['remove_filter', 'excerpt_length', $firstCallback, 999], State::$calls[0]);
+
+        Editor::removeExcerptLengthFilter();
+
+        self::assertSame(55, State::excerptLength(55));
+        self::assertSame([], State::$excerptFilters);
+        self::assertNull(Editor::$newsletterExcerptLengthFilter);
+    }
+
+    public function testConsecutiveExcerptQueriesResetIndependentlyIncludingZeroLength(): void
+    {
+        foreach ([23, 0, 12] as $length) {
+            Editor::filterExcerptLength($length);
+            self::assertSame($length, State::excerptLength(55));
+            self::assertSame([], Editor::maybeResetExcerptLength([]));
+            self::assertSame(55, State::excerptLength(55));
+            self::assertNull(Editor::$newsletterExcerptLengthFilter);
+        }
+    }
+
+    public function testExcerptCleanupIsIdempotentAndInvalidLengthsKeepActiveFilter(): void
+    {
+        Editor::removeExcerptLengthFilter();
+        self::assertSame([], State::$calls);
+        Editor::filterExcerptLength(23);
+        $callback = Editor::$newsletterExcerptLengthFilter;
+        Editor::filterExcerptLength('invalid');
+        self::assertSame($callback, Editor::$newsletterExcerptLengthFilter);
+        self::assertSame(23, State::excerptLength(55));
+        Editor::removeExcerptLengthFilter();
+        $calls = State::$calls;
+        Editor::removeExcerptLengthFilter();
+        Editor::maybeResetExcerptLength([]);
+        self::assertSame($calls, State::$calls);
+        self::assertSame(55, State::excerptLength(55));
     }
 
     public function testLayoutRegistrationDeclaresEditorOnlyMetadata(): void

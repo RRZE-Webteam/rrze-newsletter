@@ -291,8 +291,11 @@ Editor contract tests cover singleton hook registration, newsletter-only block
 restrictions, selective asset-callback removal, email-oriented theme settings,
 palette consistency, asset metadata/localization and requested excerpt lengths.
 `EditorEnvironment.php` records requested changes rather than implementing
-WordPress hook dispatch or theme-JSON merging. The editor singleton, excerpt
-state and global hook fixture are restored after each test.
+WordPress hook dispatch or theme-JSON merging. A narrow, single-argument closure
+fixture exercises excerpt-filter registration, callback identity and priority,
+replacement, cleanup and preservation of unrelated filters. It is not a full
+WordPress hook implementation or a REST query lifecycle test. The editor
+singleton, excerpt state and global hook fixture are restored after each test.
 
 Layout/pattern tests load the real bundled JSON files, check registration scope,
 layout metadata, unique IDs/titles, site-name/logo substitution and relative URL
@@ -307,14 +310,15 @@ These are not Gutenberg parsing, JavaScript execution or browser layout tests.
   was verified failing before the fix, then passing afterward; it exercises the
   real `Send`/`SMTP` chain with a non-networked `wp_mail()` failure. A companion
   test verifies that successful delivery retains the token.
-- Excerpt cleanup: `Editor::filterExcerptLength()` stores `add_filter()`'s boolean
-  return value, then passes it to `remove_filter()` instead of the registered
-  closure. The new boundary correctly returns `true`; tests verify registration
-  and callback output but do not claim the filter is removed. A fix should keep
-  the callback itself and verify subsequent queries no longer use it.
+- Excerpt cleanup — fixed: `Editor::filterExcerptLength()` previously stored
+  `add_filter()`'s boolean return value instead of the registered closure. It now
+  retains the closure, removes an existing callback before replacement and clears
+  the reference after cleanup. Regression tests were verified failing before the
+  fix and passing afterward. They check restored excerpt lengths, unrelated
+  callbacks, repeated registration, zero-length excerpts, invalid input and
+  repeated cleanup.
 
-These fixes are handled separately from the coverage expansion; excerpt cleanup
-remains outstanding.
+Both fixes were handled separately from the coverage expansion.
 
 ### Template assembly
 
