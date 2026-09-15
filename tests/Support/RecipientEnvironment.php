@@ -45,6 +45,9 @@ namespace RRZE\Newsletter {
 
     function apply_filters(string $hook, mixed $default): mixed
     {
+        if (in_array($hook, ['rrze_newsletter_disable_subscription', 'rrze_newsletter_disable_mailing_list'], true)) {
+            return \RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$filters[$hook] ?? $default;
+        }
         if (in_array($hook, ['rrze_newsletter_mail_queue_send_limit', 'rrze_newsletter_mail_queue_max_retries'], true)) {
             return \RRZE\Newsletter\Tests\Support\SettingsEnvironment::$filters[$hook] ?? $default;
         }

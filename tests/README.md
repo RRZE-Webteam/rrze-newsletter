@@ -88,9 +88,28 @@ decoding, one-time transient consumption, membership display, global/per-list
 unsubscribe handling, resubscription and preservation of existing member names.
 `SubscriptionEnvironment.php` records term queries and option/meta writes in
 memory. These tests invoke protected policies through a test-only subclass and
-run the real list sanitizers; they do not exercise the public request handler,
-confirmation emails, permissions, actual transient expiry or database persistence.
+run the real list sanitizers; they do not verify actual transient expiry or
+database persistence.
 Configuration, recipient and storage fixture state is reset around these tests.
+
+`SubscriptionRequestTest` additionally invokes the real public request handler
+with isolated GET/POST fixtures. It covers inactive/wrong-page guards, nonce
+rejection, initial signup staging, field errors, confirmation-token consumption
+and replay, membership updates, unsubscribe requests and management notices.
+The real templates and parser generate forms and notices. Confirmation tests
+check message-token replacement, one-day token TTL, invalid email rejection and
+token cleanup on a thrown transport exception. `Send` tests separately assert
+success/error return values and the fixed header allow list.
+
+`RequestEnvironment.php` records transient writes and throws a test-only
+`RedirectRecorded` exception at `wp_redirect()`, before the following `exit`.
+Thus redirects are asserted, but HTTP headers, termination, browser behavior,
+nonce cryptography and real request authorization are not tested. Its nonce
+field fixture both echoes and returns markup, matching WordPress's default call
+shape. Mail passes through the real `Send`/`SMTP` classes to the non-networked
+`wp_mail` boundary. Superglobals, mail spies and fixture storage are reset after
+each test. This is application logic under scripted WordPress responses, not
+a WordPress integration test.
 
 ### Mail queue tests
 
@@ -109,9 +128,20 @@ and `Recurrence` code calculates the next occurrences. Weekly and monthly queue
 rules currently start from date-only values and therefore schedule at midnight;
 the tests explicitly characterize that behavior.
 
-These tests assert database query arguments and requested writes, not real
-WordPress query filtering, persistence or cron execution. End-to-end queue
-creation, recipient deduplication/unsubscribe handling, SMTP integration and
+`QueueCreationTest` exercises the public `set()` method with the real newsletter
+data assembly, tag processing, parser and HTML-to-text converter. Cases cover
+duplicate recipients, global/local unsubscribe filtering, direct-recipient
+domain restrictions, missing bodies/recipients, skip-and-reschedule behavior,
+personalized content, taxonomy count requests and failed insert/content writes.
+The previous send date must survive skipped/error attempts. Creating queue rows
+must not immediately send mail. Tag tests check names, dates, supported keys and
+encrypted subscription links with plain and pretty permalinks.
+
+`QueueCreationEnvironment.php` records insertion and taxonomy calls. Existing
+mail-queue metadata fixtures record mail-layer writes separately from the
+application's newsletter metadata fixtures. The tests assert these boundary
+calls, not WordPress query filtering, persistence, rollback or cron execution.
+End-to-end queue creation and unsubscribe enforcement, SMTP integration and
 protection against concurrent duplicate sends still need integration coverage.
 
 ### SMTP and encrypted-value compatibility tests
@@ -235,6 +265,54 @@ escaping and the complete newsletter-to-email pipeline remain integration-test
 work. These tests do not establish that generated emails render correctly in
 mail clients.
 
+### Feed placeholders, RSS and archive output
+
+Feed-placeholder tests cover per-feed keys, attribute updates without erasing
+other feeds, separate RSS/ICS storage, link color and text overrides. RSS tests
+load the bundled block metadata and supply already-parsed feed items to a
+test-only rendering harness. Assertions cover the inclusive last-send boundary,
+empty titles/dates/links, independent display options, styles, excerpt-length
+arguments and ellipsis normalization. The feed fixture records item-limit
+requests; it does not implement or test SimplePie's item selection. Typography
+and trimming results are scripted. No RSS HTTP fetch or feed parsing occurs.
+
+Archive tests check stored base64 and legacy raw bodies, removal of archive
+links while retaining article links, preview tag replacement, missing rendered
+HTML and unrelated/missing-post routes. Successful archive rendering is called
+through protected-method harnesses, not the output-and-exit request path.
+Deprecated archive formats, feed substitution during delivery and actual
+WordPress routing still need coverage.
+
+### Editor, layouts and patterns
+
+Editor contract tests cover singleton hook registration, newsletter-only block
+restrictions, selective asset-callback removal, email-oriented theme settings,
+palette consistency, asset metadata/localization and requested excerpt lengths.
+`EditorEnvironment.php` records requested changes rather than implementing
+WordPress hook dispatch or theme-JSON merging. The editor singleton, excerpt
+state and global hook fixture are restored after each test.
+
+Layout/pattern tests load the real bundled JSON files, check registration scope,
+layout metadata, unique IDs/titles, site-name/logo substitution and relative URL
+replacement. Asset assertions compare against the bundled build manifests.
+These are not Gutenberg parsing, JavaScript execution or browser layout tests.
+
+### Follow-up defects identified during the 80% milestone
+
+- Confirmation cleanup: `Subscription::sendConfirmation()` only removes its
+  token for a `false` result or thrown exception. `Send::email()` returns a
+  `WP_Error` on ordinary transport failure, so this failure does not take the
+  cleanup branch. A fix needs an assertion that the failed-send token is removed;
+  the current tests cover the return-value contract and exception cleanup, not
+  successful cleanup of an ordinary failed send.
+- Excerpt cleanup: `Editor::filterExcerptLength()` stores `add_filter()`'s boolean
+  return value, then passes it to `remove_filter()` instead of the registered
+  closure. The new boundary correctly returns `true`; tests verify registration
+  and callback output but do not claim the filter is removed. A fix should keep
+  the callback itself and verify subsequent queries no longer use it.
+
+These production fixes are intentionally separate from the coverage expansion.
+
 ### Template assembly
 
 Template tests load the real `includes/templates/newsletter.mjml` file through
@@ -261,10 +339,10 @@ composer test:coverage
 Generated files, dependencies and WordPress itself are intentionally excluded
 from the coverage scope.
 
-Local milestone (2026-09-15): **61.02% line coverage (3,967 / 6,501)** across the
-unchanged `includes` scope, with **366 tests and 2,219 assertions** passing in
-random order (seed `9152060`). This run used PHP 8.5.10, PCOV 1.0.12 and the
+Local milestone (2026-09-15): **80.26% line coverage (5,217 / 6,500)** across the
+unchanged `includes` scope, up from 61.02%, with **417 tests and 2,596 assertions**
+passing in random order (seed `9152080`). This run used PHP 8.5.10, PCOV 1.0.12 and the
 locally available PHPUnit 13.3.3; the Composer development requirement remains
-PHPUnit 9.6. Exact executable-line totals can differ between runtime versions.
+PHPUnit 9.6. Exact executable-line totals can differ with runtime/instrumentation.
 Coverage measures executed plugin lines, not branch completeness or successful
 integration with WordPress and external services.

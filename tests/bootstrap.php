@@ -13,6 +13,8 @@ namespace RRZE\Newsletter\Tests\Support {
 
         public static array $postUpdates = [];
 
+        public static array $postUpdateResults = [];
+
         public static array $postMetaAdds = [];
 
         public static array $postMetaUpdates = [];
@@ -25,6 +27,7 @@ namespace RRZE\Newsletter\Tests\Support {
             self::$postTypes = [];
             self::$postMeta = [];
             self::$postUpdates = [];
+            self::$postUpdateResults = [];
             self::$postMetaAdds = [];
             self::$postMetaUpdates = [];
             self::$lastPostsQuery = null;
@@ -46,6 +49,11 @@ namespace RRZE\Newsletter\Tests\Support {
         public function getVersion(): string
         {
             return 'test';
+        }
+
+        public function getPath(string $path = ''): string
+        {
+            return dirname(__DIR__) . '/' . trim($path, '/') . '/';
         }
     }
 }
@@ -87,6 +95,10 @@ namespace RRZE\Newsletter\Mail {
     function wp_update_post(array $args): int
     {
         WordPressState::$postUpdates[] = $args;
+        if (WordPressState::$postUpdateResults !== []) {
+            $result = array_shift(WordPressState::$postUpdateResults);
+            if ($result === 0) { return 0; }
+        }
 
         foreach (WordPressState::$posts as $post) {
             if ($post->ID === $args['ID'] && isset($args['post_status'])) {
@@ -118,9 +130,9 @@ namespace RRZE\Newsletter\Mail {
         return $show === 'name' ? \RRZE\Newsletter\Tests\Support\QueueEnvironment::$blogName : '';
     }
 
-    function site_url(): string
+    function site_url(string $path = ''): string
     {
-        return 'https://example.test';
+        return 'https://example.test' . ($path === '' ? '' : '/' . ltrim($path, '/'));
     }
 }
 
@@ -187,4 +199,8 @@ namespace {
     require __DIR__ . '/Support/ApplicationEnvironment.php';
     require __DIR__ . '/Support/ApplicationTestCase.php';
     require __DIR__ . '/Support/CalendarEnvironment.php';
+    require __DIR__ . '/Support/RequestEnvironment.php';
+    require __DIR__ . '/Support/EditorEnvironment.php';
+    require __DIR__ . '/Support/QueueCreationEnvironment.php';
+    require __DIR__ . '/Support/FeedEnvironment.php';
 }

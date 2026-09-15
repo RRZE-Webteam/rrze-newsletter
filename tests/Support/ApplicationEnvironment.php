@@ -87,7 +87,7 @@ namespace RRZE\Newsletter {
     function update_post_meta(int $id, string $key, mixed $value): bool { App::$writes[] = [$id, $key, $value]; App::$meta[$id][$key] = $value; return true; }
     function is_wp_error(mixed $value): bool { return $value instanceof \WP_Error; }
     function add_action(string $hook, mixed $callback, int $priority = 10, int $accepted = 1): void { App::$hooks[] = ['action', $hook, $callback, $priority, $accepted]; }
-    function add_filter(string $hook, mixed $callback, int $priority = 10, int $accepted = 1): void { App::$hooks[] = ['filter', $hook, $callback, $priority, $accepted]; }
+    function add_filter(string $hook, mixed $callback, int $priority = 10, int $accepted = 1): bool { App::$hooks[] = ['filter', $hook, $callback, $priority, $accepted]; return true; }
     function get_post_type_capabilities(object $args): object { App::$capabilityCalls[] = $args; return (object) $args->capabilities; }
     function current_user_can(string $capability): bool { App::$capabilityCalls[] = $capability; return App::$capabilities[$capability] ?? false; }
     function esc_html(string $value): string { return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
