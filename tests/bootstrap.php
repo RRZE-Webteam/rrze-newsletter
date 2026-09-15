@@ -120,6 +120,19 @@ namespace RRZE\Newsletter\MJML {
     {
         return abs((int) $value);
     }
+
+    // Enough for fixture serialization; not a replacement for WP escaping tests.
+    function esc_attr(mixed $value): string
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+    }
+}
+
+namespace RRZE\Newsletter\MJML\BlockProcessor {
+    function absint(mixed $value): int
+    {
+        return abs((int) $value);
+    }
 }
 
 namespace {
@@ -134,4 +147,5 @@ namespace {
     date_default_timezone_set('UTC');
 
     require dirname(__DIR__) . '/vendor/autoload.php';
+    require __DIR__ . '/Support/MjmlTestCase.php';
 }
