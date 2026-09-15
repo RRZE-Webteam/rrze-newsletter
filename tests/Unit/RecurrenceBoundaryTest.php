@@ -101,12 +101,91 @@ final class RecurrenceBoundaryTest extends TestCase
         }
     }
 
-    public function testRuleParsesExplicitStartAndStopsBeforeLaterDates(): void
+    public function testRuleParsesExplicitStartAndIncludesExactUntil(): void
     {
-        // Exact UNTIL equality has a known generation inconsistency; see tests/README.md.
-        $rule = $this->rule()->rrule('DTSTART=20260102T090000Z;FREQ=DAILY;UNTIL=20260104T090001Z');
+        $rule = $this->rule()->rrule('DTSTART=20260102T090000Z;FREQ=DAILY;UNTIL=20260104T090000Z');
+        self::assertTrue($rule->occursOn($this->date('2026-01-04 09:00:00')));
         $rule->generateOccurrences();
         self::assertSame(['2026-01-02 09:00:00', '2026-01-03 09:00:00', '2026-01-04 09:00:00'], $this->format($rule->occurrences));
+    }
+
+    public function testExactUntilIsIncludedAcrossAllFrequencies(): void
+    {
+        foreach ([
+            'yearly' => ['2027-01-01 09:00:00', '2028-01-01 09:00:00'],
+            'monthly' => ['2026-02-01 09:00:00', '2026-03-01 09:00:00'],
+            'weekly' => ['2026-01-08 09:00:00', '2026-01-15 09:00:00'],
+            'daily' => ['2026-01-02 09:00:00', '2026-01-03 09:00:00'],
+            'hourly' => ['2026-01-01 10:00:00', '2026-01-01 11:00:00'],
+            'minutely' => ['2026-01-01 09:01:00', '2026-01-01 09:02:00'],
+            'secondly' => ['2026-01-01 09:00:01', '2026-01-01 09:00:02'],
+        ] as $frequency => [$middle, $end]) {
+            $rule = $this->rule()->freq($frequency)->until($this->date($end));
+            $rule->generateOccurrences();
+            self::assertSame(['2026-01-01 09:00:00', $middle, $end], $this->format($rule->occurrences), $frequency);
+        }
+    }
+
+    public function testDailyUntilDistinguishesOneSecondBeforeExactAndOneSecondAfter(): void
+    {
+        foreach (['08:59:59' => false, '09:00:00' => true, '09:00:01' => true] as $time => $includesLast) {
+            $rule = $this->rule()->freq('daily')->until($this->date('2026-01-03 ' . $time));
+            $rule->generateOccurrences();
+            $expected = ['2026-01-01 09:00:00', '2026-01-02 09:00:00'];
+            if ($includesLast) { $expected[] = '2026-01-03 09:00:00'; }
+            self::assertSame($expected, $this->format($rule->occurrences), $time);
+        }
+    }
+
+    public function testUntilEqualToStartIncludesStartOnlyOnce(): void
+    {
+        $rule = $this->rule()->freq('daily')->until($this->date('2026-01-01 09:00:00'));
+        $rule->generateOccurrences();
+        self::assertSame(['2026-01-01 09:00:00'], $this->format($rule->occurrences));
+    }
+
+    public function testInclusiveUntilStillHonorsExclusionsCountAndInterval(): void
+    {
+        $end = $this->date('2026-01-03 09:00:00');
+        $excluded = $this->rule()->freq('daily')->until($end)->exclusions([$end]);
+        $excluded->generateOccurrences();
+        self::assertSame(['2026-01-01 09:00:00', '2026-01-02 09:00:00'], $this->format($excluded->occurrences));
+
+        $limited = $this->rule()->freq('daily')->until($end)->count(2);
+        $limited->generateOccurrences();
+        self::assertSame(['2026-01-01 09:00:00', '2026-01-02 09:00:00'], $this->format($limited->occurrences));
+
+        $interval = $this->rule()->freq('daily')->interval(2)->until($end);
+        $interval->generateOccurrences();
+        self::assertSame(['2026-01-01 09:00:00', '2026-01-03 09:00:00'], $this->format($interval->occurrences));
+        $nonMatching = $this->rule()->freq('daily')->interval(2)->until($this->date('2026-01-04 09:00:00'));
+        $nonMatching->generateOccurrences();
+        self::assertSame(['2026-01-01 09:00:00', '2026-01-03 09:00:00'], $this->format($nonMatching->occurrences));
+    }
+
+    public function testUtcUntilMatchesLocalOccurrenceAcrossDaylightSavingChange(): void
+    {
+        $rule = new Recurrence('2026-03-28 09:00:00', new DateTimeZone('Europe/Berlin'));
+        $rule->rrule('FREQ=DAILY;UNTIL=20260330T070000Z')->generateOccurrences();
+        self::assertSame([
+            '2026-03-28 09:00:00 +01:00',
+            '2026-03-29 09:00:00 +02:00',
+            '2026-03-30 09:00:00 +02:00',
+        ], array_map(static fn (DateTime $date): string => $date->format('Y-m-d H:i:s P'), $rule->occurrences));
+    }
+
+    public function testWindowIncludesExactUntilWithoutChangingOriginalRule(): void
+    {
+        $rule = $this->rule()->rrule('FREQ=DAILY;UNTIL=20260103T090000Z');
+        self::assertSame(['2026-01-02 09:00:00', '2026-01-03 09:00:00'], $this->format(
+            $rule->getOccurrencesBetween($this->date('2026-01-02 09:00:00'), $this->date('2026-01-04 09:00:00'))
+        ));
+        self::assertSame(['2026-01-03 09:00:00'], $this->format(
+            $rule->getOccurrencesBetween($this->date('2026-01-03 09:00:00'), $this->date('2026-01-04 09:00:00'))
+        ));
+        self::assertSame('2026-01-01 09:00:00', $rule->startDate->format('Y-m-d H:i:s'));
+        self::assertSame('2026-01-03 09:00:00', $rule->until->format('Y-m-d H:i:s'));
+        self::assertSame([], $rule->occurrences);
     }
 
     public function testOccurrenceDateChecksStartAndEndBoundaries(): void
@@ -213,7 +292,7 @@ final class RecurrenceBoundaryTest extends TestCase
     public function testWindowIncludesMatchingStartAndStopsAfterLastMatchingDate(): void
     {
         $rule = $this->rule()->rrule('FREQ=DAILY;COUNT=5');
-        self::assertSame(['2026-01-02 09:00:00', '2026-01-03 09:00:00'], $this->format($rule->getOccurrencesBetween($this->date('2026-01-02 09:00:00'), $this->date('2026-01-03 09:00:01'))));
+        self::assertSame(['2026-01-02 09:00:00', '2026-01-03 09:00:00'], $this->format($rule->getOccurrencesBetween($this->date('2026-01-02 09:00:00'), $this->date('2026-01-03 09:00:00'))));
     }
 
     private function rule(): Recurrence

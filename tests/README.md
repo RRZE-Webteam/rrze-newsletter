@@ -66,12 +66,17 @@ dates, string exclusions, RRULE date parsing, time filters, intervals across all
 frequencies, week starts, strict-mode failures and empty/exhausted search windows.
 Expected dates are explicit and fixtures use UTC unless testing another timezone.
 
-Known gap found while extending these tests: daily generation omits an occurrence
-exactly equal to `UNTIL`, although `occursOn()` accepts that time. For example,
-`DTSTART=20260102T090000Z;FREQ=DAILY;UNTIL=20260104T090000Z` generates January 2
-and 3, not January 4. Exact end equality also affects `getOccurrencesBetween()`.
-This needs a separate production fix and a regression assertion for the final
-occurrence; the new passing generation tests use an end one second after it.
+Inclusive `UNTIL` boundary — fixed: generation previously omitted occurrences
+exactly equal to `UNTIL`, although `occursOn()` accepted that time. For example,
+`DTSTART=20260102T090000Z;FREQ=DAILY;UNTIL=20260104T090000Z` now includes January 4
+at 09:00, as well as January 2 and 3. The shared generation loop now includes
+equality. Seven regression cases were verified failing before the fix.
+
+Tests cover exact endpoints across all seven frequencies, daily bounds one
+second before/after an occurrence, start equal to end, count limits, exclusions,
+intervals, UTC end dates across a local daylight-saving transition and matching
+endpoints in `getOccurrencesBetween()`. The previous one-second workarounds were
+removed. Empty/reversed query windows still return no occurrences.
 
 ### Settings and subscription policies
 
