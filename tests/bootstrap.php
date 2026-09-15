@@ -33,6 +33,11 @@ namespace RRZE\Newsletter\Tests\Support {
 
     final class PluginStub
     {
+        public function getDirectory(): string
+        {
+            return dirname(__DIR__) . '/';
+        }
+
         public function getBaseName(): string
         {
             return 'rrze-newsletter/rrze-newsletter.php';
@@ -134,6 +139,15 @@ namespace RRZE\Newsletter\MJML {
 }
 
 namespace RRZE\Newsletter\MJML\BlockProcessor {
+    // Deterministic plugin asset URLs only; not WordPress URL/filter behavior.
+    function plugins_url(string $path, string $plugin): string
+    {
+        if ($plugin !== 'rrze-newsletter/rrze-newsletter.php') {
+            throw new \LogicException('Unexpected plugin asset base: ' . $plugin);
+        }
+        return 'https://example.test/wp-content/plugins/rrze-newsletter/' . $path;
+    }
+
     function absint(mixed $value): int
     {
         return abs((int) $value);

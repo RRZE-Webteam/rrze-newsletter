@@ -109,6 +109,14 @@ separators through their public rendering methods, including recursive calls
 through `BlockProcessor`. They verify element nesting, content order, attribute
 inheritance, automatic widths, mobile grouping and incomplete grid rows.
 
+Social-link tests cover supported service colors, filled/circle styles, the
+default feed variant, and the presence of both bundled icon variants for every
+supported service. Processor tests check element order, skipped incomplete or
+unsupported links, parent styles, container defaults, URL serialization and
+root/column wrapping. A namespaced `plugins_url()` stub supplies deterministic
+asset URLs; WordPress URL filters, URL-scheme validation and actual asset serving
+are not exercised.
+
 Button tests cover HTML and attribute-based labels and link metadata,
 typography inheritance, outline styles, borders, padding, alignment and bounded
 percentage widths. Image tests cover intrinsic and explicit dimensions,
@@ -149,6 +157,20 @@ global mode without restoring it, which remains a separate cleanup task.
 WordPress theme-palette resolution, HTML attribute escaping and full newsletter
 rendering remain integration-test work. These helper tests do not establish
 that generated emails render correctly in mail clients.
+
+### Template assembly
+
+Template tests load the real `includes/templates/newsletter.mjml` file through
+`Templates` and the real parser. They check missing files, raw loading without
+data, interpolation, output-buffer isolation, title/preview/body assembly,
+layout attributes, selected CSS rules, whitespace compaction and hover-rule
+removal. Personalization tokens inserted with the body must survive for later
+per-recipient parsing; consecutive renders must not reuse earlier content.
+
+These fixtures use trusted, XML-compatible content. DOM assertions verify
+structure, not sanitization, complete CSS/MJML validity, MJML-to-HTML compilation
+or rendering in email clients. The plugin-directory stub points only to this
+repository; tests neither alter templates nor load live WordPress data.
 
 ## Code coverage
 
