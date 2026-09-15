@@ -16,8 +16,10 @@ installation or a database.
 ```shell
 composer test
 composer test:unit
-npm run test
 ```
+
+`npm run test` runs both the PHP suite and the compiled MJML/HTML regressions
+described below. It requires the Composer and npm dependencies to be installed.
 
 Keep these stubs limited to small, deterministic boundaries. Contract tests can
 assert the arguments supplied to WordPress and the plugin's decisions given
@@ -278,6 +280,39 @@ Real Gutenberg parsing, WordPress theme-palette resolution, HTML attribute
 escaping and the complete newsletter-to-email pipeline remain integration-test
 work. These tests do not establish that generated emails render correctly in
 mail clients.
+
+### Compiled image HTML regressions
+
+```shell
+npm run test:mjml
+npm run test
+```
+
+`tests/MJML/images.test.cjs` uses Node's built-in test runner and the installed
+`mjml-browser` compiler with the editor's compilation options. Its CLI-only PHP
+fixture runs the real `ImageProcessor` and `TemplateRenderer` against synthetic
+images with known dimensions. Small plugin-path and escaping stubs replace
+WordPress boundaries; unexpected image metadata lookups fail immediately. No
+WordPress installation, database, browser, image download or email send is used.
+
+Automatic image heights — fixed: the renderer previously calculated a fixed
+pixel height which MJML combined with `width:100%`. Images could become distorted
+when their container shrank, especially above the template's 479px workaround.
+The renderer now emits `height="auto"` for intrinsically sized and width-only
+images, while preserving the same width limits. Explicit height requests retain
+their existing behavior; this change does not redefine intentional image sizing
+or cropping. The existing mobile CSS fallback remains unchanged.
+
+Nine compiled-HTML regression cases were verified failing before the fix. They
+cover landscape/portrait images, small images, pixel/percentage/oversized widths,
+size presets and a narrow container. Assertions check the image's inline
+`height:auto`, fluid width and absence of a fixed HTML height, independently of
+head CSS or media-query support. Three control cases preserve explicit sizing.
+PHP tests also cover widths on both sides of 479px and padded columns/grid cells.
+These are output-contract tests, not visual email-client compatibility tests.
+
+Existing newsletters need to be saved again in the editor to regenerate their
+stored email HTML. Already queued or delivered messages are not rewritten.
 
 ### Feed placeholders, RSS and archive output
 

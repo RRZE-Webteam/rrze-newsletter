@@ -236,7 +236,7 @@ final class ImageProcessor
             );
         }
         if ($imageSize && !isset($imgAttrs['height'])) {
-            return self::applyImageAspectRatio(
+            return self::applyIntrinsicImageWidth(
                 $imgAttrs,
                 $imageSize,
                 $requestedWidth,
@@ -323,7 +323,7 @@ final class ImageProcessor
     }
 
     /**
-     * Calculate a proportional height for the rendered image width.
+     * Bound the image width while leaving its proportional height fluid.
      *
      * @param array<string, mixed>  $imgAttrs       MJML image attributes.
      * @param array{0: int, 1: int} $imageSize      Intrinsic dimensions.
@@ -331,20 +331,18 @@ final class ImageProcessor
      * @param int                   $availableWidth Maximum available width.
      * @return array<string, mixed> Updated MJML image attributes.
      */
-    private static function applyImageAspectRatio(
+    private static function applyIntrinsicImageWidth(
         array $imgAttrs,
         array $imageSize,
         ?int $requestedWidth,
         int $availableWidth
     ): array {
-        [$intrinsicWidth, $intrinsicHeight] = $imageSize;
+        [$intrinsicWidth] = $imageSize;
         $renderedWidth = min($requestedWidth ?? $intrinsicWidth, $availableWidth);
-        $renderedHeight = (int) round(
-            $intrinsicHeight * ($renderedWidth / $intrinsicWidth)
-        );
 
         $imgAttrs['width'] = $renderedWidth . 'px';
-        $imgAttrs['height'] = $renderedHeight . 'px';
+        // MJML emits width:100%; a fixed height would distort narrower images.
+        $imgAttrs['height'] = 'auto';
 
         return $imgAttrs;
     }

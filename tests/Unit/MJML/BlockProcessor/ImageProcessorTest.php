@@ -59,6 +59,18 @@ final class ImageProcessorTest extends MjmlTestCase
         self::assertSame([$height], $this->values($xpath, '//mj-image/@height'));
     }
 
+    public function testAutomaticHeightDoesNotDependOnTheMobileBreakpoint(): void
+    {
+        foreach ([320, 479, 480, 600, 680] as $availableWidth) {
+            $this->assertDimensions($this->image([], null, $availableWidth), $availableWidth . 'px', 'auto');
+        }
+    }
+
+    public function testPortraitImageUsesIntrinsicWidthAndAutomaticHeight(): void
+    {
+        $this->assertDimensions($this->image([], $this->imageHtml(400, 800)), '400px', 'auto');
+    }
+
     public function testImageRenderingRestoresThePreviousLibxmlErrorMode(): void
     {
         foreach ([false, true] as $mode) {
@@ -110,7 +122,7 @@ final class ImageProcessorTest extends MjmlTestCase
     {
         $xpath = $this->image();
 
-        $this->assertDimensions($xpath, '600px', '300px');
+        $this->assertDimensions($xpath, '600px', 'auto');
         self::assertSame(['https://example.test/news.png'], $this->values($xpath, '//mj-image/@src'));
         self::assertSame(['Newsletter'], $this->values($xpath, '//mj-image/@alt'));
         self::assertSame(['true'], $this->values($xpath, '//mj-image/@fluid-on-mobile'));
@@ -120,29 +132,29 @@ final class ImageProcessorTest extends MjmlTestCase
         $this->assertNodes($xpath, '//mj-text', 0);
     }
 
-    public function testSmallImageKeepsIntrinsicSizeWithoutUpscaling(): void
+    public function testSmallImageKeepsIntrinsicWidthAndAutomaticHeight(): void
     {
-        $this->assertDimensions($this->image([], $this->imageHtml(200, 100)), '200px', '100px');
+        $this->assertDimensions($this->image([], $this->imageHtml(200, 100)), '200px', 'auto');
     }
 
-    public function testExplicitPixelAndPercentageWidthsScaleHeight(): void
+    public function testExplicitPixelAndPercentageWidthsKeepHeightAutomatic(): void
     {
-        foreach ([[240, '240px', '120px'], ['50%', '300px', '150px'], ['900px', '600px', '300px']] as [$requested, $width, $height]) {
-            $this->assertDimensions($this->image(['width' => $requested]), $width, $height);
+        foreach ([[240, '240px'], ['50%', '300px'], ['900px', '600px']] as [$requested, $width]) {
+            $this->assertDimensions($this->image(['width' => $requested]), $width, 'auto');
         }
     }
 
     public function testImageSizePresetsRespectAvailableWidth(): void
     {
         foreach ([
-            [['sizeSlug' => 'medium'], 600, '300px', '150px'],
-            [['className' => 'custom size-medium'], 600, '300px', '150px'],
-            [['sizeSlug' => 'thumbnail'], 600, '150px', '75px'],
-            [['className' => 'size-thumbnail'], 600, '150px', '75px'],
-            [['sizeSlug' => 'medium'], 200, '200px', '100px'],
-            [['sizeSlug' => 'medium', 'width' => 100], 600, '100px', '50px'],
-        ] as [$attrs, $available, $width, $height]) {
-            $this->assertDimensions($this->image($attrs, null, $available), $width, $height);
+            [['sizeSlug' => 'medium'], 600, '300px'],
+            [['className' => 'custom size-medium'], 600, '300px'],
+            [['sizeSlug' => 'thumbnail'], 600, '150px'],
+            [['className' => 'size-thumbnail'], 600, '150px'],
+            [['sizeSlug' => 'medium'], 200, '200px'],
+            [['sizeSlug' => 'medium', 'width' => 100], 600, '100px'],
+        ] as [$attrs, $available, $width]) {
+            $this->assertDimensions($this->image($attrs, null, $available), $width, 'auto');
         }
     }
 
@@ -181,7 +193,7 @@ final class ImageProcessorTest extends MjmlTestCase
     public function testUnsupportedDimensionsFallBackToIntrinsicAspectRatio(): void
     {
         foreach ([['width' => 'auto'], ['width' => '-10px'], ['height' => '50%'], ['width' => 0, 'height' => 0]] as $attrs) {
-            $this->assertDimensions($this->image($attrs), '600px', '300px');
+            $this->assertDimensions($this->image($attrs), '600px', 'auto');
         }
     }
 
@@ -239,7 +251,7 @@ final class ImageProcessorTest extends MjmlTestCase
         $this->assertNodes($xpath, '/test-root/mj-section/mj-column/mj-image', 1);
         $this->assertNodes($xpath, '//mj-section', 1);
         $this->assertNodes($xpath, '//mj-column', 1);
-        $this->assertDimensions($xpath, '600px', '300px');
+        $this->assertDimensions($xpath, '600px', 'auto');
     }
 
     public function testPaddedColumnsPassDistinctWidthsToSiblingImages(): void
@@ -256,7 +268,7 @@ final class ImageProcessorTest extends MjmlTestCase
         $xpath = $this->parseMjml(BlockProcessor::render($columns, RenderContext::root(42, 600)));
 
         self::assertSame(['200px', '360px'], $this->values($xpath, '//mj-image/@width'));
-        self::assertSame(['100px', '180px'], $this->values($xpath, '//mj-image/@height'));
+        self::assertSame(['auto', 'auto'], $this->values($xpath, '//mj-image/@height'));
         $this->assertNodes($xpath, '/test-root/mj-section/mj-column/mj-image', 2);
         $this->assertNodes($xpath, '//mj-column//mj-column', 0);
     }
@@ -274,7 +286,7 @@ final class ImageProcessorTest extends MjmlTestCase
 
         $this->assertNodes($xpath, '/test-root/mj-wrapper/mj-section/mj-column/mj-image', 1);
         self::assertSame(['0 20px 0 20px'], $this->values($xpath, '//mj-column/@padding'));
-        $this->assertDimensions($xpath, '260px', '130px');
+        $this->assertDimensions($xpath, '260px', 'auto');
     }
 
     public function testImageOwnPaddingStillReducesWidthInsidePaddedGridCell(): void
@@ -293,7 +305,7 @@ final class ImageProcessorTest extends MjmlTestCase
         $xpath = $this->parseMjml(BlockProcessor::render($grid, RenderContext::root(42, 600)));
 
         // 300px cell - 40px cell padding - 20px image padding.
-        $this->assertDimensions($xpath, '240px', '120px');
+        $this->assertDimensions($xpath, '240px', 'auto');
         self::assertSame(['0 20px 0 20px'], $this->values($xpath, '//mj-column/@padding'));
     }
 
@@ -308,7 +320,7 @@ final class ImageProcessorTest extends MjmlTestCase
         ]);
         $xpath = $this->parseMjml(BlockProcessor::render($grid, RenderContext::root(42, 600)));
 
-        $this->assertDimensions($xpath, '280px', '140px');
+        $this->assertDimensions($xpath, '280px', 'auto');
         self::assertSame(['0'], $this->values($xpath, '//mj-column/@padding'));
     }
 }

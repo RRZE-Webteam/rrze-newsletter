@@ -13,7 +13,8 @@
     "extends @wordpress/browserslist-config"
   ],
   "scripts": {
-    "test": "composer test",
+    "test": "composer test && npm run test:mjml",
+    "test:mjml": "node --test tests/MJML/*.test.cjs",
     "start": "wp-scripts start",
     "build": "wp-scripts build",
     "format": "wp-scripts format src",
