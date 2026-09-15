@@ -47,8 +47,17 @@ Button tests cover HTML and attribute-based labels and link metadata,
 typography inheritance, outline styles, borders, padding, alignment and bounded
 percentage widths. Image tests cover intrinsic and explicit dimensions,
 aspect ratios, size presets, plain captions, links and sizing inside padded
-columns and grid cells. Image fixtures provide dimensions directly, so these
+columns and grid cells. Image rendering fixtures provide dimensions directly, so these
 tests never fetch external images or query WordPress attachments.
+
+Image-size resolver tests separately cover attachment precedence, local path
+checks, real image decoding, remote-response validation, the two-request limit,
+positive and negative caching, and cache resets between renders. Their
+namespaced WordPress stubs live in `tests/Support/ImageLookupEnvironment.php`.
+The bootstrap points `WP_CONTENT_DIR` at the repository's read-only `assets`
+fixtures; no live WordPress files, database or network are used. Each test resets
+the resolver and stub state. Cache TTL arguments are checked, but actual
+WordPress transient expiration and SSRF protection are not simulated.
 
 The grid-padding regression checks that a 300px cell with 20px padding on each
 side renders its image at 260px, not 220px. Additional cases preserve the
@@ -66,8 +75,8 @@ correctness of WordPress escaping. Paragraph and heading processing that relies
 on `WP_HTML_Tag_Processor` is deferred to tests with the real WordPress API.
 
 Button URL tests use ordinary valid URLs. WordPress's `esc_url_raw()` scheme
-validation, image URL normalization and attachment/HTTP dimension lookup still
-need integration coverage. Image tests restore the libxml error mode and reset
+validation, image URL normalization and the real attachment, transient and HTTP
+APIs still need integration coverage. Image tests restore the libxml error mode and reset
 dimension caches after each test: the current image parser changes libxml's
 global mode without restoring it, which remains a separate cleanup task.
 

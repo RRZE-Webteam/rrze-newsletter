@@ -143,9 +143,20 @@ namespace {
     if (!defined('MINUTE_IN_SECONDS')) {
         define('MINUTE_IN_SECONDS', 60);
     }
+    if (!defined('HOUR_IN_SECONDS')) {
+        define('HOUR_IN_SECONDS', 3600);
+    }
+    if (!defined('DAY_IN_SECONDS')) {
+        define('DAY_IN_SECONDS', 86400);
+    }
+    if (!defined('WP_CONTENT_DIR')) {
+        // A read-only fixture root, never the developer's live wp-content directory.
+        define('WP_CONTENT_DIR', dirname(__DIR__) . '/assets');
+    }
 
     date_default_timezone_set('UTC');
 
     require dirname(__DIR__) . '/vendor/autoload.php';
     require __DIR__ . '/Support/MjmlTestCase.php';
+    require __DIR__ . '/Support/ImageLookupEnvironment.php';
 }
