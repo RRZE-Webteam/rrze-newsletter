@@ -97,6 +97,9 @@ final class ButtonProcessor
         array $containerAttrs,
         array $buttonAttrs
     ): array {
+        if (isset($containerAttrs['container-background-color'])) {
+            $buttonAttrs['container-background-color'] = $containerAttrs['container-background-color'];
+        }
         if (!empty($containerAttrs['style']['typography'])) {
             $buttonAttrs['style']['typography'] = array_merge(
                 $containerAttrs['style']['typography'],
@@ -224,6 +227,7 @@ final class ButtonProcessor
         $backgroundColor = $attrs['background-color'] ?? '#32373c';
 
         $buttonAttrs = [
+            'container-background-color' => $attrs['container-background-color'] ?? null,
             'align' => $align,
             'background-color' => $isOutline
                 ? 'transparent'

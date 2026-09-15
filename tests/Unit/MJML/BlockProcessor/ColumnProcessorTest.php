@@ -98,4 +98,16 @@ final class ColumnProcessorTest extends MjmlTestCase
         self::assertSame(['0 40px 0 40px'], $this->values($xpath, '/test-root/mj-section/@padding'));
         self::assertSame(['0'], $this->values($xpath, '//mj-column/@padding'));
     }
+
+    public function testOwnColumnBackgroundWinsOverOuterGroupWithoutLeakingToSibling(): void
+    {
+        $columns = $this->container('core/columns', [
+            $this->container('core/column', [$this->listBlock('Dark', ['style' => ['color' => ['text' => '#000000']]])], ['customBackgroundColor' => '#04316a']),
+            $this->container('core/column', [$this->listBlock('Light')]),
+        ]);
+        $block = $this->container('core/group', [$columns], ['customBackgroundColor' => '#ffffff']);
+        $xpath = $this->parseMjml(BlockProcessor::render($block, RenderContext::root(42)));
+        self::assertSame(['#04316a', '#ffffff'], $this->values($xpath, '//mj-column/@background-color'));
+        self::assertSame(['#04316a', '#ffffff'], $this->values($xpath, '//mj-text/@container-background-color'));
+    }
 }

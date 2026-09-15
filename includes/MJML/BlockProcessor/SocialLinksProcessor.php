@@ -102,6 +102,7 @@ final class SocialLinksProcessor
     {
         return [
             'icon-size' => '24px',
+            'container-background-color' => $attrs['background-color'] ?? $attrs['container-background-color'] ?? null,
             'mode' => 'horizontal',
             'padding' => '0',
             'border-radius' => '999px',

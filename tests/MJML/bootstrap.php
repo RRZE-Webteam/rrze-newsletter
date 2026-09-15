@@ -29,6 +29,11 @@ namespace RRZE\Newsletter {
 }
 
 namespace RRZE\Newsletter\MJML {
+    function absint(mixed $value): int
+    {
+        return abs((int) $value);
+    }
+
     // Serialization boundary only; this does not test WordPress escaping.
     function esc_attr(mixed $value): string
     {

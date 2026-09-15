@@ -136,6 +136,7 @@ final class ImageProcessor
         string $imageUrl
     ): array {
         $imgAttrs = [
+            'container-background-color' => $attrs['background-color'] ?? $attrs['container-background-color'] ?? null,
             'padding'         => '0',
             'align'           => $attrs['align'] ?? 'left',
             'fluid-on-mobile' => 'true',
@@ -400,6 +401,7 @@ final class ImageProcessor
         }
 
         $captionAttrs = [
+            'container-background-color' => $attrs['background-color'] ?? $attrs['container-background-color'] ?? null,
             'align' => 'left',
             'font-size' => '14px',
             'line-height' => '1.4',

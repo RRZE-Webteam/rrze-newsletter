@@ -68,4 +68,47 @@ final class GroupProcessorTest extends MjmlTestCase
 
         self::assertSame(['#ff0000', '#04316a'], $this->values($xpath, '//mj-text/@color'));
     }
+
+    public function testNestedBackgroundSurvivesTextAndSpacingOverridesInBothModes(): void
+    {
+        foreach ([false, true] as $managed) {
+            foreach ([false, true] as $inColumn) {
+                $dark = $this->container('core/group', [
+                    $this->listBlock('Dark', ['style' => ['color' => ['text' => '#000000'], 'spacing' => ['padding' => ['top' => '20px']]]]),
+                    $this->listBlock('Light', ['style' => ['color' => ['background' => '#ffffff', 'text' => '#000000']]]),
+                    $this->container('core/group', [$this->listBlock('Deep', ['style' => ['typography' => ['fontWeight' => '700']]])]),
+                ], ['style' => ['color' => ['background' => '#04316a']]]);
+                $block = $this->container('core/group', [$dark, $this->listBlock('Sibling')], ['customBackgroundColor' => '#ffffff']);
+                $before = $block;
+                $context = RenderContext::root(42, managedSpacing: $managed);
+                $xpath = $this->parseMjml(BlockProcessor::render($block, $inColumn ? $context->insideColumn() : $context));
+                self::assertSame(['#04316a', '#ffffff', '#04316a', '#ffffff'], $this->values($xpath, '//mj-text/@container-background-color'));
+                self::assertSame($before, $block, 'Source block colors must not change');
+            }
+        }
+    }
+
+    public function testGroupBackgroundDoesNotReplaceButtonFill(): void
+    {
+        $button = ['blockName' => 'core/button', 'attrs' => ['style' => ['typography' => ['fontWeight' => '700']]], 'innerHTML' => '<a href="https://example.test">Button</a>'];
+        $block = $this->container('core/group', [$this->container('core/group', [$button], ['customBackgroundColor' => '#04316a'])]);
+        $xpath = $this->parseMjml(BlockProcessor::render($block, RenderContext::root(42)->insideColumn()));
+        self::assertSame(['#04316a'], $this->values($xpath, '//mj-button/@container-background-color'));
+        self::assertSame(['#32373c'], $this->values($xpath, '//mj-button/@background-color'));
+    }
+
+    public function testFlattenedGroupBackdropAlsoCoversImagesCaptionsButtonsAndDecorations(): void
+    {
+        $button = ['blockName' => 'core/button', 'attrs' => [], 'innerHTML' => '<a href="https://example.test">Button</a>'];
+        $children = [
+            ['blockName' => 'core/image', 'attrs' => [], 'innerHTML' => '<figure><img src="https://example.test/image.png" width="200" height="100"/><figcaption>Caption</figcaption></figure>'],
+            $this->container('core/buttons', [$button]),
+            ['blockName' => 'core/spacer', 'attrs' => ['height' => '16px'], 'innerHTML' => '<div></div>'],
+            ['blockName' => 'core/separator', 'attrs' => [], 'innerHTML' => '<hr/>'],
+            $this->container('core/social-links', [['blockName' => 'core/social-link', 'attrs' => ['service' => 'github', 'url' => 'https://example.test']]]),
+        ];
+        $block = $this->container('core/group', $children, ['customBackgroundColor' => '#04316a']);
+        $xpath = $this->parseMjml(BlockProcessor::render($block, RenderContext::root(42)->insideColumn()));
+        self::assertSame(array_fill(0, 6, '#04316a'), $this->values($xpath, '/*/*/@container-background-color'));
+    }
 }

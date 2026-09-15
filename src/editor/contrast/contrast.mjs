@@ -96,12 +96,14 @@ export function protectDocument( doc, view ) {
 				corrected++;
 			}
 		}
-		decisions.push( { element, color: replacement || style.color } );
+		decisions.push( { element, color: replacement || style.color, replacement } );
 	}
 	if ( corrected ) {
-		// Preserve already-readable descendants when an ancestor is corrected.
-		for ( const { element, color } of decisions ) {
-			if ( color ) {
+		// Preserve readable descendants of corrected ancestors, but do not rewrite
+		// unrelated readable elements or reserialize their background declarations.
+		const changed = new Set( decisions.filter( ( decision ) => decision.replacement ).map( ( decision ) => decision.element ) );
+		for ( const { element, color, replacement } of decisions ) {
+			if ( color && ( replacement || [ ...ancestors( element ) ].some( ( parent ) => changed.has( parent ) ) ) ) {
 				element.style.setProperty( 'color', color, 'important' );
 			}
 		}

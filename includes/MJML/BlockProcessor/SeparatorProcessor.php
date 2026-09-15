@@ -18,6 +18,7 @@ final class SeparatorProcessor
     public static function render(array $attrs): string
     {
         $dividerAttrs = [
+            'container-background-color' => $attrs['container-background-color'] ?? null,
             'padding' => '0',
             'border-width' => '1px',
             'width' => self::isWide($attrs) ? '100%' : '128px',

@@ -141,3 +141,58 @@ test( 'real MJML output: dark button and caption are corrected, readable sibling
 	assert.equal( link.getAttribute( 'href' ), 'https://example.test/' );
 	dom.window.close();
 } );
+
+test( 'correcting dark text leaves unrelated readable elements completely unchanged', async () => {
+	const { doc, dom, corrected } = await protect( '<p style="background:#04316a;color:black">Correct me</p><p id="readable" style="color:#04316a;background:white;border:1px solid red">Keep me</p>' );
+	assert.equal( corrected, 1 );
+	assert.equal( doc.getElementById( 'readable' ).getAttribute( 'style' ), 'color:#04316a;background:white;border:1px solid red' );
+	dom.window.close();
+} );
+
+// Full rendering pipeline with synthetic blocks; no WordPress database/network.
+const groupFixtures = JSON.parse( require( 'node:child_process' ).execFileSync( 'php', [ require( 'node:path' ).join( __dirname, '../MJML/render-group-backgrounds.php' ) ], { encoding: 'utf8', timeout: 10000 } ) );
+for ( const [ name, mjml ] of Object.entries( groupFixtures ) ) {
+	test( `${ name }: group backgrounds survive compilation and contrast protection changes only text colors`, async () => {
+		global.window = {};
+		const { html, errors } = require( 'mjml-browser' )( mjml );
+		// Existing list rendering emits internal metadata; MJML ignores it. Keep
+		// that separate from this regression and reject any new validation errors.
+		assert.deepEqual( errors.filter( ( error ) => error.tagName !== 'mj-text' || error.message !== 'Attributes postId, link, textColor are illegal' ), [] );
+		const dom = new JSDOM( html );
+		const doc = dom.window.document;
+		const view = styleView( dom.window );
+		const background = ( node ) => {
+			for ( let element = node; element; element = element.parentElement ) {
+				const color = view.getComputedStyle( element ).backgroundColor;
+				if ( color !== 'rgba(0, 0, 0, 0)' ) { return color; }
+			}
+		};
+		const expected = { dark: 'rgb(4, 49, 106)', light: 'rgb(255, 255, 255)', readable: 'rgb(4, 49, 106)', deep: 'rgb(4, 49, 106)', link: 'rgb(4, 49, 106)', sibling: 'rgb(255, 255, 255)' };
+		for ( const [ id, color ] of Object.entries( expected ) ) { assert.equal( background( doc.getElementById( id ) ), color, id ); }
+		const original = doc.documentElement.cloneNode( true );
+		const { protectDocument } = await guard;
+		const result = protectDocument( doc, view );
+		assert.equal( result.corrected, 3 );
+		for ( const id of [ 'dark', 'deep', 'link' ] ) { assert.equal( doc.getElementById( id ).style.color, 'rgb(255, 255, 255)', id ); }
+		for ( const [ id, color ] of Object.entries( expected ) ) { assert.equal( background( doc.getElementById( id ) ), color, id ); }
+		const button = doc.querySelector( 'a[href="https://example.test/button"]' );
+		assert.equal( background( button ), 'rgb(255, 204, 0)' );
+		// Compare the whole document, ignoring only color declarations on elements
+		// that received a correction (or required inherited-color preservation).
+		const after = [ doc.documentElement, ...doc.documentElement.querySelectorAll( '*' ) ];
+		const before = [ original, ...original.querySelectorAll( '*' ) ];
+		assert.equal( after.length, before.length );
+		for ( let i = 0; i < after.length; i++ ) {
+			if ( after[ i ].getAttribute( 'style' ) === before[ i ].getAttribute( 'style' ) ) { continue; }
+			const clone = after[ i ].cloneNode( false );
+			clone.style.removeProperty( 'color' );
+			const initial = before[ i ].cloneNode( false );
+			initial.style.removeProperty( 'color' );
+			assert.equal( clone.style.cssText, initial.style.cssText, 'No other CSS property may change' );
+			if ( before[ i ].hasAttribute( 'style' ) ) { after[ i ].setAttribute( 'style', before[ i ].getAttribute( 'style' ) ); }
+			else { after[ i ].removeAttribute( 'style' ); }
+		}
+		assert.equal( doc.documentElement.outerHTML, original.outerHTML, 'All markup, background declarations and Outlook comments remain intact' );
+		dom.window.close();
+	} );
+}

@@ -65,6 +65,9 @@ final class BlockProcessor
         );
         $padding = StyleProcessor::getPaddingFromAttributes($attrs);
         $sectionAttrs = array_merge($attrs, ['padding' => '0']);
+        if (!isset($sectionAttrs['background-color']) && isset($attrs['container-background-color'])) {
+            $sectionAttrs['background-color'] = $attrs['container-background-color'];
+        }
         if ($blockName === 'core/separator') {
             unset($sectionAttrs['background-color']);
         }

@@ -43,6 +43,29 @@ final class AttributeInheritanceTest extends TestCase
         );
     }
 
+    public function testGroupBackgroundSurvivesChildStylesWithoutInheritingGroupPaddingOrButtonFill(): void
+    {
+        $child = ['attrs' => ['style' => ['color' => ['text' => '#000000'], 'spacing' => ['padding' => ['top' => '8px']]]]];
+        $defaults = ['style' => ['color' => ['background' => '#eeeeee']], 'customBackgroundColor' => '#eeeeee'];
+        $before = $defaults;
+        $attrs = AttributeInheritance::forChild($child, ['background-color' => '#04316a', 'padding' => '100px'], $defaults);
+        self::assertSame('#04316a', $attrs['container-background-color']);
+        self::assertArrayNotHasKey('background-color', $attrs);
+        self::assertArrayNotHasKey('customBackgroundColor', $attrs);
+        self::assertSame($child['attrs']['style'], $attrs['style']);
+        self::assertSame($before, $defaults);
+    }
+
+    public function testTransparentIntermediateGroupsKeepTheNearestBackgroundAndChildBackgroundStillWins(): void
+    {
+        $defaults = ['container-background-color' => '#04316a', 'backgroundColor' => 'old-preset', 'style' => ['color' => ['background' => '#ff0000']]];
+        foreach ([['customBackgroundColor' => '#ffffff'], ['style' => ['color' => ['background' => '#ffffff']]], ['background-color' => '#ffffff']] as $own) {
+            $attrs = AttributeInheritance::forChild(['attrs' => $own], [], $defaults);
+            self::assertSame('#04316a', $attrs['container-background-color']);
+            self::assertSame('#ffffff', \RRZE\Newsletter\MJML\StyleProcessor::getColors($attrs)['background-color']);
+        }
+    }
+
     public function testChildTextPresetRemovesInheritedLiteralColor(): void
     {
         $attrs = AttributeInheritance::forChild(

@@ -32,6 +32,19 @@ composer test:unit
 `npm run test` runs the PHP suite, compiled MJML/HTML, contrast and editor regressions
 described below. It requires the Composer and npm dependencies to be installed.
 
+### Group backgrounds and contrast
+
+Group backdrops are carried separately from child styles and button fills. Tests
+cover nested groups, column/grid nesting, child background precedence, sibling
+isolation, images/captions and decorations. Six PHP → MJML → HTML → contrast
+fixtures verify dark/light backgrounds through twelve nested groups in managed
+and manual spacing modes. They compare the complete document before/after the
+guard, allowing only text-color changes, and verify unchanged block input.
+The jsdom tests use a controlled computed-style boundary for CSS inheritance;
+they do not replace native mail-client checks. Existing MJML warnings about list
+metadata (`postId`, `link`, `textColor`) are explicitly allowed, not suppressed
+globally. Unrelated readable elements are no longer rewritten by the guard.
+
 ### Managed spacing and per-newsletter overrides
 
 The opt-in global `design_managed_spacing` setting is overridden by newsletter
