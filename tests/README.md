@@ -24,6 +24,39 @@ on WordPress hooks, post storage, permissions, REST routing, taxonomies or
 multisite belongs in the future integration suite and should run against a
 real WordPress test installation.
 
+### Recurrence boundaries
+
+The recurrence suite checks setter validation, numeric/weekday limits, cloned
+dates, string exclusions, RRULE date parsing, time filters, intervals across all
+frequencies, week starts, strict-mode failures and empty/exhausted search windows.
+Expected dates are explicit and fixtures use UTC unless testing another timezone.
+
+Known gap found while extending these tests: daily generation omits an occurrence
+exactly equal to `UNTIL`, although `occursOn()` accepts that time. For example,
+`DTSTART=20260102T090000Z;FREQ=DAILY;UNTIL=20260104T090000Z` generates January 2
+and 3, not January 4. Exact end equality also affects `getOccurrencesBetween()`.
+This needs a separate production fix and a regression assertion for the final
+occurrence; the new passing generation tests use an end one second after it.
+
+### Settings and subscription policies
+
+Settings tests cover default merging, unknown saved-key removal, queue-limit
+filters, required-field and sanitizer failures, preservation of other settings,
+tab selection, and text/number/checkbox/radio/select/page/textarea/password fields.
+`SettingsEnvironment.php` supplies a controlled field schema, not the production
+`config/settings.php`. The harness bypasses hook registration; serialization,
+selection helpers and page dropdowns are small deterministic stubs. Form
+assertions check structure and values, not browser behavior or WordPress escaping.
+
+Subscription tests cover normalized list IDs, allowed data keys, encrypted query
+decoding, one-time transient consumption, membership display, global/per-list
+unsubscribe handling, resubscription and preservation of existing member names.
+`SubscriptionEnvironment.php` records term queries and option/meta writes in
+memory. These tests invoke protected policies through a test-only subclass and
+run the real list sanitizers; they do not exercise the public request handler,
+confirmation emails, permissions, actual transient expiry or database persistence.
+Configuration, recipient and storage fixture state is reset around these tests.
+
 ### Mail queue tests
 
 Queue tests cover message forwarding and headers, legacy unencoded HTML,

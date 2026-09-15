@@ -181,4 +181,7 @@ namespace {
     require __DIR__ . '/Support/QueueEnvironment.php';
     require __DIR__ . '/Support/MailEnvironment.php';
     require __DIR__ . '/Support/RecipientEnvironment.php';
+    require __DIR__ . '/Support/SettingsEnvironment.php';
+    require __DIR__ . '/Support/SettingsTestCase.php';
+    require __DIR__ . '/Support/SubscriptionEnvironment.php';
 }

@@ -45,6 +45,9 @@ namespace RRZE\Newsletter {
 
     function apply_filters(string $hook, mixed $default): mixed
     {
+        if (in_array($hook, ['rrze_newsletter_mail_queue_send_limit', 'rrze_newsletter_mail_queue_max_retries'], true)) {
+            return \RRZE\Newsletter\Tests\Support\SettingsEnvironment::$filters[$hook] ?? $default;
+        }
         if (!in_array($hook, ['rrze_newsletter_sender_allowed_domains', 'rrze_newsletter_recipient_allowed_domains'], true)) {
             throw new \LogicException('Unexpected recipient filter: ' . $hook);
         }

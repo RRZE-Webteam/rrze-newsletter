@@ -81,6 +81,7 @@ namespace RRZE\Newsletter {
     function get_option(string $name, mixed $default = false): mixed
     {
         return match ($name) {
+            'rrze_newsletter_unit' => \RRZE\Newsletter\Tests\Support\SettingsEnvironment::$stored,
             'timezone_string' => QueueEnvironment::$timezone,
             'gmt_offset' => 0,
             default => throw new \LogicException('Unexpected option lookup: ' . $name),
