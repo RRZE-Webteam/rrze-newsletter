@@ -15,6 +15,11 @@ namespace RRZE\Newsletter {
     function plugin(): object
     {
         return new class {
+            public function getBasename(): string
+            {
+                return 'rrze-newsletter/rrze-newsletter.php';
+            }
+
             public function getDirectory(): string
             {
                 return ABSPATH;
@@ -32,6 +37,14 @@ namespace RRZE\Newsletter\MJML {
 }
 
 namespace RRZE\Newsletter\MJML\BlockProcessor {
+    function plugins_url(string $path, string $plugin): string
+    {
+        if ($plugin !== 'rrze-newsletter/rrze-newsletter.php') {
+            throw new \LogicException('Unexpected plugin asset base.');
+        }
+        return 'https://example.test/wp-content/plugins/rrze-newsletter/' . $path;
+    }
+
     function attachment_url_to_postid(string $url): int
     {
         throw new \LogicException('Fixtures must not perform metadata or network lookups.');

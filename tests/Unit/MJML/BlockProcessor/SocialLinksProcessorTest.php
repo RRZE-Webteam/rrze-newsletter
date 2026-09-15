@@ -44,7 +44,7 @@ final class SocialLinksProcessorTest extends MjmlTestCase
         $this->assertNodes($xpath, '//mj-social-element/@name', 0);
     }
 
-    public function testMissingAndUnknownLinksAreSkippedWithoutReorderingValidLinks(): void
+    public function testUnknownServicesRetainTheirLinksAndOrderWhileEmptyLinksAreSkipped(): void
     {
         $xpath = $this->parseMjml(SocialLinksProcessor::render([], [
             [], ['attrs' => []], $this->link('', 'https://example.test'),
@@ -53,8 +53,49 @@ final class SocialLinksProcessorTest extends MjmlTestCase
             $this->link('youtube', 'https://example.test/second'),
         ]));
 
-        self::assertSame(['https://example.test/first', 'https://example.test/second'], $this->values($xpath, '//mj-social-element/@href'));
-        self::assertSame([self::ASSET_BASE . 'white-github.png', self::ASSET_BASE . 'white-youtube.png'], $this->values($xpath, '//mj-social-element/@src'));
+        self::assertSame(['https://example.test', 'https://example.test/first', 'https://example.test/unknown', 'https://example.test/second'], $this->values($xpath, '//mj-social-element/@href'));
+        self::assertSame(['Link', '', 'unknown-service', ''], $this->values($xpath, '//mj-social-element'));
+        self::assertSame([self::ASSET_BASE . 'black-chain.png', self::ASSET_BASE . 'white-github.png', self::ASSET_BASE . 'black-chain.png', self::ASSET_BASE . 'white-youtube.png'], $this->values($xpath, '//mj-social-element/@src'));
+    }
+
+    public function testEveryRegisteredServiceRendersWithItsOwnIconAndAccessibleName(): void
+    {
+        foreach (\RRZE\Newsletter\MJML\SocialIcons::getServices() as $service => $details) {
+            $url = $service === 'mail' ? 'mailto:team@example.test' : 'https://example.test/' . $service;
+            $xpath = $this->parseMjml(SocialLinksProcessor::render([], [$this->link($service, $url)]));
+            self::assertSame([$url], $this->values($xpath, '//mj-social-element/@href'));
+            self::assertSame([$details['name']], $this->values($xpath, '//mj-social-element/@alt'));
+            self::assertSame([self::ASSET_BASE . $details['defaultIcon'] . '-' . $service . '.png'], $this->values($xpath, '//mj-social-element/@src'));
+        }
+    }
+
+    public function testLabelsAreEscapedAndVisibleOnlyWhenRequestedOrForFallbacks(): void
+    {
+        $label = '<img src=x onerror="alert(1)"> & News';
+        foreach (['github', '../new-service'] as $service) {
+            $block = $this->link($service, 'https://example.test/?a=1&b=2');
+            $block['attrs']['label'] = $label;
+            foreach ([false, true] as $showLabels) {
+                $xpath = $this->parseMjml(SocialLinksProcessor::render(['showLabels' => $showLabels], [$block]));
+                self::assertSame([$label], $this->values($xpath, '//mj-social-element/@alt'));
+                self::assertSame([($showLabels || $service !== 'github') ? $label : ''], $this->values($xpath, '//mj-social-element'));
+                $this->assertNodes($xpath, '//img | //script', 0);
+                self::assertStringNotContainsString('../', $this->values($xpath, '//mj-social-element/@src')[0]);
+            }
+        }
+    }
+
+    public function testUnsafeSchemesAndUnrelatedBlocksCannotBecomeFallbackLinks(): void
+    {
+        foreach (['github', 'new-service'] as $service) {
+            foreach (['javascript:alert(1)', "java\nscript:alert(1)", 'javascript&#58;alert(1)', 'java&#x09;script&colon;alert(1)', 'DATA:text/html,test', 'vbscript:test'] as $url) {
+                $xpath = $this->parseMjml(SocialLinksProcessor::render([], [$this->link($service, $url)]));
+                $this->assertNodes($xpath, '//mj-social-element', 0);
+            }
+        }
+        $block = $this->link('github', 'https://example.test');
+        $block['blockName'] = 'core/paragraph';
+        $this->assertNodes($this->parseMjml(SocialLinksProcessor::render([], [$block])), '//mj-social-element', 0);
     }
 
     public function testParentStyleControlsAllChildIcons(): void

@@ -13,6 +13,8 @@
     "extends @wordpress/browserslist-config"
   ],
   "scripts": {
+    "build:social-icons": "node scripts/social-icons.cjs build",
+    "check:social-icons": "node scripts/social-icons.cjs check",
     "test": "composer test && npm run test:mjml && npm run test:contrast && npm run test:editor",
     "test:editor": "node --test tests/Editor/*.test.cjs",
     "test:contrast": "node --test tests/Contrast/*.test.cjs",
@@ -36,6 +38,7 @@
     "mjml-browser": "latest"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@wordpress/scripts": "^30.23.0"
   }
 }

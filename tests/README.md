@@ -1,5 +1,16 @@
 # Tests
 
+### Social icons
+
+The email registry includes the 49 services in the imported WordPress snapshot.
+PHP tests cover all service mappings/assets, original brand colors, both icon
+variants, escaped labels, unsafe URL schemes and link-preserving fallbacks.
+MJML integration tests compile the actual PHP output and check every image,
+accessible name, direct URL (including mailto), visible labels and unknown-service
+fallbacks. Run `npm run check:social-icons -- /path/to/wordpress` after a WordPress
+upgrade to detect newly introduced services. Asset provenance and regeneration
+instructions are in `assets/social-links/README.md`.
+
 The test suite uses PHPUnit 9.6. Install the development dependencies before
 running it locally:
 

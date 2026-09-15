@@ -49,16 +49,28 @@ final class SocialLinksProcessor
         array $block,
         array $parentAttrs
     ): string {
-        $url = $block['attrs']['url'] ?? '';
-        $serviceName = $block['attrs']['service'] ?? '';
-        if ($url === '' || $serviceName === '') {
+        if (($block['blockName'] ?? '') !== 'core/social-link') {
+            return '';
+        }
+        $attrs = $block['attrs'] ?? [];
+        $url = $attrs['url'] ?? '';
+        $serviceName = is_string($attrs['service'] ?? null) ? $attrs['service'] : '';
+        if (!is_string($url) || trim($url) === '') {
+            return '';
+        }
+        // Never turn executable URLs into clickable fallback links. Keep normal
+        // web links, relative links and the mail/telephone services supported.
+        $scheme = parse_url(preg_replace('/[\x00-\x20\x7f]+/', '', html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8')), PHP_URL_SCHEME);
+        if ($scheme !== null && (!is_string($scheme) || !in_array(strtolower($scheme), ['http', 'https', 'mailto', 'tel'], true))) {
             return '';
         }
 
         $icon = SocialIcons::getIconAttributes($serviceName, $parentAttrs);
-        if (empty($icon)) {
-            return '';
-        }
+        $fallback = empty($icon);
+        // A future WordPress or third-party service must not silently lose its URL.
+        $icon = $fallback ? SocialIcons::getIconAttributes('chain', $parentAttrs) : $icon;
+        $label = is_string($attrs['label'] ?? null) ? trim($attrs['label']) : '';
+        $label = $label !== '' ? $label : (SocialIcons::getServices()[$serviceName]['name'] ?? ($serviceName !== '' ? $serviceName : 'Link'));
 
         $elementAttrs = [
             'href' => $url,
@@ -69,11 +81,15 @@ final class SocialLinksProcessor
             'background-color' => $icon['color'],
             'css-class' => 'social-element',
             'padding' => '2px',
+            'alt' => $label,
+            'title' => $label,
         ];
 
         return '<mj-social-element '
             . AttributeHandler::arrayToAttributes($elementAttrs)
-            . ' />';
+            . '>'
+            . (($fallback || !empty($parentAttrs['showLabels'])) ? htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : '')
+            . '</mj-social-element>';
     }
 
     /**

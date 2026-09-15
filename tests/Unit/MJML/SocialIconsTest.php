@@ -17,16 +17,16 @@ final class SocialIconsTest extends TestCase
         'x' => '#000000',
     ];
 
-    public function testSupportedServicesUseTheirBrandColorAndWhiteIconByDefault(): void
+    public function testOriginalServicesKeepBrandColorsAndUseReadableDefaultIcons(): void
     {
         foreach (self::COLORS as $service => $color) {
-            self::assertSame(['icon' => 'white-' . $service . '.png', 'color' => $color], SocialIcons::getIconAttributes($service, []));
+            self::assertSame(['icon' => ($service === 'feed' ? 'black' : 'white') . '-' . $service . '.png', 'color' => $color], SocialIcons::getIconAttributes($service, []));
         }
     }
 
     public function testBothIconVariantsExistForEverySupportedService(): void
     {
-        foreach (array_keys(self::COLORS) as $service) {
+        foreach (array_keys(SocialIcons::getServices()) as $service) {
             foreach (['is-style-filled-black' => 'black', 'is-style-filled-white' => 'white'] as $style => $variant) {
                 $icon = SocialIcons::getIconAttributes($service, ['className' => $style]);
                 self::assertSame($variant . '-' . $service . '.png', $icon['icon']);
@@ -39,6 +39,20 @@ final class SocialIconsTest extends TestCase
     {
         foreach (['', 'unknown-service', 'Facebook', '../github'] as $service) {
             self::assertSame([], SocialIcons::getIconAttributes($service, ['className' => 'is-style-circle-black']));
+        }
+    }
+
+    public function testAllServicesInTheWordPressSnapshotAreSupported(): void
+    {
+        $expected = explode(' ', 'fivehundredpx amazon bandcamp behance bluesky chain codepen deviantart discord dribbble dropbox etsy facebook feed flickr foursquare github goodreads google gravatar instagram lastfm linkedin mail mastodon meetup medium patreon pinterest pocket reddit share skype snapchat soundcloud spotify telegram threads tiktok tumblr twitch twitter vimeo vk whatsapp wordpress x yelp youtube');
+        $actual = array_keys(SocialIcons::getServices());
+        sort($expected);
+        sort($actual);
+        self::assertSame($expected, $actual);
+        foreach (SocialIcons::getServices() as $service => $details) {
+            self::assertNotSame('', $details['name']);
+            self::assertSame(['icon' => $details['defaultIcon'] . '-' . $service . '.png', 'color' => $details['color']], SocialIcons::getIconAttributes($service, []));
+            self::assertSame(SocialIcons::getIconAttributes($service, []), SocialIcons::getIconAttributes($service, ['className' => 'is-style-default']));
         }
     }
 

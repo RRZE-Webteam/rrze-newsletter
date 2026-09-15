@@ -1,0 +1,247 @@
+{
+  "fivehundredpx": {
+    "name": "500px",
+    "color": "#000",
+    "defaultIcon": "white"
+  },
+  "amazon": {
+    "name": "Amazon",
+    "color": "#f90",
+    "defaultIcon": "white"
+  },
+  "bandcamp": {
+    "name": "Bandcamp",
+    "color": "#1ea0c3",
+    "defaultIcon": "white"
+  },
+  "behance": {
+    "name": "Behance",
+    "color": "#0757fe",
+    "defaultIcon": "white"
+  },
+  "bluesky": {
+    "name": "Bluesky",
+    "color": "#0a7aff",
+    "defaultIcon": "white"
+  },
+  "chain": {
+    "name": "Link",
+    "color": "#f0f0f0",
+    "defaultIcon": "black"
+  },
+  "codepen": {
+    "name": "CodePen",
+    "color": "#1e1f26",
+    "defaultIcon": "white"
+  },
+  "deviantart": {
+    "name": "DeviantArt",
+    "color": "#02e49b",
+    "defaultIcon": "white"
+  },
+  "discord": {
+    "name": "Discord",
+    "color": "#5865f2",
+    "defaultIcon": "white"
+  },
+  "dribbble": {
+    "name": "Dribbble",
+    "color": "#e94c89",
+    "defaultIcon": "white"
+  },
+  "dropbox": {
+    "name": "Dropbox",
+    "color": "#4280ff",
+    "defaultIcon": "white"
+  },
+  "etsy": {
+    "name": "Etsy",
+    "color": "#f45800",
+    "defaultIcon": "white"
+  },
+  "facebook": {
+    "name": "Facebook",
+    "color": "#1977f2",
+    "defaultIcon": "white"
+  },
+  "feed": {
+    "name": "RSS Feed",
+    "color": "#f0f0f0",
+    "defaultIcon": "black"
+  },
+  "flickr": {
+    "name": "Flickr",
+    "color": "#0461dd",
+    "defaultIcon": "white"
+  },
+  "foursquare": {
+    "name": "Foursquare",
+    "color": "#e65678",
+    "defaultIcon": "white"
+  },
+  "goodreads": {
+    "name": "Goodreads",
+    "color": "#eceadd",
+    "defaultIcon": "black"
+  },
+  "google": {
+    "name": "Google",
+    "color": "#ea4434",
+    "defaultIcon": "white"
+  },
+  "github": {
+    "name": "GitHub",
+    "color": "#24292d",
+    "defaultIcon": "white"
+  },
+  "gravatar": {
+    "name": "Gravatar",
+    "color": "#1d4fc4",
+    "defaultIcon": "white"
+  },
+  "instagram": {
+    "name": "Instagram",
+    "color": "#f00075",
+    "defaultIcon": "white"
+  },
+  "lastfm": {
+    "name": "Last.fm",
+    "color": "#e21b24",
+    "defaultIcon": "white"
+  },
+  "linkedin": {
+    "name": "LinkedIn",
+    "color": "#0577b5",
+    "defaultIcon": "white"
+  },
+  "mail": {
+    "name": "Mail",
+    "color": "#f0f0f0",
+    "defaultIcon": "black"
+  },
+  "mastodon": {
+    "name": "Mastodon",
+    "color": "#3288d4",
+    "defaultIcon": "white"
+  },
+  "meetup": {
+    "name": "Meetup",
+    "color": "#f6405f",
+    "defaultIcon": "white"
+  },
+  "medium": {
+    "name": "Medium",
+    "color": "#000",
+    "defaultIcon": "white"
+  },
+  "patreon": {
+    "name": "Patreon",
+    "color": "#000",
+    "defaultIcon": "white"
+  },
+  "pinterest": {
+    "name": "Pinterest",
+    "color": "#e60122",
+    "defaultIcon": "white"
+  },
+  "pocket": {
+    "name": "Pocket",
+    "color": "#ef4155",
+    "defaultIcon": "white"
+  },
+  "reddit": {
+    "name": "Reddit",
+    "color": "#ff4500",
+    "defaultIcon": "white"
+  },
+  "share": {
+    "name": "Share Icon",
+    "color": "#f0f0f0",
+    "defaultIcon": "black"
+  },
+  "skype": {
+    "name": "Skype",
+    "color": "#0478d7",
+    "defaultIcon": "white"
+  },
+  "snapchat": {
+    "name": "Snapchat",
+    "color": "#fefc00",
+    "defaultIcon": "white"
+  },
+  "soundcloud": {
+    "name": "SoundCloud",
+    "color": "#ff5600",
+    "defaultIcon": "white"
+  },
+  "spotify": {
+    "name": "Spotify",
+    "color": "#1bd760",
+    "defaultIcon": "white"
+  },
+  "telegram": {
+    "name": "Telegram",
+    "color": "#2aabee",
+    "defaultIcon": "white"
+  },
+  "threads": {
+    "name": "Threads",
+    "color": "#000",
+    "defaultIcon": "white"
+  },
+  "tiktok": {
+    "name": "TikTok",
+    "color": "#000000",
+    "defaultIcon": "white"
+  },
+  "tumblr": {
+    "name": "Tumblr",
+    "color": "#011835",
+    "defaultIcon": "white"
+  },
+  "twitch": {
+    "name": "Twitch",
+    "color": "#6440a4",
+    "defaultIcon": "white"
+  },
+  "twitter": {
+    "name": "Twitter",
+    "color": "#21a1f3",
+    "defaultIcon": "white"
+  },
+  "vimeo": {
+    "name": "Vimeo",
+    "color": "#1eb7ea",
+    "defaultIcon": "white"
+  },
+  "vk": {
+    "name": "VK",
+    "color": "#4680c2",
+    "defaultIcon": "white"
+  },
+  "wordpress": {
+    "name": "WordPress",
+    "color": "#3499cd",
+    "defaultIcon": "white"
+  },
+  "whatsapp": {
+    "name": "WhatsApp",
+    "color": "#25d366",
+    "defaultIcon": "white"
+  },
+  "x": {
+    "name": "X",
+    "color": "#000000",
+    "defaultIcon": "white"
+  },
+  "yelp": {
+    "name": "Yelp",
+    "color": "#d32422",
+    "defaultIcon": "white"
+  },
+  "youtube": {
+    "name": "YouTube",
+    "color": "#ff0100",
+    "defaultIcon": "white"
+  }
+}
