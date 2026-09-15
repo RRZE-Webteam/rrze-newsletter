@@ -16,7 +16,7 @@ export function ManagedSpacingHint() {
 	return (
 		<InspectorControls group="dimensions">
 			<Notice status="info" isDismissible={ false }>
-				{ __( 'Managed email spacing is active. Manual spacing values remain saved, but are overridden in the editor and generated email. Switch to Expert mode under Styling → Email spacing to use them.', 'rrze-newsletter' ) }
+				{ __( 'Managed email spacing is active. Manual spacing values remain saved, but are overridden in the editor and generated email. Switch to Expert mode in the Email spacing panel to use them.', 'rrze-newsletter' ) }
 			</Notice>
 		</InspectorControls>
 	);

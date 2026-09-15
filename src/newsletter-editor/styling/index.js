@@ -5,7 +5,6 @@ import { compose, useInstanceId } from "@wordpress/compose";
 import {
     ColorPicker,
     BaseControl,
-    Panel,
     PanelBody,
     PanelRow,
     SelectControl,
@@ -14,7 +13,7 @@ import {
 } from "@wordpress/components";
 import { __ } from "@wordpress/i18n";
 import { useSelect, withDispatch, withSelect } from "@wordpress/data";
-import { useEffect, useRef } from "@wordpress/element";
+import { Fragment, useEffect, useRef } from "@wordpress/element";
 import SelectControlWithOptGroup from "../../components/select-control-with-optgroup/";
 
 /**
@@ -22,6 +21,7 @@ import SelectControlWithOptGroup from "../../components/select-control-with-optg
  */
 import "./style.scss";
 import { isManagedSpacing, mountManagedSpacing } from "./managed-spacing.mjs";
+import { mountCanvasBackground } from "./canvas-background.mjs";
 
 const fontOptgroups = [
     {
@@ -92,7 +92,7 @@ const customStylesSelector = (select) => {
         fontHeader:
             meta.rrze_newsletter_font_header ||
             fontOptgroups[0].options[0].value,
-        backgroundColor: meta.rrze_newsletter_background_color || "#f0f0f0",
+        backgroundColor: meta.rrze_newsletter_background_color || "#fff",
         contrastProtection: meta.rrze_newsletter_contrast_protection !== false,
         spacingMode: meta.rrze_newsletter_spacing_mode || "inherit",
         linkColor: meta.rrze_newsletter_link_color || "inherit",
@@ -201,12 +201,7 @@ export const ApplyStyling = withSelect(customStylesSelector)(({
             fontHeader
         );
     }, [fontHeader]);
-    useEffect(() => {
-        const editorElement = document.querySelector(".editor-styles-wrapper");
-        if (editorElement) {
-            editorElement.style.backgroundColor = backgroundColor;
-        }
-    }, [backgroundColor]);
+    useEffect(() => mountCanvasBackground(document, backgroundColor), [backgroundColor]);
 
     return null;
 });
@@ -217,7 +212,7 @@ export const Styling = compose([
         return { editPost };
     }),
     withSelect(customStylesSelector),
-])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection, spacingMode }) => {
+])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection, spacingMode, PanelComponent = PanelBody }) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
     };
@@ -226,8 +221,8 @@ export const Styling = compose([
     const id = `inspector-select-control-${instanceId}`;
 
     return (
-        <Panel>
-            <PanelBody title={__("Email spacing", "rrze-newsletter")}>
+        <Fragment>
+            <PanelComponent name="rrze-newsletter-spacing-panel" title={__("Email spacing", "rrze-newsletter")}>
                 <SelectControl
                     label={__("Spacing mode", "rrze-newsletter")}
                     value={spacingMode}
@@ -249,8 +244,8 @@ export const Styling = compose([
                 {isManagedSpacing(spacingMode, window.rrze_newsletter_data?.global_managed_spacing) && (
                     <p>{__("The editor now approximates the email's consistent content gaps and outer gutters. Manual spacing values stay saved but are overridden while managed spacing is active. Nested groups do not add extra padding. Use the generated email preview for the final check.", "rrze-newsletter")}</p>
                 )}
-            </PanelBody>
-            <PanelBody
+            </PanelComponent>
+            <PanelComponent
                 name="rrze-newsletter-typography-panel"
                 title={__("Typography", "rrze-newsletter")}
             >
@@ -277,8 +272,8 @@ export const Styling = compose([
                         }
                     />
                 </PanelRow>
-            </PanelBody>
-            <PanelBody
+            </PanelComponent>
+            <PanelComponent
                 name="rrze-newsletter-background-color-panel"
                 title={__("Background", "rrze-newsletter")}
             >
@@ -300,15 +295,15 @@ export const Styling = compose([
                         />
                     </BaseControl>
                 </PanelRow>
-            </PanelBody>
-            <PanelBody title={__("Email contrast protection", "rrze-newsletter")}>
+            </PanelComponent>
+            <PanelComponent name="rrze-newsletter-contrast-panel" title={__("Email contrast protection", "rrze-newsletter")}>
                 <ToggleControl
                     label={__("Automatically improve text contrast", "rrze-newsletter")}
                     checked={contrastProtection}
                     onChange={(value) => updateStyleValue("rrze_newsletter_contrast_protection", value)}
                     help={__("When saving, adjust low-contrast text on solid backgrounds in the generated email. Block colors stay unchanged. A notice lets you preview corrections and review backgrounds that cannot be checked safely.", "rrze-newsletter")}
                 />
-            </PanelBody>
-        </Panel>
+            </PanelComponent>
+        </Fragment>
     );
 });

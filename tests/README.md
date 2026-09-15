@@ -58,6 +58,12 @@ covered-workspace inertness without hiding the toolbar, focus and cleanup.
 Fullscreen preferences remain untouched; the temporary toolbar visibility is
 scoped to the start screen. Actual confirmation/management modals stay modal.
 
+Styling tests verify the white default and preservation of explicit background
+colors, flat sibling panels in both sidebar entry points, and color-effect cleanup.
+Canvas DOM tests cover late iframes/bodies, replaced bodies, color changes and frame
+removal without modifying block colors or unrelated previews. PHP renderer tests
+check the same white fallback for generated mail; no existing post meta is migrated.
+
 Editor spacing tests additionally exercise the live mode effect, the selected
 block's Dimensions hint, and the DOM presentation controller. The controller
 styles only newsletter canvas roots and known editor/post-inserter preview

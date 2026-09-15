@@ -1,0 +1,73 @@
+const assert = require( 'node:assert/strict' );
+const { test } = require( 'node:test' );
+const { JSDOM } = require( 'jsdom' );
+const subject = import( '../../src/newsletter-editor/styling/canvas-background.mjs' );
+const tick = () => new Promise( ( resolve ) => setImmediate( resolve ) );
+
+test( 'white fallback styles the canvas, not blocks or inspector; cleanup restores the previous color', async () => {
+	const { mountCanvasBackground } = await subject;
+	const dom = new JSDOM( '<aside style="background-color:red"></aside><div class="editor-styles-wrapper" style="background-color:gray!important"><p style="background-color:blue">Content</p></div>' );
+	const doc = dom.window.document;
+	const canvas = doc.querySelector( '.editor-styles-wrapper' );
+	const content = canvas.innerHTML;
+	const dispose = mountCanvasBackground( doc );
+	assert.equal( canvas.style.backgroundColor, 'rgb(255, 255, 255)' );
+	assert.equal( canvas.innerHTML, content );
+	assert.equal( doc.querySelector( 'aside' ).style.backgroundColor, 'red' );
+	dispose();
+	assert.equal( canvas.style.backgroundColor, 'gray' );
+	assert.equal( canvas.style.getPropertyPriority( 'background-color' ), 'important' );
+	dom.window.close();
+} );
+
+test( 'late editor iframe and body replacement receive the selected background, unrelated previews do not', async () => {
+	const { mountCanvasBackground } = await subject;
+	const dom = new JSDOM( '<body></body>' );
+	const doc = dom.window.document;
+	const dispose = mountCanvasBackground( doc, '#123456' );
+	doc.body.innerHTML = '<iframe name="editor-canvas" title="Editor-Arbeitsfläche"></iframe><iframe title="Email preview"></iframe>';
+	const frame = doc.querySelector( '[name="editor-canvas"]' );
+	const other = doc.querySelector( '[title="Email preview"]' );
+	other.contentDocument.body.className = 'editor-styles-wrapper';
+	frame.contentDocument.body.remove();
+	await tick();
+	frame.dispatchEvent( new dom.window.Event( 'load' ) );
+	const body = frame.contentDocument.createElement( 'body' );
+	body.className = 'editor-styles-wrapper';
+	frame.contentDocument.documentElement.appendChild( body );
+	await tick();
+	assert.equal( body.style.backgroundColor, 'rgb(18, 52, 86)' );
+	assert.equal( other.contentDocument.body.style.backgroundColor, '' );
+	const replacement = body.cloneNode();
+	replacement.removeAttribute( 'style' );
+	body.replaceWith( replacement );
+	await tick();
+	assert.equal( replacement.style.backgroundColor, 'rgb(18, 52, 86)' );
+	assert.equal( body.style.backgroundColor, '' );
+	dispose();
+	assert.equal( replacement.style.backgroundColor, '' );
+	frame.dispatchEvent( new dom.window.Event( 'load' ) );
+	await tick();
+	assert.equal( replacement.style.backgroundColor, '' );
+	dom.window.close();
+} );
+
+test( 'color changes and iframe reloads do not retain stale colors or styles after removal', async () => {
+	const { mountCanvasBackground } = await subject;
+	const dom = new JSDOM( '<iframe name="editor-canvas"></iframe>' );
+	const doc = dom.window.document;
+	const frame = doc.querySelector( 'iframe' );
+	const body = frame.contentDocument.body;
+	body.className = 'editor-styles-wrapper';
+	const first = mountCanvasBackground( doc, '#000000' );
+	assert.equal( body.style.backgroundColor, 'rgb(0, 0, 0)' );
+	first();
+	const second = mountCanvasBackground( doc, '#ffffff' );
+	frame.dispatchEvent( new dom.window.Event( 'load' ) );
+	assert.equal( body.style.backgroundColor, 'rgb(255, 255, 255)' );
+	frame.remove();
+	await tick();
+	assert.equal( body.style.backgroundColor, '' );
+	second();
+	dom.window.close();
+} );

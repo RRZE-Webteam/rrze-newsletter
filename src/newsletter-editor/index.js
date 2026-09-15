@@ -61,12 +61,7 @@ const NewsletterEdit = ({ savePost, layoutId }) => {
                 <Sidebar />
                 <AdvancedSettings />
             </PluginDocumentSettingPanel>
-            <PluginDocumentSettingPanel
-                name="newsletters-styling-panel"
-                title={__("Styling", "rrze-newsletter")}
-            >
-                <Styling />
-            </PluginDocumentSettingPanel>
+            <Styling PanelComponent={PluginDocumentSettingPanel} />
             <PluginDocumentSettingPanel
                 name="newsletters-testing-panel"
                 title={__("Testing", "rrze-newsletter")}

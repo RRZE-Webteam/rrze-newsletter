@@ -141,7 +141,7 @@ final class Renderer
         self::$linkTextDecoration = 'underline';
 
         $previewText = get_post_meta($post->ID, 'rrze_newsletter_preview_text', true) ?: '';
-        $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true) ?: '#f0f0f0';
+        $backgroundColor = get_post_meta($post->ID, 'rrze_newsletter_background_color', true) ?: '#fff';
         $managedSpacing = ManagedSpacing::forPost($post->ID);
 
         $data = [

@@ -50,7 +50,7 @@ final class RendererTest extends ApplicationTestCase
         $markup = Renderer::fromPost($this->post());
         self::assertSame('Arial', Renderer::getFontHeader());
         self::assertSame('Arial', Renderer::getFontBody());
-        self::assertStringContainsString('background-color="#f0f0f0"', $markup);
+        self::assertStringContainsString('background-color="#fff"', $markup);
         self::assertStringNotContainsString('<mj-preview>', $markup);
     }
 
