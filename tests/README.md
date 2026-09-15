@@ -43,6 +43,17 @@ separators through their public rendering methods, including recursive calls
 through `BlockProcessor`. They verify element nesting, content order, attribute
 inheritance, automatic widths, mobile grouping and incomplete grid rows.
 
+Button tests cover HTML and attribute-based labels and link metadata,
+typography inheritance, outline styles, borders, padding, alignment and bounded
+percentage widths. Image tests cover intrinsic and explicit dimensions,
+aspect ratios, size presets, plain captions, links and sizing inside padded
+columns and grid cells. Image fixtures provide dimensions directly, so these
+tests never fetch external images or query WordPress attachments.
+
+The grid-padding regression checks that a 300px cell with 20px padding on each
+side renders its image at 260px, not 220px. Additional cases preserve the
+image's own padding and inherited button typography.
+
 `tests/Support/MjmlTestCase.php` provides small already-parsed block fixtures
 and DOM/XPath assertions. These fixtures intentionally use XML-compatible HTML;
 the assertions check well-formed fragments and selected structural rules, not
@@ -53,6 +64,12 @@ The unit bootstrap also supplies a minimal namespaced `esc_attr()` stub for
 fixture serialization. It does not emulate WordPress filters or establish the
 correctness of WordPress escaping. Paragraph and heading processing that relies
 on `WP_HTML_Tag_Processor` is deferred to tests with the real WordPress API.
+
+Button URL tests use ordinary valid URLs. WordPress's `esc_url_raw()` scheme
+validation, image URL normalization and attachment/HTTP dimension lookup still
+need integration coverage. Image tests restore the libxml error mode and reset
+dimension caches after each test: the current image parser changes libxml's
+global mode without restoring it, which remains a separate cleanup task.
 
 WordPress theme-palette resolution, HTML attribute escaping and full newsletter
 rendering remain integration-test work. These helper tests do not establish

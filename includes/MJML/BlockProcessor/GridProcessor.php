@@ -107,6 +107,9 @@ final class GridProcessor
             $columnWidth,
             $columnWidthPercent
         );
+        if (($block['blockName'] ?? null) === 'core/group') {
+            unset($defaultAttrs['style']['spacing']['padding']);
+        }
         $cellContext = $context
             ->withDefaultAttrs($defaultAttrs)
             ->withAvailableWidth($contentWidth)
