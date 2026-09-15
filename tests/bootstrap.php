@@ -160,4 +160,5 @@ namespace {
     require __DIR__ . '/Support/MjmlTestCase.php';
     require __DIR__ . '/Support/ImageLookupEnvironment.php';
     require __DIR__ . '/Support/QueueEnvironment.php';
+    require __DIR__ . '/Support/MailEnvironment.php';
 }

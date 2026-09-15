@@ -46,6 +46,29 @@ WordPress query filtering, persistence or cron execution. End-to-end queue
 creation, recipient deduplication/unsubscribe handling, SMTP integration and
 protection against concurrent duplicate sends still need integration coverage.
 
+### SMTP and encrypted-value compatibility tests
+
+SMTP tests bypass construction to inject explicit settings, then exercise the
+real send, configuration and callback methods. They check message forwarding,
+sender fallbacks, TLS/SSL/authentication options, password decoding, embedded
+image selection, consecutive-message state and cleanup after both `true` and
+`false` transport results. Existing callbacks belonging to other callers must
+remain registered.
+
+`tests/Support/MailEnvironment.php` records hook operations and replaces
+`wp_mail()` with a non-networked test boundary. Tests explicitly invoke callbacks
+against a configuration spy; this is not WordPress hook dispatch or PHPMailer.
+The support state is reset before and after every SMTP test. Real settings
+loading, hook priorities, transport exceptions and actual delivery still need
+integration tests.
+
+Password and URL-token tests use fixed ciphertext fixtures, Unicode/whitespace
+round trips, padding cases and malformed inputs. Synthetic namespace-local
+`AUTH_KEY` and `AUTH_SALT` constants keep these tests independent of live site
+credentials. They characterize the existing storage/link format, not its
+cryptographic strength, authentication or tamper resistance. An intentional
+format migration will need corresponding compatibility-test updates.
+
 ### MJML helper and block processor tests
 
 Run the rendering helper tests on their own with:
