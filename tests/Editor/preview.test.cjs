@@ -19,7 +19,7 @@ function previewHarness() {
 			render: ( tree ) => renders.push( { host, tree, unmounted: false } ),
 			unmount: () => { renders.find( ( item ) => item.host === host ).unmounted = true; },
 		} ) },
-		'@wordpress/components': { Modal: 'Modal' },
+		'@wordpress/components': { Modal: 'Modal', Notice: 'Notice' },
 		'@wordpress/i18n': { __: ( text ) => text },
 	};
 	const exported = {};
@@ -58,6 +58,30 @@ test( 'closing and reopening the email preview unmounts only its own host', () =
 			assert.ok( item.unmounted );
 			assert.equal( item.host.isConnected, false );
 			assert.equal( state.dom.window.document.body.innerHTML, '<main>Editor</main>' );
+		}
+	} finally {
+		state.dom.window.close();
+	}
+} );
+
+test( 'saved email preview distinguishes saved content, pending edits and missing HTML', () => {
+	const state = previewHarness();
+	try {
+		for ( const stale of [ false, true ] ) {
+			state.show( '<html>Saved mail</html>', { savedVersion: true, isStale: stale } );
+			const tree = state.renders.at( -1 ).tree;
+			const notice = tree.children.find( ( node ) => node?.type === 'Notice' );
+			assert.equal( notice.props.status, stale ? 'warning' : 'info' );
+			assert.match( notice.children[ 0 ], stale ? /changes may not be included/ : /last generated email saved/ );
+			assert.equal( tree.children.find( ( node ) => node?.type === 'iframe' ).props.srcDoc, '<html>Saved mail</html>' );
+			tree.props.onRequestClose();
+		}
+		for ( const html of [ '', '   ', undefined ] ) {
+			state.show( html, { savedVersion: true } );
+			const tree = state.renders.at( -1 ).tree;
+			assert.ok( ! tree.children.some( ( node ) => node?.type === 'iframe' ) );
+			assert.match( tree.children.find( ( node ) => node?.type === 'Notice' ).children[ 0 ], /Save the newsletter/ );
+			tree.props.onRequestClose();
 		}
 	} finally {
 		state.dom.window.close();
