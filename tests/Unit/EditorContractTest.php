@@ -47,7 +47,8 @@ final class EditorContractTest extends ApplicationTestCase
     {
         $editor = Editor::instance();
         self::assertSame($editor, Editor::instance());
-        self::assertCount(8, App::$hooks);
+        self::assertCount(9, App::$hooks);
+        self::assertContains(['filter', 'block_editor_settings_all', [Editor::class, 'newsletterEditorSettings'], 99, 2], App::$hooks);
         self::assertContains(['action', 'after_setup_theme', [$editor, 'afterSetupTheme'], 99, 1], App::$hooks);
         self::assertContains(['action', 'rest_post_query', [Editor::class, 'maybeFilterExcerptLength'], 10, 2], App::$hooks);
         $editor->afterSetupTheme();
@@ -80,6 +81,53 @@ final class EditorContractTest extends ApplicationTestCase
             'core/separator', 'core/list', 'core/list-item', 'core/social-links', 'core/social-link',
             'rrze-newsletter/post-inserter', 'rrze-newsletter/rss', 'rrze-newsletter/ics',
         ], Editor::newsletterAllowedBlockTypes(true));
+    }
+
+    public function testNewsletterDisablesResponsiveEditingWithoutChangingOtherSettingsOrContent(): void
+    {
+        // Scope by the supplied editor context, not the global post.
+        $this->post(['post_type' => 'post']);
+        $context = (object) ['post' => (object) [
+            'post_type' => 'newsletter',
+            'post_content' => '<!-- wp:paragraph {"style":{"@mobile":{"color":{"text":"#ffffff"}}}} --><p>News</p><!-- /wp:paragraph -->',
+        ]];
+        $originalContent = $context->post->post_content;
+        $settings = [
+            'responsiveEditingEnabled' => true,
+            '__experimentalFeatures' => ['viewport' => ['mobile' => '480px', 'tablet' => '782px']],
+            'styles' => [['css' => '.example { color: red; }']],
+            'allowedBlockTypes' => ['core/paragraph'],
+        ];
+        $expected = $settings;
+        $expected['responsiveEditingEnabled'] = false;
+
+        self::assertSame($expected, Editor::newsletterEditorSettings($settings, $context));
+        self::assertTrue($settings['responsiveEditingEnabled']);
+        self::assertSame($originalContent, $context->post->post_content);
+        self::assertSame([], App::$writes);
+    }
+
+    public function testResponsiveEditingSettingsRemainUntouchedOutsideNewsletterContext(): void
+    {
+        $this->post(['post_type' => 'newsletter']);
+        foreach (['post', 'page', 'newsletter_layout', 'wp_template', 'wp_block'] as $postType) {
+            $context = (object) ['post' => (object) ['post_type' => $postType]];
+            foreach ([[], ['responsiveEditingEnabled' => true], ['responsiveEditingEnabled' => false]] as $settings) {
+                self::assertSame($settings, Editor::newsletterEditorSettings($settings, $context));
+            }
+        }
+        foreach ([(object) [], (object) ['post' => null], (object) ['name' => 'core/edit-site']] as $context) {
+            $settings = ['responsiveEditingEnabled' => true];
+            self::assertSame($settings, Editor::newsletterEditorSettings($settings, $context));
+        }
+    }
+
+    public function testResponsiveEditingIsDisabledWhenSettingIsMissingOrAlreadyOff(): void
+    {
+        $context = (object) ['post' => (object) ['post_type' => 'newsletter']];
+        foreach ([[], ['responsiveEditingEnabled' => false]] as $settings) {
+            self::assertSame(['responsiveEditingEnabled' => false], Editor::newsletterEditorSettings($settings, $context));
+        }
     }
 
     public function testEditorCleanupPreservesAllowListedAssetCallbacks(): void

@@ -64,6 +64,9 @@ final class Editor
         // Modify allowed block types for the newsletter editor.
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes'], 99);
 
+        // Keep device previews, but do not offer viewport-specific email styling.
+        add_filter('block_editor_settings_all', [__CLASS__, 'newsletterEditorSettings'], 99, 2);
+
         // Filter the excerpt length for the newsletter editor.
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
 
@@ -72,6 +75,25 @@ final class Editor
 
         // Register block patterns for the newsletter editor.
         add_action('init', ['\RRZE\Newsletter\Patterns\Patterns', 'registerBlockPatterns']);       
+    }
+
+    /**
+     * Disable responsive style editing only in the newsletter editor.
+     *
+     * WordPress 7.1+ uses this setting for its View and States controls.
+     * Device previews and previously saved responsive styles remain untouched.
+     *
+     * @param array $settings Existing editor settings.
+     * @param \WP_Block_Editor_Context $context Current editor context.
+     * @return array Filtered editor settings.
+     */
+    public static function newsletterEditorSettings(array $settings, $context): array
+    {
+        if (($context->post->post_type ?? null) === Newsletter::POST_TYPE) {
+            $settings['responsiveEditingEnabled'] = false;
+        }
+
+        return $settings;
     }
 
     /**
