@@ -212,7 +212,7 @@ export const Styling = compose([
         return { editPost };
     }),
     withSelect(customStylesSelector),
-])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection, spacingMode, PanelComponent = PanelBody }) => {
+])(({ editPost, fontBody, fontHeader, backgroundColor, contrastProtection, spacingMode }) => {
     const updateStyleValue = (key, value) => {
         editPost({ meta: { [key]: value } });
     };
@@ -222,7 +222,7 @@ export const Styling = compose([
 
     return (
         <Fragment>
-            <PanelComponent name="rrze-newsletter-spacing-panel" title={__("Email spacing", "rrze-newsletter")}>
+            <PanelBody name="rrze-newsletter-spacing-panel" title={__("Email spacing", "rrze-newsletter")}>
                 <SelectControl
                     label={__("Spacing mode", "rrze-newsletter")}
                     value={spacingMode}
@@ -244,8 +244,8 @@ export const Styling = compose([
                 {isManagedSpacing(spacingMode, window.rrze_newsletter_data?.global_managed_spacing) && (
                     <p>{__("The editor now approximates the email's consistent content gaps and outer gutters. Manual spacing values stay saved but are overridden while managed spacing is active. Nested groups do not add extra padding. Use the generated email preview for the final check.", "rrze-newsletter")}</p>
                 )}
-            </PanelComponent>
-            <PanelComponent
+            </PanelBody>
+            <PanelBody
                 name="rrze-newsletter-typography-panel"
                 title={__("Typography", "rrze-newsletter")}
             >
@@ -272,8 +272,8 @@ export const Styling = compose([
                         }
                     />
                 </PanelRow>
-            </PanelComponent>
-            <PanelComponent
+            </PanelBody>
+            <PanelBody
                 name="rrze-newsletter-background-color-panel"
                 title={__("Background", "rrze-newsletter")}
             >
@@ -295,15 +295,15 @@ export const Styling = compose([
                         />
                     </BaseControl>
                 </PanelRow>
-            </PanelComponent>
-            <PanelComponent name="rrze-newsletter-contrast-panel" title={__("Email contrast protection", "rrze-newsletter")}>
+            </PanelBody>
+            <PanelBody name="rrze-newsletter-contrast-panel" title={__("Email contrast protection", "rrze-newsletter")}>
                 <ToggleControl
                     label={__("Automatically improve text contrast", "rrze-newsletter")}
                     checked={contrastProtection}
                     onChange={(value) => updateStyleValue("rrze_newsletter_contrast_protection", value)}
                     help={__("When saving, adjust low-contrast text on solid backgrounds in the generated email. Block colors stay unchanged. A notice lets you preview corrections and review backgrounds that cannot be checked safely.", "rrze-newsletter")}
                 />
-            </PanelComponent>
+            </PanelBody>
         </Fragment>
     );
 });

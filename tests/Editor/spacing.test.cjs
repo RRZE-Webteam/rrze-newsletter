@@ -71,16 +71,38 @@ test( 'background defaults to white, preserves chosen colors and mounts the canv
 	}
 } );
 
-test( 'styling sections are sibling panels in both document settings and the dedicated styles sidebar', () => {
-	for ( const PanelComponent of [ undefined, 'PluginDocumentSettingPanel' ] ) {
-		const { tree, nodes } = render( 'inherit', false, {}, { PanelComponent } );
-		const type = PanelComponent || 'PanelBody';
-		assert.equal( tree.type, 'Fragment' );
-		assert.deepEqual( tree.children.map( ( node ) => node.type ), [ type, type, type, type ] );
-		assert.equal( nodes.filter( ( node ) => node.type === type ).length, 4 );
-		assert.equal( new Set( tree.children.map( ( node ) => node.props.name ) ).size, 4 );
-		assert.deepEqual( tree.children.map( ( node ) => node.props.title ), [ 'Email spacing', 'Typography', 'Background', 'Email contrast protection' ] );
+test( 'Newsletter Styles contains four sibling design panels without nested panel wrappers', () => {
+	const { tree, nodes } = render( 'inherit' );
+	assert.equal( tree.type, 'Fragment' );
+	assert.deepEqual( tree.children.map( ( node ) => node.type ), [ 'PanelBody', 'PanelBody', 'PanelBody', 'PanelBody' ] );
+	assert.equal( nodes.filter( ( node ) => node.type === 'PanelBody' ).length, 4 );
+	assert.equal( new Set( tree.children.map( ( node ) => node.props.name ) ).size, 4 );
+	assert.deepEqual( tree.children.map( ( node ) => node.props.title ), [ 'Email spacing', 'Typography', 'Background', 'Email contrast protection' ] );
+} );
+
+test( 'design controls retain saved values and update the same newsletter metadata', () => {
+	const { nodes, edits } = render( 'expert', false, {
+		rrze_newsletter_font_header: 'Georgia, serif',
+		rrze_newsletter_font_body: 'Verdana, sans-serif',
+		rrze_newsletter_background_color: '#123456',
+		rrze_newsletter_contrast_protection: false,
+	} );
+	for ( const [ label, saved, replacement, key ] of [
+		[ 'Headings font', 'Georgia, serif', 'Tahoma, sans-serif', 'rrze_newsletter_font_header' ],
+		[ 'Body font', 'Verdana, sans-serif', 'Georgia, serif', 'rrze_newsletter_font_body' ],
+		[ 'Spacing mode', 'expert', 'managed', 'rrze_newsletter_spacing_mode' ],
+	] ) {
+		const control = nodes.find( ( node ) => node.props.label === label );
+		assert.equal( control.props.value, saved );
+		control.props.onChange( replacement );
+		assert.equal( edits.at( -1 ).meta[ key ], replacement );
+		assert.deepEqual( Object.keys( edits.at( -1 ).meta ), [ key ] );
 	}
+	const contrast = nodes.find( ( node ) => node.type === 'ToggleControl' );
+	assert.equal( contrast.props.checked, false );
+	contrast.props.onChange( true );
+	assert.equal( edits.at( -1 ).meta.rrze_newsletter_contrast_protection, true );
+	assert.equal( nodes.find( ( node ) => node.type === 'ColorPicker' ).props.color, '#123456' );
 } );
 
 test( 'new newsletters inherit global spacing and offer explicit on/off overrides', () => {

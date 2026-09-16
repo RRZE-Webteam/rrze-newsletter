@@ -39,6 +39,7 @@ test( 'selected block dimensions show a non-dismissable hint only for managed ne
 		if ( hint ) {
 			assert.equal( hint.props.group, 'dimensions' );
 			assert.equal( hint.children[ 0 ].props.isDismissible, false );
+			assert.match( hint.children[ 0 ].children[ 0 ], /Newsletter Styles > Email spacing/ );
 		}
 		const wrapper = exported.withManagedSpacingHint( 'OriginalBlockEdit' );
 		assert.equal( wrapper( { isSelected: false } ).children[ 1 ], false );
