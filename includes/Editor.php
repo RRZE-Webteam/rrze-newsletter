@@ -184,6 +184,7 @@ final class Editor
             'core/column',
             'core/columns',
             'core/image',
+            'core/media-text',
             'core/separator',
             'core/list',
             'core/list-item',

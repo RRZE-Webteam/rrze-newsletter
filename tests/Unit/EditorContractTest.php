@@ -77,7 +77,7 @@ final class EditorContractTest extends ApplicationTestCase
         self::assertTrue(Editor::isEditingNewsletter());
         self::assertSame([
             'core/spacer', 'core/block', 'core/group', 'core/paragraph', 'core/heading',
-            'core/buttons', 'core/button', 'core/column', 'core/columns', 'core/image',
+            'core/buttons', 'core/button', 'core/column', 'core/columns', 'core/image', 'core/media-text',
             'core/separator', 'core/list', 'core/list-item', 'core/social-links', 'core/social-link',
             'rrze-newsletter/post-inserter', 'rrze-newsletter/rss', 'rrze-newsletter/ics',
         ], Editor::newsletterAllowedBlockTypes(true));

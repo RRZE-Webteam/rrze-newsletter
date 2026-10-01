@@ -60,6 +60,25 @@ test( 'editor mode resolution matches PHP precedence, including missing and inva
 	}
 } );
 
+test( 'media and text use managed column gutters and restore the core spacing in expert mode', async () => {
+	const { mountManagedSpacing } = await policy;
+	const dom = new JSDOM( `<style>.wp-block-media-text__content { padding:0 8%; }</style>
+		<div class="editor-styles-wrapper"><div class="is-root-container">
+		<div data-type="core/media-text"><figure class="wp-block-media-text__media"></figure>
+		<div class="wp-block-media-text__content"><p data-type="core/paragraph">Text</p></div></div></div></div>` );
+	const doc = dom.window.document;
+	const before = doc.body.innerHTML;
+	const dispose = mountManagedSpacing( doc );
+	const css = ( selector ) => dom.window.getComputedStyle( doc.querySelector( selector ) );
+	assert.equal( css( '.wp-block-media-text__content' ).paddingLeft, '8px' );
+	assert.equal( css( '.wp-block-media-text__media' ).paddingRight, '8px' );
+	assert.equal( css( '.wp-block-media-text__media' ).marginBottom, '16px' );
+	dispose();
+	assert.equal( css( '.wp-block-media-text__content' ).paddingLeft, '8%' );
+	assert.equal( doc.body.innerHTML, before );
+	dom.window.close();
+} );
+
 test( 'WordPress localized checkbox values activate inherited spacing without treating false-like strings as enabled', async () => {
 	const { isManagedSpacing } = await policy;
 	// wp_localize_script serializes scalar true/false as "1"/"".

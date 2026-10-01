@@ -253,4 +253,5 @@ namespace {
     require __DIR__ . '/Support/QueueCreationEnvironment.php';
     require __DIR__ . '/Support/FeedEnvironment.php';
     require __DIR__ . '/Support/RecurringLockEnvironment.php';
+    require __DIR__ . '/Support/MediaTextEnvironment.php';
 }

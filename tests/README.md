@@ -1,5 +1,26 @@
 # Tests
 
+### Media & Text
+
+`core/media-text` is available in the newsletter editor. The MJML processor uses
+two columns with the saved media width, side, vertical alignment and mobile
+stacking setting. Right-side media remains first in mobile reading order. The
+email uses the existing 480px breakpoint. Within an existing column or grid cell,
+media and child blocks are flattened vertically to avoid invalid nested MJML.
+Managed spacing uses the existing 24px outer/8px column gutters; expert mode keeps
+the outer block padding. Links, alternative text and featured images are retained.
+Video becomes a link, with a linked poster when available. Cover cropping
+(`imageFill`) falls back to the proportional full image and is flagged in the
+editor using WordPress's translated control label.
+
+`MediaTextProcessorTest.php` covers layout, nesting, media and inherited styling;
+`tests/MJML/media-text.test.cjs` compiles the output. The opt-in browser check is
+`node --test tests/Browser/media-text.test.cjs` and checks order, stacking,
+proportions and overflow from 280–680px without external network access. As in
+the existing group-background tests, compilation tolerates only the existing
+text-processor warnings for `postId`, `link` and `textColor` attributes.
+Save edited newsletters again to regenerate their stored email HTML.
+
 ### Social icons
 
 The email registry includes the 49 services in the imported WordPress snapshot.

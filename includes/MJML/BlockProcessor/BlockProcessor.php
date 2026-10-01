@@ -21,6 +21,7 @@ final class BlockProcessor
 
     private const BLOCKS_WITH_OWN_COLUMN = [
         'core/columns',
+        'core/media-text',
         'core/column',
         'core/separator',
     ];
@@ -65,6 +66,10 @@ final class BlockProcessor
         );
         $padding = StyleProcessor::getPaddingFromAttributes($attrs);
         $sectionAttrs = array_merge($attrs, ['padding' => '0']);
+        if ($blockName === 'core/media-text') {
+            // Keep media first in source/mobile order, including media on the right.
+            $sectionAttrs['direction'] = ($blockAttrs['mediaPosition'] ?? 'left') === 'right' ? 'rtl' : 'ltr';
+        }
         if (!isset($sectionAttrs['background-color']) && isset($attrs['container-background-color'])) {
             $sectionAttrs['background-color'] = $attrs['container-background-color'];
         }
@@ -95,7 +100,7 @@ final class BlockProcessor
             return '';
         }
 
-        if ($context->managedSpacing && !in_array($blockName, ['core/group', 'core/columns', 'core/column'], true)) {
+        if ($context->managedSpacing && !in_array($blockName, ['core/group', 'core/columns', 'core/column', 'core/media-text'], true)) {
             $markup = ManagedSpacing::spaceComponents($markup);
         }
 
@@ -176,6 +181,15 @@ final class BlockProcessor
                     $context->availableWidth,
                     $columnAttrs['padding']
                 )
+            ),
+            'core/media-text' => MediaTextProcessor::render(
+                $block,
+                $attrs,
+                $fontFamily,
+                $context->withAvailableWidth(LayoutHelper::subtractHorizontalPadding(
+                    $context->availableWidth,
+                    StyleProcessor::getPaddingFromAttributes($attrs)
+                ))
             ),
             'core/separator' => SeparatorProcessor::render($attrs),
             'core/spacer' => SpacerProcessor::render($attrs),
@@ -282,7 +296,7 @@ final class BlockProcessor
             return $markup;
         }
 
-        if ($padding !== '' && $blockName === 'core/columns') {
+        if ($padding !== '' && in_array($blockName, ['core/columns', 'core/media-text'], true)) {
             $sectionAttrs['padding'] = $padding;
         }
         $sectionAttrs = LayoutHelper::filterSectionAttributes($sectionAttrs);

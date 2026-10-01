@@ -55,8 +55,13 @@ export const editorSpacingCss = `
 .${ ROOT_CLASS } [data-type="core/list-item"] [data-type="core/paragraph"],
 .${ ROOT_CLASS } [data-type="core/list-item"] [data-type="core/heading"] { margin-bottom:0 !important; }
 .${ ROOT_CLASS } [data-type="core/column"],
+.${ ROOT_CLASS } [data-type="core/media-text"] > .wp-block-media-text__media,
+.${ ROOT_CLASS } [data-type="core/media-text"] > .wp-block-media-text__content,
 .${ ROOT_CLASS } [data-type="core/group"].is-layout-grid > [data-type] {
 	padding:0 8px !important;
+}
+.${ ROOT_CLASS } [data-type="core/media-text"] > .wp-block-media-text__media {
+	margin:0 0 16px !important;
 }
 .${ ROOT_CLASS } [data-type="core/button"] .wp-block-button__link {
 	padding:12px 24px !important; margin:0 !important;
