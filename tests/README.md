@@ -584,6 +584,32 @@ structure, not sanitization, complete CSS/MJML validity, MJML-to-HTML compilatio
 or rendering in email clients. The plugin-directory stub points only to this
 repository; tests neither alter templates nor load live WordPress data.
 
+## Dynamic feed contrast
+
+`Unit/Mail/ContrastTest.php` checks late RSS/ICS fragments against their actual
+email container, including nested backgrounds, links, CSS precedence, unchanged
+readable text, repeated placeholders and inherited colors after a correction.
+Image backgrounds, transparency, external stylesheets and unsupported paint rules
+are deliberately left unchanged; this server guard is not a general CSS engine.
+Only changed feed fragments are serialized, preserving the surrounding MJML/MSO
+output byte for byte.
+
+`Browser/dynamic-contrast.test.cjs` compiles the real newsletter template and checks
+computed contrast in Chrome at desktop and mobile widths. It first reproduces the
+unreadable text, then verifies at least 4.5:1 after the PHP guard.
+
+For the real WordPress boundaries, run on a disposable/local development site:
+
+```shell
+wp --skip-plugins --skip-themes eval-file wp-content/plugins/rrze-newsletter/tests/Integration/dynamic-contrast.php
+```
+
+This smoke test creates and deletes a draft, renders RSS/ICS from local fixtures,
+compares queue content with intercepted test mails, verifies the saved HTML is
+unchanged, and checks the absent/enabled/disabled contrast setting and feed-empty
+delivery flags. HTTP and mail are intercepted; no messages are delivered. It
+refuses to run when `wp_get_environment_type()` is `production`.
+
 ## Code coverage
 
 PCOV must be installed and loadable by PHP. The Composer command enables it

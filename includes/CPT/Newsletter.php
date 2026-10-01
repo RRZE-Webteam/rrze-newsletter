@@ -9,8 +9,7 @@ use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
-use RRZE\Newsletter\Blocks\RSS\RSS;
-use RRZE\Newsletter\Blocks\ICS\ICS;
+use RRZE\Newsletter\DynamicContent;
 
 /**
  * Custom Post Type 'Newsletter'
@@ -615,21 +614,7 @@ class Newsletter
             return $body;
         }
 
-        if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
-            foreach ($rssAttrs as $key => $attrs) {
-                if (str_contains($body, 'RSS_BLOCK_' . $key)) {
-                    $body = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $body);
-                }
-            }
-        }
-
-        if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
-            foreach ($icsAttrs as $key => $attrs) {
-                if (str_contains($body, 'ICS_BLOCK_' . $key)) {
-                    $body = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $body);
-                }
-            }
-        }
+        $body = DynamicContent::resolve($body, $postId);
 
         $data['id'] = $postId;
 
