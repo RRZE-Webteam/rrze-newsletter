@@ -620,6 +620,12 @@ unchanged, and checks the absent/enabled/disabled contrast setting and feed-empt
 delivery flags. HTTP and mail are intercepted; no messages are delivered. It
 refuses to run when `wp_get_environment_type()` is `production`.
 
+The smoke test fails on deprecations in the plugin, its bundled dependencies or
+WordPress's SimplePie library. Deprecations originating in the separately installed
+WP-CLI remain visible. `Unit/Blocks/IcsParserTest.php` also runs the real ICS parser
+with deprecations treated as errors and verifies recurring events across the
+Europe/Berlin autumn clock change, including UTC timestamps and event duration.
+
 ## Code coverage
 
 PCOV must be installed and loadable by PHP. The Composer command enables it

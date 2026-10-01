@@ -7,6 +7,9 @@
 
 WordPress-Plugin für die Erstellung von E-Mail-Newslettern und deren anschließendes Versenden.
 
+Die Änderungen in Version **3.4.0** und Hinweise zum Update stehen im
+[Änderungsprotokoll](CHANGELOG.md).
+
 
 ## Contributors
 

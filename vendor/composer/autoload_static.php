@@ -7,37 +7,37 @@ namespace Composer\Autoload;
 class ComposerStaticInitd40cab252d5dc297accbba8a108176e9
 {
     public static $prefixLengthsPsr4 = array (
-        'R' => 
+        'R' =>
         array (
             'RRule\\' => 6,
             'RRZE\\Newsletter\\' => 16,
         ),
-        'H' => 
+        'H' =>
         array (
             'Html2Text\\' => 10,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'RRule\\' => 
+        'RRule\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
             1 => __DIR__ . '/..' . '/rlanvin/php-rrule/src',
         ),
-        'RRZE\\Newsletter\\' => 
+        'RRZE\\Newsletter\\' =>
         array (
             0 => __DIR__ . '/../..' . '/includes',
         ),
-        'Html2Text\\' => 
+        'Html2Text\\' =>
         array (
             0 => __DIR__ . '/..' . '/html2text/html2text/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'I' => 
+        'I' =>
         array (
-            'ICal' => 
+            'ICal' =>
             array (
                 0 => __DIR__ . '/../..' . '/src',
                 1 => __DIR__ . '/..' . '/johngrogg/ics-parser/src',

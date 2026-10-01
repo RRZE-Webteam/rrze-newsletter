@@ -42,6 +42,14 @@ $postId = 0;
 $previousUser = get_current_user_id();
 $calendar = tempnam(sys_get_temp_dir(), 'rrze-contrast-');
 try {
+    // Keep unrelated WP-CLI deprecations visible, but fail on the plugin's feed path.
+    $pluginDirectory = dirname(__DIR__, 2) . '/';
+    set_error_handler(static function ($severity, $message, $file, $line) use ($pluginDirectory) {
+        if (str_starts_with($file, $pluginDirectory) || str_contains($file, '/wp-includes/SimplePie/')) {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        }
+        return false;
+    }, E_DEPRECATED | E_USER_DEPRECATED);
     $date = gmdate('Ymd', strtotime('+2 days'));
     file_put_contents($calendar, "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//RRZE//Contrast fixture//EN\r\nBEGIN:VEVENT\r\nUID:contrast@example.test\r\nDTSTAMP:{$date}T080000Z\r\nDTSTART:{$date}T100000Z\r\nDTEND:{$date}T110000Z\r\nSUMMARY:ICS contrast fixture\r\nDESCRIPTION:Calendar description\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n");
     $postId = wp_insert_post(['post_type' => 'newsletter', 'post_status' => 'draft', 'post_title' => 'Temporary contrast regression fixture'], true);
@@ -113,6 +121,7 @@ try {
     }
     WP_CLI::success("$checks checks passed; " . count($messages) . ' test mails intercepted, none sent.');
 } finally {
+    restore_error_handler();
     wp_set_current_user($previousUser);
     if (is_int($postId) && $postId > 0) {
         wp_delete_post($postId, true);

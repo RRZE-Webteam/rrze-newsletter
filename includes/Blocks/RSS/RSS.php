@@ -226,11 +226,11 @@ class RSS
 
         $feed = new \SimplePie();
 
-        $feed->set_sanitize_class('WP_SimplePie_Sanitize_KSES');
+        $feed->get_registry()->register(\SimplePie\Sanitize::class, 'WP_SimplePie_Sanitize_KSES', true);
 
         $feed->sanitize = new \WP_SimplePie_Sanitize_KSES();
 
-        $feed->set_file_class('WP_SimplePie_File');
+        $feed->get_registry()->register(\SimplePie\File::class, 'WP_SimplePie_File', true);
 
         $feed->set_feed_url($url);
 
