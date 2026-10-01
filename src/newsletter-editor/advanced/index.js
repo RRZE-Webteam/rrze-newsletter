@@ -2,14 +2,9 @@
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import {
-	ToggleControl,
-	SelectControl,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { ToggleControl, SelectControl } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
-import { Fragment } from '@wordpress/element';
 
 /**
  * Plugin dependencies
@@ -61,9 +56,8 @@ const AdvancedSettingsComponent = ( props ) => {
 	} = meta;
 
 	return (
-		<Fragment>
+		<div className="rrze-newsletter__sending-rules">
 			<ToggleControl
-				className="rrze-newsletter__conditionals-toggle-control rrze-newsletter__conditionals-toggle-control--separated"
 				label={ __( 'Advanced', 'rrze-newsletter' ) }
 				help={ __(
 					'Apply advanced settings for sending the newsletter, especially if it contains blocks of dynamic content.',
@@ -73,9 +67,8 @@ const AdvancedSettingsComponent = ( props ) => {
 				onChange={ ( value ) => updateHasConditionals( value ) }
 			/>
 			{ rrze_newsletter_has_conditionals && (
-				<Fragment>
+				<div className="rrze-newsletter__sending-conditions">
 					<ToggleControl
-						className="rrze-newsletter__conditionals-toggle-control"
 						label={ __( 'RSS Block', 'rrze-newsletter' ) }
 						help={ __(
 							'Apply a condition to the sending of the newsletter: If no feed items are available, the newsletter will not be sent.',
@@ -85,7 +78,6 @@ const AdvancedSettingsComponent = ( props ) => {
 						onChange={ ( value ) => updateRssNoItems( value ) }
 					/>
 					<ToggleControl
-						className="rrze-newsletter__conditionals-toggle-control"
 						label={ __( 'ICS Block', 'rrze-newsletter' ) }
 						help={ __(
 							'Apply a condition to the sending of the newsletter: If no events are available, the newsletter will not be sent.',
@@ -94,45 +86,45 @@ const AdvancedSettingsComponent = ( props ) => {
 						checked={ rrze_newsletter_conditionals_ics_block }
 						onChange={ ( value ) => updateIcsNoItems( value ) }
 					/>
-					<ToggleControl
-						className="rrze-newsletter__recurrence-toggle-control"
-						label={ __( 'Recurrence', 'rrze-newsletter' ) }
-						help={ __(
-							'Apply recurrence rules: The newsletter will be sent recurringly depending on the conditions applied to the sending.',
-							'rrze-newsletter'
-						) }
-						checked={ rrze_newsletter_is_recurring }
-						onChange={ ( value ) => updateIsRecurring( value ) }
-					/>
-					{ rrze_newsletter_is_recurring && (
-						<Fragment>
-							<Text>{ __( 'Repeat', 'rrze-newsletter' ) }</Text>
-							<SelectControl
-								value={ rrze_newsletter_recurrence_repeat }
-								options={ units }
-								onChange={ ( value ) =>
-									updateRecurrenceRepeat( value )
-								}
-							/>
-							{ rrze_newsletter_recurrence_repeat == 'WEEKLY' && (
-								<RepeatWeekly />
+					<div className="rrze-newsletter__sending-recurrence">
+						<ToggleControl
+							label={ __( 'Recurrence', 'rrze-newsletter' ) }
+							help={ __(
+								'Apply recurrence rules: The newsletter will be sent recurringly depending on the conditions applied to the sending.',
+								'rrze-newsletter'
 							) }
-							{ rrze_newsletter_recurrence_repeat ==
-								'MONTHLY' && (
-								<RepeatMonthly
-									rrze_newsletter_recurrence_monthly={
-										rrze_newsletter_recurrence_monthly
-									}
-									updateRecurrenceMonthly={
-										updateRecurrenceMonthly
+							checked={ rrze_newsletter_is_recurring }
+							onChange={ ( value ) => updateIsRecurring( value ) }
+						/>
+						{ rrze_newsletter_is_recurring && (
+							<div className="rrze-newsletter__sending-schedule">
+								<SelectControl
+									label={ __( 'Repeat', 'rrze-newsletter' ) }
+									value={ rrze_newsletter_recurrence_repeat }
+									options={ units }
+									onChange={ ( value ) =>
+										updateRecurrenceRepeat( value )
 									}
 								/>
-							) }
-						</Fragment>
-					) }
-				</Fragment>
+								{ rrze_newsletter_recurrence_repeat ==
+									'WEEKLY' && <RepeatWeekly /> }
+								{ rrze_newsletter_recurrence_repeat ==
+									'MONTHLY' && (
+									<RepeatMonthly
+										rrze_newsletter_recurrence_monthly={
+											rrze_newsletter_recurrence_monthly
+										}
+										updateRecurrenceMonthly={
+											updateRecurrenceMonthly
+										}
+									/>
+								) }
+							</div>
+						) }
+					</div>
+				</div>
 			) }
-		</Fragment>
+		</div>
 	);
 };
 
