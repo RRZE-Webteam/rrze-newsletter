@@ -16,9 +16,9 @@ final class RestApiTest extends ApplicationTestCase
         self::assertSame(['action', 'rest_api_init', [$api, 'restApiInit'], 10, 1], App::$hooks[0]);
         $api->restApiInit();
         $routes = App::$registrations['routes'];
-        self::assertCount(10, $routes);
-        foreach ($routes as $route) {
-            self::assertSame([$api, 'apiAuthoringPermissionsCheck'], $route['permission_callback']);
+        self::assertCount(11, $routes);
+        foreach ($routes as $name => $route) {
+            self::assertSame([$api, str_ends_with($name, '/preview') ? 'apiPreviewPermissionsCheck' : 'apiAuthoringPermissionsCheck'], $route['permission_callback']);
             self::assertIsCallable($route['callback']);
             self::assertContains($route['methods'], [\WP_REST_Server::READABLE, \WP_REST_Server::EDITABLE]);
             if (isset($route['args']['id'])) {
@@ -109,6 +109,29 @@ final class RestApiTest extends ApplicationTestCase
         $api = new RestApi();
         self::assertSame('42', $api->apiRetrieve(['id' => 42]));
         self::assertSame([['display_name' => 'Author 7', 'id' => 7, 'author_link' => 'https://example.test/author/7']], $api->getAuthorInfo(['author' => 7]));
+    }
+
+    public function testPreviewRequiresAuthoringAndAccessToTheSpecificNewsletter(): void
+    {
+        $api = new RestApi();
+        self::assertInstanceOf(\WP_Error::class, $api->apiPreviewPermissionsCheck(['id' => 42]));
+        App::$capabilities['edit_others_newsletters'] = true;
+        self::assertInstanceOf(\WP_Error::class, $api->apiPreviewPermissionsCheck(['id' => 42]));
+        App::$capabilities['edit_post'] = true;
+        self::assertTrue($api->apiPreviewPermissionsCheck(['id' => 42]));
+        self::assertSame(['edit_post', 42], end(App::$capabilityCalls));
+    }
+
+    public function testPreviewUsesFreshSavedHtmlAndDoesNotPersistIt(): void
+    {
+        $this->post();
+        $api = new RestApi();
+        self::assertSame(['html' => ''], $api->apiPreview(['id' => 42]));
+        foreach (['<p>Saved</p>', '<p>New version</p>'] as $html) {
+            App::$meta[42]['rrze_newsletter_email_html'] = $html;
+            self::assertSame(['html' => $html], $api->apiPreview(['id' => 42]));
+        }
+        self::assertSame([], App::$writes);
     }
 
     public function testPaletteUpdateMergesColorsAndOverridesOnlyMatchingKeys(): void

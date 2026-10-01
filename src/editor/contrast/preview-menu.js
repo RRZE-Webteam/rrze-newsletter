@@ -1,10 +1,9 @@
-import apiFetch from '@wordpress/api-fetch';
-import { dispatch, select, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { PluginPreviewMenuItem } from '@wordpress/editor';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
-import { showEmailPreview } from './preview';
+import { openEmailPreview } from './preview-request';
 
 export function EmailPreviewMenuItem() {
 	const { postType, postId, saving } = useSelect( ( store ) => {
@@ -26,33 +25,10 @@ export function EmailPreviewMenuItem() {
 
 	const openPreview = async () => {
 		if ( pending.current || saving ) return;
-		if ( ! postId ) {
-			showEmailPreview( '', { savedVersion: true } );
-			return;
-		}
 		pending.current = true;
 		setLoading( true );
 		try {
-			// Fetch on every click: the save middleware writes the generated HTML
-			// separately, so the editor store can still contain an older version.
-			const post = await apiFetch( {
-				path: `/wp/v2/newsletter/${ postId }?context=edit&_fields=meta`,
-				method: 'GET',
-			} );
-			const editor = select( 'core/editor' );
-			if ( ! mounted.current || editor.getCurrentPostId() !== postId || editor.getCurrentPostType() !== 'newsletter' ) return;
-			const html = post?.meta?.[ window.rrze_newsletter_data.email_html_meta ];
-			showEmailPreview( typeof html === 'string' ? html : '', {
-				savedVersion: true,
-				isStale: editor.isEditedPostDirty() || editor.isSavingPost(),
-			} );
-		} catch {
-			if ( mounted.current ) {
-				dispatch( 'core/notices' ).createErrorNotice(
-					__( 'The email preview could not be loaded. Please try again.', 'rrze-newsletter' ),
-					{ id: 'rrze-newsletter-preview' }
-				);
-			}
+			await openEmailPreview( postId, () => mounted.current );
 		} finally {
 			pending.current = false;
 			if ( mounted.current ) setLoading( false );

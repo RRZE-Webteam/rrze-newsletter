@@ -72,7 +72,7 @@ test( 'saved email preview distinguishes saved content, pending edits and missin
 			const tree = state.renders.at( -1 ).tree;
 			const notice = tree.children.find( ( node ) => node?.type === 'Notice' );
 			assert.equal( notice.props.status, stale ? 'warning' : 'info' );
-			assert.match( notice.children[ 0 ], stale ? /changes may not be included/ : /last generated email saved/ );
+			assert.match( notice.children[ 0 ], stale ? /changes may not be included/ : /last saved newsletter.*RSS and calendar/ );
 			assert.equal( tree.children.find( ( node ) => node?.type === 'iframe' ).props.srcDoc, '<html>Saved mail</html>' );
 			tree.props.onRequestClose();
 		}

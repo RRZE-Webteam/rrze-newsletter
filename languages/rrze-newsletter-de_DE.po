@@ -1950,8 +1950,8 @@ msgid "This is the last generated email. Your current changes may not be include
 msgstr "Dies ist die zuletzt erzeugte E-Mail. Ihre aktuellen Änderungen sind möglicherweise noch nicht enthalten. Warten Sie, bis der Newsletter vollständig gespeichert ist, und öffnen Sie anschließend die Vorschau erneut."
 
 #: src/editor/contrast/preview.js:22
-msgid "This preview shows the last generated email saved for this newsletter."
-msgstr "Diese Vorschau zeigt die zuletzt erzeugte und für diesen Newsletter gespeicherte E-Mail."
+msgid "This preview uses the last saved newsletter. RSS and calendar content is loaded when you open it."
+msgstr "Diese Vorschau verwendet den zuletzt gespeicherten Newsletter. RSS- und Kalenderinhalte werden beim Öffnen geladen."
 
 #: src/editor/contrast/preview.js:24
 msgid "This is the generated email. Mail apps may render colors differently, especially in dark mode."

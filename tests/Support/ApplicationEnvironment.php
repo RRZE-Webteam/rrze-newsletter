@@ -96,7 +96,7 @@ namespace RRZE\Newsletter {
         return true;
     }
     function get_post_type_capabilities(object $args): object { App::$capabilityCalls[] = $args; return (object) $args->capabilities; }
-    function current_user_can(string $capability): bool { App::$capabilityCalls[] = $capability; return App::$capabilities[$capability] ?? false; }
+    function current_user_can(string $capability, mixed ...$args): bool { App::$capabilityCalls[] = $args ? [$capability, ...$args] : $capability; return App::$capabilities[$capability] ?? false; }
     function esc_html(string $value): string { return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
     function esc_html__(string $value, string $domain = ''): string { return esc_html($value); }
     function sanitize_email(string $value): string { return $value; }

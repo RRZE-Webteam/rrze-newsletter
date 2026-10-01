@@ -21,6 +21,21 @@ class RestApi
     {
         register_rest_route(
             'rrze-newsletter/v1',
+            'email/(?P<id>\d+)/preview',
+            [
+                'methods' => \WP_REST_Server::READABLE,
+                'callback' => [$this, 'apiPreview'],
+                'permission_callback' => [$this, 'apiPreviewPermissionsCheck'],
+                'args' => [
+                    'id' => [
+                        'sanitize_callback' => 'absint',
+                        'validate_callback' => [$this, 'validateNewsletterId'],
+                    ],
+                ],
+            ]
+        );
+        register_rest_route(
+            'rrze-newsletter/v1',
             'email/(?P<id>[\a-z]+)',
             [
                 'methods'             => \WP_REST_Server::READABLE,
@@ -257,6 +272,28 @@ class RestApi
     {
         $response = json_encode($request['id']);
         return rest_ensure_response($response);
+    }
+
+    public function apiPreviewPermissionsCheck($request)
+    {
+        $permission = $this->apiAuthoringPermissionsCheck($request);
+        if (is_wp_error($permission)) {
+            return $permission;
+        }
+        if (!current_user_can('edit_post', (int) $request['id'])) {
+            return new \WP_Error('rrze_newsletter_rest_forbidden',
+                esc_html__('You cannot use this resource.', 'rrze-newsletter'), ['status' => 403]);
+        }
+        return true;
+    }
+
+    public function apiPreview($request)
+    {
+        $postId = (int) $request['id'];
+        // Missing generated HTML is a normal state for a new newsletter.
+        $html = get_post_meta($postId, 'rrze_newsletter_email_html', true);
+        $html = is_string($html) ? $html : '';
+        return rest_ensure_response(['html' => DynamicContent::resolve($html, $postId, false)]);
     }
 
     public function getAuthorInfo($post)

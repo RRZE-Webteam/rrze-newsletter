@@ -41,7 +41,7 @@ function harness( { enabled, failure, skipped = 0, spacingMode = 'inherit', mana
 			if ( failure ) { throw failure; }
 			return { html: active ? '<html>Corrected</html>' : html, corrected: active ? 1 : 0, skipped };
 		} },
-		'../contrast/preview': { showEmailPreview: ( html ) => previews.push( html ) },
+		'../contrast/preview-request': { openEmailPreview: ( postId ) => previews.push( postId ) },
 	};
 	vm.runInNewContext( code, {
 		exports: {},
@@ -59,7 +59,7 @@ function harness( { enabled, failure, skipped = 0, spacingMode = 'inherit', mana
 	};
 }
 
-test( 'default protection saves corrected HTML and previews that exact HTML without rewriting blocks', async () => {
+test( 'default protection saves corrected HTML and loads a resolved preview without rewriting blocks', async () => {
 	const state = harness( { skipped: 2 } );
 	assert.equal( await state.run(), 'saved' );
 	assert.equal( state.guardCalls[ 0 ][ 1 ], true );
@@ -68,7 +68,7 @@ test( 'default protection saves corrected HTML and previews that exact HTML with
 	const notice = state.notices.find( ( item ) => item[ 0 ] === 'warning' );
 	assert.equal( notice[ 2 ].id, 'rrze-newsletter-contrast' );
 	notice[ 2 ].actions[ 0 ].onClick();
-	assert.deepEqual( state.previews, [ '<html>Corrected</html>' ] );
+	assert.deepEqual( state.previews, [ 42 ] );
 } );
 
 test( 'opting out persists false and saves the unmodified compiler output', async () => {
@@ -105,7 +105,7 @@ for ( const spacingMode of [ 'inherit', 'managed', 'expert' ] ) {
 		if ( notice ) {
 			assert.equal( notice[ 2 ].id, 'rrze-newsletter-spacing' );
 			notice[ 2 ].actions[ 0 ].onClick();
-			assert.deepEqual( state.previews, [ '<html>Corrected</html>' ] );
+			assert.deepEqual( state.previews, [ 42 ] );
 		}
 	} );
 }

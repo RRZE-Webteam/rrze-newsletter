@@ -12,6 +12,7 @@ if (!defined('WP_CLI') || !WP_CLI || wp_get_environment_type() === 'production')
 require_once dirname(__DIR__, 2) . '/rrze-newsletter.php';
 \RRZE\Newsletter\plugin()->loaded();
 (new \RRZE\Newsletter\Settings())->onLoaded();
+new \RRZE\Newsletter\RestApi();
 
 $messages = [];
 $requests = 0;
@@ -38,6 +39,7 @@ $check = static function ($condition, $message) use (&$checks) {
     $checks++;
 };
 $postId = 0;
+$previousUser = get_current_user_id();
 $calendar = tempnam(sys_get_temp_dir(), 'rrze-contrast-');
 try {
     $date = gmdate('Ymd', strtotime('+2 days'));
@@ -64,6 +66,38 @@ try {
     $check((bool) wp_cache_get('rrze_newsletter_rss_block_not_empty', $postId), 'RSS delivery condition was lost.');
     $check((bool) wp_cache_get('rrze_newsletter_ics_block_not_empty', $postId), 'ICS delivery condition was lost.');
 
+    // Preview uses the real REST route, including permissions and ID validation.
+    \RRZE\Newsletter\CPT\Newsletter::registerPostType();
+    wp_set_current_user(0);
+    $route = '/rrze-newsletter/v1/email/' . $postId . '/preview';
+    $check(rest_do_request(new WP_REST_Request('GET', $route))->get_status() === 403, 'Anonymous preview was allowed.');
+    $admins = get_users(['role' => 'administrator', 'number' => 1, 'fields' => 'ID']);
+    $check((bool) $admins, 'This smoke test needs an existing local administrator.');
+    wp_set_current_user((int) $admins[0]);
+    $metaBefore = get_post_meta($postId);
+    $postBefore = get_post($postId)->to_array();
+    foreach ([false, 'unchanged'] as $availability) {
+        foreach (['rss', 'ics'] as $type) {
+            $key = 'rrze_newsletter_' . $type . '_block_not_empty';
+            wp_cache_delete($key, $postId);
+            if ($availability !== false) {
+                wp_cache_set($key, $availability, $postId);
+            }
+        }
+        $preview = rest_do_request(new WP_REST_Request('GET', $route));
+        $check($preview->get_status() === 200, 'Preview route failed.');
+        $check($preview->get_data()['html'] === $protected, 'Preview differs from final mail HTML.');
+        foreach (['rss', 'ics'] as $type) {
+            $check(wp_cache_get('rrze_newsletter_' . $type . '_block_not_empty', $postId) === $availability,
+                'Preview changed feed delivery conditions.');
+        }
+    }
+    $check(get_post_meta($postId) === $metaBefore && get_post($postId)->to_array() === $postBefore,
+        'Preview changed the newsletter or its metadata.');
+    $check(!$messages, 'Preview attempted to send mail.');
+    $check(rest_do_request(new WP_REST_Request('GET', '/rrze-newsletter/v1/email/0/preview'))->get_status() === 400,
+        'Invalid newsletter was accepted.');
+
     $response = (new \RRZE\Newsletter\RestApi())->test($postId, ['fixture@example.test']);
     $check(!is_wp_error($response), 'Intercepted test mail failed.');
     $check(count($messages) === 1 && $messages[0] === $protected, 'Test mail and queue snapshot differ.');
@@ -73,11 +107,13 @@ try {
         update_post_meta($postId, 'rrze_newsletter_contrast_protection', $enabled);
         $body = \RRZE\Newsletter\CPT\Newsletter::getData($postId)['content'];
         $check(str_contains($body, 'color:#ffffff !important;') === $enabled, 'Explicit contrast setting was ignored.');
+        $check(rest_do_request(new WP_REST_Request('GET', $route))->get_data()['html'] === $body, 'Preview ignored contrast setting.');
         (new \RRZE\Newsletter\RestApi())->test($postId, ['fixture@example.test']);
         $check(end($messages) === $body, 'Test mail ignored explicit contrast setting.');
     }
     WP_CLI::success("$checks checks passed; " . count($messages) . ' test mails intercepted, none sent.');
 } finally {
+    wp_set_current_user($previousUser);
     if (is_int($postId) && $postId > 0) {
         wp_delete_post($postId, true);
         wp_cache_delete('rrze_newsletter_rss_block_not_empty', $postId);

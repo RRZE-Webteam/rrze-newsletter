@@ -517,6 +517,16 @@ loads images. These unit tests assert the frame contract, not browser cookie or
 image-loading behavior. Private/local images can work in the editor preview and
 still be inaccessible to email recipients; this does not rewrite outgoing URLs.
 
+The editor menu and save-notice actions both request
+`GET /rrze-newsletter/v1/email/<id>/preview`. The endpoint requires newsletter
+authoring rights and permission to edit that specific post. It uses the last
+saved HTML, resolves RSS/ICS with the delivery renderer and contrast guard, and
+does not change the saved HTML, post status or feed-empty delivery flags.
+`preview-menu.test.cjs` covers fresh reads, shared in-flight requests, stale edits,
+retrying failures, unmounting and switching newsletters. The WordPress integration
+test below compares preview output with final email HTML, including opt-out,
+permissions, ID validation and unchanged metadata/cache flags.
+
 ### Feed placeholders, RSS and archive output
 
 Feed-placeholder tests cover per-feed keys, attribute updates without erasing

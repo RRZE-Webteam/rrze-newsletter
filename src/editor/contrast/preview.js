@@ -19,7 +19,7 @@ export function showEmailPreview( html, { savedVersion = false, isStale = false 
 			{ hasPreview && savedVersion && <Notice status={ isStale ? 'warning' : 'info' } isDismissible={ false }>
 				{ isStale
 					? __( 'This is the last generated email. Your current changes may not be included. Finish saving the newsletter, then reopen the preview.', 'rrze-newsletter' )
-					: __( 'This preview shows the last generated email saved for this newsletter.', 'rrze-newsletter' ) }
+					: __( 'This preview uses the last saved newsletter. RSS and calendar content is loaded when you open it.', 'rrze-newsletter' ) }
 			</Notice> }
 			<p>{ __( 'This is the generated email. Mail apps may render colors differently, especially in dark mode.', 'rrze-newsletter' ) }</p>
 			{/* Keep own-site images in the authenticated site context. Never add

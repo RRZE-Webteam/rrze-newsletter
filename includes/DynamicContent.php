@@ -8,10 +8,11 @@ use RRZE\Newsletter\Blocks\RSS\RSS;
 use RRZE\Newsletter\Blocks\ICS\ICS;
 use RRZE\Newsletter\Mail\Contrast;
 
-/** Resolve feeds once, before the final HTML is snapshotted or sent as a test. */
+/** Resolve feeds once for mail output or a read-only preview. */
 final class DynamicContent
 {
-    public static function resolve(string $html, int $postId): string
+    /** Previews must not update the feed-empty flags used by queue creation. */
+    public static function resolve(string $html, int $postId, bool $trackAvailability = true): string
     {
         $fragments = [];
         foreach (['rss' => RSS::class, 'ics' => ICS::class] as $type => $renderer) {
@@ -19,7 +20,7 @@ final class DynamicContent
             foreach (is_array($attributes) ? $attributes : [] as $key => $attrs) {
                 $placeholder = strtoupper($type) . '_BLOCK_' . $key;
                 if (str_contains($html, $placeholder)) {
-                    $fragments[$placeholder] = $renderer::renderMJML($attrs);
+                    $fragments[$placeholder] = $renderer::renderMJML($attrs, $trackAvailability);
                 }
             }
         }

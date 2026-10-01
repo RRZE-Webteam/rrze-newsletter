@@ -92,13 +92,14 @@ class RSS
      * @param array $atts The block attributes.
      * @return string Returns the block content.
      */
-    public static function renderMJML(array $atts): string
+    // Previews keep postId (including the last-send cutoff), but never alter delivery flags.
+    public static function renderMJML(array $atts, bool $trackAvailability = true): string
     {
         $feedItems = '';
         $atts = self::parseAtts($atts);
         $postId = absint($atts['postId'] ?? 0);
 
-        if ($postId) {
+        if ($postId && $trackAvailability) {
             wp_cache_delete('rrze_newsletter_rss_block_not_empty', $postId);
         }
 
@@ -111,7 +112,7 @@ class RSS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-rss"><p>%s</p></div>', __('There are no items available.', 'rrze-newsletter'));
         } else {
-            if ($postId) {
+            if ($postId && $trackAvailability) {
                 wp_cache_set('rrze_newsletter_rss_block_not_empty', 1, $postId);
             }
         }

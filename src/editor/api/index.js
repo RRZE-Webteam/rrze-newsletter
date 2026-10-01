@@ -11,7 +11,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { select as globalSelect, dispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { protectEmailHtml } from '../contrast/contrast.mjs';
-import { showEmailPreview } from '../contrast/preview';
+import { openEmailPreview } from '../contrast/preview-request';
 
 const POST_META_WHITELIST = [
 	'rrze_newsletter_preview_text',
@@ -116,7 +116,7 @@ apiFetch.use( async ( options, next ) => {
 			__( 'Managed spacing was applied to the generated email. Manual spacing and nested group padding were normalized; editor blocks were not changed. Preview the email before sending.', 'rrze-newsletter' ),
 			{ id: 'rrze-newsletter-spacing', actions: [ {
 				label: __( 'Preview generated email', 'rrze-newsletter' ),
-				onClick: () => showEmailPreview( protectedEmail.html ),
+				onClick: () => openEmailPreview( data.id ),
 			} ] }
 		);
 	}
@@ -129,7 +129,7 @@ apiFetch.use( async ( options, next ) => {
 			),
 			{ id: 'rrze-newsletter-contrast', actions: [ {
 				label: __( 'Preview generated email', 'rrze-newsletter' ),
-				onClick: () => showEmailPreview( protectedEmail.html ),
+				onClick: () => openEmailPreview( data.id ),
 			} ] }
 		);
 	}
