@@ -600,11 +600,12 @@ class Newsletter
         return $content;
     }
 
-    public static function getData(int $postId): \WP_Error|array|string
+    public static function getData(int $postId, ?\WP_Post $occurrence = null): \WP_Error|array|string
     {
         $data = [];
 
-        $post = get_post($postId);
+        // Queue creation may already have advanced the source to its next date.
+        $post = $occurrence ?? get_post($postId);
         if (!$post) {
             return $data;
         }

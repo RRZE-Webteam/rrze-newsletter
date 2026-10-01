@@ -17,6 +17,7 @@ class Events
 
     public function processMailQueue()
     {
+        $this->queue->recoverRecurringNewsletters();
         $this->queue->process();
     }
 }

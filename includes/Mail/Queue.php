@@ -6,12 +6,15 @@ defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\{Archive, Parser, Settings, Utils, Tags};
 use RRZE\Newsletter\CPT\{Newsletter, NewsletterQueue};
+use RRZE\Newsletter\Scheduling\NewsletterLock;
 use Html2Text\Html2Text;
 
 use function RRZE\Newsletter\plugin;
 
 class Queue
 {
+    private ?NewsletterLock $recurringLock = null;
+
     /**
      * Options
      * @var object
@@ -59,7 +62,19 @@ class Queue
     public function set($postId)
     {
         if (Newsletter::POST_TYPE === get_post_type($postId)) {
-            $this->add($postId);
+            if ($this->isRecurring($postId)) {
+                $lock = NewsletterLock::acquire($postId);
+                if (!$lock) {
+                    return;
+                }
+                $this->recurringLock = $lock;
+            }
+            try {
+                $this->add($postId);
+            } finally {
+                $this->recurringLock?->release();
+                $this->recurringLock = null;
+            }
         }
     }
 
@@ -68,7 +83,7 @@ class Queue
         $post = get_post($postId);
 
         if (
-            $post->post_status != 'publish'
+            !$post || $post->post_status != 'publish'
             || Newsletter::getStatus($postId) != 'send'
         ) {
             return;
@@ -77,7 +92,23 @@ class Queue
         // Keep the previous send date available while rendering conditional blocks.
         $sendAttemptDateGmt = current_time('mysql', true);
 
-        $data = Newsletter::getData($postId);
+        // Persist the next occurrence before RSS/ICS requests or queue writes can
+        // interrupt this run. Keep this occurrence's dates for its mail snapshots.
+        $post = clone $post;
+        try {
+            $recurrence = $this->maybeSetRecurrence($postId);
+            if (is_wp_error($recurrence)) {
+                $this->recurrenceError($postId, $recurrence->get_error_message());
+                return;
+            }
+            $data = $this->getNewsletterData($post);
+        } catch (\Throwable $error) {
+            $this->recurrenceError($postId, 'Queue creation interrupted (' . get_class($error) . ').');
+            return;
+        }
+        if ($this->recurringLock && !$this->recurringLock->owns()) {
+            return;
+        }
         if (empty($data) || is_wp_error($data)) {
             Newsletter::setStatus($postId, 'error');
             do_action(
@@ -90,9 +121,6 @@ class Queue
             );
             return;
         }
-
-        // Maybe the newsletter is recurring.
-        $this->maybeSetRecurrence($postId);
 
         // Check if it should be skipped.
         if ($this->maybeSkipped($postId)) {
@@ -179,6 +207,9 @@ class Queue
         }
 
         foreach ($recipient as $mail) {
+            if ($this->recurringLock && !$this->recurringLock->owns()) {
+                return;
+            }
             // Insert post in the mail queue.
             $args = [
                 'post_date' => $data['send_date'],
@@ -207,7 +238,7 @@ class Queue
                 'EMAIL' => $mail['to_email'],
                 'ARCHIVE' => $archiveUrl
             ];
-            $tags = Tags::sanitizeTags($postId, $tags);
+            $tags = Tags::sanitizeTags($post, $tags);
             $parser = new Parser();
             $body = $parser->parse($data['content'], $tags);
             $html2text = new Html2Text($body);
@@ -234,10 +265,138 @@ class Queue
             add_post_meta($queueId, 'rrze_newsletter_queue_retries', 0, true);
         }
 
+        if ($this->recurringLock && !$this->recurringLock->owns()) {
+            return;
+        }
         update_post_meta($postId, 'rrze_newsletter_send_date_gmt', $sendAttemptDateGmt);
 
         // Set the status of the newsletter to "sent".
         Newsletter::setStatus($postId, 'sent');
+    }
+
+    protected function getNewsletterData(\WP_Post $post): \WP_Error|array|string
+    {
+        return Newsletter::getData($post->ID, $post);
+    }
+
+    /**
+     * Reconcile schedules only. Never replay a possibly partial queue build.
+     * Runs before mail transport so a failing transport cannot prevent recovery.
+     */
+    public function recoverRecurringNewsletters(): void
+    {
+        $offset = 0;
+        do {
+            $posts = get_posts([
+                'post_type' => Newsletter::POST_TYPE,
+                'post_status' => ['future', 'publish'],
+                'numberposts' => 100,
+                'offset' => $offset,
+                'orderby' => 'ID',
+                'order' => 'ASC',
+                'meta_query' => [
+                    ['key' => 'rrze_newsletter_has_conditionals', 'value' => '1'],
+                    ['key' => 'rrze_newsletter_is_recurring', 'value' => '1'],
+                ],
+            ]);
+            foreach ($posts as $candidate) {
+                $lock = NewsletterLock::acquire($candidate->ID);
+                if (!$lock) {
+                    continue;
+                }
+                try {
+                    // Re-read in case an editor or another cron request changed it.
+                    $post = get_post($candidate->ID);
+                    if (!$post || $post->post_type !== Newsletter::POST_TYPE
+                        || !in_array($post->post_status, ['future', 'publish'], true) || !$this->isRecurring($post->ID)) {
+                        continue;
+                    }
+                    if ($post->post_status === 'future') {
+                        if (false !== wp_next_scheduled('publish_future_post', [$post->ID])) {
+                            continue;
+                        }
+                        // Legacy partial builds may already have snapshots for this
+                        // exact date. Older issues must not suppress a new issue.
+                        $existing = get_posts([
+                            'post_type' => NewsletterQueue::POST_TYPE,
+                            'post_status' => ['mail-queued', 'mail-sent', 'mail-error'],
+                            'numberposts' => 1,
+                            'fields' => 'ids',
+                            'meta_key' => 'rrze_newsletter_queue_newsletter_id',
+                            'meta_value' => $post->ID,
+                            'date_query' => [[
+                                'column' => 'post_date_gmt',
+                                'after' => $post->post_date_gmt,
+                                'before' => $post->post_date_gmt,
+                                'inclusive' => true,
+                            ]],
+                        ]);
+                        if (!$existing) {
+                            $timestamp = strtotime($post->post_date_gmt . ' UTC');
+                            $result = $timestamp === false || $timestamp <= 0
+                                ? new \WP_Error('newsletter_invalid_date', 'The scheduled newsletter date is invalid.')
+                                : $this->ensurePublicationEvent($post->ID, max(time() + MINUTE_IN_SECONDS, $timestamp));
+                        } else {
+                            $result = $this->maybeSetRecurrence($post->ID);
+                        }
+                    } else {
+                        // A published recurring source has already entered the
+                        // send path. Advance it without creating another queue.
+                        $result = $this->maybeSetRecurrence($post->ID);
+                    }
+                    if (is_wp_error($result)) {
+                        $this->recurrenceError($post->ID, $result->get_error_message());
+                    } elseif ($result !== false) {
+                        do_action('rrze.log.info', [
+                            'plugin' => plugin()->getBaseName(),
+                            'method' => __METHOD__,
+                            'message' => sprintf('Newsletter %d: recurring publication schedule restored.', $post->ID),
+                        ]);
+                    }
+                } catch (\Throwable $error) {
+                    $this->recurrenceError($candidate->ID, 'Schedule recovery interrupted (' . get_class($error) . ').');
+                } finally {
+                    $lock->release();
+                }
+            }
+            $offset += count($posts);
+        } while (count($posts) === 100);
+    }
+
+    protected function isRecurring(int $postId): bool
+    {
+        return (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true)
+            && (bool) get_post_meta($postId, 'rrze_newsletter_is_recurring', true);
+    }
+
+    protected function ensurePublicationEvent(int $postId, int $timestamp): true|\WP_Error
+    {
+        if (false !== wp_next_scheduled('publish_future_post', [$postId])) {
+            return true;
+        }
+        $result = wp_schedule_single_event($timestamp, 'publish_future_post', [$postId], true);
+        if (is_wp_error($result)) {
+            // A concurrent repair may have won the race to insert the event.
+            if (false !== wp_next_scheduled('publish_future_post', [$postId])) {
+                return true;
+            }
+            return $result;
+        }
+        return $result && false !== wp_next_scheduled('publish_future_post', [$postId])
+            ? true
+            : new \WP_Error('newsletter_schedule_failed', 'Could not schedule the next newsletter publication.');
+    }
+
+    protected function recurrenceError(int $postId, string $message): void
+    {
+        if (!$this->recurringLock || $this->recurringLock->owns()) {
+            Newsletter::setStatus($postId, 'error');
+        }
+        do_action('rrze.log.error', [
+            'plugin' => plugin()->getBaseName(),
+            'method' => __METHOD__,
+            'message' => sprintf('Error: Newsletter %d. %s', $postId, $message),
+        ]);
     }
 
     /**
@@ -346,13 +505,11 @@ class Queue
      * Set the next occurrence date if the bulletin has recurrence rules.
      *
      * @param integer $postId
-     * @return void
+     * @return int|false|\WP_Error Post ID, false when not recurring, or a scheduling error.
      */
     protected function maybeSetRecurrence(int $postId)
     {
-        $hasConditionals = (bool) get_post_meta($postId, 'rrze_newsletter_has_conditionals', true);
-        $isRecurring = (bool) get_post_meta($postId, 'rrze_newsletter_is_recurring', true);
-        if (!$hasConditionals || !$isRecurring) {
+        if (!$this->isRecurring($postId)) {
             return false;
         }
 
@@ -391,19 +548,28 @@ class Queue
             $nextOcurrence = Utils::nextOcurrences($currentTime, $rrule);
             $dt = $nextOcurrence[0] ?? '';
             if (!$dt) {
-                return false;
+                return new \WP_Error('newsletter_recurrence_failed', 'Could not determine the next newsletter date.');
             }
         }
 
         $newDate = $dt->format('Y-m-d H:i:s');
         $newGmtDate = get_gmt_from_date($newDate);
 
-        return wp_update_post([
+        $result = wp_update_post([
             'ID'            => $postId,
             'post_status'   => 'future',
             'post_date'     => $newDate,
             'post_date_gmt' => $newGmtDate,
-        ]);
+        ], true);
+        if (is_wp_error($result)) {
+            return $result;
+        }
+        if (!$result) {
+            return new \WP_Error('newsletter_update_failed', 'Could not save the next newsletter date.');
+        }
+        // WordPress does not propagate errors from its future-post cron hook.
+        $scheduled = $this->ensurePublicationEvent($postId, strtotime($newGmtDate . ' UTC'));
+        return is_wp_error($scheduled) ? $scheduled : $result;
     }
 
     /**

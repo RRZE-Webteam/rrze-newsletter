@@ -60,7 +60,7 @@ namespace RRZE\Newsletter {
 
     function do_action(string $hook, mixed ...$args): void
     {
-        if ($hook !== 'rrze.log.error') {
+        if (!in_array($hook, ['rrze.log.error', 'rrze.log.info'], true)) {
             throw new \LogicException('Unexpected recipient action: ' . $hook);
         }
         RecipientEnvironment::$actions[] = [$hook, $args];

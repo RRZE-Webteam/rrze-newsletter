@@ -68,9 +68,45 @@ Queue-Post: mail-queued
 ```
 
 Bei einem wiederkehrenden Newsletter setzt `Queue::maybeSetRecurrence()` den
-Quell-Post während des Queue-Aufbaus auf das nächste Datum und den Post-Status
-`future`. Das aktuelle Versandvorkommen wird danach weiter verarbeitet oder
-aufgrund leerer bedingter Inhalte übersprungen.
+Quell-Post **vor dem RSS-/ICS-Abruf** auf das nächste Datum und den Post-Status
+`future`. Anschließend wird das Vorhandensein des `publish_future_post`-Events
+geprüft und bei Bedarf dessen Anlage erneut versucht. Fehler beim Speichern oder
+Planen brechen den aktuellen Aufbau mit Status `error` und einem Logeintrag ab.
+Das aktuelle Versandvorkommen behält seine ursprünglichen Versanddaten und
+Datumsplatzhalter. Der RSS-Stichtag wird weiterhin erst am Ende des Queue-Aufbaus
+fortgeschrieben; Fehler und bedingtes Überspringen verändern ihn nicht.
+
+### Wiederanlauf nach einem Cron-Abbruch
+
+Vor jedem regulären Queue-Lauf prüft `Queue::recoverRecurringNewsletters()`
+wiederkehrende Newsletter mit aktivierten Bedingungen in Batches von 100:
+
+- Bei `future` mit vorhandenem Veröffentlichungsevent bleibt die Planung bestehen.
+- Bei `future` ohne Event wird der gespeicherte Termin wieder angelegt. Ein
+  überfälliger Termin wird frühestens nach einer Minute erneut fällig. Existieren
+  bereits Queue-Einträge mit derselben Quell-ID und demselben GMT-Versanddatum
+  (`mail-queued`, `mail-sent` oder `mail-error`), wird stattdessen das nächste
+  reguläre Vorkommen geplant.
+- Bei `publish` hat der Versandpfad möglicherweise bereits begonnen. Deshalb
+  wird ausschließlich das nächste Vorkommen ab dem aktuellen Zeitpunkt geplant.
+  Ein eventuell partieller Queue-Aufbau wird nicht wiederholt.
+- Entwürfe, Papierkorb und deaktivierte Wiederholungen werden nicht aktiviert.
+
+Die Reparatur ruft weder Feed-Abrufe noch den Mailtransport auf und erstellt keine
+Queue-Einträge. Bestehende Einträge werden regulär weiterverarbeitet. Nach einer
+längeren Unterbrechung wird kein Versand für jedes verpasste Intervall nachgeholt.
+Erfolgreiche Reparaturen gehen an `rrze.log.info`, Fehler an `rrze.log.error`.
+Ein vollständig angehaltener Cron-Runner muss weiterhin extern wieder anlaufen;
+erst dann kann die Reparatur ausgeführt werden.
+
+Aufbau und Reparatur sind pro Newsletter durch eine site-lokale Options-Sperre
+geschützt. Sie läuft nach 30 Minuten aus, damit auch ein hart beendeter Prozess
+keine dauerhafte Blockade hinterlässt. Der normale Runner-Timeout muss darunter
+liegen. Ein abgelaufener Aufbau darf nach dem Rendering, vor weiteren
+Empfängereinträgen und vor dem Fortschreiben des RSS-Stichtags nicht fortfahren.
+Freigabe und Übernahme vergleichen den gespeicherten Token atomar; ein alter
+Prozess kann die Sperre seines Nachfolgers nicht löschen. Das ersetzt keine
+atomare Claim-Verarbeitung des Mailtransports (Q7).
 
 ## Persistierte Daten
 
@@ -102,9 +138,11 @@ Für die Kombination aus Newsletter und Versandvorkommen darf der Queue-Aufbau
 nicht mehrfach erfolgreich abgeschlossen werden. Wiederholte Hooks, Requests
 oder Cron-Aufrufe dürfen keine doppelten Queue-Einträge erzeugen.
 
-**Aktueller Stand:** Nicht technisch garantiert. Der Status `send` reduziert
-das Risiko, es existiert aber weder eine eindeutige Versandvorkommen-ID noch
-eine atomare Idempotenzprüfung.
+**Aktueller Stand:** Für wiederkehrende Newsletter verhindert eine Options-Sperre
+überlappenden Queue-Aufbau und gleichzeitige Terminreparaturen. Die Reparatur
+spielt begonnene Vorkommen nicht erneut ab. Eine allgemeine Garantie fehlt:
+Es gibt weiterhin keine eindeutige Versandvorkommen-ID oder transaktionale
+Deduplizierung je Empfänger, insbesondere für manuelle erneute Veröffentlichungen.
 
 ### Q2 – Pro Versandvorkommen und E-Mail existiert höchstens ein Eintrag
 
@@ -216,8 +254,12 @@ Ein übersprungenes Vorkommen darf das nächste nicht verlieren. Fehler beim
 Queue-Aufbau müssen eine definierte Entscheidung haben: erneut versuchen oder
 zum nächsten Vorkommen wechseln.
 
-**Aktueller Stand:** Das nächste Datum wird vor der Skip-Prüfung gesetzt. Das
-Verhalten bei teilweise fehlgeschlagenem Queue-Aufbau ist nicht definiert.
+**Aktueller Stand:** Das nächste Datum und das Cron-Event werden vor Feed-Abrufen
+und Queue-Aufbau gesichert. Fehler beim Planen bleiben sichtbar und werden beim
+nächsten Queue-Lauf erneut geprüft. Die Wiederherstellung ergänzt fehlende Events
+oder wechselt bei bereits begonnenen Vorkommen zur nächsten regulären Ausgabe.
+Teilweise aufgebaute Vorkommen werden nicht automatisch wiederholt. Die genaue
+Erfassung partieller Ergebnisse bleibt offen (Q5).
 
 ### Q13 – Zustände und Fehler sind beobachtbar
 
@@ -284,6 +326,12 @@ abgeleitet werden:
 10. Ein übersprungenes wiederkehrendes Vorkommen behält sein korrektes nächstes
     Datum.
 
+Die Wiederanlauf-Szenarien sind in
+`tests/Unit/Mail/RecurringNewsletterRecoveryTest.php` abgedeckt: verlorene Events,
+abgebrochenes Rendering, fehlgeschlagene Post-/Cron-Schreibvorgänge, Schutz
+bestehender Versandvorkommen, mehrseitige Reparaturläufe, überlappende Aufrufe,
+abgelaufene Sperren und Erhalt der ursprünglichen Versanddaten.
+
 ## Offene fachliche Entscheidungen
 
 Vor den ersten Queue-Änderungen müssen Maintainer und Product Owner folgende
@@ -298,5 +346,6 @@ Punkte festlegen:
 4. Wie lange muss die personalisierte Archivansicht erreichbar bleiben?
 5. Welche Namensdaten gewinnen, wenn dieselbe E-Mail in mehreren Listen mit
    unterschiedlichen Namen vorkommt?
-6. Soll ein dauerhaft fehlerhaftes Vorkommen eines wiederkehrenden Newsletters
-   die folgende Ausführung blockieren?
+6. Für den automatischen Wiederanlauf entschieden: Ein fehlerhaftes Vorkommen
+   blockiert die folgende Ausführung nicht. Eine zusätzliche fachliche
+   Fehlergrenze mit automatischer Deaktivierung wäre eine eigene Erweiterung.

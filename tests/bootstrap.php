@@ -20,6 +20,11 @@ namespace RRZE\Newsletter\Tests\Support {
         public static array $postMetaUpdates = [];
 
         public static ?array $lastPostsQuery = null;
+        public static array $postsQueries = [];
+        public static array $scheduledEvents = [];
+        public static array $scheduleCalls = [];
+        public static array $scheduleResults = [];
+        public static bool $coreSchedules = true;
 
         public static function reset(): void
         {
@@ -31,6 +36,9 @@ namespace RRZE\Newsletter\Tests\Support {
             self::$postMetaAdds = [];
             self::$postMetaUpdates = [];
             self::$lastPostsQuery = null;
+            self::$postsQueries = self::$scheduledEvents = self::$scheduleCalls = self::$scheduleResults = [];
+            self::$coreSchedules = true;
+            RecurringLockEnvironment::reset();
         }
     }
 
@@ -78,6 +86,22 @@ namespace RRZE\Newsletter\Mail {
     function get_posts(array $args): array
     {
         WordPressState::$lastPostsQuery = $args;
+        WordPressState::$postsQueries[] = $args;
+
+        if ($args['post_type'] === 'newsletter') {
+            $posts = array_filter(\RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$posts, static fn($post) =>
+                $post->post_type === 'newsletter' && in_array($post->post_status, $args['post_status'], true)
+                && !empty(WordPressState::$postMeta[$post->ID]['rrze_newsletter_has_conditionals'])
+                && !empty(WordPressState::$postMeta[$post->ID]['rrze_newsletter_is_recurring']));
+            ksort($posts);
+            return array_slice(array_values($posts), $args['offset'], $args['numberposts']);
+        }
+        if (($args['fields'] ?? '') === 'ids') {
+            return array_map(static fn($post) => $post->ID, array_values(array_filter(WordPressState::$posts, static fn($post) =>
+                (WordPressState::$postMeta[$post->ID][$args['meta_key']] ?? null) === $args['meta_value']
+                && in_array($post->post_status, $args['post_status'], true)
+                && $post->post_date_gmt === $args['date_query'][0]['after'])));
+        }
 
         return WordPressState::$posts;
     }
@@ -92,12 +116,12 @@ namespace RRZE\Newsletter\Mail {
         return WordPressState::$postMeta[$postId][$key] ?? ($single ? '' : []);
     }
 
-    function wp_update_post(array $args): int
+    function wp_update_post(array $args, bool $wpError = false): int|\WP_Error
     {
         WordPressState::$postUpdates[] = $args;
         if (WordPressState::$postUpdateResults !== []) {
             $result = array_shift(WordPressState::$postUpdateResults);
-            if ($result === 0) { return 0; }
+            if ($result === 0 || $result instanceof \WP_Error) { return $result; }
         }
 
         foreach (WordPressState::$posts as $post) {
@@ -106,7 +130,32 @@ namespace RRZE\Newsletter\Mail {
             }
         }
 
+        if (isset(\RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$posts[$args['ID']])) {
+            $post = clone \RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$posts[$args['ID']];
+            foreach ($args as $key => $value) { $post->$key = $value; }
+            \RRZE\Newsletter\Tests\Support\ApplicationEnvironment::$posts[$args['ID']] = $post;
+            if (($args['post_status'] ?? '') === 'future') {
+                unset(WordPressState::$scheduledEvents[$post->ID]);
+                if (WordPressState::$coreSchedules) {
+                    WordPressState::$scheduledEvents[$post->ID] = strtotime($post->post_date_gmt . ' UTC');
+                }
+            }
+        }
+
         return $args['ID'];
+    }
+
+    function wp_next_scheduled(string $hook, array $args): int|false
+    {
+        return WordPressState::$scheduledEvents[$args[0]] ?? false;
+    }
+
+    function wp_schedule_single_event(int $timestamp, string $hook, array $args, bool $wpError = false): bool|\WP_Error
+    {
+        WordPressState::$scheduleCalls[] = [$timestamp, $hook, $args, $wpError];
+        $result = array_shift(WordPressState::$scheduleResults) ?? true;
+        if ($result === true) { WordPressState::$scheduledEvents[$args[0]] = $timestamp; }
+        return $result;
     }
 
     function add_post_meta(int $postId, string $key, mixed $value, bool $unique = false): int
@@ -203,4 +252,5 @@ namespace {
     require __DIR__ . '/Support/EditorEnvironment.php';
     require __DIR__ . '/Support/QueueCreationEnvironment.php';
     require __DIR__ . '/Support/FeedEnvironment.php';
+    require __DIR__ . '/Support/RecurringLockEnvironment.php';
 }
