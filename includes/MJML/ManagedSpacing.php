@@ -10,7 +10,7 @@ final class ManagedSpacing
     public static function globallyEnabled(): bool
     {
         $options = get_option('rrze_newsletter', []);
-        return is_array($options) && ($options['design_managed_spacing'] ?? 'off') === 'on';
+        return is_array($options) && ($options['design_managed_spacing'] ?? 'on') === 'on';
     }
 
     public static function forPost(int $postId): bool

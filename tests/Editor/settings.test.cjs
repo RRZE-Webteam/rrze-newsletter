@@ -3,7 +3,7 @@ const { execFileSync } = require( 'node:child_process' );
 const path = require( 'node:path' );
 const { test } = require( 'node:test' );
 
-test( 'production settings register the opt-in design checkbox under the renderer option name', () => {
+test( 'production settings enable the design checkbox by default under the renderer option name', () => {
 	// Isolated CLI process: no WordPress bootstrap, database or test schema replacements.
 	const config = JSON.parse( execFileSync( 'php', [ '-r', `
 		define('ABSPATH', getcwd() . '/');
@@ -21,5 +21,5 @@ test( 'production settings register the opt-in design checkbox under the rendere
 	assert.ok( config.sections.some( ( section ) => section.id === 'design' ) );
 	const field = config.fields.design.find( ( entry ) => entry.name === 'managed_spacing' );
 	assert.equal( field.type, 'checkbox' );
-	assert.equal( field.default, 'off' );
+	assert.equal( field.default, 'on' );
 } );

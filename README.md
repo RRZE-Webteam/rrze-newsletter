@@ -40,10 +40,10 @@ Dashboard / Einstellungen / Newsletters
 
 ### Automatische E-Mail-Abstände
 
-Unter **Design → Email spacing** lässt sich eine automatische Abstandsregelung
-aktivieren. Sie vereinheitlicht Abstände in der generierten E-Mail und verhindert,
-dass verschachtelte Gruppen immer mehr Innenabstand aufbauen. Standardmäßig bleibt
-sie deaktiviert, damit bestehende Newsletter ihr bisheriges Layout behalten.
+Unter **Design → Email spacing** lässt sich die standardmäßig aktivierte automatische
+Abstandsregelung steuern. Sie vereinheitlicht Abstände in der generierten E-Mail und
+verhindert, dass verschachtelte Gruppen immer mehr Innenabstand aufbauen. Eine bereits
+gespeicherte Deaktivierung bleibt erhalten.
 
 Im Newsletter-Editor unter **Styling → Email spacing** kann jeder Newsletter die
 globale Einstellung übernehmen, automatische Abstände aktivieren oder ausdrücklich

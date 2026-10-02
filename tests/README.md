@@ -68,7 +68,7 @@ globally. Unrelated readable elements are no longer rewritten by the guard.
 
 ### Managed spacing and per-newsletter overrides
 
-The opt-in global `design_managed_spacing` setting is overridden by newsletter
+The global `design_managed_spacing` setting is enabled by default and overridden by newsletter
 meta `rrze_newsletter_spacing_mode`: `inherit` (default), `managed`, or `expert`.
 PHP tests cover precedence, invalid/missing values, unchanged manual-mode output,
 immutable source blocks, nested groups through twelve levels, grids, columns,

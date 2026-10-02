@@ -43,15 +43,19 @@ final class ManagedSpacingTest extends ApplicationTestCase
         self::assertSame($blocks, App::$blocks['spacing-fixture']);
         self::assertSame('spacing-fixture', $post->post_content);
         if (!$expected) {
-            App::$options['rrze_newsletter'] = [];
+            App::$options['rrze_newsletter'] = ['design_managed_spacing' => 'off'];
             App::$meta[42]['rrze_newsletter_spacing_mode'] = 'inherit';
             self::assertSame(Renderer::fromPost($post), $markup);
         }
     }
 
-    public function testMissingOrMalformedGlobalSettingIsOptIn(): void
+    public function testMissingGlobalSettingDefaultsToEnabled(): void
     {
-        foreach ([null, '', 'on', [], ['design_managed_spacing' => 'off']] as $option) {
+        foreach ([null, [], ['mail_queue_send_limit' => '15']] as $option) {
+            App::$options['rrze_newsletter'] = $option;
+            self::assertTrue(ManagedSpacing::globallyEnabled());
+        }
+        foreach (['', 'on', ['design_managed_spacing' => 'off']] as $option) {
             App::$options['rrze_newsletter'] = $option;
             self::assertFalse(ManagedSpacing::globallyEnabled());
         }
@@ -59,7 +63,6 @@ final class ManagedSpacingTest extends ApplicationTestCase
 
     public function testArrayRenderingFollowsGlobalDefault(): void
     {
-        App::$options['rrze_newsletter'] = ['design_managed_spacing' => 'on'];
         self::assertStringContainsString('rrze-managed-spacing', Renderer::fromAry([]));
     }
 }
