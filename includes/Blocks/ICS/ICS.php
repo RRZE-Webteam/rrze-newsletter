@@ -79,12 +79,13 @@ class ICS
      * @param array $atts The block attributes.
      * @return string Returns the block content.
      */
-    public static function renderMJML(array $atts): string
+    // Previews render the same events without altering delivery flags.
+    public static function renderMJML(array $atts, bool $trackAvailability = true): string
     {
         $atts = self::parseAtts($atts);
         $postId = absint($atts['postId'] ?? 0);
 
-        if ($postId) {
+        if ($postId && $trackAvailability) {
             wp_cache_delete('rrze_newsletter_ics_block_not_empty', $postId);
         }
         $feedItems = self::getItems($atts['feedURL'], $atts);
@@ -98,7 +99,7 @@ class ICS
         if (!$feedItems) {
             $feedItems = sprintf('<div class="rrze-newsletter-ics"><p>%s</p></div>', __('There are no events available.', 'rrze-newsletter'));
         } else {
-            if ($postId) {
+            if ($postId && $trackAvailability) {
                 wp_cache_set('rrze_newsletter_ics_block_not_empty', 1, $postId);
             }
         }
@@ -881,7 +882,8 @@ class ICS
 
         // Valid method values
         $validMethods = array('curl', 'fopen');
-        $method = in_array(strtolower($method), $validMethods) ? strtolower($method) : null;
+        $method = strtolower((string) $method);
+        $method = in_array($method, $validMethods, true) ? $method : null;
 
         // Replace ampersand entities in URL to plain ampersands
         $url = str_replace('&amp;', '&', $url);
@@ -908,7 +910,8 @@ class ICS
             $urlContent = (curl_exec($conn));
             $curlResponseCode = curl_getinfo($conn, CURLINFO_RESPONSE_CODE);
             $curlRedirectUrl = curl_getinfo($conn, CURLINFO_REDIRECT_URL);
-            curl_close($conn);
+            // CurlHandle releases its resources when the last reference is removed.
+            unset($conn);
         }
 
         // Attempt to use fopen functions

@@ -21,7 +21,19 @@ final class AttributeInheritance
         array $parentAttrs,
         array $defaultAttrs
     ): array {
+        // A group background is a backdrop, not an inherited CSS text style or
+        // button fill. Keep it outside `style`, which a child may replace in full.
+        $background = $parentAttrs['background-color']
+            ?? $parentAttrs['container-background-color']
+            ?? $defaultAttrs['container-background-color']
+            ?? StyleProcessor::getColors($defaultAttrs)['background-color']
+            ?? null;
+        unset($defaultAttrs['background-color'], $defaultAttrs['backgroundColor'], $defaultAttrs['customBackgroundColor']);
+        unset($defaultAttrs['style']['color']['background']);
         $attrs = array_merge($defaultAttrs, $block['attrs'] ?? []);
+        if ($background !== null) {
+            $attrs['container-background-color'] = $background;
+        }
         $attrs['color'] = $attrs['color']
             ?? $parentAttrs['color']
             ?? '#000000';

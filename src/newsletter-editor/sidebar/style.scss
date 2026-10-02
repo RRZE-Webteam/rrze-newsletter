@@ -21,12 +21,26 @@
         }
     }
 
-    &__name-textcontrol {
-        margin-top: 8px;
-        &--separated {
-            margin-top: 14px;
-            padding-top: 8px;
-            border-top: 1px solid $light-gray-500;
+    // Own the gaps at the layout level instead of stacking field margins.
+    &__configuration,
+    &__sending-rules,
+    &__configuration-section {
+        display: grid;
+        gap: 16px;
+        min-width: 0;
+
+        .components-base-control,
+        .components-base-control__field {
+            margin-bottom: 0;
+        }
+    }
+
+    &__configuration-section {
+        padding-top: 16px;
+        border-top: 1px solid $light-gray-500;
+
+        > .components-button {
+            justify-self: start;
         }
     }
 

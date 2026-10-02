@@ -23,6 +23,10 @@ final class ColumnProcessor
         array $columnAttrs,
         RenderContext $context
     ): string {
+        $columnAttrs['background-color'] = $attrs['background-color'] ?? $attrs['container-background-color'] ?? null;
+        if ($context->managedSpacing) {
+            $columnAttrs['padding'] = '0 8px';
+        }
         if (isset($attrs['verticalAlignment'])) {
             $columnAttrs['vertical-align'] = $attrs['verticalAlignment'] === 'center'
                 ? 'middle'
@@ -46,9 +50,10 @@ final class ColumnProcessor
             . AttributeHandler::arrayToAttributes($columnAttrs)
             . '>';
         foreach ($innerBlocks as $childBlock) {
-            $childDefaultAttrs = AttributeInheritance::withoutParentLinkColor(
-                $context->defaultAttrs,
-                $childBlock
+            $childDefaultAttrs = AttributeInheritance::forChild(
+                [], // Do not carry a column's width/layout down to its children.
+                $attrs,
+                AttributeInheritance::withoutParentLinkColor($context->defaultAttrs, $childBlock)
             );
             $markup .= BlockProcessor::render(
                 $childBlock,
@@ -81,9 +86,10 @@ final class ColumnProcessor
         $markup = $isStackedOnMobile ? '' : '<mj-group>';
 
         foreach ($innerBlocks as $childBlock) {
-            $childDefaultAttrs = AttributeInheritance::withoutParentLinkColor(
-                $context->defaultAttrs,
-                $childBlock
+            $childDefaultAttrs = AttributeInheritance::forChild(
+                [],
+                $attrs,
+                AttributeInheritance::withoutParentLinkColor($context->defaultAttrs, $childBlock)
             );
             $markup .= BlockProcessor::render(
                 $childBlock,

@@ -107,6 +107,13 @@ final class GridProcessor
             $columnWidth,
             $columnWidthPercent
         );
+        if ($context->managedSpacing) {
+            $columnAttrs['padding'] = '0 8px';
+            $contentWidth = max(1, $columnWidth - 16);
+        }
+        if (($block['blockName'] ?? null) === 'core/group') {
+            unset($defaultAttrs['style']['spacing']['padding']);
+        }
         $cellContext = $context
             ->withDefaultAttrs($defaultAttrs)
             ->withAvailableWidth($contentWidth)

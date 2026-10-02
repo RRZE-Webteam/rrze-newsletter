@@ -18,6 +18,7 @@ final class SpacerProcessor
     {
         $heightParts = explode('|', (string) ($attrs['height'] ?? '0'));
         $spacerAttrs = [
+            'container-background-color' => $attrs['background-color'] ?? $attrs['container-background-color'] ?? null,
             'height' => absint(end($heightParts)) . 'px',
         ];
 

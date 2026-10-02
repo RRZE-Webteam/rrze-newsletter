@@ -21,7 +21,11 @@ import registerRSSBlock from "./blocks/rss";
 import { addBlocksValidationFilter } from './blocks-validation/blocks-filters';
 import { NestedColumnsDetection } from './blocks-validation/nesting-detection';
 import './api';
+import './contrast/preview-menu';
 import '../newsletter-editor';
+import { withManagedSpacingHint } from '../newsletter-editor/styling/spacing-inspector';
+
+addFilter( 'editor.BlockEdit', 'rrze-newsletter/managed-spacing-hint', withManagedSpacingHint );
 
 addBlocksValidationFilter();
 registerPostInserterBlock();

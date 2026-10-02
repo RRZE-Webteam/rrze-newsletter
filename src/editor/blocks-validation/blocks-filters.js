@@ -81,6 +81,12 @@ const getWarnings = ( props ) => {
 			}
 			break;
 
+		case 'core/media-text':
+			if ( props.attributes.imageFill ) {
+				warnings.push( __( 'Crop image to fill' ) );
+			}
+			break;
+
 		case 'core/paragraph':
 			if ( props.attributes.content.indexOf( '<img' ) >= 0 ) {
 				warnings.push( __( 'Inline image', 'rrze-newsletter' ) );

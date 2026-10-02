@@ -1,6 +1,11 @@
 @use "~@wordpress/base-styles/colors" as wp-colors;
 
 .rrze-newsletter {
+    &__managed-spacing-hint {
+        // The dimensions inspector uses a two-column grid.
+        grid-column: 1 / -1;
+    }
+
     &__color-panel {
         > .components-base-control {
             max-width: 100%;

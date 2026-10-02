@@ -56,16 +56,16 @@ const NewsletterEdit = ({ savePost, layoutId }) => {
 
             <PluginDocumentSettingPanel
                 name="newsletters-settings-panel"
-                title={__("Newsletter", "rrze-newsletter")}
+                title={__("Email configuration", "rrze-newsletter")}
             >
                 <Sidebar />
-                <AdvancedSettings />
             </PluginDocumentSettingPanel>
+            {/* New document panels start collapsed; WordPress remembers later user choices. */}
             <PluginDocumentSettingPanel
-                name="newsletters-styling-panel"
-                title={__("Styling", "rrze-newsletter")}
+                name="newsletters-sending-rules-panel"
+                title={__("Sending rules", "rrze-newsletter")}
             >
-                <Styling />
+                <AdvancedSettings />
             </PluginDocumentSettingPanel>
             <PluginDocumentSettingPanel
                 name="newsletters-testing-panel"

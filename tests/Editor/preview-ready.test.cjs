@@ -1,0 +1,37 @@
+const assert = require( 'node:assert/strict' );
+const { test } = require( 'node:test' );
+const { JSDOM } = require( 'jsdom' );
+const tick = () => new Promise( ( resolve ) => setImmediate( resolve ) );
+test( 'preview readiness waits for late iframe bodies and fires once', async () => {
+	const { watchPreview } = await import( '../../src/components/init-modal/screens/layout-picker/preview-ready.mjs' );
+	const dom = new JSDOM( '<body><main></main></body>' );
+	const host = dom.window.document.querySelector( 'main' );
+	let ready = 0;
+	const dispose = watchPreview( host, () => ready++, () => assert.fail( 'Unexpected timeout' ) );
+	const frame = dom.window.document.createElement( 'iframe' );
+	host.appendChild( frame );
+	frame.contentDocument.body.remove();
+	await tick();
+	assert.equal( ready, 0 );
+	const body = frame.contentDocument.createElement( 'body' );
+	body.innerHTML = '<p data-block="example">Content</p>';
+	frame.contentDocument.documentElement.appendChild( body );
+	await tick();
+	assert.equal( ready, 1 );
+	frame.dispatchEvent( new dom.window.Event( 'load' ) );
+	assert.equal( ready, 1 );
+	dispose(); dom.window.close();
+} );
+test( 'unmount cancels callbacks and an empty frame produces a bounded timeout', async () => {
+	const { watchPreview } = await import( '../../src/components/init-modal/screens/layout-picker/preview-ready.mjs' );
+	const dom = new JSDOM( '<body><main><iframe></iframe></main></body>' );
+	const host = dom.window.document.querySelector( 'main' );
+	let errors = 0;
+	watchPreview( host, () => assert.fail( 'No preview content' ), () => errors++, 10 )();
+	await new Promise( ( resolve ) => setTimeout( resolve, 20 ) );
+	assert.equal( errors, 0 );
+	watchPreview( host, () => assert.fail( 'No preview content' ), () => errors++, 10 );
+	await new Promise( ( resolve ) => setTimeout( resolve, 20 ) );
+	assert.equal( errors, 1 );
+	dom.window.close();
+} );

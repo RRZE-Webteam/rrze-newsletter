@@ -13,27 +13,15 @@ defined('ABSPATH') || exit;
  */
 class SocialIcons
 {
-    /**
-     * Associative array mapping social media service names to their icon colors.
-     * The keys are the service names, and the values are the corresponding hex color codes.
-     *
-     * @var array<string, string>
-     */
-    private const ICON_COLORS = [
-        'bluesky' => '#0a7aff',
-        'facebook' => '#1977f2',
-        'feed' => '#f0f0f0',
-        'github' => '#24292d',
-        'instagram' => '#f00075',
-        'linkedin' => '#0577b5',
-        'mastodon' => '#3288d4',
-        'tiktok' => '#000000',
-        'tumblr' => '#011835',
-        'twitter' => '#21a1f3',
-        'wordpress' => '#3499cd',
-        'youtube' => '#ff0100',
-        'x' => '#000000',
-    ];
+    /** @return array<string, array{name: string, color: string, defaultIcon: string}> */
+    public static function getServices(): array
+    {
+        static $services;
+        if ($services === null) {
+            $services = json_decode(file_get_contents(__DIR__ . '/../../assets/social-links/services.json'), true, 512, JSON_THROW_ON_ERROR);
+        }
+        return $services;
+    }
 
     /**
      * Returns the icon attributes for a given service name and block attributes.
@@ -44,15 +32,16 @@ class SocialIcons
      */
     public static function getIconAttributes(string $serviceName, array $blockAttrs): array
     {
-        if (!isset(self::ICON_COLORS[$serviceName])) {
+        $service = self::getServices()[$serviceName] ?? null;
+        if ($service === null) {
             return [];
         }
 
-        $color = self::ICON_COLORS[$serviceName];
-        $icon = 'white';
+        $color = $service['color'];
+        $icon = $service['defaultIcon'];
 
         if (isset($blockAttrs['className'])) {
-            $icon = self::determineIconVariant($blockAttrs['className'], $serviceName);
+            $icon = self::determineIconVariant($blockAttrs['className'], $icon);
             $color = self::determineIconColor($blockAttrs['className'], $color);
         }
 
@@ -66,19 +55,23 @@ class SocialIcons
      * Determines the icon variant based on the class name and service name.
      *
      * @param string $className The class name from the block attributes.
-     * @param string $serviceName The name of the social media service.
+     * @param string $defaultIcon The default variant for the service background.
      * @return string The icon variant ('black' or 'white').
      */
-    private static function determineIconVariant(string $className, string $serviceName): string
+    private static function determineIconVariant(string $className, string $defaultIcon): string
     {
         if (
             strpos($className, 'is-style-filled-black') !== false ||
-            strpos($className, 'is-style-circle-white') !== false ||
-            (strpos($className, 'is-style-default') !== false && $serviceName === 'feed')
+            strpos($className, 'is-style-circle-white') !== false
         ) {
             return 'black';
         }
-        return 'white';
+        if (strpos($className, 'is-style-circle-black') !== false ||
+            strpos($className, 'is-style-filled-white') !== false ||
+            strpos($className, 'is-style-filled-primary-text') !== false) {
+            return 'white';
+        }
+        return $defaultIcon;
     }
 
     /**

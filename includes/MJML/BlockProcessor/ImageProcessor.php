@@ -71,12 +71,16 @@ final class ImageProcessor
     private static function parseImageContent(string $innerHtml): ?array
     {
         $dom = new \DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            '<?xml encoding="UTF-8">' . $innerHtml,
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
-        );
-        libxml_clear_errors();
+        $previousErrorMode = libxml_use_internal_errors(true);
+        try {
+            $dom->loadHTML(
+                '<?xml encoding="UTF-8">' . $innerHtml,
+                LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousErrorMode);
+        }
 
         $xpath = new \DOMXpath($dom);
         $image = $xpath->query('//img')[0];
@@ -132,6 +136,7 @@ final class ImageProcessor
         string $imageUrl
     ): array {
         $imgAttrs = [
+            'container-background-color' => $attrs['background-color'] ?? $attrs['container-background-color'] ?? null,
             'padding'         => '0',
             'align'           => $attrs['align'] ?? 'left',
             'fluid-on-mobile' => 'true',
@@ -232,7 +237,7 @@ final class ImageProcessor
             );
         }
         if ($imageSize && !isset($imgAttrs['height'])) {
-            return self::applyImageAspectRatio(
+            return self::applyIntrinsicImageWidth(
                 $imgAttrs,
                 $imageSize,
                 $requestedWidth,
@@ -319,7 +324,7 @@ final class ImageProcessor
     }
 
     /**
-     * Calculate a proportional height for the rendered image width.
+     * Bound the image width while leaving its proportional height fluid.
      *
      * @param array<string, mixed>  $imgAttrs       MJML image attributes.
      * @param array{0: int, 1: int} $imageSize      Intrinsic dimensions.
@@ -327,20 +332,18 @@ final class ImageProcessor
      * @param int                   $availableWidth Maximum available width.
      * @return array<string, mixed> Updated MJML image attributes.
      */
-    private static function applyImageAspectRatio(
+    private static function applyIntrinsicImageWidth(
         array $imgAttrs,
         array $imageSize,
         ?int $requestedWidth,
         int $availableWidth
     ): array {
-        [$intrinsicWidth, $intrinsicHeight] = $imageSize;
+        [$intrinsicWidth] = $imageSize;
         $renderedWidth = min($requestedWidth ?? $intrinsicWidth, $availableWidth);
-        $renderedHeight = (int) round(
-            $intrinsicHeight * ($renderedWidth / $intrinsicWidth)
-        );
 
         $imgAttrs['width'] = $renderedWidth . 'px';
-        $imgAttrs['height'] = $renderedHeight . 'px';
+        // MJML emits width:100%; a fixed height would distort narrower images.
+        $imgAttrs['height'] = 'auto';
 
         return $imgAttrs;
     }
@@ -398,6 +401,7 @@ final class ImageProcessor
         }
 
         $captionAttrs = [
+            'container-background-color' => $attrs['background-color'] ?? $attrs['container-background-color'] ?? null,
             'align' => 'left',
             'font-size' => '14px',
             'line-height' => '1.4',

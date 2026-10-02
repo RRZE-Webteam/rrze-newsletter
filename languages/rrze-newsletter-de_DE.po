@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE Newsletter\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-newsletter\n"
 "POT-Creation-Date: 2025-09-10T13:45:48+00:00\n"
-"PO-Revision-Date: 2025-09-10 15:49+0200\n"
+"PO-Revision-Date: 2026-10-01 14:51+0200\n"
 "Last-Translator: RRZE Webteam <webmaster@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -1607,7 +1607,7 @@ msgstr "E-Mail"
 
 #: src/newsletter-editor/sidebar/index.js:105
 msgid "ReplyTo"
-msgstr "ReplyTo"
+msgstr "Reply-To"
 
 #: src/newsletter-editor/sidebar/index.js:137
 msgid "Update Sender"
@@ -1716,3 +1716,288 @@ msgstr "Newsletter wurde bereits verschickt."
 #: src/service-providers/generic/index.js:124
 msgid "Sending newsletter to:"
 msgstr "Senden eines Newsletters an:"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start a newsletter"
+msgstr "Newsletter starten"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Choose a starting point. You can edit all content and adjust the design afterwards."
+msgstr "Wählen Sie einen Ausgangspunkt. Inhalte und Gestaltung können Sie anschließend anpassen."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Back to newsletters"
+msgstr "Zur Newsletter-Übersicht"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Templates"
+msgstr "Vorlagen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Template category"
+msgstr "Vorlagenkategorie"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Template preview"
+msgstr "Vorlagenvorschau"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Preview width"
+msgstr "Vorschaubreite"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Desktop"
+msgstr "Desktop"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Mobile"
+msgstr "Mobil"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Loading templates…"
+msgstr "Vorlagen werden geladen…"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Templates could not be loaded."
+msgstr "Die Vorlagen konnten nicht geladen werden."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Try again"
+msgstr "Erneut versuchen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "No templates here yet"
+msgstr "Hier gibt es noch keine Vorlagen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start with a prebuilt design or a blank newsletter. You can save your own template later in the editor."
+msgstr "Starten Sie mit einer Standardvorlage oder einem leeren Newsletter. Eine eigene Vorlage können Sie später im Editor speichern."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Browse prebuilt templates"
+msgstr "Standardvorlagen ansehen"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Manage your own templates later under Layout in the editor."
+msgstr "Eigene Vorlagen können Sie später im Editor unter „Vorlage“ speichern."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Choose a template from the list to see its preview."
+msgstr "Wählen Sie eine Vorlage aus der Liste für die Vorschau."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Layout preview with sample content. Check the generated email before sending; mail apps may display it differently."
+msgstr "Layout-Vorschau mit Beispielinhalten. Prüfen Sie vor dem Versand die erzeugte E-Mail; Mailprogramme können sie anders darstellen."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "The newsletter could not be saved. Please try again in the editor."
+msgstr "Der Newsletter konnte nicht gespeichert werden. Bitte versuchen Sie es im Editor erneut."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Nothing is sent when you start."
+msgstr "Beim Starten wird nichts versendet."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start without a template"
+msgstr "Ohne Vorlage starten"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Start with this template"
+msgstr "Mit dieser Vorlage starten"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Starting…"
+msgstr "Wird gestartet…"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Your saved design, ready to reuse."
+msgstr "Ihre gespeicherte Gestaltung zum Wiederverwenden."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Classic layout with text and images."
+msgstr "Klassisches Layout mit Texten und Bildern."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Alternative layout with highlighted sections."
+msgstr "Alternatives Layout mit hervorgehobenen Abschnitten."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "General FAU design for university news."
+msgstr "Allgemeines FAU-Design für Neuigkeiten aus der Universität."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for the Faculty of Medicine."
+msgstr "FAU-Design für die Medizinische Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for the Faculty of Sciences."
+msgstr "FAU-Design für die Naturwissenschaftliche Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for Humanities, Social Sciences, and Theology."
+msgstr "FAU-Design für die Philosophische Fakultät und den Fachbereich Theologie."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for Business, Economics, and Law."
+msgstr "FAU-Design für die Rechts- und Wirtschaftswissenschaftliche Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "FAU design for the Faculty of Engineering."
+msgstr "FAU-Design für die Technische Fakultät."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "A starting point for your newsletter."
+msgstr "Ein Ausgangspunkt für Ihren Newsletter."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "General starting point"
+msgstr "Allgemeiner Einstieg"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "This template could not be previewed. Choose another template or start without one."
+msgstr "Diese Vorlage kann nicht angezeigt werden. Wählen Sie eine andere Vorlage oder starten Sie ohne Vorlage."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "This is a blank template. Add your content after starting."
+msgstr "Dies ist eine leere Vorlage. Ergänzen Sie Ihre Inhalte nach dem Start."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Loading preview…"
+msgstr "Vorschau wird geladen…"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "The preview is taking too long or could not be loaded."
+msgstr "Die Vorschau benötigt zu lange oder konnte nicht geladen werden."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Template name"
+msgstr "Vorlagenname"
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "The template could not be updated. Please try again."
+msgstr "Die Vorlage konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+
+#: src/components/init-modal/screens/layout-picker/index.js
+msgid "Manage saved templates"
+msgstr "Gespeicherte Vorlagen verwalten"
+
+#: src/components/init-modal/screens/layout-picker/ManageTemplates.js
+msgid "Close"
+msgstr "Schließen"
+
+#: config/settings.php:82 src/newsletter-editor/styling/index.js:225
+msgid "Email spacing"
+msgstr "E-Mail-Abstände"
+
+#: config/settings.php:83
+msgid "Manage email spacing automatically. Normalize manual margins, padding and spacer heights, and prevent nested groups from accumulating padding. Each newsletter can override this setting under Styling → Email spacing. Changes apply when a newsletter is saved again; saved editor blocks are not changed."
+msgstr "E-Mail-Abstände automatisch verwalten. Manuelle Außen- und Innenabstände sowie die Höhe von Abstandshaltern werden vereinheitlicht. Innenabstände verschachtelter Gruppen werden nicht addiert. Diese Einstellung kann für jeden Newsletter unter Styling → E-Mail-Abstände überschrieben werden. Änderungen werden beim erneuten Speichern eines Newsletters wirksam; gespeicherte Editor-Blöcke bleiben unverändert."
+
+#: src/newsletter-editor/styling/index.js:227
+msgid "Spacing mode"
+msgstr "Abstandsmodus"
+
+#: src/newsletter-editor/styling/index.js:230
+msgid "Use global setting"
+msgstr "Globale Einstellung verwenden"
+
+#: src/newsletter-editor/styling/index.js:231
+msgid "Managed spacing"
+msgstr "Automatische Abstände"
+
+#: src/newsletter-editor/styling/index.js:232
+msgid "Expert mode (manual spacing)"
+msgstr "Expertenmodus (manuelle Abstände)"
+
+#: src/newsletter-editor/styling/index.js:236
+msgid "Global setting: managed spacing enabled. Save and preview the generated email to see the result. Editor blocks stay unchanged."
+msgstr "Globale Einstellung: Automatische Abstände sind aktiviert. Speichern Sie den Newsletter und öffnen Sie die Vorschau der erzeugten E-Mail, um das Ergebnis zu sehen. Editor-Blöcke bleiben unverändert."
+
+#: src/newsletter-editor/styling/index.js:237
+msgid "Global setting: manual spacing. Save and preview the generated email to see the result. Editor blocks stay unchanged."
+msgstr "Globale Einstellung: Manuelle Abstände. Speichern Sie den Newsletter und öffnen Sie die Vorschau der erzeugten E-Mail, um das Ergebnis zu sehen. Editor-Blöcke bleiben unverändert."
+
+#: src/newsletter-editor/styling/index.js:241
+msgid "Expert mode disables spacing safeguards for this newsletter. Large gaps and deeply nested group padding can reduce readability on small screens. Check the generated email before sending. Contrast protection is controlled separately."
+msgstr "Der Expertenmodus deaktiviert die automatische Abstandsregelung für diesen Newsletter. Große Abstände und Innenabstände tief verschachtelter Gruppen können die Lesbarkeit auf kleinen Bildschirmen beeinträchtigen. Prüfen Sie die erzeugte E-Mail vor dem Versand. Der Kontrastschutz wird separat gesteuert."
+
+#: src/newsletter-editor/styling/index.js:245
+msgid "The editor now approximates the email's consistent content gaps and outer gutters. Manual spacing values stay saved but are overridden while managed spacing is active. Nested groups do not add extra padding. Use the generated email preview for the final check."
+msgstr "Der Editor zeigt die einheitlichen Inhaltsabstände und Seitenränder der E-Mail näherungsweise an. Manuelle Abstände bleiben gespeichert, werden bei aktiver automatischer Abstandsregelung jedoch überschrieben. Verschachtelte Gruppen erzeugen keine zusätzlichen Innenabstände. Nutzen Sie die Vorschau der erzeugten E-Mail für die abschließende Prüfung."
+
+#: src/newsletter-editor/styling/spacing-inspector.js:19
+msgid "Managed email spacing is active. Manual spacing values remain saved, but are overridden in the editor and generated email. Open Newsletter Styles > Email spacing and switch to Expert mode to use them."
+msgstr "Die automatische Abstandsregelung ist aktiv. Manuelle Abstände bleiben gespeichert, werden aber im Editor und in der erzeugten E-Mail überschrieben. Um sie zu verwenden, öffnen Sie Newsletter-Stile > E-Mail-Abstände und wechseln Sie in den Expertenmodus."
+
+#: src/editor/api/index.js:116
+msgid "Managed spacing was applied to the generated email. Manual spacing and nested group padding were normalized; editor blocks were not changed. Preview the email before sending."
+msgstr "Die automatische Abstandsregelung wurde auf die erzeugte E-Mail angewendet. Manuelle Abstände und Innenabstände verschachtelter Gruppen wurden vereinheitlicht; Editor-Blöcke wurden nicht geändert. Prüfen Sie die E-Mail vor dem Versand in der Vorschau."
+
+#: src/editor/api/index.js:118 src/editor/api/index.js:131
+msgid "Preview generated email"
+msgstr "Vorschau der erzeugten E-Mail"
+
+#: src/editor/contrast/preview.js:15
+msgid "Generated email preview"
+msgstr "Vorschau der erzeugten E-Mail"
+
+#: src/editor/contrast/preview.js:17
+msgid "No generated email is available yet. Save the newsletter, then open the preview again."
+msgstr "Es wurde noch keine E-Mail erzeugt. Speichern Sie den Newsletter und öffnen Sie anschließend die Vorschau erneut."
+
+#: src/editor/contrast/preview.js:21
+msgid "This is the last generated email. Your current changes may not be included. Finish saving the newsletter, then reopen the preview."
+msgstr "Dies ist die zuletzt erzeugte E-Mail. Ihre aktuellen Änderungen sind möglicherweise noch nicht enthalten. Warten Sie, bis der Newsletter vollständig gespeichert ist, und öffnen Sie anschließend die Vorschau erneut."
+
+#: src/editor/contrast/preview.js:22
+msgid "This preview uses the last saved newsletter. RSS and calendar content is loaded when you open it."
+msgstr "Diese Vorschau verwendet den zuletzt gespeicherten Newsletter. RSS- und Kalenderinhalte werden beim Öffnen geladen."
+
+#: src/editor/contrast/preview.js:24
+msgid "This is the generated email. Mail apps may render colors differently, especially in dark mode."
+msgstr "Dies ist die erzeugte E-Mail. E-Mail-Programme können Farben anders darstellen, insbesondere im Dunkelmodus."
+
+#: src/editor/contrast/preview.js:27
+msgid "Email content"
+msgstr "E-Mail-Inhalt"
+
+#: src/editor/contrast/preview-menu.js:52
+msgid "The email preview could not be loaded. Please try again."
+msgstr "Die E-Mail-Vorschau konnte nicht geladen werden. Bitte versuchen Sie es erneut."
+
+#: src/editor/contrast/preview-menu.js:63
+msgid "Loading email preview…"
+msgstr "E-Mail-Vorschau wird geladen…"
+
+#: src/editor/contrast/preview-menu.js:63
+msgid "Email preview"
+msgstr "E-Mail-Vorschau"
+
+#: src/editor/api/index.js:102
+msgid "Email contrast protection could not run. Please retry saving or disable it in the newsletter styling settings."
+msgstr "Der Kontrastschutz für E-Mails konnte nicht ausgeführt werden. Versuchen Sie erneut zu speichern oder deaktivieren Sie den Kontrastschutz unter Newsletter-Stile."
+
+#: src/editor/api/index.js:127
+#, javascript-format
+msgid "Email contrast protection: %1$d text elements adjusted; %2$d could not be checked safely (for example, image backgrounds or transparency). Review the generated email before sending. Editor block colors were not changed."
+msgstr "Kontrastschutz für E-Mails: %1$d Textelemente wurden angepasst; %2$d konnten nicht zuverlässig geprüft werden (zum Beispiel bei Hintergrundbildern oder Transparenz). Prüfen Sie die erzeugte E-Mail vor dem Versand. Die Farben der Editor-Blöcke wurden nicht geändert."
+
+#: src/newsletter-editor/styling/index.js:299
+msgid "Email contrast protection"
+msgstr "Kontrastschutz für E-Mails"
+
+#: src/newsletter-editor/styling/index.js:301
+msgid "Automatically improve text contrast"
+msgstr "Textkontrast automatisch verbessern"
+
+#: src/newsletter-editor/styling/index.js:304
+msgid "When saving, adjust low-contrast text on solid backgrounds in the generated email. Block colors stay unchanged. A notice lets you preview corrections and review backgrounds that cannot be checked safely."
+msgstr "Beim Speichern wird kontrastarmer Text auf einfarbigen Hintergründen in der erzeugten E-Mail angepasst. Die Blockfarben bleiben unverändert. Über einen Hinweis können Sie die Korrekturen in der Vorschau ansehen und Hintergründe prüfen, die nicht zuverlässig überprüft werden können."
+
+#: src/newsletter-editor/index.js:59
+msgid "Email configuration"
+msgstr "E-Mail-Konfiguration"
+
+#: src/newsletter-editor/index.js:66
+msgid "Sending rules"
+msgstr "Versandregeln"

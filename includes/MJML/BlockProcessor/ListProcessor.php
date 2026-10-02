@@ -37,6 +37,10 @@ final class ListProcessor
             'font-size'   => '16px',
             'font-family' => $fontFamily,
         ], $attrs);
+        if (isset($textAttrs['background-color'])) {
+            $textAttrs['container-background-color'] = $textAttrs['background-color'];
+            unset($textAttrs['background-color']);
+        }
 
         $markup = '';
         if (!$context->inList) {

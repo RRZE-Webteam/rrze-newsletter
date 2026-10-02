@@ -23,7 +23,7 @@ final class Editor
     protected static $instance = null;
 
     /**
-     * @var string|null $newsletterExcerptLengthFilter The filter for the newsletter excerpt length.
+     * @var \Closure|null $newsletterExcerptLengthFilter The filter for the newsletter excerpt length.
      */
     public static $newsletterExcerptLengthFilter = null;
 
@@ -64,6 +64,9 @@ final class Editor
         // Modify allowed block types for the newsletter editor.
         add_filter('allowed_block_types_all', [__CLASS__, 'newsletterAllowedBlockTypes'], 99);
 
+        // Keep device previews, but do not offer viewport-specific email styling.
+        add_filter('block_editor_settings_all', [__CLASS__, 'newsletterEditorSettings'], 99, 2);
+
         // Filter the excerpt length for the newsletter editor.
         add_action('rest_post_query', [__CLASS__, 'maybeFilterExcerptLength'], 10, 2);
 
@@ -72,6 +75,25 @@ final class Editor
 
         // Register block patterns for the newsletter editor.
         add_action('init', ['\RRZE\Newsletter\Patterns\Patterns', 'registerBlockPatterns']);       
+    }
+
+    /**
+     * Disable responsive style editing only in the newsletter editor.
+     *
+     * WordPress 7.1+ uses this setting for its View and States controls.
+     * Device previews and previously saved responsive styles remain untouched.
+     *
+     * @param array $settings Existing editor settings.
+     * @param \WP_Block_Editor_Context $context Current editor context.
+     * @return array Filtered editor settings.
+     */
+    public static function newsletterEditorSettings(array $settings, $context): array
+    {
+        if (($context->post->post_type ?? null) === Newsletter::POST_TYPE) {
+            $settings['responsiveEditingEnabled'] = false;
+        }
+
+        return $settings;
     }
 
     /**
@@ -162,6 +184,7 @@ final class Editor
             'core/column',
             'core/columns',
             'core/image',
+            'core/media-text',
             'core/separator',
             'core/list',
             'core/list-item',
@@ -226,13 +249,11 @@ final class Editor
     public static function filterExcerptLength($excerptLength)
     {
         if (is_int($excerptLength)) {
-            self::$newsletterExcerptLengthFilter = add_filter(
-                'excerpt_length',
-                function () use ($excerptLength) {
-                    return $excerptLength;
-                },
-                999
-            );
+            self::removeExcerptLengthFilter();
+            self::$newsletterExcerptLengthFilter = static function () use ($excerptLength) {
+                return $excerptLength;
+            };
+            add_filter('excerpt_length', self::$newsletterExcerptLengthFilter, 999);
         }
     }
 
@@ -246,11 +267,16 @@ final class Editor
      */
     public static function removeExcerptLengthFilter()
     {
+        if (self::$newsletterExcerptLengthFilter === null) {
+            return;
+        }
+
         remove_filter(
             'excerpt_length',
             self::$newsletterExcerptLengthFilter,
             999
         );
+        self::$newsletterExcerptLengthFilter = null;
     }
 
     /**
@@ -293,6 +319,7 @@ final class Editor
                 'is_service_provider_configured' => true,
                 'service_provider' => 'provider',
                 'email_html_meta' => 'rrze_newsletter_email_html',
+                'global_managed_spacing' => \RRZE\Newsletter\MJML\ManagedSpacing::globallyEnabled(),
                 'mjml_handling_post_types' => [Newsletter::POST_TYPE],
             ]
         );

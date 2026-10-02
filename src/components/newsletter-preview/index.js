@@ -30,7 +30,7 @@ const NewsletterPreview = ({ meta = {}, ...props }) => {
                 id={ELEMENT_ID}
                 className="rrze-newsletter__layout-preview"
                 style={{
-                    backgroundColor: meta.rrze_newsletter_background_color,
+                    backgroundColor: meta.rrze_newsletter_background_color || '#fff',
                 }}
             >
                 <BlockPreview

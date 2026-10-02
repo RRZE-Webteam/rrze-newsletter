@@ -5,6 +5,7 @@ namespace RRZE\Newsletter\MJML\BlockProcessor;
 defined('ABSPATH') || exit;
 
 use RRZE\Newsletter\MJML\AttributeHandler;
+use RRZE\Newsletter\MJML\ManagedSpacing;
 use RRZE\Newsletter\MJML\Renderer;
 use RRZE\Newsletter\MJML\StyleProcessor;
 
@@ -20,6 +21,7 @@ final class BlockProcessor
 
     private const BLOCKS_WITH_OWN_COLUMN = [
         'core/columns',
+        'core/media-text',
         'core/column',
         'core/separator',
     ];
@@ -43,6 +45,10 @@ final class BlockProcessor
         array $block,
         RenderContext $context
     ): string {
+        $isRoot = !$context->inGroup && !$context->inColumn && !$context->inList;
+        if ($context->managedSpacing && $isRoot) {
+            $block = ManagedSpacing::normalizeBlock($block);
+        }
         $blockName = (string) ($block['blockName'] ?? '');
         $blockAttrs = $block['attrs'] ?? [];
 
@@ -60,10 +66,23 @@ final class BlockProcessor
         );
         $padding = StyleProcessor::getPaddingFromAttributes($attrs);
         $sectionAttrs = array_merge($attrs, ['padding' => '0']);
+        if ($blockName === 'core/media-text') {
+            // Keep media first in source/mobile order, including media on the right.
+            $sectionAttrs['direction'] = ($blockAttrs['mediaPosition'] ?? 'left') === 'right' ? 'rtl' : 'ltr';
+        }
+        if (!isset($sectionAttrs['background-color']) && isset($attrs['container-background-color'])) {
+            $sectionAttrs['background-color'] = $attrs['container-background-color'];
+        }
         if ($blockName === 'core/separator') {
             unset($sectionAttrs['background-color']);
         }
         $columnAttrs = ['padding' => $padding ?: '0'];
+        if ($context->managedSpacing && $isRoot && $blockName !== 'core/group'
+            && ($blockAttrs['align'] ?? '') !== 'full') {
+            $sectionAttrs['padding'] = '0 24px';
+            $sectionAttrs['css-class'] = 'rrze-managed-spacing';
+            $context = $context->withAvailableWidth(max(1, $context->availableWidth - 48));
+        }
         $fontFamily = $blockName === 'core/heading'
             ? Renderer::getFontHeader()
             : Renderer::getFontBody();
@@ -79,6 +98,10 @@ final class BlockProcessor
 
         if ($markup === '') {
             return '';
+        }
+
+        if ($context->managedSpacing && !in_array($blockName, ['core/group', 'core/columns', 'core/column', 'core/media-text'], true)) {
+            $markup = ManagedSpacing::spaceComponents($markup);
         }
 
         return self::wrapMarkup(
@@ -158,6 +181,15 @@ final class BlockProcessor
                     $context->availableWidth,
                     $columnAttrs['padding']
                 )
+            ),
+            'core/media-text' => MediaTextProcessor::render(
+                $block,
+                $attrs,
+                $fontFamily,
+                $context->withAvailableWidth(LayoutHelper::subtractHorizontalPadding(
+                    $context->availableWidth,
+                    StyleProcessor::getPaddingFromAttributes($attrs)
+                ))
             ),
             'core/separator' => SeparatorProcessor::render($attrs),
             'core/spacer' => SpacerProcessor::render($attrs),
@@ -264,7 +296,7 @@ final class BlockProcessor
             return $markup;
         }
 
-        if ($padding !== '' && $blockName === 'core/columns') {
+        if ($padding !== '' && in_array($blockName, ['core/columns', 'core/media-text'], true)) {
             $sectionAttrs['padding'] = $padding;
         }
         $sectionAttrs = LayoutHelper::filterSectionAttributes($sectionAttrs);

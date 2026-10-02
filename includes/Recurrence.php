@@ -546,7 +546,7 @@ class Recurrence extends DateTime
         return true;
     }
 
-    // Get occurrences between two DateTimes, exclusive. Does not modify $this.
+    // Get occurrences including matching endpoints of a non-empty range. Does not modify $this.
     public function getOccurrencesBetween($startDate, $endDate, $limit = NULL)
     {
 
@@ -750,7 +750,8 @@ class Recurrence extends DateTime
             }
         }
 
-        while ($dateLooper < $this->until && count($this->occurrences) < $this->count) {
+        // UNTIL is inclusive, matching the boundary check in occursOn().
+        while ($dateLooper <= $this->until && count($this->occurrences) < $this->count) {
             $occurrences = [];
 
             if ($this->freq === "yearly") {

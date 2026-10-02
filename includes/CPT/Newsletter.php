@@ -9,8 +9,7 @@ use RRZE\Newsletter\Tags;
 use RRZE\Newsletter\Parser;
 use RRZE\Newsletter\Utils;
 use RRZE\Newsletter\Capabilities;
-use RRZE\Newsletter\Blocks\RSS\RSS;
-use RRZE\Newsletter\Blocks\ICS\ICS;
+use RRZE\Newsletter\DynamicContent;
 
 /**
  * Custom Post Type 'Newsletter'
@@ -391,6 +390,33 @@ class Newsletter
                 'auth_callback'  => '__return_true',
             ]
         );
+        register_meta(
+            'post',
+            'rrze_newsletter_contrast_protection',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest' => ['schema' => ['context' => ['edit']]],
+                'type' => 'boolean',
+                'single' => true,
+                'default' => true,
+                'auth_callback' => '__return_true',
+            ]
+        );
+        register_meta(
+            'post',
+            'rrze_newsletter_spacing_mode',
+            [
+                'object_subtype' => self::POST_TYPE,
+                'show_in_rest' => ['schema' => [
+                    'context' => ['edit'],
+                    'enum' => ['inherit', 'managed', 'expert'],
+                ]],
+                'type' => 'string',
+                'single' => true,
+                'default' => 'inherit',
+                'auth_callback' => '__return_true',
+            ]
+        );
     }
 
     public static function registerCategory(): void
@@ -573,11 +599,12 @@ class Newsletter
         return $content;
     }
 
-    public static function getData(int $postId): \WP_Error|array|string
+    public static function getData(int $postId, ?\WP_Post $occurrence = null): \WP_Error|array|string
     {
         $data = [];
 
-        $post = get_post($postId);
+        // Queue creation may already have advanced the source to its next date.
+        $post = $occurrence ?? get_post($postId);
         if (!$post) {
             return $data;
         }
@@ -587,21 +614,7 @@ class Newsletter
             return $body;
         }
 
-        if ($rssAttrs = get_post_meta($postId, 'rrze_newsletter_rss_attrs', true)) {
-            foreach ($rssAttrs as $key => $attrs) {
-                if (str_contains($body, 'RSS_BLOCK_' . $key)) {
-                    $body = str_replace('RSS_BLOCK_' . $key, RSS::renderMJML($attrs), $body);
-                }
-            }
-        }
-
-        if ($icsAttrs = get_post_meta($postId, 'rrze_newsletter_ics_attrs', true)) {
-            foreach ($icsAttrs as $key => $attrs) {
-                if (str_contains($body, 'ICS_BLOCK_' . $key)) {
-                    $body = str_replace('ICS_BLOCK_' . $key, ICS::renderMJML($attrs), $body);
-                }
-            }
-        }
+        $body = DynamicContent::resolve($body, $postId);
 
         $data['id'] = $postId;
 

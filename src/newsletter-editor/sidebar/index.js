@@ -40,7 +40,6 @@ const Sidebar = ( {
 			value={ title }
 			disabled={ inFlight }
 			onChange={ ( value ) => editPost( { title: value } ) }
-			hideLabelFromVision
 		/>
 	);
 
@@ -81,91 +80,98 @@ const Sidebar = ( {
 
 	const renderFrom = () => (
 		<Fragment>
-			<strong>{ __( 'From', 'rrze-newsletter' ) }</strong>
-			<TextControl
-				label={ __( 'Name', 'rrze-newsletter' ) }
-				className="rrze-newsletter__name-textcontrol"
-				value={ senderName }
-				disabled={ inFlight }
-				onChange={ ( value ) =>
-					editPost( { meta: { rrze_newsletter_from_name: value } } )
-				}
-			/>
-			<TextControl
-				label={ __( 'Email', 'rrze-newsletter' ) }
-				className={ senderEmailClasses }
-				value={ senderEmail }
-				type="email"
-				disabled={ inFlight }
-				onChange={ ( value ) =>
-					editPost( { meta: { rrze_newsletter_from_email: value } } )
-				}
-			/>
-			<TextControl
-				label={ __( 'ReplyTo', 'rrze-newsletter' ) }
-				className={ senderEmailClasses }
-				value={ replytoEmail }
-				type="email"
-				disabled={ inFlight }
-				onChange={ ( value ) =>
-					editPost( { meta: { rrze_newsletter_replyto: value } } )
-				}
-			/>
-			<Button
-				isLink
-				onClick={ () => {
-					updateMetaValueInAPI( {
-						key: 'rrze_newsletter_from_name',
-						value: senderName,
-					} );
-					updateMetaValueInAPI( {
-						key: 'rrze_newsletter_from_email',
-						value: senderEmail,
-					} );
-					updateMetaValueInAPI( {
-						key: 'rrze_newsletter_replyto',
-						value: replytoEmail,
-					} );
-				} }
-				disabled={
-					inFlight ||
-					( senderEmail.length
-						? ! hasValidEmail( senderEmail )
-						: false )
-				}
-			>
-				{ __( 'Update Sender', 'rrze-newsletter' ) }
-			</Button>
-
-			<TextareaControl
-				label={ __( 'Preview text', 'rrze-newsletter' ) }
-				className="rrze-newsletter__name-textcontrol rrze-newsletter__name-textcontrol--separated"
-				value={ previewText }
-				disabled={ inFlight }
-				onChange={ ( value ) =>
-					editPost( {
-						meta: { rrze_newsletter_preview_text: value },
-					} )
-				}
-			/>
-			<Button
-				isLink
-				onClick={ () =>
-					updateMetaValueInAPI( {
-						key: 'rrze_newsletter_preview_text',
-						value: previewText,
-					} )
-				}
-				disabled={ inFlight }
-			>
-				{ __( 'Update preview text', 'rrze-newsletter' ) }
-			</Button>
+			<div className="rrze-newsletter__configuration-section">
+				<strong>{ __( 'From', 'rrze-newsletter' ) }</strong>
+				<TextControl
+					label={ __( 'Name', 'rrze-newsletter' ) }
+					className="rrze-newsletter__name-textcontrol"
+					value={ senderName }
+					disabled={ inFlight }
+					onChange={ ( value ) =>
+						editPost( {
+							meta: { rrze_newsletter_from_name: value },
+						} )
+					}
+				/>
+				<TextControl
+					label={ __( 'Email', 'rrze-newsletter' ) }
+					className={ senderEmailClasses }
+					value={ senderEmail }
+					type="email"
+					disabled={ inFlight }
+					onChange={ ( value ) =>
+						editPost( {
+							meta: { rrze_newsletter_from_email: value },
+						} )
+					}
+				/>
+				<TextControl
+					label={ __( 'ReplyTo', 'rrze-newsletter' ) }
+					className={ senderEmailClasses }
+					value={ replytoEmail }
+					type="email"
+					disabled={ inFlight }
+					onChange={ ( value ) =>
+						editPost( { meta: { rrze_newsletter_replyto: value } } )
+					}
+				/>
+				<Button
+					isLink
+					onClick={ () => {
+						updateMetaValueInAPI( {
+							key: 'rrze_newsletter_from_name',
+							value: senderName,
+						} );
+						updateMetaValueInAPI( {
+							key: 'rrze_newsletter_from_email',
+							value: senderEmail,
+						} );
+						updateMetaValueInAPI( {
+							key: 'rrze_newsletter_replyto',
+							value: replytoEmail,
+						} );
+					} }
+					disabled={
+						inFlight ||
+						( senderEmail.length
+							? ! hasValidEmail( senderEmail )
+							: false )
+					}
+				>
+					{ __( 'Update Sender', 'rrze-newsletter' ) }
+				</Button>
+			</div>
+			<div className="rrze-newsletter__configuration-section">
+				<TextareaControl
+					label={ __( 'Preview text', 'rrze-newsletter' ) }
+					className="rrze-newsletter__name-textcontrol"
+					value={ previewText }
+					disabled={ inFlight }
+					onChange={ ( value ) =>
+						editPost( {
+							meta: { rrze_newsletter_preview_text: value },
+						} )
+					}
+				/>
+				<Button
+					isLink
+					onClick={ () =>
+						updateMetaValueInAPI( {
+							key: 'rrze_newsletter_preview_text',
+							value: previewText,
+						} )
+					}
+					disabled={ inFlight }
+				>
+					{ __( 'Update preview text', 'rrze-newsletter' ) }
+				</Button>
+			</div>
 		</Fragment>
 	);
 
 	const { ProviderSidebar } = getServiceProvider();
 	return (
-		<Fragment>
+		<div className="rrze-newsletter__configuration">
 			<ProviderSidebar
 				postId={ postId }
 				inFlight={ inFlight }
@@ -174,7 +180,7 @@ const Sidebar = ( {
 				renderFrom={ renderFrom }
 				updateMeta={ ( meta ) => editPost( { meta } ) }
 			/>
-		</Fragment>
+		</div>
 	);
 };
 

@@ -14,3 +14,5 @@ node_modules/
 /languages/*.mo
 ### Tmp ###
 /_tmp/
+/.phpunit.cache/
+/.phpunit.result.cache

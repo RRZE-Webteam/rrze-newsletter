@@ -7,6 +7,9 @@
 
 WordPress-Plugin für die Erstellung von E-Mail-Newslettern und deren anschließendes Versenden.
 
+Die Änderungen in Version **3.4.0** und Hinweise zum Update stehen im
+[Änderungsprotokoll](CHANGELOG.md).
+
 
 ## Contributors
 
@@ -34,6 +37,28 @@ Mit dem Plugin kann man mit dem WordPress-Blockeditor (Gutenberg) auffällige E-
 ## Einstellungen
 
 Dashboard / Einstellungen / Newsletters
+
+### Automatische E-Mail-Abstände
+
+Unter **Design → Email spacing** lässt sich die standardmäßig aktivierte automatische
+Abstandsregelung steuern. Sie vereinheitlicht Abstände in der generierten E-Mail und
+verhindert, dass verschachtelte Gruppen immer mehr Innenabstand aufbauen. Eine bereits
+gespeicherte Deaktivierung bleibt erhalten.
+
+Im Newsletter-Editor unter **Styling → Email spacing** kann jeder Newsletter die
+globale Einstellung übernehmen, automatische Abstände aktivieren oder ausdrücklich
+den **Expertenmodus (manuelle Abstände)** verwenden. Der Expertenmodus zeigt einen
+Warnhinweis; der separate Kontrastschutz bleibt davon unberührt.
+
+Im automatischen Modus zeigt der Editor die Abstände näherungsweise direkt an,
+auch in der iframe-Ansicht. Beim Wechsel in den Expertenmodus gelten wieder die
+gespeicherten manuellen Werte. Ein Hinweis bei den Abstandsreglern erklärt die
+Übersteuerung; die Blockdaten selbst bleiben unverändert.
+
+Nach einer Änderung den Newsletter erneut speichern und die generierte E-Mail
+prüfen. Die Editor-Darstellung ist keine pixelgenaue Mailclient-Vorschau; unter
+anderem bleiben Spacer im Editor einzeln auswählbar. Bereits gespeicherte
+Versand-HTMLs ändern sich nicht rückwirkend.
 
 ## Tags
 
@@ -68,6 +93,20 @@ Guten Tag{{FNAME}} {{=FNAME}}{{/FNAME}},
 ```
 
 ## Hinweis für Entwickler
+
+### Maintainer-Dokumentation
+
+* [Versand- und Queue-Invarianten](docs/maintainer/queue-invariants.md)
+
+### Tests
+
+Die schnellen Smoke-Tests für Parser, Wiederholungen und Mail-Queue verwenden
+die Composer-Entwicklungsabhängigkeit PHPUnit 9.6 und benötigen keine laufende
+WordPress-Installation:
+
+```shell
+composer test
+```
 
 **WordPress-Version:** `^6.8`
 

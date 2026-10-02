@@ -1,6 +1,6 @@
 {
   "name": "rrze-newsletter",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "Multilanguage plugin for WordPress.",
   "main": "webpack.config.js",
   "author": "RRZE Webteam <webmaster@fau.de> (https://www.rrze.fau.de/)",
@@ -13,6 +13,13 @@
     "extends @wordpress/browserslist-config"
   ],
   "scripts": {
+    "build:social-icons": "node scripts/social-icons.cjs build",
+    "check:social-icons": "node scripts/social-icons.cjs check",
+    "test": "composer test && npm run test:mjml && npm run test:contrast && npm run test:editor",
+    "test:editor": "node --test tests/Editor/*.test.cjs",
+    "test:contrast": "node --test tests/Contrast/*.test.cjs",
+    "test:mjml": "node --test tests/MJML/*.test.cjs",
+    "test:browser": "node --test tests/Browser/*.test.cjs",
     "start": "wp-scripts start",
     "build": "wp-scripts build",
     "format": "wp-scripts format src",
@@ -31,6 +38,7 @@
     "mjml-browser": "latest"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@wordpress/scripts": "^30.23.0"
   }
 }
