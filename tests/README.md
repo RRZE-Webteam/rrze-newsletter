@@ -1,5 +1,13 @@
 # Tests
 
+### Post Inserter
+
+`tests/Editor/post-inserter.test.cjs` checks the article title above the image/excerpt
+row and the read-more button or link below it. It covers image placement, H2–H6,
+optional content, toolbar changes and insertion. Generated blocks are serialized
+and parsed with the real WordPress core block library; editor stores and toolbar
+primitives are isolated test boundaries.
+
 ### Media & Text
 
 `core/media-text` is available in the newsletter editor. The MJML processor uses

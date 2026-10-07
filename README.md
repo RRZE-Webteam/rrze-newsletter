@@ -60,6 +60,16 @@ prüfen. Die Editor-Darstellung ist keine pixelgenaue Mailclient-Vorschau; unter
 anderem bleiben Spacer im Editor einzeln auswählbar. Bereits gespeicherte
 Versand-HTMLs ändern sich nicht rückwirkend.
 
+## Beiträge mit dem Post-Inserter einfügen
+
+Der Post-Inserter setzt die Artikelüberschrift über den Bereich mit Anleser und
+Beitragsbild. Darunter steht standardmäßig ein „Weiterlesen“-Button. In der
+Block-Werkzeugleiste lassen sich die Bildposition (links, rechts oder oben), die
+Überschriftenebene (H2–H6) und die Darstellung von „Weiterlesen“ als Button oder
+Textlink wählen. Über die Seitenleiste können Bild, Anleser und „Weiterlesen“
+einzeln ausgeblendet werden. Nach „Beiträge einfügen“ können die erzeugten
+WordPress-Blöcke wie gewohnt weiterbearbeitet werden.
+
 ## Tags
 
 Das Plugin bietet Tags für dynamische Informationen. Einfach einen Tag in den Newsletter einfügen, um personalisierte oder dynamische Inhalte hinzuzufügen. Die folgende Liste zeigt alle verfügbaren Tags.

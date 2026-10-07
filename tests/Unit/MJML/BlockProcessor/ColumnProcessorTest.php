@@ -85,6 +85,37 @@ final class ColumnProcessorTest extends MjmlTestCase
         self::assertFalse($context->inColumn);
     }
 
+    public function testPostInserterLeadingColumnSharesTheHeadingGutter(): void
+    {
+        $image = ['blockName' => 'core/image', 'attrs' => [], 'innerHTML' => '<figure><img src="https://example.test/image.png" width="1200" height="600" /></figure>'];
+        foreach (['text', 'image'] as $leading) {
+            foreach ([false, true] as $managed) {
+                $block = $this->container('core/columns', [
+                    $this->container('core/column', [$leading === 'image' ? $image : $this->listBlock('Text')], [
+                        'className' => 'custom rrze-newsletter-post-inserter-' . $leading . '-left',
+                        'style' => ['spacing' => ['padding' => ['left' => '0', 'right' => '20px'], 'margin' => ['left' => '0']]],
+                    ]),
+                    $this->container('core/column', [$leading === 'image' ? $this->listBlock('Text') : $image]),
+                ]);
+                $before = $block;
+                $context = RenderContext::root(42, managedSpacing: $managed);
+                $xpath = $this->parseMjml(BlockProcessor::render($block, $context));
+                $heading = $this->parseMjml(BlockProcessor::render($this->listBlock('Heading'), $context));
+
+                self::assertSame($this->values($heading, '/test-root/mj-section/@padding'), $this->values($xpath, '/test-root/mj-section/@padding'));
+                self::assertSame(
+                    $managed ? ['0 8px 0 0', '0 8px'] : ['0 20px 0 0', '0'],
+                    $this->values($xpath, '/test-root/mj-section/mj-column/@padding')
+                );
+                self::assertSame($before, $block);
+                self::assertSame(
+                    [$managed ? ($leading === 'image' ? '308px' : '300px') : ($leading === 'image' ? '320px' : '340px')],
+                    $this->values($xpath, '//mj-image/@width')
+                );
+            }
+        }
+    }
+
     public function testColumnsPaddingBelongsOnSection(): void
     {
         $block = $this->container('core/columns', [

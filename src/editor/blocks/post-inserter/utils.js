@@ -28,12 +28,15 @@ const assignFontSize = (fontSize, attributes) => {
     return attributes;
 };
 
-const getHeadingBlockTemplate = (post, { headingFontSize, headingColor }) => [
+const getHeadingBlockTemplate = (
+    post,
+    { headingFontSize, headingColor, headingLevel }
+) => [
     "core/heading",
     assignFontSize(headingFontSize, {
         style: { color: { text: headingColor } },
         content: `<a href="${post.link}">${post.title.rendered}</a>`,
-        level: 3,
+        level: [2, 3, 4, 5, 6].includes(headingLevel) ? headingLevel : 3,
     }),
 ];
 
@@ -89,15 +92,24 @@ const getExcerptBlockTemplate = (
     return ["core/paragraph", assignFontSize(textFontSize, attributes)];
 };
 
-const getContinueReadingLinkBlockTemplate = (
+const getContinueReadingBlockTemplate = (
     post,
-    { textFontSize, textColor }
+    { textFontSize, textColor, continueReadingStyle }
 ) => {
+    const text = __("Continue reading…", "rrze-newsletter");
+    if (continueReadingStyle !== "link") {
+        return [
+            "core/buttons",
+            { layout: { type: "flex", justifyContent: "left" } },
+            [[
+                "core/button",
+                assignFontSize(textFontSize, { text, url: post.link }),
+            ]],
+        ];
+    }
+
     const attributes = {
-        content: `<a href="${post.link}">${__(
-            "Continue reading…",
-            "rrze-newsletter"
-        )}</a>`,
+        content: `<a href="${post.link}">${text}</a>`,
         style: { color: { text: textColor } },
     };
     return ["core/paragraph", assignFontSize(textFontSize, attributes)];
@@ -144,16 +156,17 @@ const getAuthorBlockTemplate = (post, { textFontSize, textColor }) => {
 };
 
 const createBlockTemplatesForSinglePost = (post, attributes) => {
+    const headingBlocks = [getHeadingBlockTemplate(post, attributes)];
     const postContentBlocks = [];
-    let displayAuthor = attributes.displayAuthor;
-
-    postContentBlocks.push(getHeadingBlockTemplate(post, attributes));
+    const continueReadingBlocks = attributes.displayContinueReading
+        ? [getContinueReadingBlockTemplate(post, attributes)]
+        : [];
 
     if (attributes.displayPostSubtitle && post.meta?.rrze_post_subtitle) {
-        postContentBlocks.push(getSubtitleBlockTemplate(post, attributes));
+        headingBlocks.push(getSubtitleBlockTemplate(post, attributes));
     }
 
-    if (displayAuthor) {
+    if (attributes.displayAuthor) {
         const author = getAuthorBlockTemplate(post, attributes);
 
         if (author) {
@@ -166,17 +179,13 @@ const createBlockTemplatesForSinglePost = (post, attributes) => {
     if (attributes.displayPostExcerpt) {
         postContentBlocks.push(getExcerptBlockTemplate(post, attributes));
     }
-    if (attributes.displayContinueReading) {
-        postContentBlocks.push(
-            getContinueReadingLinkBlockTemplate(post, attributes)
-        );
-    }
-
     const hasFeaturedImage =
-        post.featuredImageLargeURL || post.featuredImageMediumURL;
+        post.featuredImageLargeURL ||
+        post.featuredImageMediumURL ||
+        post.featuredImageFullURL ||
+        post.featuredImageThumbURL;
 
     if (attributes.displayFeaturedImage && hasFeaturedImage) {
-        const featuredImageId = post.featured_media;
         // Picks the most suitable URL depending on alignment/size, with graceful fallbacks.
         const getImageBlock = (alignCenter = false) => {
             // Preferred URL when the image is on top (centered)
@@ -228,6 +237,18 @@ const createBlockTemplatesForSinglePost = (post, attributes) => {
             ];
         };
 
+        if (
+            attributes.featuredImageAlignment === "top" ||
+            postContentBlocks.length === 0
+        ) {
+            return [
+                ...headingBlocks,
+                getImageBlock(true),
+                ...postContentBlocks,
+                ...continueReadingBlocks,
+            ];
+        }
+
         let imageColumnBlockSize = "50%";
         let postContentColumnBlockSize = "50%";
 
@@ -269,31 +290,29 @@ const createBlockTemplatesForSinglePost = (post, attributes) => {
             [],
         ];
 
-        switch (attributes.featuredImageAlignment) {
-            case "left":
-                columnsBlock[2] = [imageColumnBlock, postContentColumnBlock];
-                break;
-            case "right":
-                columnsBlock[2] = [postContentColumnBlock, imageColumnBlock];
-                break;
-            case "top":
-                return [getImageBlock(true), ...postContentBlocks];
-        }
+        columnsBlock[2] = attributes.featuredImageAlignment === "right"
+            ? [postContentColumnBlock, imageColumnBlock]
+            : [imageColumnBlock, postContentColumnBlock];
 
-        // Add padding-right to all 'core/column' blocks except the last one
+        // Keep the leading column flush with the heading and the gap on its right.
         columnsBlock[2].forEach((column, index) => {
             if (index < columnsBlock[2].length - 1) {
+                column[1].className = column === imageColumnBlock
+                    ? "rrze-newsletter-post-inserter-image-left"
+                    : "rrze-newsletter-post-inserter-text-left";
                 column[1].style = column[1].style || {};
                 column[1].style.spacing = column[1].style.spacing || {};
                 column[1].style.spacing.padding =
                     column[1].style.spacing.padding || {};
                 column[1].style.spacing.padding.right = "20px";
+                column[1].style.spacing.padding.left = "0";
+                column[1].style.spacing.margin = { left: "0" };
             }
         });
 
-        return [columnsBlock];
+        return [...headingBlocks, columnsBlock, ...continueReadingBlocks];
     }
-    return postContentBlocks;
+    return [...headingBlocks, ...postContentBlocks, ...continueReadingBlocks];
 };
 
 const createBlockFromTemplate = ([name, blockAttributes, innerBlocks = []]) =>

@@ -29,6 +29,7 @@ import {
     InnerBlocks,
     InspectorControls,
     BlockControls,
+    HeadingLevelDropdown,
     useBlockProps,
 } from "@wordpress/block-editor";
 import { Fragment, useEffect, useMemo, useState } from "@wordpress/element";
@@ -228,7 +229,7 @@ const PostInserterBlock = ({
                     />
                     <ToggleControl
                         label={__(
-                            "“Continue reading…” link",
+                            'Display "Continue reading"',
                             "rrze-newsletter"
                         )}
                         checked={attributes.displayContinueReading}
@@ -315,6 +316,15 @@ const PostInserterBlock = ({
             </InspectorControls>
 
             <BlockControls>
+                <ToolbarGroup>
+                    <HeadingLevelDropdown
+                        value={attributes.headingLevel}
+                        options={[2, 3, 4, 5, 6]}
+                        onChange={(headingLevel) =>
+                            setAttributes({ headingLevel })
+                        }
+                    />
+                </ToolbarGroup>
                 {attributes.displayFeaturedImage && (
                     <ToolbarGroup>
                         <ToolbarButton
@@ -388,6 +398,39 @@ const PostInserterBlock = ({
                                 )}
                             </ToolbarDropdownMenu>
                         )}
+                    </ToolbarGroup>
+                )}
+                {attributes.displayContinueReading && (
+                    <ToolbarGroup>
+                        <ToolbarDropdownMenu
+                            label={__("Continue reading style", "rrze-newsletter")}
+                            text={
+                                attributes.continueReadingStyle === "link"
+                                    ? __("Link", "rrze-newsletter")
+                                    : __("Button", "rrze-newsletter")
+                            }
+                            icon={null}
+                            controls={[
+                                {
+                                    title: __("Button", "rrze-newsletter"),
+                                    isActive:
+                                        attributes.continueReadingStyle !== "link",
+                                    role: "menuitemradio",
+                                    onClick: () => setAttributes({
+                                        continueReadingStyle: "button",
+                                    }),
+                                },
+                                {
+                                    title: __("Link", "rrze-newsletter"),
+                                    isActive:
+                                        attributes.continueReadingStyle === "link",
+                                    role: "menuitemradio",
+                                    onClick: () => setAttributes({
+                                        continueReadingStyle: "link",
+                                    }),
+                                },
+                            ]}
+                        />
                     </ToolbarGroup>
                 )}
             </BlockControls>

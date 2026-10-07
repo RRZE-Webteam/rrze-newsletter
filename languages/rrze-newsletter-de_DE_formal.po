@@ -2001,3 +2001,15 @@ msgstr "E-Mail-Konfiguration"
 #: src/newsletter-editor/index.js:66
 msgid "Sending rules"
 msgstr "Versandregeln"
+
+#: src/editor/blocks/post-inserter/index.js
+msgid "Continue reading style"
+msgstr "Darstellung von „Weiterlesen“"
+
+#: src/editor/blocks/post-inserter/index.js
+msgid "Button"
+msgstr "Button"
+
+#: src/editor/blocks/post-inserter/index.js
+msgid "Link"
+msgstr "Link"

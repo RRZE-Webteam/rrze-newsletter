@@ -60,6 +60,11 @@ export const editorSpacingCss = `
 .${ ROOT_CLASS } [data-type="core/group"].is-layout-grid > [data-type] {
 	padding:0 8px !important;
 }
+/* The Post Inserter's leading column shares the heading's outer gutter. */
+.${ ROOT_CLASS } [data-type="core/column"].rrze-newsletter-post-inserter-text-left,
+.${ ROOT_CLASS } [data-type="core/column"].rrze-newsletter-post-inserter-image-left {
+	padding-left:0 !important;
+}
 .${ ROOT_CLASS } [data-type="core/media-text"] > .wp-block-media-text__media {
 	margin:0 0 16px !important;
 }

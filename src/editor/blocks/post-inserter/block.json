@@ -49,7 +49,17 @@
 		},
 		"displayContinueReading": {
 			"type": "boolean",
-			"default": false
+			"default": true
+		},
+		"continueReadingStyle": {
+			"type": "string",
+			"enum": ["button", "link"],
+			"default": "button"
+		},
+		"headingLevel": {
+			"type": "number",
+			"enum": [2, 3, 4, 5, 6],
+			"default": 3
 		},
 		"displaySponsoredPosts": {
 			"type": "boolean",

@@ -5,6 +5,34 @@ const policy = import( '../../src/newsletter-editor/styling/managed-spacing.mjs'
 const canvas = '<div class="editor-styles-wrapper"><div class="is-root-container"><p data-type="core/paragraph" style="margin:90px;padding:80px">Unchanged content</p></div></div>';
 const tick = () => new Promise( ( resolve ) => setImmediate( resolve ) );
 
+for ( const leading of [ 'text', 'image' ] ) {
+	test( `Post Inserter ${ leading } on the left aligns with the heading while other columns keep their gutters`, async () => {
+		const { mountManagedSpacing } = await policy;
+		for ( const grouped of [ false, true ] ) {
+			const content = `<h3 data-type="core/heading">Heading</h3>
+				<div data-type="core/columns">
+					<div data-type="core/column" class="rrze-newsletter-post-inserter-${ leading }-left">${ leading === 'image' ? '<figure data-type="core/image"><img alt="Article image" /></figure>' : '<p data-type="core/paragraph">Excerpt</p>' }</div>
+					<div data-type="core/column" id="trailing">Trailing column</div>
+				</div>`;
+			const dom = new JSDOM( `<div class="editor-styles-wrapper"><div class="is-root-container">${ grouped ? `<div data-type="core/group">${ content }</div>` : content }</div></div>` );
+			const doc = dom.window.document;
+			const dispose = mountManagedSpacing( doc );
+			const css = ( node ) => dom.window.getComputedStyle( node );
+			const columns = doc.querySelector( '[data-type="core/columns"]' );
+			const text = columns.firstElementChild;
+			assert.equal( css( text ).paddingLeft, '0px' );
+			assert.equal( css( text ).marginLeft, '0px' );
+			assert.equal( css( text.firstElementChild ).paddingLeft, '0px' );
+			assert.equal( css( text.firstElementChild ).marginLeft, '0px' );
+			assert.equal( css( doc.querySelector( 'h3' ) ).paddingLeft, css( columns ).paddingLeft );
+			assert.equal( css( text ).paddingRight, '8px' );
+			assert.equal( css( doc.querySelector( '#trailing' ) ).paddingLeft, '8px' );
+			dispose();
+			dom.window.close();
+		}
+	} );
+}
+
 for ( const legacyWrapper of [ false, true ] ) {
 	for ( const type of [ 'heading', 'paragraph' ] ) {
 		test( `${ type } bottom spacing stays contained by modern/legacy groups (legacy=${ legacyWrapper })`, async () => {

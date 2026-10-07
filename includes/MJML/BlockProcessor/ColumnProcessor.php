@@ -25,7 +25,12 @@ final class ColumnProcessor
     ): string {
         $columnAttrs['background-color'] = $attrs['background-color'] ?? $attrs['container-background-color'] ?? null;
         if ($context->managedSpacing) {
-            $columnAttrs['padding'] = '0 8px';
+            // Match the Post Inserter heading's outer gutter for either leading column.
+            $isPostInserterLeftColumn = array_intersect(
+                ['rrze-newsletter-post-inserter-text-left', 'rrze-newsletter-post-inserter-image-left'],
+                preg_split('/\s+/', $attrs['className'] ?? '')
+            ) !== [];
+            $columnAttrs['padding'] = $isPostInserterLeftColumn ? '0 8px 0 0' : '0 8px';
         }
         if (isset($attrs['verticalAlignment'])) {
             $columnAttrs['vertical-align'] = $attrs['verticalAlignment'] === 'center'
